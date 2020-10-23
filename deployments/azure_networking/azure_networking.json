@@ -15,12 +15,6 @@
                 "description": "The Name of the NAT Gateway Public IP Address."
             }
         },
-        "natGatewayPublicIPPrefixName": {
-            "type": "string",
-            "metadata": {
-                "description": "The Name of the NAT Gateway Public IP Prefix."
-            }
-        },
         "natGatewayName": {
             "type": "string",
             "metadata": {
@@ -224,34 +218,12 @@
             ]
         },
         {
-            "type": "Microsoft.Network/publicIPPrefixes",
-            "apiVersion": "2019-11-01",
-            "name": "[parameters('natGatewayPublicIPPrefixName')]",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIpAddresses', parameters('natGatewayPublicIPAddressName'))]"
-            ],
-            "tags": {
-                "Environment": "[variables('environmentName')]",
-                "Function": "[variables('functionName')]",
-                "Cost Center": "[variables('costCenterName')]"
-            },
-            "sku": {
-                "name": "Standard"
-            },
-            "properties": {
-                "prefixLength": 31,
-                "publicIPAddressVersion": "IPv4"
-            }
-        },
-        {
             "type": "Microsoft.Network/natGateways",
             "apiVersion": "2019-11-01",
             "name": "[parameters('natGatewayName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIpAddresses', parameters('natGatewayPublicIPAddressName'))]",
-                "[resourceId('Microsoft.Network/publicIPPrefixes', parameters('natGatewayPublicIPPrefixName'))]"
+                "[resourceId('Microsoft.Network/publicIpAddresses', parameters('natGatewayPublicIPAddressName'))]"
             ],
             "tags": {
                 "Environment": "[variables('environmentName')]",
@@ -266,11 +238,6 @@
                 "publicIpAddresses": [
                     {
                         "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('natGatewayPublicIPAddressName'))]"
-                    }
-                ],
-                "publicIpPrefixes": [
-                    {
-                        "id": "[resourceId('Microsoft.Network/publicIPPrefixes', parameters('natGatewayPublicIPPrefixName'))]"
                     }
                 ]
             }
@@ -794,8 +761,7 @@
             "name": "[parameters('virtualNetwork01Name')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIpAddresses', parameters('natGatewayPublicIPAddressName'))]", 
-                "[resourceId('Microsoft.Network/publicIPPrefixes', parameters('natGatewayPublicIPPrefixName'))]",
+                "[resourceId('Microsoft.Network/publicIpAddresses', parameters('natGatewayPublicIPAddressName'))]",
                 "[resourceId('Microsoft.Network/natGateways', parameters('natGatewayName'))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('managementSubnetNetworkSecurityGroupName'))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('directoryServicesSubnetNetworkSecurityGroupName'))]"

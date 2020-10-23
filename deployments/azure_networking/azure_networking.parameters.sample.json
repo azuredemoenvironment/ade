@@ -5,9 +5,6 @@
         "natGatewayPublicIPAddressName": {
             "value": "@@natGatewayPublicIPAddressName@@"
         },
-        "natGatewayPublicIPPrefixName": {
-            "value": "@@natGatewayPublicIPPrefixName@@"
-        },
         "natGatewayName": {
             "value": "@@natGatewayName@@"
         },
