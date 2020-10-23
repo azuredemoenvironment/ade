@@ -1,0 +1,42 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "PowerShell Launch ade.ps1 Interactive Deploy Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "./ade.ps1",
+            "args": [
+                "-deploy"
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "PowerShell Launch ade.ps1 Interactive Remove Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "./ade.ps1",
+            "args": [
+                "-remove",
+                "-skipConfirmation"
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "PowerShell Launch ade.personal.ps1 Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "./ade.personal.ps1",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "PowerShell: Interactive Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "cwd": ""
+        }
+    ]
+}

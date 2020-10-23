@@ -1,0 +1,12 @@
+#deploy kubernetes services vote
+#retrieve the cluster credentials
+$aksResourceGroupName='rg-alias-region-aks'
+$aksClusterName='aks-alias-region-01'
+az aks get-credentials -g $aksResourceGroupName -n $aksClusterName
+#retrieve the list of cluster nodes
+kubectl get nodes
+#deploy an application to the cluster
+$applicationPath='https://raw.githubusercontent.com/Mitaric/AzureDemoEnvironment/master/yaml/azure-vote.yaml'
+kubectl apply -f $applicationPath
+#monitor the deployment of the application
+kubectl get service azure-vote-front --watch

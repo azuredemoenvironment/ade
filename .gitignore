@@ -1,0 +1,5 @@
+*.certificate.ps1
+*.key.azcli
+*.parameters.json
+*.personal.*
+data/**

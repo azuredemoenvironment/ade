@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sqlToDoSqlServerName":{
+            "value": "@@sqlToDoSqlServerName@@"
+        },
+        "sqlToDoSqlAdminUserName":{
+            "value": "@@sqlToDoSqlAdminUserName@@"
+        },
+        "sqlToDoSqlAdminPassword":{
+            "reference":{
+                "keyVault":{
+                    "id": "@@keyVaultResourceID@@"
+                },
+                "secretName": "resourcePassword"
+            }
+        },
+        "sqlToDoSqlDatabaseName":{
+            "value": "@@sqlToDoSqlDatabaseName@@"
+        },
+        "sqlToDoWebAppBackupStorageAccountName": {
+            "value": "@@sqlToDoWebAppBackupStorageAccountName@@"
+        },
+        "sqlToDoAppInsightsName": {
+            "value": "@@sqlToDoAppInsightsName@@"
+        },
+        "primaryRegionAppServicePlanResourceGroupName": {
+            "value": "@@primaryRegionAppServicePlanResourceGroupName@@"
+        },
+        "primaryRegionAppServicePlanName": {
+            "value": "@@primaryRegionAppServicePlanName@@"
+        },
+        "sqlToDoWebAppName": {
+            "value": "@@sqlToDoWebAppName@@"
+        },
+        "logAnalyticsWorkspaceResourceGroupName": {
+            "value": "@@logAnalyticsWorkspaceResourceGroupName@@"
+        },
+        "logAnalyticsWorkspaceName": {
+            "value": "@@logAnalyticsWorkspaceName@@"
+        }
+    }
+}

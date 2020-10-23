@@ -1,0 +1,58 @@
+#create user assigned managed identities
+#create resource group
+$managedIdentityResourceGroupName = 'rg-alias-region-managedidentity'
+$location = 'eastus'
+az group create -n $managedIdentityResourceGroupName -l $location
+
+#create container registry user assigned managed identity
+$managedIdentityResourceGroupName = 'rg-alias-region-managedidentity'
+$crManagedIdentityName = 'uami-alias-region-cr'
+az identity create -g $managedIdentityResourceGroupName -n $crManagedIdentityName
+
+#create application gateway user assigned managed identity
+$managedIdentityResourceGroupName = 'rg-alias-region-managedidentity'
+$appGWManagedIdentityName = 'uami-alias-region-appgw'
+az identity create -g $managedIdentityResourceGroupName -n $appGWManagedIdentityName
+
+#assign user assigned managed identities to key vault
+#assign container registry user assigned managed identity to key vault
+$keyVaultResourceGroupName = 'rg-alias-region-keyvault'
+$keyVaultName = 'kv-alias-region-01'
+$managedIdentityResourceGroupName = 'rg-alias-region-managedidentity'
+$crManagedIdentityName = 'uami-alias-region-cr'
+$crManagedIdentitySPNID = az identity show -g $managedIdentityResourceGroupName -n $crManagedIdentityName --query principalId
+az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --object-id $crManagedIdentitySPNID --key-permissions get unwrapKey wrapKey
+
+#assign application gateway user assigned managed identity to key vault
+$keyVaultResourceGroupName = 'rg-alias-region-keyvault'
+$keyVaultName = 'kv-alias-region-01'
+$managedIdentityResourceGroupName = 'rg-alias-region-managedidentity'
+$appGWManagedIdentityName = 'uami-alias-region-appgw'
+$appGWManagedIdentitySPNID = az identity show -g $managedIdentityResourceGroupName -n $appGWManagedIdentityName --query principalId
+az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --object-id $appGWManagedIdentitySPNID --secret-permissions get
+
+#create service principals
+#create rest api service principal
+$restAPISPNName = 'spn-alias-region-restapi'
+az ad sp create-for-rbac -n http://$restAPISPNName
+
+#create github actions servie principal
+$githubActionsSPNName = 'spn-alias-region-githubactions'
+az ad sp create-for-rbac -n http://$githubActionsSPNName
+
+#create container registry service principal
+$keyVaultResourceGroupName='rg-alias-region-keyvault'
+$keyVaultName='kv-alias-region-01'
+$crSPNName='spn-alias-region-cr'
+$crSPNPassword=az ad sp create-for-rbac -n http://$crSPNName --skip-assignment true --role acrpull --query password --output tsv
+$crSPNAppID=az ad sp show --id http://$crSPNName --query appId --output tsv
+$crSPNObjectID=az ad sp show --id http://$crSPNName --query objectId --output tsv
+$userSecretName='containerRegistryUserName'
+$passwordSecretName='containerRegistryPassword'
+$objectIdSecretName='containerRegistryObjectId'
+az keyvault secret set --vault-name $keyVaultName -n $userSecretName --value $crSPNAppID
+az keyvault secret set --vault-name $keyVaultName -n $passwordSecretName --value $crSPNPassword
+az keyvault secret set --vault-name $keyVaultName -n $objectIdSecretName --value $crSPNObjectID
+echo "$crSPNAppID"
+echo "$crSPNPassword"
+echo "$crSPNObjectID"

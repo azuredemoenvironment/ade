@@ -1,0 +1,77 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "nTierWebAvailabilitySetName": {
+            "value": "@@nTierWebAvailabilitySetName@@"
+        },
+        "nTierDBAvailabilitySetName": {
+            "value": "@@nTierDBAvailabilitySetName@@"
+        },
+        "nTierDBLoadBalancerName": {
+            "value": "@@nTierDBLoadBalancerName@@"
+        },
+        "virtualNetwork02ResourceGroupName": {
+            "value": "@@networkingResourceGroupName@@"
+        },
+        "virtualNetwork02Name": {
+            "value": "@@virtualNetwork02Name@@"
+        },
+        "nTierWeb01NICName": {
+            "value": "@@nTierWeb01NICName@@"
+        },
+        "nTierWeb02NICName": {
+            "value": "@@nTierWeb02NICName@@"
+        },   
+        "nTierDB01NICName": {
+            "value": "@@nTierDB01NICName@@"
+        },
+        "nTierDB02NICName": {
+            "value": "@@nTierDB02NICName@@"
+        },      
+        "nTierWeb01Name": {
+            "value": "vm-ntierweb01"
+        },
+        "nTierWeb01OSDiskName": {
+            "value": "@@nTierWeb01OSDiskName@@"
+        },
+        "nTierWeb02Name": {
+            "value": "vm-ntierweb02"
+        },
+        "nTierWeb02OSDiskName": {
+            "value": "@@nTierWeb02OSDiskName@@"
+        },
+        "nTierDB01Name": {
+            "value": "vm-ntierdb01"
+        },
+        "nTierDB01OSDiskName": {
+            "value": "@@nTierDB01OSDiskName@@"
+        },
+        "nTierDB02Name": {
+            "value": "vm-ntierdb02"
+        },
+        "nTierDB02OSDiskName": {
+            "value": "@@nTierDB02OSDiskName@@"
+        },
+        "adminUsername": {
+            "value": "@@adminUsername@@"
+        },
+        "adminPassword": {
+            "reference": {
+                "keyVault": {
+                    "id": "@@keyVaultResourceID@@"
+                },
+                "secretName": "resourcePassword"
+            }
+        },
+        "vmDiagnosticsStorageAccountName": {
+            "value": "@@vmDiagnosticsStorageAccountName@@"
+        },
+        "logAnalyticsWorkspaceResourceGroupName": {
+            "value": "@@logAnalyticsWorkspaceResourceGroupName@@"
+        },
+        "logAnalyticsWorkspaceName": {
+            "value": "@@logAnalyticsWorkspaceName@@"
+        }
+    }
+}

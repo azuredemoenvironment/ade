@@ -1,0 +1,75 @@
+#dnsrecords
+#create a record for jumpbox
+$jumpboxResourceGroup='rg-alias-region-jumpbox'
+$jumpboxPublicIPAddressName='pip-alias-region-jumpbox01'
+$jumpboxPublicIPAddressValue=az network public-ip show -g $jumpboxResourceGroup -n $jumpboxPublicIPAddressName --query ipAddress
+$dnsResourceGroup='rg-alias-global-dns'
+$zoneName='enter your custom domain name here (domain.com)'
+$jumpboxRecordSet='jumpbox'
+az network dns record-set a add-record -g $dnsResourceGroup -z $zoneName -n $jumpboxRecordSet --ipv4-address $jumpboxPublicIPAddressValue
+#create a record for developer
+$developerResourceGroup='rg-alias-region-developer'
+$developerPublicIPAddressName='pip-alias-region-developer01'
+$developerPublicIPAddressValue=az network public-ip show -g $developerResourceGroup -n $developerPublicIPAddressName --query ipAddress
+$dnsResourceGroup='rg-alias-global-dns'
+$zoneName='enter your custom domain name here (domain.com)'
+$developerRecordSet='developer'
+az network dns record-set a add-record -g $dnsResourceGroup -z $zoneName -n $developerRecordSet -a $developerPublicIPAddressValue
+#create a record for vmss
+$vmssResourceGroup='rg-alias-region-vmss'
+$vmssPublicIPAddressName='pip-alias-region-lb-vmss01'
+$vmssPublicIPAddressValue=az network public-ip show -g $vmssResourceGroup -n $vmssPublicIPAddressName --query ipAddress
+$dnsResourceGroup='rg-alias-global-dns'
+$zoneName='enter your custom domain name here (domain.com)'
+$vmssRecordSet='vmss'
+az network dns record-set a add-record -g $dnsResourceGroup -z $zoneName -n $vmssRecordSet -a $vmssPublicIPAddressValue
+#create a record for imageresizer app service
+$appGWResourceGroup='rg-alias-region-applicationgateway'
+$applicationGatewayPublicIPAddressName='pip-alias-region-appgw01'
+$appGWPublicIPAddressValue=az network public-ip show -g $appGWResourceGroup -n $applicationGatewayPublicIPAddressName --query ipAddress
+$dnsResourceGroup='rg-alias-global-dns'
+$zoneName='enter your custom domain name here (domain.com)'
+$imageResizerRecordSet='imageresizer'
+az network dns record-set a add-record -g $dnsResourceGroup -z $zoneName -n $imageResizerRecordSet -a $appGWPublicIPAddressValue
+#create a record for wordpress container
+$appGWResourceGroup='rg-alias-region-applicationgateway'
+$applicationGatewayPublicIPAddressName='pip-alias-region-appgw01'
+$appGWPublicIPAddressValue=az network public-ip show -g $appGWResourceGroup -n $applicationGatewayPublicIPAddressName --query ipAddress
+$dnsResourceGroup='rg-alias-global-dns'
+$zoneName='enter your custom domain name here (domain.com)'
+$wordPressRecordSet='wordpress'
+az network dns record-set a set-record -g $dnsResourceGroup -z $zoneName -n $wordPressRecordSet -a $appGWPublicIPAddressValue
+#create a record for sqltodo app service
+$appGWResourceGroup='rg-alias-region-applicationgateway'
+$applicationGatewayPublicIPAddressName='pip-alias-region-appgw01'
+$appGWPublicIPAddressValue=az network public-ip show -g $appGWResourceGroup -n $applicationGatewayPublicIPAddressName --query ipAddress
+$dnsResourceGroup='rg-alias-global-dns'
+$zoneName='enter your custom domain name here (domain.com)'
+$sqlToDoRecordSet='sqltodo'
+az network dns record-set a add-record -g $dnsResourceGroup -z $zoneName -n $sqlToDoRecordSet -a $appGWPublicIPAddressValue
+#create a record for ntier application
+$appGWResourceGroup='rg-alias-region-applicationgateway'
+$applicationGatewayPublicIPAddressName='pip-alias-region-appgw01'
+$appGWPublicIPAddressValue=az network public-ip show -g $appGWResourceGroup -n $applicationGatewayPublicIPAddressName --query ipAddress
+$dnsResourceGroup='rg-alias-global-dns'
+$zoneName='enter your custom domain name here (domain.com)'
+$nTierRecordSet='ntier'
+az network dns record-set a add-record -g $dnsResourceGroup -z $zoneName -n $nTierRecordSet -a $appGWPublicIPAddressValue
+#create cname record for helloworld (traffic manager)
+$trafficManagerResourceGroup='rg-alias-region-trafficmanager'
+$trafficManagerProfileName='tmp-alias-region-helloworld'
+$trafficManagerProfileID=az network traffic-manager profile show -g $trafficManagerResourceGroup -n $trafficManagerProfileName --query id
+$dnsResourceGroup='rg-alias-global-dns'
+$zoneName='enter your custom domain name here (domain.com)'
+$helloWorldRecordSet='helloworld'
+az network dns record-set cname create -g $dnsResourceGroup -z $zoneName -n $helloWorldRecordSet --target-resource $trafficManagerProfileID
+#create a custom domain name for helloworld (primary region) app service
+$primaryRegionHelloWorldWebAppResourceGroupName='rg-alias-region-helloworld'
+$primaryRegionHelloWorldWebAppName='enter hello world region app service name here (without .azurewebsites.net)'
+$helloWorldHostName='enter fqdn here (helloworld.domain.com)'
+az webapp config hostname add -g $primaryRegionHelloWorldWebAppResourceGroupName --webapp-name $primaryRegionHelloWorldWebAppName --hostname $helloWorldHostName
+#create a custom domain name for helloworld (secondary regoion) app service
+$helloWorldResourceGroup='rg-alias-region-helloworld'
+$secondaryRegionHelloWorldWebAppName='enter hello world wus app service name here (without .azurewebsites.net)'
+$helloWorldHostName='enter fqdn here (helloworld.domain.com)'
+az webapp config hostname add -g $helloWorldResourceGroup --webapp-name $secondaryRegionHelloWorldWebAppName --hostname $helloWorldHostName

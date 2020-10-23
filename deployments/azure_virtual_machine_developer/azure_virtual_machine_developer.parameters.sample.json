@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "developerPublicIPAddressName": {
+            "value": "@@developerPublicIPAddressName@@"
+        },
+        "developerNICName": {
+            "value": "@@developerNICName@@"
+        },
+        "virtualNetwork02ResourceGroupName": {
+            "value": "@@networkingResourceGroupName@@"
+        },
+        "virtualNetwork02Name": {
+            "value": "@@virtualNetwork02Name@@"
+        },
+        "developerName": {
+            "value": "@@developerName@@"
+        },
+        "developerOSDiskName": {
+            "value": "@@developerOSDiskName@@"
+        },
+        "adminUsername": {
+            "value": "@@adminUsername@@"
+        },
+        "adminPassword": {
+            "reference": {
+                "keyVault": {
+                    "id": "@@keyVaultResourceID@@"
+                },
+                "secretName": "resourcePassword"
+            }
+        },
+        "vmDiagnosticsStorageAccountName": {
+            "value": "@@vmDiagnosticsStorageAccountName@@"
+        },
+        "logAnalyticsWorkspaceResourceGroupName": {
+            "value": "@@logAnalyticsWorkspaceResourceGroupName@@"
+        },
+        "logAnalyticsWorkspaceName": {
+            "value": "@@logAnalyticsWorkspaceName@@"
+        }
+    }
+}

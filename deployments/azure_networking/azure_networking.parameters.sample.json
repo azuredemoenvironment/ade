@@ -1,0 +1,60 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "natGatewayPublicIPAddressName": {
+            "value": "@@natGatewayPublicIPAddressName@@"
+        },
+        "natGatewayPublicIPPrefixName": {
+            "value": "@@natGatewayPublicIPPrefixName@@"
+        },
+        "natGatewayName": {
+            "value": "@@natGatewayName@@"
+        },
+        "azureBastionSubnetNetworkSecurityGroupName": {
+            "value": "@@azureBastionSubnetNetworkSecurityGroupName@@"
+        },
+        "managementSubnetNetworkSecurityGroupName": {
+            "value": "@@managementSubnetNetworkSecurityGroupName@@"
+        },
+        "directoryServicesSubnetNetworkSecurityGroupName": {
+            "value": "@@directoryServicesSubnetNetworkSecurityGroupName@@"
+        },
+        "nTierWebSubnetNetworkSecurityGroupName": {
+            "value": "@@nTierWebSubnetNetworkSecurityGroupName@@"
+        },
+        "nTierDBSubnetNetworkSecurityGroupName": {
+            "value": "@@nTierDBSubnetNetworkSecurityGroupName@@"
+        },
+        "vmssSubnetNetworkSecurityGroupName": {
+            "value": "@@vmssSubnetNetworkSecurityGroupName@@"
+        },
+        "developerSubnetNetworkSecurityGroupName": {
+            "value": "@@developerSubnetNetworkSecurityGroupName@@"
+        },
+        "clientServicesSubnetNetworkSecurityGroupName": {
+            "value": "@@clientServicesSubnetNetworkSecurityGroupName@@"
+        },
+        "internetRouteTableName": {
+            "value": "@@internetRouteTableName@@"
+        },
+        "virtualNetwork01Name": {
+            "value": "@@virtualNetwork01Name@@"
+        },
+        "virtualNetwork02Name": {
+            "value": "@@virtualNetwork02Name@@"
+        },
+        "virtualNetwork03Name": {
+            "value": "@@virtualNetwork03Name@@"
+        },
+        "sourceAddressPrefix": {
+            "value": "@@sourceAddressPrefix@@"
+        },
+        "logAnalyticsWorkspaceResourceGroupName": {
+            "value": "@@logAnalyticsWorkspaceResourceGroupName@@"
+        },
+        "logAnalyticsWorkspaceName": {
+            "value": "@@logAnalyticsWorkspaceName@@"
+        }
+    }
+}
