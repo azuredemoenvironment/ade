@@ -26,6 +26,7 @@ function Remove-AzureDemoEnvironment {
     # Configuring Variables
     Write-ScriptSection "Starting Removal Process"
 
+    Remove-LocalDockerImages $armParameters
     Remove-AzureDnsEntries $armParameters
     Remove-AzureResourceGroups $armParameters
     Remove-AzureServicePrincipals $armParameters
