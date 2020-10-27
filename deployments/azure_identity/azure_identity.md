@@ -5,13 +5,13 @@
 
 ## Description
 
-The Azure Identity deployment creates a series of User Assigned Managed Identities and Service Principals used in subsequent deployments. Additionaly, these Managed Identities are assigned rights within an Azure Key Vault, and the Service Principals are assigned RBAC roles over specific resources. The following resources are created
+The Azure Identity deployment creates a series of User Assigned Managed Identities and Service Principals used in subsequent deployments. Additionaly, these Managed Identities are assigned rights within an Azure Key Vault, and the Service Principals are assigned RBAC roles over specific resources. Service Princiapl values (user name, password, and object ID) are saved as Secrets in the Key Vault. The following resources are created:
 
 - User Assigned Managed Identity for Azure Container Registry
 - User Assigned Managed Identity for Azure Application Gateway
 - Service Principal for use with the REST API
-- Service Principal for Azure Container Registry
 - Service Principal for GitHub Actions
+- Service Principal for Azure Container Registry
 
 ## Files Used
 

@@ -47,7 +47,6 @@ function Set-InitialArmParameters {
         'adminUsername'                                     = $resourceUserName
         'aksClusterDNSName'                                 = "aks-$aliasRegion-01-dns"
         'aksClusterName'                                    = "aks-$aliasRegion-01"
-        'aksSPNName'                                        = "spn-$aliasRegion-aks"
         'appGWManagedIdentityName'                          = "uami-$aliasRegion-appgw"
         'applicationGatewayName'                            = "appgw-$aliasRegion-01"
         'applicationGatewayPublicIPAddressName'             = "pip-$aliasRegion-appgw01"
@@ -74,6 +73,7 @@ function Set-InitialArmParameters {
         'directoryServicesSubnetNetworkSecurityGroupName'   = "nsg-$aliasRegion-directoryservices"
         'firewallName'                                      = "fw-$aliasRegion-01"
         'firewallPublicIPAddressName'                       = "pip-$aliasRegion-fw01"
+        'ghaSPNName'                                        = "spn-$aliasRegion-gha"
         'imageResizerAppInsightsName'                       = "appin-$aliasRegion-imageresizer".Replace('-', '')
         'imageResizerFQDN'                                  = "as-$aliasRegion-imgreszr.azurewebsites.net".Replace('-', '')
         'imageResizerFunctionAppName'                       = "fa-$aliasRegion-imgreszr".replace('-', '')
