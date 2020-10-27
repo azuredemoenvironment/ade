@@ -7,7 +7,7 @@
 
 ## Description
 
-The Azure App Service Hello World Primary Region deployment creates a simple App Service with four additional deployment slots to the existing App Service Plan in the primary region.  This App Service acts as an Azure Traffic Manager Endpoint. Diagnostic settings are enabled for all resources utilizing Azure Log Analytics for log and metric storage.  Application Insights is configured for application monitoring.
+The Azure App Service Hello World Primary Region deployment creates a simple App Service with an additional deployment slot to the existing App Service Plan in the primary region.  This App Service acts as an Azure Traffic Manager Endpoint. Diagnostic settings are enabled for all resources utilizing Azure Log Analytics for log and metric storage.  Application Insights is configured for application monitoring.
 
 ## Files Required
 
