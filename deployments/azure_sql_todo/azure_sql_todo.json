@@ -65,7 +65,6 @@
         },
         "environments": {
             "defaultValue": [
-                "preview",
                 "staging"
             ],
             "type": "array",
