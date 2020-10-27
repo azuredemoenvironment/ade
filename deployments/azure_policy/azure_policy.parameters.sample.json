@@ -8,7 +8,7 @@
                 "westus"
             ]
         },
-        "listOfAllowedVirtualMachineSKUs": {
+        "listOfAllowedSKUs": {
             "value": [
                 "Standard_B1ls",
                 "Standard_B1ms",

@@ -34,6 +34,12 @@ function Deploy-ArmTemplate {
         Write-Status "Deploying $stepName to Subscription"
 
         $commandToExecute += " -l $region"
+    
+        Write-Log "Executing Command: $commandToExecute"
+        $commandResults = Invoke-Expression -Command $commandToExecute | ConvertFrom-Json
+        Write-Host $commandResults
+
+        Confirm-LastExitCode
 
         Write-Status "Finished $stepName to Subscription"
     }
