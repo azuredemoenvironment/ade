@@ -2,7 +2,7 @@
 
 The Azure Demo Environment (ADE) is designed to deploy a solution to your Azure
 Subscription demonstrating many of the Azure service offerings. While not every
-possible Azure service is utilized, the purpose of the ADE is to showcase
+possible Azure service is deployed, the purpose of the ADE is to showcase
 common, but often more complex, scenarios within Azure, and to be an example to
 work from when designing your own solutions.
 
@@ -30,14 +30,16 @@ starting an ADE deployment.
   `Install-Module -Name Az -AllowClobber -Scope CurrentUser`
 - PowerShell needs to allow scripts. Run this in a PS command:
   `set-executionpolicy -executionpolicy unrestricted`
-- [Docker](https://docs.docker.com/get-docker/)
+- [Docker](https://docs.docker.com/get-docker/). Ensure that Docker is **Running**. (Restart required after installation.)
+- Set your default region in Azure CLI
+  `az configure --defaults location=eastus`
 - A Domain Name Ready to Point at Azure DNS; **note:** this should be a domain
   **not used** for anything else, as a DNS zone will be created and maintained
   for you within Azure DNS
 - A PFX wildcard certificate stored at `data/wildcard.pfx` for the domain name
   to be used with Azure DNS
 
-## Utilizing the PowerShell Script to Automatically Build the Environment
+## Using the PowerShell Script to Automatically Build the Environment
 
 A PowerShell script is provided to make use of the ARM templates in the
 solution. There are two methods of using the script, as a pipeline-friendly CLI
@@ -110,7 +112,7 @@ Additional Required Parameters:
 - `secureCertificatePassword`: the password used to encrypt your PFX certificate
   stored at `data/wildcard.pfx`
 
-## Utilizing the PowerShell Script to Automatically Remove the Environment
+## Using the PowerShell Script to Automatically Remove the Environment
 
 When you've finished using ADE, you can utilize the same script to remove the
 environment from your subscription. You can run the following command for an
