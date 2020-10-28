@@ -31,8 +31,6 @@ starting an ADE deployment.
 - PowerShell needs to allow scripts. Run this in a PS command:
   `set-executionpolicy -executionpolicy unrestricted`
 - [Docker](https://docs.docker.com/get-docker/). Ensure that Docker is **Running**. (Restart required after installation.)
-- Set your default region in Azure CLI
-  `az configure --defaults location=eastus`
 - A Domain Name Ready to Point at Azure DNS; **note:** this should be a domain
   **not used** for anything else, as a DNS zone will be created and maintained
   for you within Azure DNS
