@@ -29,7 +29,7 @@ function Deploy-ArmTemplate {
         Set-ArmParameters $parametersSampleFile $parametersFile $armParameters
     }
 
-    $commandToExecute = "az deployment $resourceLevel create -n $deploymentName --template-file $templateFile --parameters $parametersFile"
+    $commandToExecute = "az deployment $resourceLevel create -n $deploymentName --template-file '$templateFile' --parameters '$parametersFile'"
     if ($resourceLevel -eq 'sub') {
         Write-Status "Deploying $stepName to Subscription"
 
