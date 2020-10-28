@@ -8,6 +8,7 @@ function Remove-AzureDnsEntries {
     $dnsResourceGroup = $armParameters.dnsResourceGroupName
     $zoneName = $armParameters.rootDomainName
     $zoneExists = Confirm-AzureResourceExists 'dns zone' $dnsResourceGroup $zoneName
+    $rootDomainName = $armParameters.rootDomainName
 
     if (-not $zoneExists) {
         Write-Log "The $zoneName does not exist; continuing to next steps."

@@ -12,7 +12,7 @@ function Deploy-AzureDnsARecord {
         Write-Log "$recordName.$zoneName already exists; skipping creation."
     }
     else {
-        Write-Log "Adding A Record for $recordSet.$rootDomainName"
+        Write-Log "Adding A Record for $recordName.$zoneName"
         az network dns record-set a add-record -g $resourceGroup -z $zoneName -n $recordName --ipv4-address $ipAddress
         Confirm-LastExitCode
     }

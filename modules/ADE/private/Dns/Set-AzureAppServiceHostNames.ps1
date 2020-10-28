@@ -3,6 +3,8 @@ function Set-AzureAppServiceHostNames {
         [object] $armParameters
     )
 
+    $rootDomainName = $armParameters.rootDomainName
+
     Write-ScriptSection "Initializing AzureAppServiceHostNames Deployment"
 
     $helloWorldHostName = "helloworld.$rootDomainName"

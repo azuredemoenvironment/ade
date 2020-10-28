@@ -12,7 +12,7 @@ function Deploy-AzureDnsCnameRecord {
         Write-Log "$recordName.$zoneName already exists; skipping creation."
     }
     else {
-        Write-Log "Adding CNAME Record for $recordName.$rootDomainName"
+        Write-Log "Adding CNAME Record for $recordName.$hostName"
         az network dns record-set cname create -g $resourceGroup -z $zoneName -n $recordName --target-resource $hostName
         Confirm-LastExitCode
     }
