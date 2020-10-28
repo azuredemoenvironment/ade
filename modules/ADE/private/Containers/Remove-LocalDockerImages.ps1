@@ -8,29 +8,15 @@ function Remove-LocalDockerImages {
     $containerRegistryLoginServer = $armParameters.containerRegistryLoginServer
     
     Write-Log "Removing local docker images"
-    docker rmi microsoft/azure-cli
-    Confirm-LastExitCode
     
-    docker rmi mysql:latest
-    Confirm-LastExitCode
-    
-    docker rmi wordpress:latest
-    Confirm-LastExitCode
-    
-    docker rmi mcr.microsoft.com/azure-powershell
-    Confirm-LastExitCode
-    
-    docker rmi "$containerRegistryLoginServer/azure-cli:latest"
-    Confirm-LastExitCode
-    
-    docker rmi "$containerRegistryLoginServer/mysql:latest"
-    Confirm-LastExitCode
-    
-    docker rmi "$containerRegistryLoginServer/wordpress:latest"
-    Confirm-LastExitCode
-    
+    docker rmi microsoft/azure-cli    
+    docker rmi mysql:latest    
+    docker rmi wordpress:latest    
+    docker rmi mcr.microsoft.com/azure-powershell    
+    docker rmi "$containerRegistryLoginServer/azure-cli:latest"    
+    docker rmi "$containerRegistryLoginServer/mysql:latest"    
+    docker rmi "$containerRegistryLoginServer/wordpress:latest"    
     docker rmi "$containerRegistryLoginServer/azure-powershell"
-    Confirm-LastExitCode
 
     Write-ScriptSection "Finished Removal of Local Docker Images"
 }
