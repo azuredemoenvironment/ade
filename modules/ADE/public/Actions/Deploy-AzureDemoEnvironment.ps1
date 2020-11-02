@@ -74,7 +74,9 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureApplicationGateway $armParameters
     Deploy-AzureDns $armParameters
     Set-AzureAppServiceHostNames $armParameters
-    Deploy-AzureCognitiveServices $armParameters
+    Deploy-AzureCognitiveServices $armParameters 
+    Set-AppServiceManagedIdentities $armParameters
+    Set-HelloWorldCert $armParameters
 
     Write-ScriptSection "Finished Azure Development Environment Deployments"
 }

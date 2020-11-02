@@ -40,6 +40,7 @@ function Set-InitialArmParameters {
         'overwriteParameterFiles'                           = $overwriteParameterFiles
         'rootDomainName'                                    = $rootDomainName
         'skipConfirmation'                                  = $skipConfirmation
+        'HelloWorldCert'                                    = 'HelloWorldCert'
 
         # Generated Parameters
         'aciStorageAccountName'                             = "sa-$aliasRegion-aciwp".replace('-', '')
@@ -74,6 +75,7 @@ function Set-InitialArmParameters {
         'firewallName'                                      = "fw-$aliasRegion-01"
         'firewallPublicIPAddressName'                       = "pip-$aliasRegion-fw01"
         'ghaSPNName'                                        = "spn-$aliasRegion-gha"
+        'helloWorldManagedIdentityName'                     = "uami-$aliasRegion-helloworld"
         'imageResizerAppInsightsName'                       = "appin-$aliasRegion-imageresizer".Replace('-', '')
         'imageResizerFQDN'                                  = "as-$aliasRegion-imgreszr.azurewebsites.net".Replace('-', '')
         'imageResizerFunctionAppName'                       = "fa-$aliasRegion-imgreszr".replace('-', '')

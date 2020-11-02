@@ -6,6 +6,7 @@ function Deploy-AzureIdentity {
     $managedIdentityResourceGroupName = $armParameters.managedIdentityResourceGroupName
     $crManagedIdentityName = $armParameters.crManagedIdentityName
     $appGWManagedIdentityName = $armParameters.appGWManagedIdentityName
+    $helloWorldManagedIdentityName = $armParameters.helloWorldManagedIdentityName
     $keyVaultResourceGroupName = $armParameters.keyVaultResourceGroupName
     $keyVaultName = $armParameters.keyVaultName
     $restAPISPNName = $armParameters.restAPISPNName
@@ -24,6 +25,10 @@ function Deploy-AzureIdentity {
 
     Write-Log "Creating Managed Identity $($armParameters.appGWManagedIdentityName)"
     az identity create -g $managedIdentityResourceGroupName -n $armParameters.appGWManagedIdentityName
+    Confirm-LastExitCode
+
+    Write-Log "Creating Managed Identity $($armParameters.helloWorldManagedIdentityName)"
+    az identity create -g $managedIdentityResourceGroupName -n $armParameters.helloWorldManagedIdentityName
     Confirm-LastExitCode
 
     Write-Status "Finished Creating Managed Identities"
@@ -45,6 +50,16 @@ function Deploy-AzureIdentity {
 
     Write-Log "Assigning $appGWManagedIdentitySPNID to $keyVaultName Key Vault"
     az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --object-id $appGWManagedIdentitySPNID --secret-permissions get
+    Confirm-LastExitCode
+
+    # Added Hello World Identity for use with App Services
+    $hwManagedIdentitySPNID = az identity show -g $managedIdentityResourceGroupName -n $helloWorldManagedIdentityName --query principalId
+    Confirm-LastExitCode
+
+    $armParameters['helloWorldManagedIdentitySPNID'] = $hwManagedIdentitySPNID
+
+    Write-Log "Assigning $hwManagedIdentitySPNID to $keyVaultName Key Vault"
+    az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --object-id $hwManagedIdentitySPNID --certificate-permissions get
     Confirm-LastExitCode
 
     Write-Status "Finished Assigning Managed Identities to Key Vault"

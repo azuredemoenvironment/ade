@@ -21,4 +21,5 @@ function Deploy-WildcardCertificateToAzureKeyVault {
     $secureEncodedCertificate = ConvertTo-SecureString $encodedCertificate -AsPlainText -Force
 
     Set-AzureKeyVaultSecret $keyVaultName 'certificate' $secureEncodedCertificate 'application/x-pkcs12'
+    Set-AzureKeyVaultCert $keyVaultName 'HelloWorldCert' $wildcardCertificatePath $secureCertificatePassword
 }
