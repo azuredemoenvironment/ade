@@ -17,7 +17,11 @@ function Deploy-AzureDns {
     # Write-Log "Finished Configuring $rootDomainName Zone"
 
     Write-Log 'Configuring Virtual Machine DNS Entries'
-    $virtualMachines = @('jumpbox', 'developer', 'lb-vmss')
+    $virtualMachines = @(
+        'jumpbox',
+        # 'developer',
+        'lb-vmss'
+    )
 
     $virtualMachines | ForEach-Object {
         Write-Log "Configuring $_"
