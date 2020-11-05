@@ -17,7 +17,7 @@ function Deploy-AzureKubernetesServicesVote {
     
     Write-Log "Deploying Vote Application to Cluster"
     $applicationPath = 'https://raw.githubusercontent.com/Mitaric/AzureDemoEnvironment/master/yaml/azure-vote.yaml'
-    kubectl apply -f $applicationPath
+    kubectl apply -f $applicationPath --force
     Confirm-LastExitCode
 
     Write-Log "Getting Status of Kubernetes Service"
