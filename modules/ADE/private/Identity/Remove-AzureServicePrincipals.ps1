@@ -11,6 +11,12 @@ function Remove-AzureServicePrincipals {
         Confirm-LastExitCode
     }
 
+    $ghaSPNName = $armParameters.ghaSPNName
+    if (Confirm-AzureResourceExists 'service principal' $ghaSPNName) {
+        az ad sp delete --id http://$ghaSPNName
+        Confirm-LastExitCode
+    }
+
     $crSPNName = $armParameters.crSPNName
     if (Confirm-AzureResourceExists 'service principal' $crSPNName) {
         az ad sp delete --id http://$crSPNName
