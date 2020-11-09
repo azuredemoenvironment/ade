@@ -19,7 +19,7 @@ function Deploy-AzureDns {
     Write-Log 'Configuring Virtual Machine DNS Entries'
     $virtualMachines = @(
         'jumpbox',
-        # 'developer',
+        'developer',
         'lb-vmss'
     )
 
