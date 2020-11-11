@@ -4,7 +4,8 @@ function Deploy-ArmTemplate {
         [object] $armParameters,
         [string] $resourceGroupName = '',
         [string] $region = 'EastUS',
-        [string] $resourceLevel = 'group'
+        [string] $resourceLevel = 'group',
+        [switch] $noWait = $false
     )
 
     $overwriteParameterFiles = [System.Convert]::ToBoolean($armParameters.overwriteParameterFiles)
@@ -30,6 +31,11 @@ function Deploy-ArmTemplate {
     }
 
     $commandToExecute = "az deployment $resourceLevel create -n $deploymentName --template-file '$templateFile' --parameters '$parametersFile'"
+
+    if($noWait) {
+        $commandToExecute += " --no-wait"
+    }
+
     if ($resourceLevel -eq 'sub') {
         Write-Status "Deploying $stepName to Subscription"
 

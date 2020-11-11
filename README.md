@@ -39,13 +39,15 @@ starting an ADE deployment.
     the `rg-ALIAS-REGION_SHORTCODE-dns` naming convention for its resource
     group, where `ALIAS` is the same alias used when running the command, and
     `REGION_SHORTCODE` is the shortened form of the primary region (e.g. `eus`
-    for the _East US_ region).
+    for the _East US_ region). To create a resource group with `az`, use the
+    following command: `az group create -n RESOURCE_GROUP_NAME -l REGION_CODE`
   - To create a zone using `az`, run the following command:
     `az network dns zone create -g YOUR_RESOURCE_GROUP_NAME -n YOUR_DOMAIN_NAME`
   - Get the
     [nameserver](https://docs.microsoft.com/en-us/azure/dns/dns-delegate-domain-azure-dns#retrieve-name-servers)
     entries from Azure DNS and configure your domain at your registrar to use
-    them
+    them. This can also be done with `az` via this command:
+    `az network dns zone show -g YOUR_RESOURCE_GROUP_NAME -n YOUR_DOMAIN_NAME --query nameServers`
 - A PFX wildcard certificate stored at `data/wildcard.pfx` for the domain name
   to be used with Azure DNS
 

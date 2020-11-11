@@ -8,7 +8,8 @@ function Deploy-AzureKubernetesServicesVote {
     $aksResourceGroupName = $armParameters.aksResourceGroupName
     $aksClusterName = $armParameters.aksClusterName
 
-    az aks get-credentials -g $aksResourceGroupName -n $aksClusterName
+    Write-Log "Retrieving AKS Credentials"
+    az aks get-credentials -g $aksResourceGroupName -n $aksClusterName --overwrite-existing
     Confirm-LastExitCode
 
     Write-Log "Retrieving Kubernetes Cluster Nodes"
