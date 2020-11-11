@@ -47,7 +47,7 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
     Deploy-AzureIdentity $armParameters
     Deploy-AzureNetworking $armParameters
-    Deploy-AzureVpnGateway $armParameters
+    # Deploy-AzureVpnGateway $armParameters
     Deploy-VnetPeering $armParameters
     Deploy-AzureStorageAccountVmDiagnostics $armParameters
     Deploy-AzureFirewall $armParameters

@@ -8,7 +8,8 @@ function Deploy-AzureKubernetesServicesVote {
     $aksResourceGroupName = $armParameters.aksResourceGroupName
     $aksClusterName = $armParameters.aksClusterName
 
-    az aks get-credentials -g $aksResourceGroupName -n $aksClusterName
+    Write-Log "Retrieving AKS Credentials"
+    az aks get-credentials -g $aksResourceGroupName -n $aksClusterName --overwrite-existing
     Confirm-LastExitCode
 
     Write-Log "Retrieving Kubernetes Cluster Nodes"
@@ -17,7 +18,7 @@ function Deploy-AzureKubernetesServicesVote {
     
     Write-Log "Deploying Vote Application to Cluster"
     $applicationPath = 'https://raw.githubusercontent.com/Mitaric/AzureDemoEnvironment/master/yaml/azure-vote.yaml'
-    kubectl apply -f $applicationPath
+    kubectl apply -f $applicationPath --force
     Confirm-LastExitCode
 
     Write-Log "Getting Status of Kubernetes Service"

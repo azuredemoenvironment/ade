@@ -3,5 +3,5 @@ function Deploy-AzureFirewall {
         [object] $armParameters
     )
 
-    Deploy-ArmTemplate 'Azure Firewall' $armParameters -resourceGroupName $armParameters.networkingResourceGroupName
+    Deploy-ArmTemplate 'Azure Firewall' $armParameters -resourceGroupName $armParameters.networkingResourceGroupName -noWait
 }

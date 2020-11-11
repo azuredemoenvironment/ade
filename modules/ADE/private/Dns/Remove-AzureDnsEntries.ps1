@@ -43,9 +43,10 @@ function Remove-AzureDnsEntries {
         Confirm-LastExitCode
     }
 
-    Write-Log "Removing $rootDomainName Zone"
-    az network dns zone delete -g $dnsResourceGroup -n $rootDomainName -y
-    Confirm-LastExitCode
+    # TODO: we leave the zone since we didn't create it, in the future it would be nice to automate this portion as well
+    # Write-Log "Removing $rootDomainName Zone"
+    # az network dns zone delete -g $dnsResourceGroup -n $rootDomainName -y
+    # Confirm-LastExitCode
     
 
     Write-ScriptSection "Finished Removing Azure DNS Entries"
