@@ -117,10 +117,7 @@
                 "Cost Center": "[variables('costCenterName')]"
             },
             "properties": {
-                "ApplicationId": "[parameters('secondaryRegionHelloWorldAppInsightsName')]",
                 "Application_Type": "web",
-                "Flow_Type": "Redfield",
-                "Request_Source": "IbizaAIExtension",
                 "WorkspaceResourceId": "[variables('logAnalyticsWorkspaceID')]"
             }
         },
