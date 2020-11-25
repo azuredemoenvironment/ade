@@ -11,6 +11,7 @@ param (
     # Shared Command Set Parameters
     ###################################################################################################
     [Parameter(Position = 1, mandatory = $true)]
+    [ValidateLength(1, 8)]
     [string]$alias,
 
     [Parameter(Position = 4, mandatory = $true, ParameterSetName = 'deploy-interactive')]
