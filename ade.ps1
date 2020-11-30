@@ -120,7 +120,7 @@ try {
 
     # Setting the default location for services
     Write-Status "Setting the Default Resource Location to $defaultPrimaryRegion"
-    az configure --defaults location=$defaultPrimaryRegion
+    az configure --defaults location=$defaultPrimaryRegion group=
     Confirm-LastExitCode
 
     ###################################################################################################
