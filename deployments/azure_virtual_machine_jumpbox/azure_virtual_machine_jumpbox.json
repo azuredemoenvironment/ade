@@ -79,7 +79,7 @@
     "variables": {
         "jumpboxPrivateIPAddress": "10.101.10.4",
         "managementSubnetName": "management",
-        "scriptLocation": "https://raw.githubusercontent.com/Mitaric/AzureDemoenvironment/master/cse/jumpboxvm.ps1",
+        "scriptLocation": "https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/main/deployments/azure_virtual_machine_jumpbox/jumpboxvm.ps1",
         "scriptName": "jumpboxvm.ps1",
         "logAnalyticsWorkspaceID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('logAnalyticsWorkspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]",
         "environmentName": "Production",
