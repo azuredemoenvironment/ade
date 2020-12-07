@@ -22,7 +22,7 @@ For instructions on configuring a Windows Server Routing and Remote Access Serve
 
 Additionaly, it may be necessary to configure Static Routes in the IPv4 section of the Routing and Remote Access Server as shown in the graphic below:
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![alt text](https://raw.githubusercontent.com/Mitaric/AzureDemoEnvironment/master/images/vpn1.JPG "Static Routes")
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![alt text](https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/main/deployments/azure_vpn_gateway/vpn1.jpg "Static Routes")
 
 ## Post-Deployment
 

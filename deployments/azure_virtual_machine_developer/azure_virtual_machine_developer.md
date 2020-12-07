@@ -14,7 +14,6 @@ The Azure Virtual Machine Developer deployment creates a Windows Virtual Machine
 - .NET Core SDK
 - PowerShell Core 7
 - SQL Server Management Studio
-- Windows Admin Center
 - Windows Subsystem for Linux
 - AZ Copy
 - Azure CLI
@@ -23,16 +22,10 @@ The Azure Virtual Machine Developer deployment creates a Windows Virtual Machine
 - Cosmos DB Explorer
 - Azure Storage Explorer
 - Service Bus Explorer
-- 7-Zip
 - Docker Desktop
-- Foxit Reader
-- Google Chrome
-- Marktext
 - Node.js
-- Notepad++
 - Postman
 - Putty
-- Visual Studio Extensions
 
 ## Files Used
 
