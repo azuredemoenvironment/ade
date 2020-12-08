@@ -12,7 +12,7 @@ function Set-AzureFirewallToAllocated {
 
     $vnet = Get-AzVirtualNetwork -ResourceGroupName $networkingResourceGroupName -Name $vnetName
     $publicIp = Get-AzPublicIpAddress -Name $ipAddressName -ResourceGroupName $networkingResourceGroupName
-    $firewall = Get-AzFirewall -Name $firewallName -ResourceGroupName networkingResourceGroupName
+    $firewall = Get-AzFirewall -Name $firewallName -ResourceGroupName $networkingResourceGroupName
     $firewall.Allocate($vnet, $publicIp)
 
     Write-Log "Finished Allocating Azure Firewall"

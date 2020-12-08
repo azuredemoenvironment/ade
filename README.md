@@ -28,8 +28,9 @@ starting an ADE deployment.
 - [Azure PowerShell Cmdlets](https://docs.microsoft.com/en-us/powershell/azure/install-az-ps)
   (may require elevated permissions):
   `Install-Module -Name Az -AllowClobber -Scope CurrentUser`
-- PowerShell needs to allow scripts. Run this in a PS command:
-  `set-executionpolicy -executionpolicy unrestricted`
+  - PowerShell needs to allow scripts. Run this in a PS command:
+    `set-executionpolicy -executionpolicy unrestricted`
+  - Login to Azure's PowerShell commandlets with `Connect-AzAccount`
 - [Docker](https://docs.docker.com/get-docker/). Ensure that Docker is
   **Running**. (Restart required after installation.)
 - A Domain Name Ready to Point at Azure DNS – this should **only** be used for
@@ -43,7 +44,7 @@ starting an ADE deployment.
     following command: `az group create -n RESOURCE_GROUP_NAME -l REGION_CODE`
   - To create a zone using `az`, run the following command:
     `az network dns zone create -g YOUR_RESOURCE_GROUP_NAME -n YOUR_DOMAIN_NAME`
-  - Get the
+  - Get the 
     [nameserver](https://docs.microsoft.com/en-us/azure/dns/dns-delegate-domain-azure-dns#retrieve-name-servers)
     entries from Azure DNS and configure your domain at your registrar to use
     them. This can also be done with `az` via this command:
