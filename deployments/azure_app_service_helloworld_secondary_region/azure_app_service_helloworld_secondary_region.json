@@ -63,7 +63,7 @@
     },
     "variables": {
         "appServicePlanid": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('secondaryRegionAppServicePlanResourceGroupName'), '/providers/','Microsoft.Web/serverfarms/', parameters('secondaryRegionAppServicePlanName'))]",
-        "webAppRepoURL": "https://github.com/joshuawaddell/azure-demo-environment/main/deployments/azure_app_service_helloworld_secondary_region/src",
+        "webAppRepoURL": "https://github.com/joshuawaddell/azure-demo-environment/",
         "logAnalyticsWorkspaceID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('logAnalyticsWorkspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]",
         "environmentName": "Production",
         "functionName": "HelloWorld",
@@ -140,6 +140,10 @@
                 "siteConfig": {
                     "appSettings": [
                         {
+                            "name":"PROJECT",
+                            "value":"deployments/azure_app_service_helloworld_secondary_region/src"
+                        },
+                        {
                             "name":"APPINSIGHTS_INSTRUMENTATIONKEY",
                             "value":"[reference(concat('Microsoft.insights/components/', parameters('secondaryRegionHelloWorldAppInsightsName'))).InstrumentationKey]"
                         },
@@ -172,7 +176,7 @@
                     ],
                     "properties": {
                         "RepoUrl": "[variables('webAppRepoURL')]",
-                        "Branch": "master",
+                        "Branch": "main",
                         "IsManualIntegration": true
                     }
                 },

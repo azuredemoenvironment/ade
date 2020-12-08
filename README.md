@@ -1,47 +1,114 @@
 # Azure Demo Environment
 
+The Azure Demo Environment, aka ADE, is
+
 The Azure Demo Environment (ADE) is designed to deploy a solution to your Azure
 Subscription demonstrating many of the Azure service offerings. While not every
 possible Azure service is deployed, the purpose of the ADE is to showcase
 common, but often more complex, scenarios within Azure, and to be an example to
 work from when designing your own solutions.
 
-## Requirements
+## Pre-Requisites
 
-To use the ADE, the following prerequisites are required. Note that some are
-software installations, while others require services to be setup before
-starting an ADE deployment.
+To deploy, manage, and remove the Azure Demo Environment, the following
+pre-requisites are required. The pre-requisites include software installations
+as well as additional service setups (DNS, Certificate Services, and Azure
+Subscription Quotas).
+
+### Software Installations
 
 - [PowerShell Core](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7)
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
-  - [AZ AKS Preview Extension](https://docs.microsoft.com/en-us/azure/aks/start-stop-cluster) -
-    `az extension add --name aks-preview` or
-    `az extension update --name aks-preview` from a terminal
-  - [AZ AKS StartStopPreview feature](https://docs.microsoft.com/en-us/azure/aks/start-stop-cluster#register-the-startstoppreview-preview-feature) -
-    `az feature register --namespace "Microsoft.ContainerService" --name "StartStopPreview"`
-    from a terminal, followed by
-    `az provider register --namespace Microsoft.ContainerService` in a terminal
-    after registration has finished, to enable new start and stop functionality
-    of AKS in your Azure subscription
-  - [az aks kubectl](https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az_aks_install_cli) -
-    `az aks install-cli` from a terminal
+
+  The Azure CLI is available to install in Windows, macOS and Linux environments.
+  - [AZ AKS Preview Extension](https://docs.microsoft.com/en-us/azure/aks/start-stop-cluster)
+
+      To install the AZ AKS Preview Extension, run the following command
+      from a terminal:
+
+        az extension add --name aks-preview
+
+      To update to the latest version of the AZ AKS Preview Extension, run
+      the following command from a terminal:
+
+        az extension update --name aks-preview
+
+  - [AZ AKS StartStopPreview feature](https://docs.microsoft.com/en-us/azure/aks/start-stop-cluster#register-the-startstoppreview-preview-feature)
+
+      To install the AZ AKS "StartStopPreview" Feature, run the following
+      command from a terminal:
+
+        az feature register --namespace "Microsoft.ContainerService" --name "StartStopPreview"
+
+      After registration has finished, enable the "StartStopPreview" feature
+      functionality by running the following command from a terminal:
+
+        az provider register --namespace Microsoft.ContainerService
+
+  - [az aks kubectl](https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az_aks_install_cli)
+  
+      To install the AZ AKS Kubectl CLI, run the following command from a
+      terminal:
+
+        az aks install-cli
 - [Azure PowerShell Cmdlets](https://docs.microsoft.com/en-us/powershell/azure/install-az-ps)
-  (may require elevated permissions):
-  `Install-Module -Name Az -AllowClobber -Scope CurrentUser`
-  - PowerShell needs to allow scripts. Run this in a PS command:
-    `set-executionpolicy -executionpolicy unrestricted`
-  - Login to Azure's PowerShell commandlets with `Connect-AzAccount`
-- [Docker](https://docs.docker.com/get-docker/). Ensure that Docker is
-  **Running**. (Restart required after installation.)
-- A Domain Name Ready to Point at Azure DNS – this should **only** be used for
-  this project, as nameserver records need to be updated to point at the Azure
-  DNS nameservers.
-  - Additionally, this domain should have a zone created in Azure DNS following
-    the `rg-ALIAS-REGION_SHORTCODE-dns` naming convention for its resource
-    group, where `ALIAS` is the same alias used when running the command, and
-    `REGION_SHORTCODE` is the shortened form of the primary region (e.g. `eus`
-    for the _East US_ region). To create a resource group with `az`, use the
-    following command: `az group create -n RESOURCE_GROUP_NAME -l REGION_CODE`
+
+  Azure PowerShell works with PowerShell 6.2.4 and later on all platforms. It is
+  also supported with PowerShell 5.1 on Windows
+
+    To install the Azure PowerShell Cmdlets, run the following from an elevated
+    PowerShell terminal:
+
+      Install-Module -Name Az -AllowClobber -Scope CurrentUser
+
+    If the following error occurs, "execution of scripts is disabled on this
+    system", it is necessary to change the execution policy to allow the running
+    of scripts. To modify the PowerShell execution policy, run the following
+    from an elevated     PowerShell terminal:
+
+      set-executionpolicy -executionpolicy unrestricted
+
+- [Docker](https://docs.docker.com/get-docker/)
+
+    A system restart is required after the Docker installation. Prior to the
+    dployment of ADE, ensure that Docker is **Running**.
+
+### DNS
+
+- The Azure Demo Environment utilizes Azure DNS for publicly accessible A and
+  CNAME records for access to Azure Resources including Virtual Machines, Virtual
+  Machine Scale Sets, App Services.
+
+- Prior to configuration of Azure DNS, it is necessary to have ownership and
+  access to a custom domain.
+
+- ADE requires that an Azure DNS Zone is created prior to deployment of the demo
+  environment.
+
+- To create an Azure DNS Zone for ADE, complete the following steps.
+
+  - Create the Azure DNS Zone Resource Group
+    - When creating the Azure DNS Zone Resource Group, it is necessary to follow
+      the naming convention for ADE:
+
+          rg-ALIAS-REGION_SHORTCODE-dns
+
+    - In this example `ALIAS` represents an unique name that will be used globally,
+      within the Azure Demo Environment and `REGION_SHORTCODE` is the shortened
+      form of the primary region (e.g. `eus` for the _East US_ region). For example:
+
+          rg-dvader-eus-dns
+
+    - To create the Azure DNS Zone Resource Group using `az`, run the following command:
+
+          az group create -n RESOURCE_GROUP_NAME -l REGION SHORTCODE
+
+          for example:
+
+          az group create -n rg-dvader-eus-dns -l eus
+
+  - Create the Azure DNS Zone
+  
   - To create a zone using `az`, run the following command:
     `az network dns zone create -g YOUR_RESOURCE_GROUP_NAME -n YOUR_DOMAIN_NAME`
   - Get the 
@@ -49,8 +116,16 @@ starting an ADE deployment.
     entries from Azure DNS and configure your domain at your registrar to use
     them. This can also be done with `az` via this command:
     `az network dns zone show -g YOUR_RESOURCE_GROUP_NAME -n YOUR_DOMAIN_NAME --query nameServers`
+
+### Certificate Services
+
 - A PFX wildcard certificate stored at `data/wildcard.pfx` for the domain name
   to be used with Azure DNS
+
+### Azure Subscription Quotas
+
+- For MSDN Subscriptions or other Subscriptions that have more restrictive resource quotas, open a support ticket and request a quota increase for the following resources:
+  - Public IP Addresses (10 - 20)
 
 ## Using the PowerShell Script to Automatically Build the Environment
 
