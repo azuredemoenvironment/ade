@@ -13,8 +13,8 @@ function Deploy-AzureDns {
     New-ResourceGroup $dnsResourceGroup $armParameters.defaultPrimaryRegion
 
     # TODO: we cannot automatically create the zone right now because nameservers need to be established with the domain name
-    # Deploy-AzureDnsZone $dnsResourceGroup $rootDomainName
-    # Write-Log "Finished Configuring $rootDomainName Zone"
+    Deploy-AzureDnsZone $dnsResourceGroup $rootDomainName
+    Write-Log "Finished Configuring $rootDomainName Zone"
 
     Write-Log 'Configuring Virtual Machine DNS Entries'
     $virtualMachines = @(
