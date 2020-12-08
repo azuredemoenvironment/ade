@@ -35,6 +35,7 @@ function Remove-AzureDemoEnvironment {
         Remove-AzureKeyVaultResourceGroup $armParameters
     }
 
+    Remove-AzureActivityLogDiagnostics $armParameters
     Remove-AzurePolicyAssignmentsAndDefinitions $armParameters
     Remove-AzureLogAnalyticsResourceGroup $armParameters
 
