@@ -5,6 +5,7 @@
         "listOfAllowedLocations": {
             "value": [
                 "eastus",
+                "eastus2",
                 "westus"
             ]
         },
