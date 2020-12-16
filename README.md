@@ -178,7 +178,7 @@ Azure Demo Environment, execute the following steps:
     root of the cloned repository.
   - To login to Azure using `az`, run the following command:
 
-        az login
+    `az login`
 
     The CLI will open a default browser and redirect to the Azure login page.
     Enter the appropriate credentials and return to the Terminal, Command
@@ -187,12 +187,12 @@ Azure Demo Environment, execute the following steps:
   - To retrieve a list of available subscriptions associated with the
     credentials used in the previous step using `az`, run the following command:
 
-        az account list --output table
+    `az account list --output table`
 
   - To select the subscription to use with ADE using `az`, run the following
     command:
 
-        az account set --subscription "Subscription Name"
+    `az account set --subscription "Subscription Name"`
 
 - Deploy the Azure Demo Environment Using the CLI Script (Pipeline Friendly)
 
@@ -217,7 +217,9 @@ Azure Demo Environment, execute the following steps:
   - From the Terminal, Command Prompt, or PowerShell session, execute the
     following command:
 
-        ./ade.ps1 -deploy
+    ```ps
+    ./ade.ps1 -deploy
+    ```
 
 #### Parameters for CLI Script (Pipeline Friendly) and CLI Script (Wizard)
 
@@ -268,14 +270,18 @@ Kubernetes Service clusters, and Azure Container Instances.
   - From the Terminal, Command Prompt, or PowerShell session, execute the
     following command:
 
-        ./ade.ps1 -deallocate
+    ```ps
+    ./ade.ps1 -deallocate
+    ```
 
 - Allocate the Azure Demo Environment
 
   - From the Terminal, Command Prompt, or PowerShell session, execute the
     following command:
 
-        ./ade.ps1 -allocate
+    ```ps
+    ./ade.ps1 -allocate
+    ```
 
   Note: The commands will prompt for the value of `alias` used during the
   initial deployment of ADE. Additionally, the `alias` parameter can be added to
@@ -293,7 +299,9 @@ exception of Azure Key Vault, due to soft-delete restrictions.
   - From the Terminal, Command Prompt, or PowerShell session, execute the
     following command:
 
-        ./ade.ps1 -remove
+    ```ps
+    ./ade.ps1 -remove
+    ```
 
   Note: The removal command will prompt for the value of `alias`, and
   `rootDomainName` in an interactive session. Additionally, the following

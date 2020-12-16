@@ -19,4 +19,10 @@
         "deallocate",
         "deallocates"
     ],
+    "cSpell.enableFiletypes": [
+        "arm-template",
+        "azcli",
+        "dockerfile",
+        "powershell"
+    ],
 }
