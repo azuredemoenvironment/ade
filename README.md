@@ -7,9 +7,9 @@ is deployed as a part of ADE, it does showcase many of the common, and more
 often complex, scenarios withing Azure, and it can be used as an example when
 designing a solution. The Azure Demo Environment is built to be deployed,
 deallocated, allocated, removed and re-deployed. The deployment and removal
-processes take approximate two hours. Instructions are provided below. The
-Azure Demo Environment is an Open Source Project. Contributions are welcome
-and encouraged!
+processes take approximate two hours. Instructions are provided below. The Azure
+Demo Environment is an Open Source Project. Contributions are welcome and
+encouraged!
 
 ## Prerequisites
 
@@ -30,9 +30,9 @@ Certificate Services.
 
     - Public IP Addresses (10 - 20)
 
-  **Note: At this time, the Azure Demo Environment is configured to deploy to East US
-  (Primary Region), East US 2, and West US (Secondary Region). In a future update,
-  other regions will be supported.**
+  **Note: At this time, the Azure Demo Environment is configured to deploy to
+  East US (Primary Region), East US 2, and West US (Secondary Region). In a
+  future update, other regions will be supported.**
 
 ### Software Installations
 
