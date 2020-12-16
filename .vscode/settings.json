@@ -14,4 +14,15 @@
             "query": "state:open repo:${owner}/${repository} sort:created-desc"
         }
     ],
+    "cSpell.words": [
+        "Kubernetes",
+        "deallocate",
+        "deallocates"
+    ],
+    "cSpell.enableFiletypes": [
+        "arm-template",
+        "azcli",
+        "dockerfile",
+        "powershell"
+    ],
 }

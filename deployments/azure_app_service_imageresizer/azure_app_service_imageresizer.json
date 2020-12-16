@@ -335,14 +335,6 @@
                                 }
                             },
                             {
-                                "category": "AppServiceAntivirusScanAuditLogs",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "days": 7,
-                                    "enabled": true
-                                }
-                            },
-                            {
                                 "category": "AppServiceIPSecAuditLogs",
                                 "enabled": true,
                                 "retentionPolicy": {
