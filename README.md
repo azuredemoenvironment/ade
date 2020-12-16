@@ -5,14 +5,34 @@ Script, and ARM Templates that automatically generates an environment of Azure
 Resources and Services to an Azure Subscription. While not every Azure Service
 is deployed as a part of ADE, it does showcase many of the common, and more
 often complex, scenarios withing Azure, and it can be used as an example when
-designing a solution.
+designing a solution. The Azure Demo Environment is built to be deployed,
+deallocated, allocated, removed and re-deployed. The deployment and removal
+processes take approximate two hours. Instructions are provided below. The
+Azure Demo Environment is an Open Source Project. Contributions are welcome
+and encouraged!
 
-## Pre-Requisites
+## Prerequisites
 
 To deploy, manage, and remove the Azure Demo Environment, the following
-pre-requisites are required. The pre-requisites include software installations
-as well as additional service setups (DNS, Certificate Services, and Azure
-Subscription Quotas).
+prerequisites are required. The prerequisites include and Azure Subscription,
+software installations as well as additional service setups such as DNS and
+Certificate Services.
+
+### Azure Subscription
+
+- An Azure Subscription is required to deploy the Azure Demo Environment. ADE
+  supports Pay As You Go, Enterprise, and MSDN Subscriptions. The resources in
+  ADE do incur charges, but many resources can be deallocated to save on cost.
+
+  - For MSDN Subscriptions or other Subscriptions that have more restrictive
+    resource quotas, open a support ticket and request a quota increase for the
+    following resources:
+
+    - Public IP Addresses (10 - 20)
+
+  **Note: At this time, the Azure Demo Environment is configured to deploy to East US
+  (Primary Region), East US 2, and West US (Secondary Region). In a future update,
+  other regions will be supported.**
 
 ### Software Installations
 
@@ -115,24 +135,36 @@ Subscription Quotas).
 
       `rg-dvader-eus-dns`
 
+      **Note: At this time, it is necessary to utilize `eus` as the
+      `REGION_SHORTCODE`, due to the current configuration of ADE. In a future
+      update, other regions will be supported.**
+
     - To create the Azure DNS Zone Resource Group using `az`, run the following
       command:
 
-      `az group create -n RESOURCE_GROUP_NAME -l REGION SHORTCODE`
+      ```sh
+      az group create -n RESOURCE_GROUP_NAME -l REGION SHORTCODE
+      ```
 
       For example:
 
-      `az group create -n rg-dvader-eus-dns -l eus`
+      ```sh
+      az group create -n rg-dvader-eus-dns -l eus
+      ```
 
   - Create the Azure DNS Zone
 
     - To create the Azure DNS Zone using `az`, run the following command:
 
-      `az network dns zone create -g RESOURCE_GROUP_NAME -n DOMAIN_NAME`
+      ```sh
+      az network dns zone create -g RESOURCE_GROUP_NAME -n DOMAIN_NAME
+      ```
 
       For example:
 
-      `az network dns zone create -g rg-dvader-eus-dns -n darthvader.com`
+      ```sh
+      az network dns zone create -g rg-dvader-eus-dns -n darthvader.com
+      ```
 
   - Update Domain Registrar with Azure
     [Name Servers](https://docs.microsoft.com/en-us/azure/dns/dns-delegate-domain-azure-dns#retrieve-name-servers).
@@ -141,7 +173,9 @@ Subscription Quotas).
       DNS Name Servers with the Domain Registrar. To retrieve the Azure DNS Zone
       Name Servers using `az`, run the following command:
 
-      `az network dns zone show -g RESOURCE_GROUP_NAME -n DOMAIN_NAME --query nameServers`
+      ```sh
+      az network dns zone show -g RESOURCE_GROUP_NAME -n DOMAIN_NAME --query nameServers
+      ```
 
 ### Certificate Services
 
@@ -154,14 +188,6 @@ Subscription Quotas).
 - **Prior to deploying ADE, it is necessary to store the PFX Wildcard
   Certificate in the `data` folder in the repository, with the name
   `wildcard.pfx`.**
-
-### Azure Subscription Quotas
-
-- For MSDN Subscriptions or other Subscriptions that have more restrictive
-  resource quotas, open a support ticket and request a quota increase for the
-  following resources:
-
-  - Public IP Addresses (10 - 20)
 
 ## Using the Azure Demo Environment
 
@@ -178,7 +204,9 @@ Azure Demo Environment, execute the following steps:
     root of the cloned repository.
   - To login to Azure using `az`, run the following command:
 
-    `az login`
+    ```sh
+    az login
+    ```
 
     The CLI will open a default browser and redirect to the Azure login page.
     Enter the appropriate credentials and return to the Terminal, Command
@@ -187,12 +215,16 @@ Azure Demo Environment, execute the following steps:
   - To retrieve a list of available subscriptions associated with the
     credentials used in the previous step using `az`, run the following command:
 
-    `az account list --output table`
+    ```sh
+    az account list --output table
+    ```
 
   - To select the subscription to use with ADE using `az`, run the following
     command:
 
-    `az account set --subscription "Subscription Name"`
+    ```sh
+    az account set --subscription "Subscription Name"
+    ```
 
 - Deploy the Azure Demo Environment Using the CLI Script (Pipeline Friendly)
 
