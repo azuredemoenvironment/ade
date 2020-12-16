@@ -171,6 +171,7 @@ commands to run completely from the CLI.
 - [Azure VNET Peering](./deployments/azure_vnet_peering/azure_vnet_peering.md)
 - [Azure Firewall](./deployments/azure_firewall/azure_firewall.md)
 - [Azure Storage Account VM Diagnostics](./deployments/azure_storage_account_vm_diagnostics/azure_storage_account_vm_diagnostics.md)
+- [Azure NSG FLow Logs](./deployments/azure_nsg_flow_logs/azure_nsg_flow_logs.md)
 - [Azure Bastion](./deployments/azure_bastion/azure_bastion/azure_bastion.md)
 - [Azure Virtual Machine Jumpbox](./deployments/azure_virtual_machine_jumpbox/azure_virtual_machine_jumpbox.md)
 - [Azure Virtual Machine Developer](./deployments/azure_virtual_machine_developer/azure_virtual_machine_developer.md)
