@@ -7,6 +7,7 @@ function Enable-HighCostAzureServices {
 
     Set-AzureFirewallToAllocated  $armParameters
     Set-AzureVmssToAllocated $armParameters
+    Set-AzureVirtualMachinesToAllocated $armParameters
     Enable-AzureKubernetesServicesCluster $armParameters
     Set-AzureContainerInstancesToStarted $armParameters
 

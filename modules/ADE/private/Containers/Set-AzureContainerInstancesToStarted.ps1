@@ -14,7 +14,7 @@ function Set-AzureContainerInstancesToStarted {
     )
     
     $containerGroups | ForEach-Object {
-        Write-Log "Stopping $_"
+        Write-Log "Starting $_"
 
         az container start --resource-group $containerGroupResourceGroup --name $_
         Confirm-LastExitCode
