@@ -11,6 +11,8 @@ processes take approximate two hours. Instructions are provided below. The Azure
 Demo Environment is an Open Source Project. Contributions are welcome and
 encouraged!
 
+[![Architecture Diagram of ADE](./assets/azure_demo_environment_1_0.jpg)](./assets/azure_demo_environment_1_0.jpg)
+
 ## Prerequisites
 
 To deploy, manage, and remove the Azure Demo Environment, the following
