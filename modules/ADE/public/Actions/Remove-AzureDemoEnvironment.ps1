@@ -30,6 +30,7 @@ function Remove-AzureDemoEnvironment {
     Remove-AzureDnsEntries $armParameters
     Remove-AzureResourceGroups $armParameters
     Remove-AzureServicePrincipals $armParameters
+    Remove-AzureNsgFlowLogs $armParameters
 
     if ($includeKeyVault) {
         Remove-AzureKeyVaultResourceGroup $armParameters

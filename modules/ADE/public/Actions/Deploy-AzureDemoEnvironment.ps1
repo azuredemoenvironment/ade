@@ -50,6 +50,7 @@ function Deploy-AzureDemoEnvironment {
     # Deploy-AzureVpnGateway $armParameters
     Deploy-VnetPeering $armParameters
     Deploy-AzureStorageAccountVmDiagnostics $armParameters
+    Deploy-AzureNsgFlowLogs $armParameters
     Deploy-AzureFirewall $armParameters
     Deploy-StorageFirewallRules $armParameters
     Deploy-AzureBastion $armParameters
@@ -62,7 +63,7 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureContainerRegistry $armParameters
     Deploy-DockerImagesToAzureContainerRegistry $armParameters
     Deploy-AzureContainerInstancesWordPress $armParameters
-    Deploy-AzureKubernetesServices  $armParameters
+    Deploy-AzureKubernetesServices $armParameters
     Deploy-AzureKubernetesServicesVote $armParameters
     Deploy-AzureAppServicePlanToPrimaryRegion $armParameters
     Deploy-AzureAppServicePlanToSecondaryRegion $armParameters

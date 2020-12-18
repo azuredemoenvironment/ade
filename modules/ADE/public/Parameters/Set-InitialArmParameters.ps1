@@ -155,7 +155,6 @@ function Set-InitialArmParameters {
         'w10clientOSDiskName'                               = "disk-$aliasRegion-w10client01-os"
         'wordPressHostName'                                 = "wordpress.$rootDomainName"
 
-
         # Resource Group Names
         'aksNodeResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-aks-node"
         'aksResourceGroupName'                              = "$primaryRegionResourceGroupNamePrefix-aks"
