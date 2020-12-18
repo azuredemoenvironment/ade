@@ -41,40 +41,41 @@ function Deploy-AzureDemoEnvironment {
 
     # ORDER MATTERS!!
     
-    Deploy-AzureLogAnalytics $armParameters
-    Deploy-AzurePolicy $armParameters
-    Deploy-AzureActivityLog $armParameters
-    Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
-    Deploy-AzureIdentity $armParameters
-    Deploy-AzureNetworking $armParameters
-    # Deploy-AzureVpnGateway $armParameters
-    Deploy-VnetPeering $armParameters
-    Deploy-AzureStorageAccountVmDiagnostics $armParameters
-    Deploy-AzureFirewall $armParameters
-    Deploy-StorageFirewallRules $armParameters
-    Deploy-AzureBastion $armParameters
-    Deploy-AzureVirtualMachineJumpbox $armParameters
-    Deploy-AzureVirtualMachineDeveloper $armParameters
-    Deploy-AzureVirtualMachineWindows10Client $armParameters
-    Deploy-AzureVirtualMachineNTier $armParameters
-    Deploy-AzureVirtualMachineScaleSets $armParameters
-    Deploy-AzureAlerts $armParameters
-    Deploy-AzureContainerRegistry $armParameters
-    Deploy-DockerImagesToAzureContainerRegistry $armParameters
-    Deploy-AzureContainerInstancesWordPress $armParameters
-    Deploy-AzureKubernetesServices  $armParameters
-    Deploy-AzureKubernetesServicesVote $armParameters
-    Deploy-AzureAppServicePlanToPrimaryRegion $armParameters
-    Deploy-AzureAppServicePlanToSecondaryRegion $armParameters
-    Deploy-ImageResizerAppService $armParameters
-    Deploy-HelloWorldAppServiceToPrimaryRegion $armParameters
-    Deploy-HelloWorldAppServiceToSecondaryRegion $armParameters
-    Deploy-SqlToDoAppService $armParameters
-    Deploy-AzureTrafficManager $armParameters
-    Deploy-AzureApplicationGateway $armParameters
-    Deploy-AzureDns $armParameters
-    Set-AzureAppServiceHostNames $armParameters
-    Deploy-AzureCognitiveServices $armParameters
+    # Deploy-AzureLogAnalytics $armParameters
+    # Deploy-AzurePolicy $armParameters
+    # Deploy-AzureActivityLog $armParameters
+    # Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
+    # Deploy-AzureIdentity $armParameters
+    # Deploy-AzureNetworking $armParameters
+    # # Deploy-AzureVpnGateway $armParameters
+    # Deploy-VnetPeering $armParameters
+    # Deploy-AzureStorageAccountVmDiagnostics $armParameters
+    Deploy-AzureNsgFlowLogs $armParameters
+    # Deploy-AzureFirewall $armParameters
+    # Deploy-StorageFirewallRules $armParameters
+    # Deploy-AzureBastion $armParameters
+    # Deploy-AzureVirtualMachineJumpbox $armParameters
+    # Deploy-AzureVirtualMachineDeveloper $armParameters
+    # Deploy-AzureVirtualMachineWindows10Client $armParameters
+    # Deploy-AzureVirtualMachineNTier $armParameters
+    # Deploy-AzureVirtualMachineScaleSets $armParameters
+    # Deploy-AzureAlerts $armParameters
+    # Deploy-AzureContainerRegistry $armParameters
+    # Deploy-DockerImagesToAzureContainerRegistry $armParameters
+    # Deploy-AzureContainerInstancesWordPress $armParameters
+    # Deploy-AzureKubernetesServices $armParameters
+    # Deploy-AzureKubernetesServicesVote $armParameters
+    # Deploy-AzureAppServicePlanToPrimaryRegion $armParameters
+    # Deploy-AzureAppServicePlanToSecondaryRegion $armParameters
+    # Deploy-ImageResizerAppService $armParameters
+    # Deploy-HelloWorldAppServiceToPrimaryRegion $armParameters
+    # Deploy-HelloWorldAppServiceToSecondaryRegion $armParameters
+    # Deploy-SqlToDoAppService $armParameters
+    # Deploy-AzureTrafficManager $armParameters
+    # Deploy-AzureApplicationGateway $armParameters
+    # Deploy-AzureDns $armParameters
+    # Set-AzureAppServiceHostNames $armParameters
+    # Deploy-AzureCognitiveServices $armParameters
 
     Write-ScriptSection "Finished Azure Development Environment Deployments"
 }
