@@ -18,7 +18,6 @@ function Set-AzureContainerInstancesToStopped {
 
         az container stop --resource-group $containerGroupResourceGroup --name $_
         Confirm-LastExitCode
-
     }
 
     Write-Log "Finished Setting Azure Container Instances to Stopped (for Cost Savings)"

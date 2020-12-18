@@ -23,7 +23,6 @@ function Set-AzureVirtualMachinesToDeallocated {
 
         az vm deallocate --resource-group $rg --name $name
         Confirm-LastExitCode
-
     }
 
     Write-Log "Finished Setting Azure Virtual Machines to Deallocated (for Cost Savings)"

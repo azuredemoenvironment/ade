@@ -18,7 +18,6 @@ function Set-AzureContainerInstancesToStarted {
 
         az container start --resource-group $containerGroupResourceGroup --name $_
         Confirm-LastExitCode
-
     }
 
     Write-Log "Finished Setting Azure Container Instances to Started"

@@ -23,7 +23,6 @@ function Set-AzureVirtualMachinesToAllocated {
 
         az vm start --resource-group $rg --name $name
         Confirm-LastExitCode
-
     }
 
     Write-Log "Finished Setting Azure Virtual Machines to Allocated"
