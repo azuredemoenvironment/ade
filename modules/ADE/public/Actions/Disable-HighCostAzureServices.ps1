@@ -7,7 +7,9 @@ function Disable-HighCostAzureServices {
 
     Set-AzureFirewallToDeallocated $armParameters
     Set-AzureVmssToDeallocated $armParameters
+    Set-AzureVirtualMachinesToDeallocated $armParameters
     Set-AzureKubernetesServicesClusterToStopped $armParameters
+    Set-AzureContainerInstancesToStopped $armParameters
 
     Write-ScriptSection "Finished Azure Demo Environment Deallocation"
 }
