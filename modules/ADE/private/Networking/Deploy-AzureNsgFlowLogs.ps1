@@ -18,7 +18,6 @@ function Deploy-AzureNsgFlowLogs {
     az storage account create -g $nsgFlowLogStorageAccountResourceGroupName -n $nsgFlowLogStorageAccountName --sku Standard_LRS --kind StorageV2 --access-tier Hot --https-only true --tags $tag1 $tag2 $tag3
     Confirm-LastExitCode
 
-
     Write-Status "Creating NSG Flow Logs"
     $location = $armParameters.defaultPrimaryRegion
     $networkingResourceGroupName = $armParameters.networkingResourceGroupName
