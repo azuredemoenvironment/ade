@@ -15,6 +15,12 @@
                 "description": "The Name of the Application Gateway Public IP Address."
             }
         },
+        "inspectorGadgetWafPolicyName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Inspector Gadget WAF Policy."
+            }
+        },
         "applicationGatewayName": {
             "type": "string",
             "metadata": {
@@ -61,6 +67,18 @@
             "type": "string",
             "metadata": {
                 "description": "The Host Name of Image Resizer."
+            }
+        },
+        "inspectorGadgetFQDN":{
+            "type": "string",
+            "metadata": {
+                "description": "The FQDN of the Inspector Gadget App Service."
+            }
+        },
+        "inspectorGadgetHostName":{
+            "type": "string",
+            "metadata": {
+                "description": "The Host Name of Inspector Gadget."
             }
         },
         "nTierHostName":{
@@ -119,6 +137,11 @@
         "imageResizerHTTPSettingName": "httpsetting-imageresizer",
         "imageResizerListenerName": "listener-imageresizer",
         "imageResizerRuleName": "routingrule-imageresizer",
+        "inspectorGadgetBackendPoolName": "backendpool-inspectorgadget",
+        "inspectorGadgetHealthProbeName": "healthprobe-inspectorgadget",        
+        "inspectorGadgetHTTPSettingName": "httpsetting-inspectorgadget",
+        "inspectorGadgetListenerName": "listener-inspectorgadget",
+        "inspectorGadgetRuleName": "routingrule-inspectorgadget",
         "nTierBackendPoolName": "backendpool-ntier",
         "nTierHealthProbeName": "healthprobe-ntier",
         "nTierHTTPSettingName": "httpsetting-ntier",
@@ -215,6 +238,62 @@
             ]
         },
         {
+            "type": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('inspectorGadgetWafPolicyName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('applicationGatewayPublicIPAddressName'))]"
+            ],
+            "tags": {
+                "Environment": "Production",
+                "Function": "Networking",
+                "Cost Center": "IT"
+            },
+            "properties": {
+                "customRules": [
+                    {
+                        "name": "inspectorgadget",
+                        "priority": 1,
+                        "ruleType": "MatchRule",
+                        "action": "Allow",
+                        "matchConditions": [
+                            {
+                                "matchVariables": [
+                                    {
+                                        "variableName": "RemoteAddr"
+                                    }
+                                ],
+                                "operator": "IPMatch",
+                                "negationConditon": false,
+                                "matchValues": [
+                                    "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('applicationGatewayPublicIPAddressName'))).ipAddress]"
+                                ],
+                                "transforms": []
+                            }
+                        ]
+                    }
+                ],
+                "policySettings": {
+                    "requestBodyCheck": true,
+                    "maxRequestBodySizeInKb": 128,
+                    "fileUploadLimitInMb": 100,
+                    "state": "Enabled",
+                    "mode": "Detection"
+                },
+                "managedRules": {
+                    "managedRuleSets": [
+                        {
+                            "ruleSetType": "OWASP",
+                            "ruleSetVersion": "3.0",
+                            "ruleGroupOverrides": []
+                        }
+                    ],
+                    "exclusions": []
+                }
+            }
+        },
+        {
             "type": "Microsoft.Network/applicationGateways",
             "apiVersion": "2019-09-01",
             "name": "[parameters('applicationGatewayName')]",
@@ -289,6 +368,16 @@
                         }
                     },
                     {
+                        "name": "[variables('inspectorGadgetBackendPoolName')]",
+                        "properties": {
+                            "backendAddresses": [
+                                {
+                                    "fqdn": "[parameters('inspectorGadgetFQDN')]"
+                                }
+                            ]
+                        }
+                    },
+                    {
                         "name": "[variables('nTierBackendPoolName')]",
                         "properties": {
                             "backendAddresses": [
@@ -329,6 +418,23 @@
                             "backendHttpSettings": [
                                 {
                                     "id": "[concat(variables('applicationGatewayID'), '/backendHttpSettingsCollection/', variables('imageResizerHTTPSettingName'))]"
+                                }
+                            ],
+                            "interval": 30,
+                            "minServers": 0,
+                            "path": "/",
+                            "protocol": "Http",
+                            "timeout": 30,
+                            "unhealthyThreshold": 3,
+                            "pickHostNameFromBackendHttpSettings": true
+                        }
+                    },
+                    {
+                        "name": "[variables('inspectorGadgetHealthProbeName')]",
+                        "properties": {
+                            "backendHttpSettings": [
+                                {
+                                    "id": "[concat(variables('applicationGatewayID'), '/backendHttpSettingsCollection/', variables('inspectorGadgetHTTPSettingName'))]"
                                 }
                             ],
                             "interval": 30,
@@ -407,6 +513,19 @@
                         }
                     },
                     {
+                        "name": "[variables('inspectorGadgetHTTPSettingName')]",
+                        "properties": {
+                            "Port": 80,
+                            "Protocol": "Http",
+                            "cookieBasedAffinity": "Disabled",
+                            "requestTimeout": 30,
+                            "pickHostNameFromBackendAddress": true,
+                            "probe": {
+                                "id": "[concat(variables('applicationGatewayID'), '/probes/', variables('inspectorGadgetHealthProbeName'))]"
+                            }
+                        }
+                    },
+                    {
                         "name": "[variables('nTierHTTPSettingName')]",
                         "properties": {
                             "Port": 80,
@@ -462,6 +581,26 @@
                                 "id": "[concat(variables('applicationGatewayID'), '/sslCertificates/', parameters('sslCertificateName'))]"
                             },
                             "hostName": "[parameters('imageResizerHostName')]",
+                            "requireServerNameIndication": true
+                        }
+                    },
+                    {
+                        "name": "[variables('inspectorGadgetListenerName')]",
+                        "properties": {
+                            "firewallPolicy": {
+                                "id": "[resourceId('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies', parameters('inspectorGadgetWafPolicyName'))]"
+                            },
+                            "frontendIPConfiguration": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendIPConfigurations/appGatewayFrontendIP')]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendPorts/port_443')]"
+                            },
+                            "protocol": "Https",
+                            "sslCertificate": {
+                                "id": "[concat(variables('applicationGatewayID'), '/sslCertificates/', parameters('sslCertificateName'))]"
+                            },
+                            "hostName": "[parameters('inspectorGadgetHostName')]",
                             "requireServerNameIndication": true
                         }
                     },
@@ -530,6 +669,21 @@
                             },
                             "backendHttpSettings": {
                                 "id": "[concat(variables('applicationGatewayID'), '/backendHttpSettingsCollection/', variables('imageResizerHTTPSettingName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "Name": "[variables('inspectorGadgetRuleName')]",
+                        "properties": {
+                            "RuleType": "Basic",
+                            "httpListener": {
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('inspectorGadgetListenerName'))]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(variables('applicationGatewayID'), '/backendAddressPools/', variables('inspectorGadgetBackendPoolName'))]"
+                            },
+                            "backendHttpSettings": {
+                                "id": "[concat(variables('applicationGatewayID'), '/backendHttpSettingsCollection/', variables('inspectorGadgetHTTPSettingName'))]"
                             }
                         }
                     },
@@ -643,6 +797,6 @@
                     }
                 }
             ]
-        }
+        }        
     ]
 }

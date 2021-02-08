@@ -5,14 +5,21 @@
 
 ## Description
 
-The Azure DNS deployment creates a series of A Records and CNAME records for publicly accessible services. A Records are created for the Public IP Addresses of the JumpBox VM, the Developer VM, the NTIER VMs, the Virtual Machine Scale Set, Image Resizer, SQL ToDo and WordPress, CNAME records are created for HelloWorld (Traffic Manager.), and Custom Domains are created for the HelloWorld App Services.
+The Azure DNS deployment creates a series of A Records and CNAME records for
+publicly accessible services. A Records are created for the Public IP Addresses
+of the JumpBox VM, the Developer VM, the NTIER VMs, the Virtual Machine Scale
+Set, Image Resizer, Inspector Gadget, SQL ToDo and WordPress, CNAME records are
+created for HelloWorld (Traffic Manager.), and Custom Domains are created for
+the HelloWorld App Services.
 
 ## Files Used
 
-- Azure_DNS.azcli
+- azure_dns.azcli
 
-The values for all parameters will be automatically generated based on the values provided at script execution.
+The values for all parameters will be automatically generated based on the
+values provided at script execution.
 
 ## Post-Deployment
 
-Following the deployment, verify the creating of the DNS Records and the Custom Domain Name settings on the Hello World App Services.
+Following the deployment, verify the creation of the DNS Records and the Custom
+Domain Name settings on the Hello World App Services.

@@ -17,6 +17,7 @@ function Remove-AzureDnsEntries {
 
     Write-Log "Removing A Records"
     $aRecords = @(
+        'inspectorgadget'
         'ntier'
         'sqltodo'
         'wordpress'

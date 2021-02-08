@@ -14,6 +14,7 @@ function Remove-AzureResourceGroups {
         $armParameters.sqlTodoResourceGroupName
         $armParameters.secondaryRegionHelloWorldWebAppResourceGroupName
         $armParameters.primaryRegionHelloWorldWebAppResourceGroupName
+        $armParameters.inspectorGadgetResourceGroupName
         $armParameters.imageResizerResourceGroupName
         $armParameters.secondaryRegionAppServicePlanResourceGroupName
         $armParameters.primaryRegionAppServicePlanResourceGroupName
@@ -28,8 +29,9 @@ function Remove-AzureResourceGroups {
         $armParameters.jumpboxResourceGroupName
         $armParameters.bastionResourceGroupName
         $armParameters.storageResourceGroupName
+        $armParameters.privateDnsZoneResourceGroupName
         $armParameters.networkingResourceGroupName
-        $armParameters.managedIdentityResourceGroupName
+        # $armParameters.managedIdentityResourceGroupName
     )
 
     $resourceGroupsToRemove | ForEach-Object {

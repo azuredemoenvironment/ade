@@ -29,16 +29,16 @@ function Remove-AzureDemoEnvironment {
     Remove-LocalDockerImages $armParameters
     Remove-AzureDnsEntries $armParameters
     Remove-AzureResourceGroups $armParameters
-    Remove-AzureServicePrincipals $armParameters
+    # Remove-AzureServicePrincipals $armParameters
     Remove-AzureNsgFlowLogs $armParameters
 
     if ($includeKeyVault) {
         Remove-AzureKeyVaultResourceGroup $armParameters
     }
 
-    Remove-AzureActivityLogDiagnostics $armParameters
-    Remove-AzurePolicyAssignmentsAndDefinitions $armParameters
-    Remove-AzureLogAnalyticsResourceGroup $armParameters
+    # Remove-AzureActivityLogDiagnostics $armParameters
+    # Remove-AzurePolicyAssignmentsAndDefinitions $armParameters
+    # Remove-AzureLogAnalyticsResourceGroup $armParameters
 
     Write-ScriptSection "Finished Removal"
 }

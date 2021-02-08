@@ -31,6 +31,14 @@ $dnsResourceGroup='rg-alias-global-dns'
 $zoneName='enter your custom domain name here (domain.com)'
 $imageResizerRecordSet='imageresizer'
 az network dns record-set a add-record -g $dnsResourceGroup -z $zoneName -n $imageResizerRecordSet -a $appGWPublicIPAddressValue
+#create a record for inspector gadget app service
+$appGWResourceGroup='rg-alias-region-applicationgateway'
+$applicationGatewayPublicIPAddressName='pip-alias-region-appgw01'
+$appGWPublicIPAddressValue=az network public-ip show -g $appGWResourceGroup -n $applicationGatewayPublicIPAddressName --query ipAddress
+$dnsResourceGroup='rg-alias-global-dns'
+$zoneName='enter your custom domain name here (domain.com)'
+$inspectorGadgetAppServiceRecordSet='inspectorgadget'
+az network dns record-set a add-record -g $dnsResourceGroup -z $zoneName -n $inspectorGadgetAppServiceRecordSet -a $appGWPublicIPAddressValue
 #create a record for wordpress container
 $appGWResourceGroup='rg-alias-region-applicationgateway'
 $applicationGatewayPublicIPAddressName='pip-alias-region-appgw01'
