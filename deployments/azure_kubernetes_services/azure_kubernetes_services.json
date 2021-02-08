@@ -104,7 +104,7 @@
                 "Cost Center": "[variables('costCenterName')]"
             },
             "properties": {
-                "kubernetesVersion": "1.17.11",
+                "kubernetesVersion": "1.18.14",
                 "nodeResourceGroup": "[parameters('aksNodeResourceGroupName')]",
                 "enableRBAC": true,
                 "dnsPrefix": "[parameters('aksClusterDNSName')]",
