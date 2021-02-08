@@ -1,10 +1,10 @@
 # Azure Demo Environment v1.1.0 Update
 
-Welcome to v1.1.0 of the Azure Demo Environment. Insert text here...
+Welcome to v1.1.0 of the Azure Demo Environment.
 
 ## Global Updates
 
-- Insert text here...
+- tbd
 
 ## Deployment Updates
 
@@ -24,6 +24,8 @@ Welcome to v1.1.0 of the Azure Demo Environment. Insert text here...
 ### azure private dns
 
 - new deployment
+- creates private dns zones for azure app service and azure sql private
+  endpoints
 
 ### azure kubernetes services
 
@@ -38,7 +40,9 @@ Welcome to v1.1.0 of the Azure Demo Environment. Insert text here...
 
 ### azure private link inspector gadget
 
-- insert text here
+- new deployment
+- creates an azure app service, azure sql database, and private endpoints to
+  demo private accessing an application via azure private link
 
 ### azure application gateway
 
