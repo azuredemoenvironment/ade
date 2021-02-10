@@ -206,10 +206,7 @@
                 "Cost Center": "[variables('costCenterName')]"
             },
             "properties": {
-                "ApplicationId": "[parameters('imageResizerAppInsightsName')]",
                 "Application_Type": "web",
-                "Flow_Type": "Redfield",
-                "Request_Source": "IbizaAIExtension",
                 "WorkspaceResourceId": "[variables('logAnalyticsWorkspaceID')]"
             }
         },
@@ -331,14 +328,6 @@
                             },
                             {
                                 "category": "AppServiceAuditLogs",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "days": 7,
-                                    "enabled": true
-                                }
-                            },
-                            {
-                                "category": "AppServiceAntivirusScanAuditLogs",
                                 "enabled": true,
                                 "retentionPolicy": {
                                     "days": 7,

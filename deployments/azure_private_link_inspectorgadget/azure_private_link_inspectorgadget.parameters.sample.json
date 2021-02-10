@@ -1,0 +1,56 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "inspectorGadgetSqlServerName":{
+            "value": "@@inspectorGadgetSqlServerName@@"
+        },
+        "inspectorGadgetSqlAdminUserName":{
+            "value": "@@inspectorGadgetSqlAdminUserName@@"
+        },
+        "inspectorGadgetSqlAdminPassword":{
+            "reference":{
+                "keyVault":{
+                    "id": "@@keyVaultResourceID@@"
+                },
+                "secretName": "resourcePassword"
+            }
+        },
+        "inspectorGadgetSqlDatabaseName":{
+            "value": "@@inspectorGadgetSqlDatabaseName@@"
+        },
+        "inspectorGadgetAzureSQLPrivateEndpointName": {
+            "value": "@@inspectorGadgetAzureSQLPrivateEndpointName@@"
+        },
+        "virtualNetwork03ResourceGroupName": {
+            "value": "@@networkingResourceGroupName@@"
+        },
+        "virtualNetwork03Name": {
+            "value": "@@virtualNetwork03Name@@"
+        },
+        "privateDnsZoneResourceGroupName": {
+            "value": "@@privateDnsZoneResourceGroupName@@"
+        },
+        "inspectorGadgetAppInsightsName": {
+            "value": "@@inspectorGadgetAppInsightsName@@"
+        },
+        "primaryRegionAppServicePlanResourceGroupName": {
+            "value": "@@primaryRegionAppServicePlanResourceGroupName@@"
+        },
+        "primaryRegionAppServicePlanName": {
+            "value": "@@primaryRegionAppServicePlanName@@"
+        },
+        "inspectorGadgetWebAppName": {
+            "value": "@@inspectorGadgetWebAppName@@"
+        },
+        "inspectorGadgetAppServicePrivateEndpointName": {
+            "value": "@@inspectorGadgetAppServicePrivateEndpointName@@"
+        },        
+        "logAnalyticsWorkspaceResourceGroupName": {
+            "value": "@@logAnalyticsWorkspaceResourceGroupName@@"
+        },
+        "logAnalyticsWorkspaceName": {
+            "value": "@@logAnalyticsWorkspaceName@@"
+        }
+    }
+}

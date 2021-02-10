@@ -44,6 +44,7 @@ function Set-InitialArmParameters {
         # Generated Parameters
         'aciStorageAccountName'                             = "sa-$aliasRegion-aciwp".replace('-', '')
         'acrName'                                           = $acrName
+        'activityLogDiagnosticsName'                        = 'GlobalActivityLog'
         'adminUsername'                                     = $resourceUserName
         'aksClusterDNSName'                                 = "aks-$aliasRegion-01-dns"
         'aksClusterName'                                    = "aks-$aliasRegion-01"
@@ -68,14 +69,14 @@ function Set-InitialArmParameters {
         'crSPNName'                                         = "spn-$aliasRegion-cr"
         'developerName'                                     = "vm-developer01"
         'developerNICName'                                  = "nic-$aliasRegion-developer01"
-        'developerOSDiskName'                               = "disk-$aliasRegion-developer01-os".replace('-', '')
+        'developerOSDiskName'                               = "disk-$aliasRegion-developer01-os"
         'developerPublicIPAddressName'                      = "pip-$aliasRegion-developer01"
         'developerSubnetNetworkSecurityGroupName'           = "nsg-$aliasRegion-developer"
         'directoryServicesSubnetNetworkSecurityGroupName'   = "nsg-$aliasRegion-directoryservices"
         'firewallName'                                      = "fw-$aliasRegion-01"
         'firewallPublicIPAddressName'                       = "pip-$aliasRegion-fw01"
-        'ghaSPNName'                                        = "spn-$aliasRegion-gha"        
-        'imageResizerAppInsightsName'                       = "appin-$aliasRegion-imageresizer".Replace('-', '')
+        'ghaSPNName'                                        = "spn-$aliasRegion-gha"
+        'imageResizerAppInsightsName'                       = "appin-$aliasRegion-imageresizer"
         'imageResizerFQDN'                                  = "as-$aliasRegion-imgreszr.azurewebsites.net".Replace('-', '')
         'imageResizerFunctionAppName'                       = "fa-$aliasRegion-imgreszr".replace('-', '')
         'imageResizerFunctionAppStorageAccountName'         = "sa-$aliasRegion-faimgreszr".Replace('-', '')
@@ -83,10 +84,20 @@ function Set-InitialArmParameters {
         'imageResizerpBackupStorageAccountName'             = "sa-$aliasRegion-bkpimgreszr".Replace('-', '')
         'imageResizerWebAppName'                            = "as-$aliasRegion-imgreszr".Replace('-', '')
         'imageResizerWebAppStorageAccountName'              = "sa-$aliasRegion-asimgreszr".Replace('-', '')
+        "inspectorGadgetAppInsightsName"                    = "appin-$aliasRegion-inspectorgadget"
+        "inspectorGadgetAppServicePrivateEndpointName"      = "pe-$aliasRegion-inspectorgadgetappservice"
+        "inspectorGadgetAzureSQLPrivateEndpointName"        = "pe-$aliasRegion-inspectorgadgetazuresql"
+        'inspectorGadgetFQDN'                               = "as-$aliasRegion-inspectorgadget.azurewebsites.net".Replace('-', '')
+        'inspectorGadgetHostName'                           = "inspectorgadget.$rootDomainName".replace('-', '')
+        "inspectorGadgetSqlAdminUserName"                   = $resourceUserName
+        "inspectorGadgetSqlDatabaseName"                    = "sqldb-$aliasRegion-inspectorgadget".replace('-', '')
+        "inspectorGadgetSqlServerName"                      = "sql-$aliasRegion-inspectorgadget".replace('-', '')
+        "inspectorGadgetWafPolicyName"                      = "wafp-$aliasRegion-inspectorgadget"
+        "inspectorGadgetWebAppName"                         = "as-$aliasRegion-inspectorgadget".replace('-', '')
         'internetRouteTableName'                            = "rt-$aliasRegion-internet"
         'jumpboxName'                                       = "vm-jumpbox01"
         'jumpboxNICName'                                    = "nic-$aliasRegion-jumpbox01"
-        'jumpboxOSDiskName'                                 = "disk-$aliasRegion-jumpbox01-os".replace('-', '')
+        'jumpboxOSDiskName'                                 = "disk-$aliasRegion-jumpbox01-os"
         'jumpboxPublicIPAddressName'                        = "pip-$aliasRegion-jumpbox01"
         'keyVaultName'                                      = "kv-$aliasRegion-01"
         'localNetworkGatewayAddressPrefix'                  = $localNetworkRange
@@ -98,17 +109,17 @@ function Set-InitialArmParameters {
         'natGatewayPublicIPPrefixName'                      = "pipp-$aliasRegion-natgw01"
         'nsgFlowLogsStorageAccountName'                     = "sa-$aliasRegion-nsgflow".replace('-', '')
         'nTierDB01NICName'                                  = "nic-$aliasRegion-ntierdb01"
-        'nTierDB01OSDiskName'                               = "disk-$aliasRegion-ntierdb01-os".replace('-', '')
+        'nTierDB01OSDiskName'                               = "disk-$aliasRegion-ntierdb01-os"
         'nTierDB02NICName'                                  = "nic-$aliasRegion-ntierdb02"
-        'nTierDB02OSDiskName'                               = "disk-$aliasRegion-ntierdb02-os".replace('-', '')
+        'nTierDB02OSDiskName'                               = "disk-$aliasRegion-ntierdb02-os"
         'nTierDBAvailabilitySetName'                        = "avset-$aliasRegion-ntierdb"
         'nTierDBLoadBalancerName'                           = "lb-$aliasRegion-ntierdb"
         'nTierDBSubnetNetworkSecurityGroupName'             = "nsg-$aliasRegion-ntierdb"
         'nTierHostName'                                     = "ntier.$rootDomainName"
         'nTierWeb01NICName'                                 = "nic-$aliasRegion-ntierweb01"
-        'nTierWeb01OSDiskName'                              = "disk-$aliasRegion-ntierweb01-os".replace('-', '')
+        'nTierWeb01OSDiskName'                              = "disk-$aliasRegion-ntierweb01-os"
         'nTierWeb02NICName'                                 = "nic-$aliasRegion-ntierweb02"
-        'nTierWeb02OSDiskName'                              = "disk-$aliasRegion-ntierweb02-os".replace('-', '')
+        'nTierWeb02OSDiskName'                              = "disk-$aliasRegion-ntierweb02-os"
         'nTierWebAvailabilitySetName'                       = "avset-$aliasRegion-ntierweb"
         'nTierWebSubnetNetworkSecurityGroupName'            = "nsg-$aliasRegion-ntierweb"
         'peering01'                                         = "vnet-$aliasRegion-01-to-vnet-$aliasRegion-02"
@@ -127,7 +138,7 @@ function Set-InitialArmParameters {
         'secondaryRegionHelloWorldWebAppName'               = "as-$aliasSecondaryRegion-helloworld".replace('-', '')
         'secondaryRegionHelloWorldWebAppStorageAccountName' = "sa-$aliasSecondaryRegion-bkphello".replace('-', '')
         'sourceAddressPrefix'                               = $sourceAddressPrefix
-        'sqlToDoAppInsightsName'                            = "appin-$aliasRegion-sqltodo".replace('-', '')
+        'sqlToDoAppInsightsName'                            = "appin-$aliasRegion-sqltodo"
         'sqlToDoFQDN'                                       = "as-$aliasRegion-sqltodo.azurewebsites.net".replace('-', '')
         'sqlToDoHostName'                                   = "sqltodo.$rootDomainName"
         'sqlToDoSqlAdminUserName'                           = $resourceUserName
@@ -152,9 +163,8 @@ function Set-InitialArmParameters {
         'vmssSubnetNetworkSecurityGroupName'                = "nsg-$aliasRegion-vmss"
         'w10clientName'                                     = "vm-w10client01"
         'w10clientNICName'                                  = "nic-$aliasRegion-w10client01"
-        'w10clientOSDiskName'                               = "disk-$aliasRegion-w10client01-os".replace('-', '')
+        'w10clientOSDiskName'                               = "disk-$aliasRegion-w10client01-os"
         'wordPressHostName'                                 = "wordpress.$rootDomainName"
-
 
         # Resource Group Names
         'aksNodeResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-aks-node"
@@ -167,6 +177,7 @@ function Set-InitialArmParameters {
         'developerResourceGroupName'                        = "$primaryRegionResourceGroupNamePrefix-developer"
         'dnsResourceGroupName'                              = "$primaryRegionResourceGroupNamePrefix-dns"
         'imageResizerResourceGroupName'                     = "$primaryRegionResourceGroupNamePrefix-imageresizer"
+        'inspectorGadgetResourceGroupName'                  = "$primaryRegionResourceGroupNamePrefix-inspectorgadget"
         'jumpboxResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-jumpbox"
         'keyVaultResourceGroupName'                         = "$primaryRegionResourceGroupNamePrefix-keyvault"
         'logAnalyticsWorkspaceResourceGroupName'            = "$primaryRegionResourceGroupNamePrefix-loganalytics"
@@ -175,6 +186,7 @@ function Set-InitialArmParameters {
         'ntierResourceGroupName'                            = "$primaryRegionResourceGroupNamePrefix-ntier"
         'primaryRegionAppServicePlanResourceGroupName'      = "$primaryRegionResourceGroupNamePrefix-asp"
         'primaryRegionHelloWorldWebAppResourceGroupName'    = "$primaryRegionResourceGroupNamePrefix-helloworld"
+        'privateDnsZoneResourceGroupName'                   = "$primaryRegionResourceGroupNamePrefix-privatedns"
         'secondaryRegionAppServicePlanResourceGroupName'    = "$secondaryRegionResourceGroupNamePrefix-asp"
         'secondaryRegionHelloWorldWebAppResourceGroupName'  = "$secondaryRegionResourceGroupNamePrefix-helloworld"
         'sqlTodoResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-sqltodo"

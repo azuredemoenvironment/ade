@@ -87,7 +87,7 @@
     },
     "variables": {
         "appServicePlanid": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('primaryRegionAppServicePlanResourceGroupName'), '/providers/','Microsoft.Web/serverfarms/', parameters('primaryRegionAppServicePlanName'))]",
-        "webAppRepoURL": "https://github.com/Mitaric/SQLToDo",
+        "webAppRepoURL": "https://github.com/Azure-Samples/dotnet-sqldb-tutorial/",
         "logAnalyticsWorkspaceID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('logAnalyticsWorkspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]",
         "environmentName": "Production",
         "functionName": "SQLToDo",
@@ -316,10 +316,7 @@
                 "Cost Center": "[variables('costCenterName')]"
             },
             "properties": {
-                "ApplicationId": "[parameters('sqlToDoAppInsightsName')]",
                 "Application_Type": "web",
-                "Flow_Type": "Redfield",
-                "Request_Source": "IbizaAIExtension",
                 "WorkspaceResourceId": "[variables('logAnalyticsWorkspaceID')]"
             }
         },
@@ -439,14 +436,6 @@
                             },
                             {
                                 "category": "AppServiceAuditLogs",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "days": 7,
-                                    "enabled": true
-                                }
-                            },
-                            {
-                                "category": "AppServiceAntivirusScanAuditLogs",
                                 "enabled": true,
                                 "retentionPolicy": {
                                     "days": 7,

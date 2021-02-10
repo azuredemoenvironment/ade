@@ -5,14 +5,20 @@
 
 ## Description
 
-The Azure Application Gateway deployment creates an Azure Application Gateway at the WAFv2 SKU. The Application Gateway provides Layer 7 access and SSL Termination for multiple deployed App Services, and Virtual Machines.  The Web Application Firewall is configured in Prevention Mode.  Diagnostic settings are enabled for all resources utilizing Azure Log Analytics for log and metric storage.
+The Azure Application Gateway deployment creates an Azure Application Gateway at
+the WAFv2 SKU. The Application Gateway provides Layer 7 access and SSL
+Termination for multiple deployed App Services, and Virtual Machines. The Web
+Application Firewall is configured in Prevention Mode. Diagnostic settings are
+enabled for all resources utilizing Azure Log Analytics for log and metric
+storage.
 
 ## Files Used
 
 - azure_application_gateway.json
 - azure_application_gateway.parameters.json
 
-The values for all parameters will be automatically generated based on the values provided at script execution.
+The values for all parameters will be automatically generated based on the
+values provided at script execution.
 
 ## Post-Deployment
 

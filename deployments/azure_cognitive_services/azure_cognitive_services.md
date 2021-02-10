@@ -24,8 +24,8 @@ Following deployment, execute the following tasks:
 
 To find the Cognitive Services Computer Vision Endpoint and API Key, in the Azure Portal, navigate to Cognitive Services, select "ComputerVision" from the Cognitive Services blade, select "Quick Start" and copy the Endpoint and Key1 value.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![alt text](https://raw.githubusercontent.com/Mitaric/AzureDemoEnvironment/master/images/computervision.JPG "Computer Vision Endpoint and Key")
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![alt text](https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/main/deployments/azure_cognitive_services/computervision.jpg "Computer Vision Endpoint and Key")
 
 To find the Cognitive Services Computer Vision Endpoint and API Key, in the Azure Portal, navigate to Cognitive Services, select "Text Analytics" from the Cognitive Services blade, select "Quick Start" and copy the Endpoint and Key1 value.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![alt text](https://raw.githubusercontent.com/Mitaric/AzureDemoEnvironment/master/images/textanalytics.JPG "Text Analytics Endpoint and Key")
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![alt text](https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/main/deployments/azure_cognitive_services/textanalytics.jpg "Text Analytics Endpoint and Key")

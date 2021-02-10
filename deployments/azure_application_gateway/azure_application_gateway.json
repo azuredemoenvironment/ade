@@ -15,6 +15,12 @@
                 "description": "The Name of the Application Gateway Public IP Address."
             }
         },
+        "inspectorGadgetWafPolicyName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Inspector Gadget WAF Policy."
+            }
+        },
         "applicationGatewayName": {
             "type": "string",
             "metadata": {
@@ -61,6 +67,18 @@
             "type": "string",
             "metadata": {
                 "description": "The Host Name of Image Resizer."
+            }
+        },
+        "inspectorGadgetFQDN":{
+            "type": "string",
+            "metadata": {
+                "description": "The FQDN of the Inspector Gadget App Service."
+            }
+        },
+        "inspectorGadgetHostName":{
+            "type": "string",
+            "metadata": {
+                "description": "The Host Name of Inspector Gadget."
             }
         },
         "nTierHostName":{
@@ -117,25 +135,45 @@
         "imageResizerBackendPoolName": "backendpool-imageresizer",
         "imageResizerHealthProbeName": "healthprobe-imageresizer",        
         "imageResizerHTTPSettingName": "httpsetting-imageresizer",
-        "imageResizerListenerName": "listener-imageresizer",
+        "imageResizerHTTPListenerName": "listener-http-imageresizer",
+        "imageResizerHTTPSListenerName": "listener-https-imageresizer",
         "imageResizerRuleName": "routingrule-imageresizer",
+        "imageResizerRedirectionConfigName": "redirectionconfig-imageresizer",
+        "imageResizerRedirectionRuleName": "routingrule-redirection-imageresizer",
+        "inspectorGadgetBackendPoolName": "backendpool-inspectorgadget",
+        "inspectorGadgetHealthProbeName": "healthprobe-inspectorgadget",        
+        "inspectorGadgetHTTPSettingName": "httpsetting-inspectorgadget",
+        "inspectorGadgetHTTPListenerName": "listener--http-inspectorgadget",
+        "inspectorGadgetHTTPSListenerName": "listener--https-inspectorgadget",
+        "inspectorGadgetRuleName": "routingrule-inspectorgadget",
+        "inspectorGadgetRedirectionConfigName": "redirectionconfig-inspectorgadget",
+        "inspectorGadgetRedirectionRuleName": "routingrule-redirection-inspectorgadget",
         "nTierBackendPoolName": "backendpool-ntier",
         "nTierHealthProbeName": "healthprobe-ntier",
         "nTierHTTPSettingName": "httpsetting-ntier",
-        "nTierListenerName": "listener-ntier",
+        "nTierHTTPListenerName": "listener-http-ntier",
+        "nTierHTTPSListenerName": "listener-https-ntier",
         "nTierRuleName": "routingrule-ntier",
+        "nTierRedirectionConfigName": "redirectionconfig-ntier",
+        "nTierRedirectionRuleName": "routingrule-redirection-ntier",
         "nTierWeb1IPAddress": "10.102.10.4",
         "nTierWeb2IPAddress": "10.102.10.5",
         "sqlToDoBackendPoolName": "backendpool-sqltodo",
         "sqlToDoHealthProbeName": "healthprobe-sqltodo",
         "sqlToDoHTTPSettingName": "httpsetting-sqltodo",
-        "sqlToDoListenerName": "listener-sqltodo",
+        "sqlToDoHTTPListenerName": "listener-http-sqltodo",
+        "sqlToDoHTTPSListenerName": "listener-https-sqltodo",
         "sqlToDoRuleName": "routingrule-sqltodo",
+        "sqlToDoRedirectionConfigName": "redirectionconfig-sqltodo",
+        "sqlToDoRedirectionRuleName": "routingrule-redirection-sqltodo",
         "wordPressBackendPoolName": "backendpool-wordpress",
         "wordPressHealthProbeName": "healthprobe-wordpress",
         "wordPressHTTPSettingName": "httpsetting-wordpress",
-        "wordPressListenerName": "listener-wordpress",
+        "wordPressHTTPListenerName": "listener-http-wordpress",
+        "wordPressHTTPSListenerName": "listener-https-wordpress",
         "wordPressRuleName": "routingrule-wordpress",
+        "wordPressRedirectionConfigName": "redirectionconfig-wordpress",
+        "wordPressRedirectionRuleName": "routingrule-redirection-wordpress",
         "wordPressContainerIPAddress": "10.103.20.5",
         "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName'))]",
         "userAssignedManagedIdentity": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('managedIdentityResourceGroupName'), '/providers/','Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('managedIdentityName'))]",
@@ -215,8 +253,64 @@
             ]
         },
         {
+            "type": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('inspectorGadgetWafPolicyName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('applicationGatewayPublicIPAddressName'))]"
+            ],
+            "tags": {
+                "Environment": "Production",
+                "Function": "Networking",
+                "Cost Center": "IT"
+            },
+            "properties": {
+                "customRules": [
+                    {
+                        "name": "inspectorgadget",
+                        "priority": 1,
+                        "ruleType": "MatchRule",
+                        "action": "Allow",
+                        "matchConditions": [
+                            {
+                                "matchVariables": [
+                                    {
+                                        "variableName": "RemoteAddr"
+                                    }
+                                ],
+                                "operator": "IPMatch",
+                                "negationConditon": false,
+                                "matchValues": [
+                                    "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('applicationGatewayPublicIPAddressName'))).ipAddress]"
+                                ],
+                                "transforms": []
+                            }
+                        ]
+                    }
+                ],
+                "policySettings": {
+                    "requestBodyCheck": true,
+                    "maxRequestBodySizeInKb": 128,
+                    "fileUploadLimitInMb": 100,
+                    "state": "Enabled",
+                    "mode": "Detection"
+                },
+                "managedRules": {
+                    "managedRuleSets": [
+                        {
+                            "ruleSetType": "OWASP",
+                            "ruleSetVersion": "3.0",
+                            "ruleGroupOverrides": []
+                        }
+                    ],
+                    "exclusions": []
+                }
+            }
+        },
+        {
             "type": "Microsoft.Network/applicationGateways",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2020-05-01",
             "name": "[parameters('applicationGatewayName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
@@ -289,6 +383,16 @@
                         }
                     },
                     {
+                        "name": "[variables('inspectorGadgetBackendPoolName')]",
+                        "properties": {
+                            "backendAddresses": [
+                                {
+                                    "fqdn": "[parameters('inspectorGadgetFQDN')]"
+                                }
+                            ]
+                        }
+                    },
+                    {
                         "name": "[variables('nTierBackendPoolName')]",
                         "properties": {
                             "backendAddresses": [
@@ -329,6 +433,23 @@
                             "backendHttpSettings": [
                                 {
                                     "id": "[concat(variables('applicationGatewayID'), '/backendHttpSettingsCollection/', variables('imageResizerHTTPSettingName'))]"
+                                }
+                            ],
+                            "interval": 30,
+                            "minServers": 0,
+                            "path": "/",
+                            "protocol": "Http",
+                            "timeout": 30,
+                            "unhealthyThreshold": 3,
+                            "pickHostNameFromBackendHttpSettings": true
+                        }
+                    },
+                    {
+                        "name": "[variables('inspectorGadgetHealthProbeName')]",
+                        "properties": {
+                            "backendHttpSettings": [
+                                {
+                                    "id": "[concat(variables('applicationGatewayID'), '/backendHttpSettingsCollection/', variables('inspectorGadgetHTTPSettingName'))]"
                                 }
                             ],
                             "interval": 30,
@@ -407,6 +528,19 @@
                         }
                     },
                     {
+                        "name": "[variables('inspectorGadgetHTTPSettingName')]",
+                        "properties": {
+                            "Port": 80,
+                            "Protocol": "Http",
+                            "cookieBasedAffinity": "Disabled",
+                            "requestTimeout": 30,
+                            "pickHostNameFromBackendAddress": true,
+                            "probe": {
+                                "id": "[concat(variables('applicationGatewayID'), '/probes/', variables('inspectorGadgetHealthProbeName'))]"
+                            }
+                        }
+                    },
+                    {
                         "name": "[variables('nTierHTTPSettingName')]",
                         "properties": {
                             "Port": 80,
@@ -449,7 +583,21 @@
                 ],
                 "httpListeners":[
                     {
-                        "name": "[variables('imageResizerListenerName')]",
+                        "name": "[variables('imageResizerHTTPListenerName')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendIPConfigurations/appGatewayFrontendIP')]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendPorts/port_80')]"
+                            },
+                            "protocol": "Http",
+                            "hostName": "[parameters('imageResizerHostName')]",
+                            "requireServerNameIndication": false
+                        }
+                    },
+                    {
+                        "name": "[variables('imageResizerHTTPSListenerName')]",
                         "properties": {
                             "frontendIPConfiguration": {
                                 "id": "[concat(variables('applicationGatewayID'), '/frontendIPConfigurations/appGatewayFrontendIP')]"
@@ -466,7 +614,58 @@
                         }
                     },
                     {
-                        "name": "[variables('nTierListenerName')]",
+                        "name": "[variables('inspectorGadgetHTTPListenerName')]",
+                        "properties": {
+                            "firewallPolicy": {
+                                "id": "[resourceId('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies', parameters('inspectorGadgetWafPolicyName'))]"
+                            },
+                            "frontendIPConfiguration": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendIPConfigurations/appGatewayFrontendIP')]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendPorts/port_80')]"
+                            },
+                            "protocol": "Http",
+                            "hostName": "[parameters('inspectorGadgetHostName')]",
+                            "requireServerNameIndication": false
+                        }
+                    },
+                    {
+                        "name": "[variables('inspectorGadgetHTTPSListenerName')]",
+                        "properties": {
+                            "firewallPolicy": {
+                                "id": "[resourceId('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies', parameters('inspectorGadgetWafPolicyName'))]"
+                            },
+                            "frontendIPConfiguration": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendIPConfigurations/appGatewayFrontendIP')]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendPorts/port_443')]"
+                            },
+                            "protocol": "Https",
+                            "sslCertificate": {
+                                "id": "[concat(variables('applicationGatewayID'), '/sslCertificates/', parameters('sslCertificateName'))]"
+                            },
+                            "hostName": "[parameters('inspectorGadgetHostName')]",
+                            "requireServerNameIndication": true
+                        }
+                    },
+                    {
+                        "name": "[variables('nTierHTTPListenerName')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendIPConfigurations/appGatewayFrontendIP')]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendPorts/port_80')]"
+                            },
+                            "protocol": "Http",
+                            "hostName": "[parameters('nTierHostName')]",
+                            "requireServerNameIndication": false
+                        }
+                    },
+                    {
+                        "name": "[variables('nTierHTTPSListenerName')]",
                         "properties": {
                             "frontendIPConfiguration": {
                                 "id": "[concat(variables('applicationGatewayID'), '/frontendIPConfigurations/appGatewayFrontendIP')]"
@@ -483,7 +682,21 @@
                         }
                     },
                     {
-                        "name": "[variables('sqlToDoListenerName')]",
+                        "name": "[variables('sqlToDoHTTPListenerName')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendIPConfigurations/appGatewayFrontendIP')]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendPorts/port_80')]"
+                            },
+                            "protocol": "Http",
+                            "hostName": "[parameters('sqlToDoHostName')]",
+                            "requireServerNameIndication": false
+                        }
+                    },
+                    {
+                        "name": "[variables('sqlToDoHTTPSListenerName')]",
                         "properties": {
                             "frontendIPConfiguration": {
                                 "id": "[concat(variables('applicationGatewayID'), '/frontendIPConfigurations/appGatewayFrontendIP')]"
@@ -500,7 +713,21 @@
                         }
                     },
                     {
-                        "name": "[variables('wordPressListenerName')]",
+                        "name": "[variables('wordPressHTTPListenerName')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendIPConfigurations/appGatewayFrontendIP')]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendPorts/port_80')]"
+                            },
+                            "protocol": "Http",
+                            "hostName": "[parameters('wordPressHostName')]",
+                            "requireServerNameIndication": false
+                        }
+                    },
+                    {
+                        "name": "[variables('wordPressHTTPSListenerName')]",
                         "properties": {
                             "frontendIPConfiguration": {
                                 "id": "[concat(variables('applicationGatewayID'), '/frontendIPConfigurations/appGatewayFrontendIP')]"
@@ -517,13 +744,60 @@
                         }
                     }
                 ],
+                "redirectConfigurations": [
+                    {
+                        "name": "[variables('imageResizerRedirectionConfigName')]",
+                        "properties": {
+                            "redirectType": "Permanent",
+                            "targetListener": {
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('imageResizerHTTPSListenerName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[variables('inspectorGadgetRedirectionConfigName')]",
+                        "properties": {
+                            "redirectType": "Permanent",
+                            "targetListener": {
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('inspectorGadgetHTTPSListenerName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[variables('nTierRedirectionConfigName')]",
+                        "properties": {
+                            "redirectType": "Permanent",
+                            "targetListener": {
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('nTierHTTPSListenerName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[variables('sqlToDoRedirectionConfigName')]",
+                        "properties": {
+                            "redirectType": "Permanent",
+                            "targetListener": {
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('sqlToDoHTTPSListenerName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[variables('wordPressRedirectionConfigName')]",
+                        "properties": {
+                            "redirectType": "Permanent",
+                            "targetListener": {
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('wordPressHTTPSListenerName'))]"
+                            }
+                        }
+                    }
+                ],
                 "requestRoutingRules": [
                     {
                         "Name": "[variables('imageResizerRuleName')]",
                         "properties": {
                             "RuleType": "Basic",
                             "httpListener": {
-                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('imageResizerListenerName'))]"
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('imageResizerHTTPSListenerName'))]"
                             },
                             "backendAddressPool": {
                                 "id": "[concat(variables('applicationGatewayID'), '/backendAddressPools/', variables('imageResizerBackendPoolName'))]"
@@ -534,11 +808,50 @@
                         }
                     },
                     {
+                        "Name": "[variables('imageResizerRedirectionRuleName')]",
+                        "properties": {
+                            "RuleType": "Basic",
+                            "httpListener": {
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('imageResizerHTTPListenerName'))]"
+                            },
+                            "redirectConfiguration": {
+                                "id": "[concat(variables('applicationGatewayID'), '/redirectConfigurations/', variables('imageResizerRedirectionConfigName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "Name": "[variables('inspectorGadgetRuleName')]",
+                        "properties": {
+                            "RuleType": "Basic",
+                            "httpListener": {
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('inspectorGadgetHTTPSListenerName'))]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(variables('applicationGatewayID'), '/backendAddressPools/', variables('inspectorGadgetBackendPoolName'))]"
+                            },
+                            "backendHttpSettings": {
+                                "id": "[concat(variables('applicationGatewayID'), '/backendHttpSettingsCollection/', variables('inspectorGadgetHTTPSettingName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "Name": "[variables('inspectorGadgetRedirectionRuleName')]",
+                        "properties": {
+                            "RuleType": "Basic",
+                            "httpListener": {
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('inspectorGadgetHTTPListenerName'))]"
+                            },
+                            "redirectConfiguration": {
+                                "id": "[concat(variables('applicationGatewayID'), '/redirectConfigurations/', variables('inspectorGadgetRedirectionConfigName'))]"
+                            }
+                        }
+                    },
+                    {
                         "Name": "[variables('nTierRuleName')]",
                         "properties": {
                             "RuleType": "Basic",
                             "httpListener": {
-                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('nTierListenerName'))]"
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('nTierHTTPSListenerName'))]"
                             },
                             "backendAddressPool": {
                                 "id": "[concat(variables('applicationGatewayID'), '/backendAddressPools/', variables('nTierBackendPoolName'))]"
@@ -549,11 +862,23 @@
                         }
                     },
                     {
+                        "Name": "[variables('nTierRedirectionRuleName')]",
+                        "properties": {
+                            "RuleType": "Basic",
+                            "httpListener": {
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('nTierHTTPListenerName'))]"
+                            },
+                            "redirectConfiguration": {
+                                "id": "[concat(variables('applicationGatewayID'), '/redirectConfigurations/', variables('nTierRedirectionConfigName'))]"
+                            }
+                        }
+                    },
+                    {
                         "Name": "[variables('sqlToDoRuleName')]",
                         "properties": {
                             "RuleType": "Basic",
                             "httpListener": {
-                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('sqlToDoListenerName'))]"
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('sqlToDoHTTPSListenerName'))]"
                             },
                             "backendAddressPool": {
                                 "id": "[concat(variables('applicationGatewayID'), '/backendAddressPools/', variables('sqlToDoBackendPoolName'))]"
@@ -564,17 +889,41 @@
                         }
                     },
                     {
+                        "Name": "[variables('sqlToDoRedirectionRuleName')]",
+                        "properties": {
+                            "RuleType": "Basic",
+                            "httpListener": {
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('sqlToDoHTTPListenerName'))]"
+                            },
+                            "redirectConfiguration": {
+                                "id": "[concat(variables('applicationGatewayID'), '/redirectConfigurations/', variables('sqlToDoRedirectionConfigName'))]"
+                            }
+                        }
+                    },
+                    {
                         "Name": "[variables('wordPressRuleName')]",
                         "properties": {
                             "RuleType": "Basic",
                             "httpListener": {
-                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('wordPressListenerName'))]"
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('wordPressHTTPSListenerName'))]"
                             },
                             "backendAddressPool": {
                                 "id": "[concat(variables('applicationGatewayID'), '/backendAddressPools/', variables('wordPressBackendPoolName'))]"
                             },
                             "backendHttpSettings": {
                                 "id": "[concat(variables('applicationGatewayID'), '/backendHttpSettingsCollection/', variables('wordPressHTTPSettingName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "Name": "[variables('wordPressRedirectionRuleName')]",
+                        "properties": {
+                            "RuleType": "Basic",
+                            "httpListener": {
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', variables('wordPressHTTPListenerName'))]"
+                            },
+                            "redirectConfiguration": {
+                                "id": "[concat(variables('applicationGatewayID'), '/redirectConfigurations/', variables('wordPressRedirectionConfigName'))]"
                             }
                         }
                     }
@@ -643,6 +992,6 @@
                     }
                 }
             ]
-        }
+        }        
     ]
 }

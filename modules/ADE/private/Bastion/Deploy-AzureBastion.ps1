@@ -8,5 +8,5 @@ function Deploy-AzureBastion {
         return;
     }
 
-    Deploy-ArmTemplate 'Azure Bastion' $armParameters -resourceGroupName $armParameters.bastionResourceGroupName
+    Deploy-ArmTemplate 'Azure Bastion' $armParameters -resourceGroupName $armParameters.bastionResourceGroupName -noWait
 }

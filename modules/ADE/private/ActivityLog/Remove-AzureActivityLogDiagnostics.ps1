@@ -6,7 +6,7 @@ function Remove-AzureActivityLogDiagnostics {
     Write-ScriptSection "Removing Azure Activity Log Diagnostics"
     
     # TODO: should this be in the main arm parameters?
-    $activityLogDiagnosticsName = 'GlobalActivityLog'
+    $activityLogDiagnosticsName = $armParameters.activityLogDiagnosticsName
     az monitor diagnostic-settings subscription delete -n $activityLogDiagnosticsName -y
     Confirm-LastExitCode
 

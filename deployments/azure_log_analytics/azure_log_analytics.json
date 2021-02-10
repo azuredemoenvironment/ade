@@ -69,7 +69,7 @@
     "resources": [        
         {
             "type": "Microsoft.OperationalInsights/workspaces",
-            "apiVersion": "2020-03-01-preview",
+            "apiVersion": "2020-08-01",
             "name": "[parameters('logAnalyticsWorkspaceName')]",
             "location": "[parameters('location')]",
             "dependsOn": [],
@@ -80,9 +80,6 @@
             },
             "properties": {
                 "retentionInDays": 30,
-                "features": {
-                    "searchVersion": 1
-                },
                 "sku": {
                     "name": "PerGB2018"
                 }
@@ -196,7 +193,7 @@
             "type": "Microsoft.Automation/automationAccounts",
             "apiVersion": "2018-06-30",
             "name": "[parameters('automationAccountName')]",
-            "location": "[parameters('location')]",
+            "location": "eastus2",
             "dependsOn": [
                 "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
             ],

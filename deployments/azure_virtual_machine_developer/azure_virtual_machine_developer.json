@@ -79,7 +79,7 @@
     "variables": {
         "developerPrivateIPAddress": "10.102.0.4",
         "developerSubnetName": "developer",
-        "scriptLocation": "https://raw.githubusercontent.com/Mitaric/AzureDemoEnvironment/master/cse/developervm.ps1",
+        "scriptLocation": "https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/main/deployments/azure_virtual_machine_developer/developervm.ps1",
         "scriptName": "developervm.ps1",
         "logAnalyticsWorkspaceID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('logAnalyticsWorkspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]",
         "environmentName": "Production",
