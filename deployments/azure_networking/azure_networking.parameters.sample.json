@@ -20,6 +20,9 @@
         "directoryServicesSubnetNetworkSecurityGroupName": {
             "value": "@@directoryServicesSubnetNetworkSecurityGroupName@@"
         },
+        "developerSubnetNetworkSecurityGroupName": {
+            "value": "@@developerSubnetNetworkSecurityGroupName@@"
+        },
         "nTierWebSubnetNetworkSecurityGroupName": {
             "value": "@@nTierWebSubnetNetworkSecurityGroupName@@"
         },
@@ -28,9 +31,6 @@
         },
         "vmssSubnetNetworkSecurityGroupName": {
             "value": "@@vmssSubnetNetworkSecurityGroupName@@"
-        },
-        "developerSubnetNetworkSecurityGroupName": {
-            "value": "@@developerSubnetNetworkSecurityGroupName@@"
         },
         "clientServicesSubnetNetworkSecurityGroupName": {
             "value": "@@clientServicesSubnetNetworkSecurityGroupName@@"

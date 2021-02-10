@@ -45,6 +45,12 @@
                 "description": "The Name of the Directory Services Subnet NSG."
             }
         },
+        "developerSubnetNetworkSecurityGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Developer Subnet NSG."
+            }
+        },
         "nTierWebSubnetNetworkSecurityGroupName": {
             "type": "string",
             "metadata": {
@@ -61,12 +67,6 @@
             "type": "string",
             "metadata": {
                 "description": "The Name of the VMSS Subnet NSG."
-            }
-        },
-        "developerSubnetNetworkSecurityGroupName": {
-            "type": "string",
-            "metadata": {
-                "description": "The Name of the Developer Subnet NSG."
             }
         },
         "clientServicesSubnetNetworkSecurityGroupName": {
@@ -140,14 +140,20 @@
         "nTierDBSubnetName": "ntierDB",
         "nTierDBSubnetPrefix": "10.102.11.0/24",
         "vmssSubnetName": "vmss",
-        "vmssSubnetPrefix": "10.102.20.0/24",        
+        "vmssSubnetPrefix": "10.102.20.0/24",      
         "clientServicesSubnetName": "clientServices",
         "clientServicesSubnetPrefix": "10.102.200.0/24",
         "virtualnetwork03Prefix": "10.103.0.0/16",        
         "aksSubnetName": "aks",
         "aksSubnetPrefix": "10.103.10.0/24",
         "aciSubnetName": "aci",
-        "aciSubnetPrefix": "10.103.20.0/24",       
+        "aciSubnetPrefix": "10.103.20.0/24",
+        "inspectorGadgetAppServicePrivateEndpointSubnetName": "inspectorGadget-appservice-privateendpoint",
+        "inspectorGadgetAppServicePrivateEndpointSubnetPrefix": "10.103.30.0/24",
+        "inspectorGadgetAppServiceVnetIntegrationSubnetName": "inspectorGadget-appservice-vnetintegration",
+        "inspectorGadgetAppServiceVnetIntegrationSubnetPrefix": "10.103.31.0/24",
+        "inspectorGadgetAzureSqlPrivateEndpointSubnetName": "inspectorGadget-azuresql-privateendpoint",
+        "inspectorGadgetAzureSqlPrivateEndpointSubnetPrefix": "10.103.32.0/24",       
         "logAnalyticsWorkspaceID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('logAnalyticsWorkspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]",
         "environmentName": "Production",
         "functionName": "Networking",
@@ -497,6 +503,69 @@
         {
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2019-06-01",
+            "name": "[parameters('developerSubnetNetworkSecurityGroupName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {
+                "Environment": "[variables('environmentName')]",
+                "Function": "[variables('functionName')]",
+                "Cost Center": "[variables('costCenterName')]"
+            },
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "RDP_Inbound",
+                        "properties": {
+                            "description": "Allow RDP Access from Current Location",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3389",
+                            "sourceAddressPrefix": "[parameters('sourceAddressPrefix')]",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            },
+            "resources": [
+                {
+                    "type": "providers/diagnosticSettings",
+                    "apiVersion": "2017-05-01-preview",
+                    "name": "[concat('Microsoft.Insights/', parameters('developerSubnetNetworkSecurityGroupName'), '-Diagnostics')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('developerSubnetNetworkSecurityGroupName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "name": "[concat(parameters('developerSubnetNetworkSecurityGroupName'), '-Diagnostics')]",
+                        "workspaceId": "[variables('logAnalyticsWorkspaceID')]",
+                        "logs": [
+                            {
+                                "category": "NetworkSecurityGroupEvent",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            },
+                            {
+                                "category": "NetworkSecurityGroupRuleCounter",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-06-01",
             "name": "[parameters('nTierWebSubnetNetworkSecurityGroupName')]",
             "location": "[parameters('location')]",
             "dependsOn": [],
@@ -652,70 +721,7 @@
                     }
                 }
             ]
-        },
-        {
-            "type": "Microsoft.Network/networkSecurityGroups",
-            "apiVersion": "2019-06-01",
-            "name": "[parameters('developerSubnetNetworkSecurityGroupName')]",
-            "location": "[parameters('location')]",
-            "dependsOn": [],
-            "tags": {
-                "Environment": "[variables('environmentName')]",
-                "Function": "[variables('functionName')]",
-                "Cost Center": "[variables('costCenterName')]"
-            },
-            "properties": {
-                "securityRules": [
-                    {
-                        "name": "RDP_Inbound",
-                        "properties": {
-                            "description": "Allow RDP Access from Current Location",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "3389",
-                            "sourceAddressPrefix": "[parameters('sourceAddressPrefix')]",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 100,
-                            "direction": "Inbound"
-                        }
-                    }
-                ]
-            },
-            "resources": [
-                {
-                    "type": "providers/diagnosticSettings",
-                    "apiVersion": "2017-05-01-preview",
-                    "name": "[concat('Microsoft.Insights/', parameters('developerSubnetNetworkSecurityGroupName'), '-Diagnostics')]",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('developerSubnetNetworkSecurityGroupName'))]"
-                    ],
-                    "tags": {},
-                    "properties": {
-                        "name": "[concat(parameters('developerSubnetNetworkSecurityGroupName'), '-Diagnostics')]",
-                        "workspaceId": "[variables('logAnalyticsWorkspaceID')]",
-                        "logs": [
-                            {
-                                "category": "NetworkSecurityGroupEvent",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "days": 7,
-                                    "enabled": true
-                                }
-                            },
-                            {
-                                "category": "NetworkSecurityGroupRuleCounter",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "days": 7,
-                                    "enabled": true
-                                }
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
+        },   
         {
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2019-06-01",
@@ -921,7 +927,7 @@
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('developerSubnetNetworkSecurityGroupName'))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nTierWebSubnetNetworkSecurityGroupName'))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nTierDBSubnetNetworkSecurityGroupName'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('vmssSubnetNetworkSecurityGroupName'))]",                
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('vmssSubnetNetworkSecurityGroupName'))]",           
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('clientServicesSubnetNetworkSecurityGroupName'))]",
                 "[resourceId('Microsoft.Network/routeTables', parameters('internetRouteTableName'))]"
             ],
@@ -992,7 +998,7 @@
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('vmssSubnetNetworkSecurityGroupName'))]"
                             }
                         }
-                    },                    
+                    },               
                     {
                         "name": "[variables('clientServicesSubnetName')]",
                         "properties": {
@@ -1094,6 +1100,34 @@
                                     }  
                                 }
                             ]                     
+                        }
+                    },
+                    {
+                        "name": "[variables('inspectorGadgetAppServicePrivateEndpointSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('inspectorGadgetAppServicePrivateEndpointSubnetPrefix')]",
+                            "privateEndpointNetworkPolicies": "Disabled"                      
+                        }
+                    },
+                    {
+                        "name": "[variables('inspectorGadgetAppServiceVnetIntegrationSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('inspectorGadgetAppServiceVnetIntegrationSubnetPrefix')]",
+                            "delegations": [
+                                {
+                                    "name": "ASPDelegation",
+                                    "properties": {
+                                        "serviceName": "Microsoft.Web/serverFarms"
+                                    }  
+                                }
+                            ]                     
+                        }
+                    },
+                    {
+                        "name": "[variables('inspectorGadgetAzureSqlPrivateEndpointSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('inspectorGadgetAzureSqlPrivateEndpointSubnetPrefix')]",
+                            "privateEndpointNetworkPolicies": "Disabled"                      
                         }
                     }
                 ]

@@ -5,7 +5,9 @@
 
 ## Description
 
-The Azure NSG Flow Logs deployment enables NSG Flow Log archival to and Azure Storage Account and Azure Log Analytics.  NSG Flow Logs are enabled for the following Network Security Groups.
+The Azure NSG Flow Logs deployment enables NSG Flow Log archival to and Azure
+Storage Account and Azure Log Analytics. NSG Flow Logs are enabled for the
+following Network Security Groups.
 
 - Azure Bastion Subnet NSG
 - Management Subnet NSG
@@ -20,7 +22,8 @@ The Azure NSG Flow Logs deployment enables NSG Flow Log archival to and Azure St
 
 - azure_nsg_flow_logs.azcli
 
-The values for all parameters will be automatically generated based on the values provided at script execution.
+The values for all parameters will be automatically generated based on the
+values provided at script execution.
 
 ## Post Deployment
 

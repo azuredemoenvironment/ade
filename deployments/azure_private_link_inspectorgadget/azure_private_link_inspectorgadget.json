@@ -1,0 +1,586 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location For All Resources."
+            }
+        },
+        "inspectorGadgetSqlServerName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the SQL Server Instance."
+            }
+        },
+        "inspectorGadgetSqlAdminUserName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the SQL Server Administrator User Name."
+            }
+        },
+        "inspectorGadgetSqlAdminPassword": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the SQL ServerAdministrator Password."
+            }
+        },
+        "inspectorGadgetSqlDatabaseName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Inspector Gadget SQL Database."
+            }
+        },
+        "inspectorGadgetAzureSQLPrivateEndpointName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Inspector Gadget Private Endpoint."
+            }
+        },
+        "virtualNetwork03ResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of Virtual Network 03 Resource Group."
+            }
+        },
+        "virtualNetwork03Name": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of Virtual Network 03."
+            }
+        },
+        "privateDnsZoneResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Private DNS Zone Resource Group"
+            }
+        },
+        "inspectorGadgetAppInsightsName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Inspector Gadget App Insights Instance."
+            }
+        },
+        "primaryRegionAppServicePlanResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Primary Region App Service Plan Resource Group."
+            }
+        },
+        "primaryRegionAppServicePlanName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Primary Region App Service Plan."
+            }
+        },
+        "inspectorGadgetWebAppName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Inspector Gadget Web App."
+            }
+        },        
+        "inspectorGadgetAppServicePrivateEndpointName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Inspector Gadget Private Endpoint."
+            }
+        },
+        "logAnalyticsWorkspaceResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Log Analytics Workspace Resource Group."
+            }
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Log Analytics Workspace."
+            }
+        }
+    },
+    "variables": {
+        "inspectorGadgetAzureSQLPrivateEndpointSubnetName": "inspectorGadget-azuresql-privateendpoint",                
+        "inspectorGadgetAzureSQLPrivateEndpointSubnetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('virtualNetwork03ResourceGroupName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('virtualNetwork03Name'), '/subnets/', variables('inspectorGadgetAzureSQLPrivateEndpointSubnetName'))]",
+        "azureSQLprivateEndpointDnsGroupName": "[concat(parameters('inspectorGadgetAzureSQLPrivateEndpointName'),'/inspectorgadget')]",
+        "azureSQLprivateDnsZoneName": "privatelink.database.windows.net",
+        "azureSQLprivateDnsZoneId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('privateDnsZoneResourceGroupName'), '/providers/','Microsoft.Network/privateDnsZones/', variables('azureSQLPrivateDnsZoneName'))]",
+        "appServicePlanId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('primaryRegionAppServicePlanResourceGroupName'), '/providers/','Microsoft.Web/serverfarms/', parameters('primaryRegionAppServicePlanName'))]",
+        "inspectorGadgetAppServiceVnetIntegrationSubnetName": "inspectorGadget-appservice-vnetintegration",        
+        "inspectorGadgetAppServiceVnetIntegrationSubnetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('virtualNetwork03ResourceGroupName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('virtualNetwork03Name'), '/subnets/', variables('inspectorGadgetAppServiceVnetIntegrationSubnetName'))]",
+        "webAppRepoURL": "https://github.com/jelledruyts/InspectorGadget/",
+        "inspectorGadgetWebAppDnsName": ".azurewebsites.net",
+        "inspectorGadgetAppServicePrivateEndpointSubnetName": "inspectorGadget-appservice-privateendpoint",        
+        "inspectorGadgetAppServicePrivateEndpointSubnetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('virtualNetwork03ResourceGroupName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('virtualNetwork03Name'), '/subnets/', variables('inspectorGadgetAppServicePrivateEndpointSubnetName'))]",
+        "appServicePrivateEndpointDnsGroupName": "[concat(parameters('inspectorGadgetAppServicePrivateEndpointName'),'/inspectorgadget')]",
+        "appServicePrivateDnsZoneName": "privatelink.azurewebsites.net",
+        "appServicePrivateDnsZoneId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('privateDnsZoneResourceGroupName'), '/providers/','Microsoft.Network/privateDnsZones/', variables('appServicePrivateDnsZoneName'))]",
+        "logAnalyticsWorkspaceID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('logAnalyticsWorkspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]",
+        "environmentName": "Production",
+        "functionName": "InspectorGadget",
+        "costCenterName": "IT"        
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2015-05-01-preview",
+            "name": "[parameters('inspectorGadgetSqlServerName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {
+                "Environment": "[variables('environmentName')]",
+                "Function": "[variables('functionName')]",
+                "Cost Center": "[variables('costCenterName')]"
+            },
+            "properties": {
+                "administratorLogin": "[parameters('inspectorGadgetSqlAdminUserName')]",
+                "administratorLoginPassword": "[parameters('inspectorGadgetSqlAdminPassword')]",
+                "version": "12.0",
+                "publicNetworkAccess": "Disabled"
+            },
+            "resources": [
+                {
+                    "type": "firewallRules",
+                    "apiVersion": "2015-05-01-preview",
+                    "name": "AllowAllWindowsAzureIps",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                         "[resourceID('Microsoft.Sql/servers/', parameters('inspectorGadgetSqlServerName'))]"
+                    ],
+                    "condition": true,
+                    "properties": {
+                        "startIpAddress": "0.0.0.0",
+                        "endIpAddress": "0.0.0.0"
+                    }
+                },
+                {
+                    "type": "Microsoft.Sql/servers/databases",
+                    "apiVersion": "2017-10-01-preview",
+                    "name": "[concat(string(parameters('inspectorGadgetSqlServerName')), '/', string(parameters('inspectorGadgetSqlDatabaseName')))]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceID('Microsoft.Sql/servers/', parameters('inspectorGadgetSqlServerName'))]"
+                    ],
+                    "tags": {
+                        "Environment": "[variables('environmentName')]",
+                        "Function": "[variables('functionName')]",
+                        "Cost Center": "[variables('costCenterName')]"
+                    },
+                    "sku": {
+                        "name": "Standard",
+                        "tier": "Standard",
+                        "capacity": 10
+                    },
+                    "properties": {
+                        "collation": "SQL_Latin1_General_CP1_CI_AS",
+                        "maxSizeBytes": 1073741824,
+                        "zoneRedundant": false,
+                        "licenseType": "LicenseIncluded"
+                    },
+                    "resources": [
+                        {
+                            "type": "providers/diagnosticSettings",
+                            "apiVersion": "2017-05-01-preview",
+                            "name": "[concat('Microsoft.Insights/', parameters('inspectorGadgetSqlDatabaseName'), '-Diagnostics')]",
+                            "dependsOn": [
+                                "[parameters('inspectorGadgetSqlDatabaseName')]"
+                            ],
+                            "tags": {},
+                            "properties": {
+                                "name": "[concat(parameters('inspectorGadgetSqlDatabaseName'), '-Diagnostics')]",
+                                "workspaceId": "[variables('logAnalyticsWorkspaceID')]",
+                                "logs": [
+                                    {
+                                        "category": "SQLInsights",
+                                        "enabled": true,
+                                        "retentionPolicy": {
+                                            "days": 7,
+                                            "enabled": true
+                                        }
+                                    },
+                                    {
+                                        "category": "AutomaticTuning",
+                                        "enabled": true,
+                                        "retentionPolicy": {
+                                            "days": 7,
+                                            "enabled": true
+                                        }
+                                    },
+                                    {
+                                        "category": "QueryStoreRuntimeStatistics",
+                                        "enabled": true,
+                                        "retentionPolicy": {
+                                            "days": 7,
+                                            "enabled": true
+                                        }
+                                    },
+                                    {
+                                        "category": "QueryStoreWaitStatistics",
+                                        "enabled": true,
+                                        "retentionPolicy": {
+                                            "days": 7,
+                                            "enabled": true
+                                        }
+                                    },
+                                    {
+                                        "category": "Errors",
+                                        "enabled": true,
+                                        "retentionPolicy": {
+                                            "days": 7,
+                                            "enabled": true
+                                        }
+                                    },
+                                    {
+                                        "category": "DatabaseWaitStatistics",
+                                        "enabled": true,
+                                        "retentionPolicy": {
+                                            "days": 7,
+                                            "enabled": true
+                                        }
+                                    },
+                                    {
+                                        "category": "Timeouts",
+                                        "enabled": true,
+                                        "retentionPolicy": {
+                                            "days": 7,
+                                            "enabled": true
+                                        }
+                                    },
+                                    {
+                                        "category": "Blocks",
+                                        "enabled": true,
+                                        "retentionPolicy": {
+                                            "days": 7,
+                                            "enabled": true
+                                        }
+                                    },
+                                    {
+                                        "category": "Deadlocks",
+                                        "enabled": true,
+                                        "retentionPolicy": {
+                                            "days": 7,
+                                            "enabled": true
+                                        }
+                                    }
+                                ],
+                                "metrics": [
+                                    {
+                                        "category": "Basic",
+                                        "enabled": true,
+                                        "retentionPolicy": {
+                                            "days": 7,
+                                            "enabled": true
+                                        }
+                                    },
+                                    {
+                                        "category": "InstanceAndAppAdvanced",
+                                        "enabled": true,
+                                        "retentionPolicy": {
+                                            "days": 7,
+                                            "enabled": true
+                                        }
+                                    },
+                                    {
+                                        "category": "WorkloadManagement",
+                                        "enabled": true,
+                                        "retentionPolicy": {
+                                            "days": 7,
+                                            "enabled": true
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }                
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('inspectorGadgetAzureSQLPrivateEndpointName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('inspectorGadgetSqlServerName'))]"
+            ],
+            "properties": {
+                "subnet": {
+                    "id": "[variables('inspectorGadgetAzureSQLPrivateEndpointSubnetId')]"
+                },
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('inspectorGadgetAzureSQLPrivateEndpointName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[resourceId('Microsoft.Sql/servers', parameters('inspectorGadgetSqlServerName'))]",
+                            "groupIds": [
+                                "sqlServer"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('azureSQLprivateEndpointDnsGroupName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [                
+                "[resourceId('Microsoft.Network/privateEndpoints', parameters('inspectorGadgetAzureSQLPrivateEndpointName'))]"
+            ],
+            "properties": {
+                "privateDnsZoneConfigs": [
+                    {
+                        "name": "config1",
+                        "properties": {
+                            "privateDnsZoneId": "[variables('azureSQLprivateDnsZoneId')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Insights/components",
+            "apiVersion": "2020-02-02-preview",
+            "kind": "web",
+            "name": "[parameters('inspectorGadgetAppInsightsName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {
+                "Environment": "[variables('environmentName')]",
+                "Function": "[variables('functionName')]",
+                "Cost Center": "[variables('costCenterName')]"
+            },
+            "properties": {
+                "Application_Type": "web",
+                "WorkspaceResourceId": "[variables('logAnalyticsWorkspaceID')]"
+            }
+        },
+        {
+            "type":"Microsoft.Web/sites",
+            "apiVersion": "2018-02-01",
+            "name": "[parameters('inspectorGadgetWebAppName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Insights/components', parameters('inspectorGadgetAppInsightsName'))]"
+            ],
+            "tags": {
+                "Environment": "[variables('environmentName')]",
+                "Function": "[variables('functionName')]",
+                "Cost Center": "[variables('costCenterName')]"
+            },
+            "properties": {
+                "serverFarmId": "[variables('appServicePlanid')]",
+                "httpsOnly": false,
+                "siteconfig": {
+                    "appSettings": [
+                        {
+                            "name":"PROJECT",
+                            "value":"WebApp"
+                        },
+                        {
+                            "name":"APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value":"[reference(concat('Microsoft.insights/components/', parameters('inspectorGadgetAppInsightsName'))).InstrumentationKey]"
+                        },
+                        {
+                            "name":"ApplicationInsightsAgent_EXTENSION_VERSION",
+                            "value":"~2"
+                        },
+                        {
+                            "name":"XDT_MicrosoftApplicationInsights_Mode",
+                            "value":"recommended"
+                        },
+                        {
+                            "name":"InstrumentationEngine_EXTENSION_VERSION",
+                            "value":"~1"
+                        },
+                        {
+                            "name":"XDT_MicrosoftApplicationInsights_BaseExtensions",
+                            "value":"~1"
+                        },
+                        {
+                            "name":"DefaultSqlConnectionSqlConnectionString",
+                            "value":"[concat('Data Source=tcp:', reference(concat('Microsoft.Sql/servers/', parameters('inspectorGadgetSqlServerName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('inspectorGadgetSqlDatabaseName'), ';User Id=', parameters('inspectorGadgetSqlAdminUserName'), '@', reference(concat('Microsoft.Sql/servers/', parameters('inspectorGadgetSqlServerName'))).fullyQualifiedDomainName, ';Password=', parameters('inspectorGadgetSqlAdminPassword'), ';')]"
+                        },
+                        {
+                            "name":"WEBSITE_VNET_ROUTE_ALL",
+                            "value":"1"
+                        },
+                        {
+                            "name":"WEBSITE_DNS_SERVER",
+                            "value":"168.63.129.16"
+                        }
+                    ],
+                    "connectionStrings": []
+                }
+            },
+            "resources": [
+                {
+                    "type": "config",
+                    "name": "virtualNetwork",
+                    "apiVersion": "2019-08-01",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/Sites', parameters('inspectorGadgetWebAppName'))]"
+                    ],
+                    "properties": {
+                        "subnetResourceId": "[variables('inspectorGadgetAppServiceVnetIntegrationSubnetId')]",
+                        "swiftSupported": true
+                    }
+                },
+                {
+                    "type": "sourcecontrols",
+                    "apiVersion": "2018-02-01",
+                    "name": "web",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/Sites', parameters('inspectorGadgetWebAppName'))]"
+                    ],
+                    "properties": {
+                        "RepoUrl": "[variables('webAppRepoURL')]",
+                        "Branch": "master",
+                        "IsManualIntegration": true
+                    }
+                },
+                {
+                    "type": "providers/diagnosticSettings",
+                    "apiVersion": "2017-05-01-preview",
+                    "name": "[concat('Microsoft.Insights/', parameters('inspectorGadgetWebAppName'), '-Diagnostics')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', parameters('inspectorGadgetWebAppName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "name": "[concat(parameters('inspectorGadgetWebAppName'), '-Diagnostics')]",
+                        "workspaceId": "[variables('logAnalyticsWorkspaceID')]",
+                        "logs": [
+                            {
+                                "category": "AppServiceHTTPLogs",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            },
+                            {
+                                "category": "AppServiceConsoleLogs",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            },
+                            {
+                                "category": "AppServiceAppLogs",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            },
+                            {
+                                "category": "AppServiceFileAuditLogs",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            },
+                            {
+                                "category": "AppServiceAuditLogs",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            },
+                            {
+                                "category": "AppServiceIPSecAuditLogs",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            },
+                            {
+                                "category": "AppServicePlatformLogs",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            }
+                        ],
+                        "metrics": [
+                            {
+                                "category": "AllMetrics",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2019-08-01",
+            "name": "[concat(parameters('inspectorGadgetWebAppName'), '/', parameters('inspectorGadgetWebAppName'), variables('inspectorGadgetWebAppDnsName'))]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('inspectorGadgetWebAppName'))]"
+            ],
+            "properties": {
+                "siteName": "[parameters('inspectorGadgetWebAppName')]",
+                "hostNameType": "Verified"
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('inspectorGadgetAppServicePrivateEndpointName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('inspectorGadgetWebAppName'))]"
+            ],
+            "properties": {
+                "subnet": {
+                "id": "[variables('inspectorGadgetAppServicePrivateEndpointSubnetId')]"
+                },
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('inspectorGadgetAppServicePrivateEndpointName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[resourceId('Microsoft.Web/sites', parameters('inspectorGadgetWebAppName'))]",
+                            "groupIds": [
+                                "sites"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('appServiceprivateEndpointDnsGroupName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [                
+                "[resourceId('Microsoft.Network/privateEndpoints', parameters('inspectorGadgetAppServicePrivateEndpointName'))]"
+            ],
+            "properties": {
+                "privateDnsZoneConfigs": [
+                    {
+                        "name": "config1",
+                        "properties": {
+                            "privateDnsZoneId": "[variables('appServiceprivateDnsZoneId')]"
+                        }
+                    }
+                ]
+            }
+        }      
+    ],
+    "outputs": {}
+}

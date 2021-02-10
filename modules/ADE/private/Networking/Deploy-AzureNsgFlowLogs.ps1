@@ -12,7 +12,7 @@ function Deploy-AzureNsgFlowLogs {
     # Shared Tags
     $tag1 = 'Environment=Production'
     $tag2 = 'Function=Diagnostics'
-    $tag3 = 'CostCenter=IT'
+    $tag3 = 'Cost Center=IT'
 
     Write-Status "Creating Storage Account $nsgFlowLogStorageAccountName for NSG Flow Logs"
     az storage account create -g $nsgFlowLogStorageAccountResourceGroupName -n $nsgFlowLogStorageAccountName --sku Standard_LRS --kind StorageV2 --access-tier Hot --https-only true --tags $tag1 $tag2 $tag3
