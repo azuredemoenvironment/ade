@@ -48,6 +48,7 @@ Welcome to v1.1.0 of the Azure Demo Environment.
 
 - added configuration for inspector gadget app service (backend pool, listener,
   http setting, health probe, routing rule)
+- added http to https redirection rules for all sites
 
 ### azure dns
 
