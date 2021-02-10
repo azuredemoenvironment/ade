@@ -10,8 +10,14 @@ function Deploy-WildcardCertificateToAzureKeyVault {
         throw "A PFX certificate needs to be available at $wildcardCertificatePath. Please copy your certificate to that file path."
     }
 
-    # TODO: move to separate function
+    # Convert Secure Password into Plain Text
     $certificatePasswordPlainText = ConvertFrom-SecureString -SecureString $secureCertificatePassword -AsPlainText
+
+    # Upload PFX Certificate to Key Vault as a Certificate
+    az keyvault certificate import --vault-name $keyVaultName --name 'certificate' --file $wildcardCertificatePath --password $certificatePasswordPlainText
+    Confirm-LastExitCode
+    
+    # Convert PFX Certificate to Base64 string, and upload to Key Vault as a Secret
     $certificateFlags = [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable
     $certificateCollection = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2Collection
     $certificateCollection.Import($wildcardCertificatePath, $certificatePasswordPlainText, $certificateFlags)
@@ -19,7 +25,5 @@ function Deploy-WildcardCertificateToAzureKeyVault {
     $certificateBytes = $certificateCollection.Export($pkcs12ContentType)
     $encodedCertificate = [System.Convert]::ToBase64String($certificateBytes)
     $secureEncodedCertificate = ConvertTo-SecureString $encodedCertificate -AsPlainText -Force
-
-    Set-AzureKeyVaultSecret $keyVaultName 'certificate' $secureEncodedCertificate 'application/x-pkcs12'
-    Set-AzureKeyVaultCert $keyVaultName 'HelloWorldCert' $wildcardCertificatePath $secureCertificatePassword
+    Set-AzureKeyVaultSecret $keyVaultName 'certificate' $secureEncodedCertificate 'application/x-pkcs12'    
 }

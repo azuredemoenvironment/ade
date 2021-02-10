@@ -139,7 +139,7 @@
             },
             "properties": {
                 "serverFarmId": "[variables('appServicePlanid')]",
-                "httpsOnly": false,
+                "httpsOnly": true,
                 "siteConfig": {
                     "appSettings": [
                         {

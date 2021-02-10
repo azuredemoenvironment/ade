@@ -40,7 +40,6 @@ function Set-InitialArmParameters {
         'overwriteParameterFiles'                           = $overwriteParameterFiles
         'rootDomainName'                                    = $rootDomainName
         'skipConfirmation'                                  = $skipConfirmation
-        'HelloWorldCert'                                    = 'HelloWorldCert'
 
         # Generated Parameters
         'aciStorageAccountName'                             = "sa-$aliasRegion-aciwp".replace('-', '')
@@ -51,6 +50,7 @@ function Set-InitialArmParameters {
         'appGWManagedIdentityName'                          = "uami-$aliasRegion-appgw"
         'applicationGatewayName'                            = "appgw-$aliasRegion-01"
         'applicationGatewayPublicIPAddressName'             = "pip-$aliasRegion-appgw01"
+        'asManagedIdentityName'                             = "uami-$aliasRegion-as"
         'automationAccountName'                             = "aa-$aliasRegion-01"
         'azureActiveDirectoryTenantID'                      = $currentAccount.tenantId
         'azureActiveDirectoryUserID'                        = $adSignedInUser.objectId
@@ -74,8 +74,7 @@ function Set-InitialArmParameters {
         'directoryServicesSubnetNetworkSecurityGroupName'   = "nsg-$aliasRegion-directoryservices"
         'firewallName'                                      = "fw-$aliasRegion-01"
         'firewallPublicIPAddressName'                       = "pip-$aliasRegion-fw01"
-        'ghaSPNName'                                        = "spn-$aliasRegion-gha"
-        'helloWorldManagedIdentityName'                     = "uami-$aliasRegion-helloworld"
+        'ghaSPNName'                                        = "spn-$aliasRegion-gha"        
         'imageResizerAppInsightsName'                       = "appin-$aliasRegion-imageresizer".Replace('-', '')
         'imageResizerFQDN'                                  = "as-$aliasRegion-imgreszr.azurewebsites.net".Replace('-', '')
         'imageResizerFunctionAppName'                       = "fa-$aliasRegion-imgreszr".replace('-', '')

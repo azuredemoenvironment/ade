@@ -6,7 +6,7 @@ function Deploy-AzureIdentity {
     $managedIdentityResourceGroupName = $armParameters.managedIdentityResourceGroupName
     $crManagedIdentityName = $armParameters.crManagedIdentityName
     $appGWManagedIdentityName = $armParameters.appGWManagedIdentityName
-    $helloWorldManagedIdentityName = $armParameters.helloWorldManagedIdentityName
+    $asManagedIdentityName = $armParameters.asManagedIdentityName
     $keyVaultResourceGroupName = $armParameters.keyVaultResourceGroupName
     $keyVaultName = $armParameters.keyVaultName
     $restAPISPNName = $armParameters.restAPISPNName
@@ -27,8 +27,8 @@ function Deploy-AzureIdentity {
     az identity create -g $managedIdentityResourceGroupName -n $armParameters.appGWManagedIdentityName
     Confirm-LastExitCode
 
-    Write-Log "Creating Managed Identity $($armParameters.helloWorldManagedIdentityName)"
-    az identity create -g $managedIdentityResourceGroupName -n $armParameters.helloWorldManagedIdentityName
+    Write-Log "Creating Managed Identity $($armParameters.asManagedIdentityName)"
+    az identity create -g $managedIdentityResourceGroupName -n $armParameters.asManagedIdentityName
     Confirm-LastExitCode
 
     Write-Status "Finished Creating Managed Identities"
@@ -52,14 +52,13 @@ function Deploy-AzureIdentity {
     az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --object-id $appGWManagedIdentitySPNID --secret-permissions get
     Confirm-LastExitCode
 
-    # Added Hello World Identity for use with App Services
-    $hwManagedIdentitySPNID = az identity show -g $managedIdentityResourceGroupName -n $helloWorldManagedIdentityName --query principalId
+    $asManagedIdentitySPNID = az identity show -g $managedIdentityResourceGroupName -n $asManagedIdentityName --query principalId
     Confirm-LastExitCode
 
-    $armParameters['helloWorldManagedIdentitySPNID'] = $hwManagedIdentitySPNID
+    $armParameters['asManagedIdentitySPNID'] = $asManagedIdentitySPNID
 
-    Write-Log "Assigning $hwManagedIdentitySPNID to $keyVaultName Key Vault"
-    az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --object-id $hwManagedIdentitySPNID --certificate-permissions get
+    Write-Log "Assigning $asManagedIdentitySPNID to $keyVaultName Key Vault"
+    az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --object-id $asManagedIdentitySPNID --certificate-permissions get
     Confirm-LastExitCode
 
     Write-Status "Finished Assigning Managed Identities to Key Vault"

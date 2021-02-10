@@ -69,14 +69,14 @@ function Deploy-AzureDemoEnvironment {
     Deploy-ImageResizerAppService $armParameters
     Deploy-HelloWorldAppServiceToPrimaryRegion $armParameters
     Deploy-HelloWorldAppServiceToSecondaryRegion $armParameters
+    Set-AppServiceManagedIdentities $armParameters
     Deploy-SqlToDoAppService $armParameters
     Deploy-AzureTrafficManager $armParameters
     Deploy-AzureApplicationGateway $armParameters
     Deploy-AzureDns $armParameters
     Set-AzureAppServiceHostNames $armParameters
-    Deploy-AzureCognitiveServices $armParameters 
-    Set-AppServiceManagedIdentities $armParameters
-    Set-HelloWorldCert $armParameters
+    Set-AppServiceCertificate $armParameters
+    Deploy-AzureCognitiveServices $armParameters    
 
     Write-ScriptSection "Finished Azure Development Environment Deployments"
 }

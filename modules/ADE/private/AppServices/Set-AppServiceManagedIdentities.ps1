@@ -3,27 +3,23 @@ function Set-AppServiceManagedIdentities {
         [object] $armParameters
     )
 
-    # Get UAMI ID
-    $uamiRG = $armParameters.managedIdentityResourceGroupName
-    $uami = $armParameters.helloWorldManagedIdentityName
+    $managedIdentityResourceGroupName = $armParameters.managedIdentityResourceGroupName
+    $asManagedIdentityName = $armParameters.asManagedIdentityName
 
-    $uamiID = az identity show --name $uami --resource-group $uamiRG --query id --output tsv
-    # Primary Region Hello World, set UAMI to App Service
+    $asManagedIdentityNameID = az identity show --name $asManagedIdentityName --resource-group $managedIdentityResourceGroupName --query id --output tsv
+    Confirm-LastExitCode
+
     Write-Log "Assigning UAMI to Hello World App Service Primary Region"
     $hwWebAppName = $armParameters.primaryRegionHelloWorldWebAppName
-    $hwResourceGroupName = $armParameters.primaryRegionHelloWorldWebAppResourceGroupName
-    
+    $hwResourceGroupName = $armParameters.primaryRegionHelloWorldWebAppResourceGroupName    
 
-    az webapp identity assign -g $hwResourceGroupName -n $hwWebAppName --identities $uamiID
+    az webapp identity assign -g $hwResourceGroupName -n $hwWebAppName --identities $asManagedIdentityNameID
     Confirm-LastExitCode
 
-    # Secondary Region Hello World, set UAMI to App Service
-    Write-Log "Assigning UAMI to Hello World App Service Primary Region"
+    Write-Log "Assigning UAMI to Hello World App Service Secondary Region"
     $hwWebAppNameSecondary = $armParameters.secondaryRegionHelloWorldWebAppName
     $hwResourceGroupNameSecondary = $armParameters.secondaryRegionHelloWorldWebAppResourceGroupName
-    $uami = $armParameters.helloWorldManagedIdentityName
 
-    az webapp identity assign -g $hwResourceGroupNameSecondary -n $hwWebAppNameSecondary --identities $uamiID
-    Confirm-LastExitCode
-    
+    az webapp identity assign -g $hwResourceGroupNameSecondary -n $hwWebAppNameSecondary --identities $asManagedIdentityNameID
+    Confirm-LastExitCode    
 }
