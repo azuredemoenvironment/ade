@@ -67,7 +67,6 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureKubernetesServices $armParameters
     Deploy-AzureKubernetesServicesVote $armParameters
     Deploy-AzureAppServicePlanToPrimaryRegion $armParameters
-    Deploy-AzureAppServicePlanToPrimaryRegionScaleDown $armParameters
     Deploy-AzureAppServicePlanToSecondaryRegion $armParameters
     Deploy-ImageResizerAppService $armParameters
     Deploy-InspectorGadgetAppService $armParameters
@@ -75,6 +74,7 @@ function Deploy-AzureDemoEnvironment {
     Deploy-HelloWorldAppServiceToSecondaryRegion $armParameters
     Deploy-SqlToDoAppService $armParameters
     Deploy-AzureTrafficManager $armParameters
+    Deploy-AzureAppServicePlanToPrimaryRegionScaleDown $armParameters
     Deploy-AzureApplicationGateway $armParameters
     Deploy-AzureDns $armParameters
     Set-AzureAppServiceHostNames $armParameters
