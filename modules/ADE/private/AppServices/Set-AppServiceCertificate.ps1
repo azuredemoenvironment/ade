@@ -4,7 +4,7 @@ function Set-AppServiceCertificate {
     )
 
         $keyVaultName = $armParameters.keyVaultName
-        $certName = 'certificate'
+        $certName = 'pfx-certificate'
         $primaryRegionHelloWorldWebAppResourceGroupName = $armParameters.primaryRegionHelloWorldWebAppResourceGroupName
         $primaryRegionHelloWorldWebAppName = $armParameters.primaryRegionHelloWorldWebAppName
         $secondaryRegionHelloWorldWebAppResourceGroupName = $armParameters.secondaryRegionHelloWorldWebAppResourceGroupName

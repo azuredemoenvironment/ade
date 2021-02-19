@@ -14,7 +14,7 @@ function Deploy-WildcardCertificateToAzureKeyVault {
     $certificatePasswordPlainText = ConvertFrom-SecureString -SecureString $secureCertificatePassword -AsPlainText
 
     # Upload PFX Certificate to Key Vault as a Certificate
-    az keyvault certificate import --vault-name $keyVaultName --name 'certificate' --file $wildcardCertificatePath --password $certificatePasswordPlainText
+    az keyvault certificate import --vault-name $keyVaultName --name 'pfx-certificate' --file $wildcardCertificatePath --password $certificatePasswordPlainText
     Confirm-LastExitCode
     
     # Convert PFX Certificate to Base64 string, and upload to Key Vault as a Secret
