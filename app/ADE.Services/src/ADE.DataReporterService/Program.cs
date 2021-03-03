@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace ADE.DataReporterApi
+namespace ADE.DataReporterService
 {
     public class Program
     {

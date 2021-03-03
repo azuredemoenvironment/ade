@@ -4,7 +4,7 @@ using ADE.DataContracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace ADE.DataReporterApi.Controllers
+namespace ADE.DataReporterService.Controllers
 {
     [ApiController, Route("[controller]")]
     public class ReportsController : ControllerBase

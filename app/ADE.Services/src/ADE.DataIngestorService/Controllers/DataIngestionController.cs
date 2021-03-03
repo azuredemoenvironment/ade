@@ -3,7 +3,7 @@ using ADE.DataContracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace ADE.DataIngestorApi.Controllers
+namespace ADE.DataIngestorService.Controllers
 {
     [ApiController, Route("[controller]")]
     public class DataIngestionController : ControllerBase

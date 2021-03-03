@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
-namespace ADE.DataReporterApi
+namespace ADE.DataReporterService
 {
     public class Startup
     {
