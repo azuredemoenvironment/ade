@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 
 namespace ADE.ApiGateway
@@ -31,6 +29,8 @@ namespace ADE.ApiGateway
 
             app.UseRouting();
 
+            app.UseCors();
+
             // app.UseAuthentication();
             // app.UseAuthorization();
 
@@ -42,6 +42,15 @@ namespace ADE.ApiGateway
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin();
+                    });
+            });
+
             // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             //     .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAdB2C"));
 

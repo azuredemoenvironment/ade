@@ -18,29 +18,24 @@ namespace ADE.DataReporterService.Controllers
         }
 
         [HttpGet]
-        public Task<IEnumerable<UserDataPoint>> GetAsync() => Task.FromResult((IEnumerable<UserDataPoint>) new List<UserDataPoint>()
+        public Task<IEnumerable<UserDataPoint>> GetAsync()
         {
-            new UserDataPoint
+            var mockDataPoints = new List<UserDataPoint>();
+
+            for(var i = 0; i < 100; i++)
             {
-                Content = "Sample 001",
-                CreatedAt = DateTime.UtcNow,
-                DataSource = "MockData",
-                UserId = Guid.NewGuid()
-            },
-            new UserDataPoint
-            {
-                Content = "Sample 002",
-                CreatedAt = DateTime.UtcNow,
-                DataSource = "MockData",
-                UserId = Guid.NewGuid()
-            },
-            new UserDataPoint
-            {
-                Content = "Sample 003",
-                CreatedAt = DateTime.UtcNow,
-                DataSource = "MockData",
-                UserId = Guid.NewGuid()
+                var mockDataPoint = new UserDataPoint
+                {
+                    Id = Guid.NewGuid(),
+                    Content = "Sample " + (i + 1),
+                    CreatedAt = DateTime.UtcNow,
+                    DataSource = "MockData",
+                    UserId = Guid.NewGuid()
+                };
+                mockDataPoints.Add(mockDataPoint);
             }
-        });
+
+            return Task.FromResult((IEnumerable<UserDataPoint>) mockDataPoints);
+        }
     }
 }
