@@ -1,55 +1,33 @@
-import "./App.css";
+import './App.css';
 
-import {
-  useEffect,
-  useState
-} from "react";
+import { ThemeProvider } from 'styled-components';
+
+import UserDataPoints from './components/data/UserDataPoints';
+import Layout from './components/layout/Layout';
+import ThemeProviderTheme from './components/layout/ThemeProviderTheme';
 
 function App() {
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [items, setItems] = useState([]);
-
-  // Note: the empty deps array [] means
-  // this useEffect will run once
-  // similar to componentDidMount()
-  useEffect(() => {
-    fetch("http://localhost:5001/datapoints/")
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setItems(result);
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
-  }, []);
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  } else if (!isLoaded) {
-    return <div>Loading...</div>;
-  } else {
-    return (
-      <table>
-        {items.map((item) => (
-          <tr key={item.id}>
-            <td>{item.id}</td>
-            <td>{item.content}</td>
-            <td>{item.dataSource}</td>
-            <td>{item.userId}</td>
-            <td>{item.createdAt}</td>
-          </tr>
-        ))}
-      </table>
-    );
-  }
+	return (
+		<ThemeProvider theme={ThemeProviderTheme}>
+			<Layout>
+				<h1>Welcome!</h1>
+				<p>
+					The Azure Demo Environment, aka ADE, is a series of PowerShell
+					Scripts, CLI Script, and ARM Templates that automatically generates an
+					environment of Azure Resources and Services to an Azure Subscription.
+					While not every Azure Service is deployed as a part of ADE, it does
+					showcase many of the common, and more often complex, scenarios withing
+					Azure, and it can be used as an example when designing a solution. The
+					Azure Demo Environment is built to be deployed, deallocated,
+					allocated, removed and re-deployed. The deployment and removal
+					processes take approximate two hours. Instructions are provided below.
+					The Azure Demo Environment is an Open Source Project. Contributions
+					are welcome and encouraged!
+				</p>
+				<UserDataPoints />
+			</Layout>
+		</ThemeProvider>
+	);
 }
 
 export default App;

@@ -18,6 +18,7 @@
         "Deallocated",
         "Deallocating",
         "Deallocation",
+        "Ingestor",
         "Kubernetes",
         "deallocate",
         "deallocates"

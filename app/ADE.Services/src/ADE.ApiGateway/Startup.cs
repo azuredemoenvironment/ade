@@ -1,3 +1,4 @@
+using ADE.DataContracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -42,6 +43,9 @@ namespace ADE.ApiGateway
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<ConnectionConfiguration>(Configuration.GetSection(
+                ConnectionConfiguration.APPSETTINGS_ROOT_KEY));
+
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
