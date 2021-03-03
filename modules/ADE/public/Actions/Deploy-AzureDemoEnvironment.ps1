@@ -76,8 +76,8 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureTrafficManager $armParameters
     Deploy-AzureAppServicePlanToPrimaryRegionScaleDown $armParameters
     Deploy-AzureApplicationGateway $armParameters
-    Deploy-AzureDns $armParameters
-    Set-AzureAppServiceHostNames $armParameters
+    Deploy-AzureDns $armParameters    
+    Set-HelloWorldCertificateAndHostName $armParameters
     Deploy-AzureCognitiveServices $armParameters
 
     Write-ScriptSection "Finished Azure Development Environment Deployments"
