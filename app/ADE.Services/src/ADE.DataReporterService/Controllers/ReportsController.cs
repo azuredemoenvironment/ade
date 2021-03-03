@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ADE.DataContracts;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,29 @@ namespace ADE.DataReporterService.Controllers
         }
 
         [HttpGet]
-        public Task<IEnumerable<UserDataPoint>> GetAsync() => Task.FromResult((IEnumerable<UserDataPoint>) new List<UserDataPoint>());
+        public Task<IEnumerable<UserDataPoint>> GetAsync() => Task.FromResult((IEnumerable<UserDataPoint>) new List<UserDataPoint>()
+        {
+            new UserDataPoint
+            {
+                Content = "Sample 001",
+                CreatedAt = DateTime.UtcNow,
+                DataSource = "MockData",
+                UserId = Guid.NewGuid()
+            },
+            new UserDataPoint
+            {
+                Content = "Sample 002",
+                CreatedAt = DateTime.UtcNow,
+                DataSource = "MockData",
+                UserId = Guid.NewGuid()
+            },
+            new UserDataPoint
+            {
+                Content = "Sample 003",
+                CreatedAt = DateTime.UtcNow,
+                DataSource = "MockData",
+                UserId = Guid.NewGuid()
+            }
+        });
     }
 }

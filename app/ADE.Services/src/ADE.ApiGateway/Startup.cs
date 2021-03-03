@@ -31,8 +31,8 @@ namespace ADE.ApiGateway
 
             app.UseRouting();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+            // app.UseAuthentication();
+            // app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
@@ -42,8 +42,8 @@ namespace ADE.ApiGateway
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAdB2C"));
+            // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //     .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAdB2C"));
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

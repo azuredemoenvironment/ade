@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ADE.ApiGateway.Controllers
 {
-    [Authorize, ApiController, Route("[controller]")]
+    [ApiController, Route("[controller]")]
     public class UsersController : ControllerBase
     {
         private readonly ILogger<UsersController> _logger;
