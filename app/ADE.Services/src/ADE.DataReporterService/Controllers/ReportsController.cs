@@ -18,7 +18,7 @@ namespace ADE.DataReporterService.Controllers
         }
 
         [HttpGet]
-        public Task<IEnumerable<UserDataPoint>> GetAsync()
+        public Task<IEnumerable<UserDataPoint>> GetAllAsync()
         {
             var mockDataPoints = new List<UserDataPoint>();
 
@@ -27,7 +27,10 @@ namespace ADE.DataReporterService.Controllers
                 var mockDataPoint = new UserDataPoint
                 {
                     Id = Guid.NewGuid(),
-                    Content = "Sample " + (i + 1),
+                    StringValue = "Sample " + (i + 1),
+                    IntegerValue = i,
+                    DecimalValue = i ^ (4 / 2),
+                    BooleanValue = i % 2 == 0,
                     CreatedAt = DateTime.UtcNow,
                     DataSource = "MockData",
                     UserId = Guid.NewGuid()
