@@ -161,7 +161,7 @@
                                 },
                                 {
                                     "name": "AZURE_STORAGE_KEY",
-                                    "value": "[listKeys(parameters('aciStorageAccountName'),'2017-10-01').keys[0].value]"
+                                    "value": "[listKeys(parameters('aciStorageAccountName'),'2019-04-01').keys[0].value]"
                                 }
                             ],
                             "resources": {
@@ -191,7 +191,7 @@
                                 },
                                 {
                                     "name": "AZURE_STORAGE_KEY",
-                                    "value": "[listKeys(parameters('aciStorageAccountName'),'2017-10-01').keys[0].value]"
+                                    "value": "[listKeys(parameters('aciStorageAccountName'),'2019-04-01').keys[0].value]"
                                 }
                             ],
                             "resources": {
@@ -265,7 +265,7 @@
                     {
                         "azureFile": {
                             "shareName": "mysql-share",
-                            "storageAccountKey": "[listKeys(parameters('aciStorageAccountName'),'2017-10-01').keys[0].value]",
+                            "storageAccountKey": "[listKeys(parameters('aciStorageAccountName'),'2019-04-01').keys[0].value]",
                             "storageAccountName": "[parameters('aciStorageAccountName')]"
                         },
                         "name": "mysqlfile"
@@ -339,7 +339,7 @@
                     {
                         "azureFile": {
                             "shareName": "wordpress-share",
-                            "storageAccountKey": "[listKeys(parameters('aciStorageAccountName'),'2017-10-01').keys[0].value]",
+                            "storageAccountKey": "[listKeys(parameters('aciStorageAccountName'),'2019-04-01').keys[0].value]",
                             "storageAccountName": "[parameters('aciStorageAccountName')]"
                         },
                         "name": "wordpressfile"
