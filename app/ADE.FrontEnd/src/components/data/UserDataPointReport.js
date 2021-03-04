@@ -6,7 +6,7 @@ import {
 import Card from 'react-bootstrap/Card';
 import CardColumns from 'react-bootstrap/CardColumns';
 
-function UserDataPoints() {
+function UserDataPointReport() {
 	const [error, setError] = useState(null);
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [items, setItems] = useState([]);
@@ -40,7 +40,7 @@ function UserDataPoints() {
 
 	return (
 		<div>
-			<h2>User Data Points</h2>
+			<h2>User Data Point Report</h2>
 			<CardColumns>
 				{items.map((item) => (
 					<Card style={{ width: '18rem' }} key={item.id}>
@@ -68,4 +68,4 @@ function UserDataPoints() {
 	);
 }
 
-export default UserDataPoints;
+export default UserDataPointReport;

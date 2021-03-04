@@ -2,7 +2,8 @@ import './App.css';
 
 import { ThemeProvider } from 'styled-components';
 
-import UserDataPoints from './components/data/UserDataPoints';
+import UserDataPointEntry from './components/data/UserDataPointEntry';
+import UserDataPointReport from './components/data/UserDataPointReport';
 import Layout from './components/layout/Layout';
 import ThemeProviderTheme from './components/layout/ThemeProviderTheme';
 
@@ -24,7 +25,8 @@ function App() {
 					The Azure Demo Environment is an Open Source Project. Contributions
 					are welcome and encouraged!
 				</p>
-				<UserDataPoints />
+				<UserDataPointEntry />
+				<UserDataPointReport />
 			</Layout>
 		</ThemeProvider>
 	);
