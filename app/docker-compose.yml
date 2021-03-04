@@ -44,10 +44,9 @@ services:
       dockerfile: ./Dockerfile
       args:
         - BuildConfiguration
+        - CONNECTIONS__APIGATEWAYURI
     expose:
       - "80"
-    environment:
-      - CONNECTIONS__APIGATEWAYURI
   ade_dataingestorservice:
     image: ade-dataingestorservice
     container_name: ade_dataingestorservice

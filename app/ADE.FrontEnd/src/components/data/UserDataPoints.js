@@ -14,7 +14,7 @@ function UserDataPoints() {
 	// this useEffect will run once
 	// similar to componentDidMount()
 	useEffect(() => {
-		fetch('http://localhost:8888/datapoints/')
+		fetch(process.env.REACT_APP_APIGATEWAYURI + '/datapoints/')
 			.then((res) => res.json())
 			.then(
 				(result) => {

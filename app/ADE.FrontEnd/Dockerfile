@@ -16,6 +16,10 @@ EXPOSE 443
 ##################################################################
 FROM base as publish
 
+# Environment Variables that Affect the Build
+ARG CONNECTIONS__APIGATEWAYURI
+ENV REACT_APP_APIGATEWAYURI $CONNECTIONS__APIGATEWAYURI
+
 # Copy package files and npm install
 COPY ./package*.json ./
 RUN npm install
