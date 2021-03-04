@@ -14,7 +14,7 @@ function UserDataPoints() {
 	// this useEffect will run once
 	// similar to componentDidMount()
 	useEffect(() => {
-		fetch('http://localhost:5001/datapoints/')
+		fetch('http://localhost:8888/datapoints/')
 			.then((res) => res.json())
 			.then(
 				(result) => {
