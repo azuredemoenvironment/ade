@@ -3,8 +3,7 @@ import {
 	useState
 } from 'react';
 
-import Card from 'react-bootstrap/Card';
-import CardColumns from 'react-bootstrap/CardColumns';
+import Table from 'react-bootstrap/Table';
 
 function UserDataPointReport() {
 	const [error, setError] = useState(null);
@@ -41,29 +40,32 @@ function UserDataPointReport() {
 	return (
 		<div>
 			<h2>User Data Point Report</h2>
-			<CardColumns>
-				{items.map((item) => (
-					<Card style={{ width: '18rem' }} key={item.id}>
-						<Card.Header>{item.stringValue}</Card.Header>
-						<Card.Body>
-							<Card.Title>{item.id}</Card.Title>
-							<Card.Subtitle className='mb-2 text-muted'>
-								{item.userId}
-							</Card.Subtitle>
-							<Card.Text>
-								<ul>
-									<li>{item.integerValue}</li>
-									<li>{item.stringValue}</li>
-									<li>{item.booleanValue.toString()}</li>
-									<li>{item.decimalValue}</li>
-									<li>{item.dataSource}</li>
-									<li>{item.createdAt}</li>
-								</ul>
-							</Card.Text>
-						</Card.Body>
-					</Card>
-				))}
-			</CardColumns>
+			<Table>
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>User Id</th>
+						<th>String Value</th>
+						<th>Integer Value</th>
+						<th>Decimal Value</th>
+						<th>Boolean Value</th>
+						<th>Data Source</th>
+						<th>Created At</th>
+					</tr>
+				</thead>
+				<tbody>
+					{items.map((item) => (
+						<tr key={item.id}>
+							<td>{item.integerValue}</td>
+							<td>{item.stringValue}</td>
+							<td>{item.booleanValue.toString()}</td>
+							<td>{item.decimalValue}</td>
+							<td>{item.dataSource}</td>
+							<td>{item.createdAt}</td>
+						</tr>
+					))}
+				</tbody>
+			</Table>
 		</div>
 	);
 }

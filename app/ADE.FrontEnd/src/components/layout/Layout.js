@@ -10,7 +10,7 @@ import Header from './Header';
 const StyledContainer = styled(({ isScrolled, showHeader, ...rest }) => (
 	<Container fluid={false} {...rest} />
 ))`
-	margin-top: ${(props) => (props.showHeader ? 0 : '7rem')};
+	margin-top: ${(props) => (props.showHeader ? 0 : '2rem')};
 	padding-left: ${(props) => (props.fluid ? '0' : '1rem')};
 	padding-right: ${(props) => (props.fluid ? '0' : '1rem')};
 `;

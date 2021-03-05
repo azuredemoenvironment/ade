@@ -42,7 +42,9 @@ const theme = {
 	textShadow: '0.1rem 0.1rem 0.3rem #000',
 	boxShadowLight: '0 0.05rem 0.3rem rgba(0, 0, 0, 0.25)',
 	boxShadow: '0 0.05rem 0.3rem rgba(0, 0, 0, 0.5)',
-	boxShadowDark: '0 0.05rem 0.3rem rgba(0, 0, 0, 0.75)'
+	boxShadowDark: '0 0.05rem 0.3rem rgba(0, 0, 0, 0.75)',
+	// Module-Specific
+	siteNavigationBackgroundColor: '#1a1a1f'
 };
 
 // Combined Theme Styles

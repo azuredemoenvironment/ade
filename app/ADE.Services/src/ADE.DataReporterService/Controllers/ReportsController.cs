@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ADE.DataAccess.SqlDatabase;
 using ADE.DataContracts;
@@ -26,7 +27,10 @@ namespace ADE.DataReporterService.Controllers
         {
             // Get Data from Azure SQL
             // TODO: we should filter, not grab all entries
-            var sqlDatabaseDataPoints = await _adeDataContext.UserDataPoints.ToListAsync();
+            var sqlDatabaseDataPoints = await _adeDataContext.UserDataPoints
+                .OrderByDescending(u => u.CreatedAt)
+                .Take(10)
+                .ToListAsync();
 
             return sqlDatabaseDataPoints;
         }

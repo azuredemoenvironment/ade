@@ -1,17 +1,22 @@
+import { useState } from 'react';
+
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import styled from 'styled-components';
 
-const StyledNavbarWrapper = ({ ...rest }) => (
+import { useScrollPosition } from '@n8tb1t/use-scroll-position';
+
+const StyledNavbarWrapper = ({ isScrolled, ...rest }) => (
 	<Navbar expand='lg' fixed='top' variant='dark' {...rest} />
 );
 const StyledNavbar = styled(StyledNavbarWrapper)`
-	background-color: ${(props) => props.theme.grayDark};
+	background-color: ${(props) => props.theme.siteNavigationBackgroundColor};
 	border-bottom: ${(props) => props.theme.borderWidth} solid
 		${(props) => props.theme.grayLight};
 	color: ${(props) => props.theme.white};
 	transition: all 1s ease-out 0s;
+	opacity: ${(props) => (props.isScrolled ? 0.8 : 1)};
 
 	&:hover {
 		opacity: 1;
@@ -72,23 +77,48 @@ const StyledNavbarLink = styled(NavLink)`
 	}
 `;
 
+const StyledHeroBanner = styled.div`
+	background-image: url('./banner.png');
+	background-size: cover;
+	background-position: center center;
+	background-repeat: no-repeat;
+	height: 400px;
+	width: 100%;
+`;
+
 const Header = () => {
+	const [isScrolled, setIsScrolled] = useState(false);
+
+	useScrollPosition(
+		({ prevPos, currPos }) => {
+			const nbc = Math.abs(currPos.y) > 100;
+			setIsScrolled(nbc);
+		},
+		[isScrolled],
+		null,
+		true,
+		600
+	);
+
 	return (
-		<StyledNavbar>
-			<Container>
-				<Navbar.Brand href='/'>Azure Demo Environment</Navbar.Brand>
-				<Navbar.Toggle
-					aria-controls='navbar-toggler'
-					aria-expanded='false'
-					area-label='Toggle Navigation'
-				/>
-				<Navbar.Collapse id='navbar-toggler'>
-					<Nav className='ml-auto'>
-						<StyledNavbarLink href='/'>Home</StyledNavbarLink>
-					</Nav>
-				</Navbar.Collapse>
-			</Container>
-		</StyledNavbar>
+		<div>
+			<StyledNavbar isScrolled={isScrolled}>
+				<Container>
+					<Navbar.Brand href='/'>Azure Demo Environment</Navbar.Brand>
+					<Navbar.Toggle
+						aria-controls='navbar-toggler'
+						aria-expanded='false'
+						area-label='Toggle Navigation'
+					/>
+					{/* <Navbar.Collapse id='navbar-toggler'>
+						<Nav className='ml-auto'>
+							<StyledNavbarLink href='/'>Home</StyledNavbarLink>
+						</Nav>
+					</Navbar.Collapse> */}
+				</Container>
+			</StyledNavbar>
+			<StyledHeroBanner />
+		</div>
 	);
 };
 
