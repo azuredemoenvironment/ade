@@ -27,6 +27,7 @@ WORKDIR /app
 # Shared Libraries
 COPY ./ADE.DataContracts/*.csproj ./ADE.DataContracts/
 COPY ./ADE.DataAccess/*.csproj ./ADE.DataAccess/
+COPY ./ADE.ServiceBase/*.csproj ./ADE.ServiceBase/
 
 # App
 COPY ./ADE.DataIngestorService/*.csproj ./ADE.DataIngestorService/
@@ -42,6 +43,7 @@ WORKDIR /app
 # Shared Libraries
 COPY ./ADE.DataContracts/ ./ADE.DataContracts/
 COPY ./ADE.DataAccess/ ./ADE.DataAccess/
+COPY ./ADE.ServiceBase/ ./ADE.ServiceBase/
 
 # App
 COPY ./ADE.DataIngestorService/ ./ADE.DataIngestorService/
