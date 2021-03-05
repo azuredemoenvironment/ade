@@ -15,8 +15,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ADE.DataContracts\ADE.DataContracts.csproj" />
-      <ProjectReference Include="..\ADE.ServiceBase\ADE.ServiceBase.csproj" />
+        <ProjectReference Include="..\ADE.DataContracts\ADE.DataContracts.csproj" />
+        <ProjectReference Include="..\ADE.ServiceBase\ADE.ServiceBase.csproj" />
     </ItemGroup>
 
     <Target Name="CreateLocalAppSettings" BeforeTargets="BeforeBuild">
