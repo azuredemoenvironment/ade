@@ -359,4 +359,4 @@ MigrationBackup/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio
 
-appSettings.Development.json
+appsettings.Development.json
