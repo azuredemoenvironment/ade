@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.17.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.3" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.3" />
         <PackageReference Include="Microsoft.Identity.Web" Version="1.1.0" />
@@ -15,6 +16,11 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ADE.DataContracts\ADE.DataContracts.csproj" />
+      <ProjectReference Include="..\ADE.ServiceBase\ADE.ServiceBase.csproj" />
     </ItemGroup>
+
+    <Target Name="CreateLocalAppSettings" BeforeTargets="BeforeBuild">
+        <Copy SourceFiles="appSettings.json" DestinationFiles="appSettings.Development.json" Condition="!Exists('appSettings.Development.json')" />
+    </Target>
 
 </Project>

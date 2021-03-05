@@ -1,4 +1,4 @@
-using ADE.DataContracts;
+using ADE.ServiceBase;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +26,7 @@ namespace ADE.ApiGateway
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ADE.ApiGateway v1"));
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -43,8 +43,9 @@ namespace ADE.ApiGateway
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<ConnectionConfiguration>(Configuration.GetSection(
-                ConnectionConfiguration.APPSETTINGS_ROOT_KEY));
+            services.AddAdeConfiguration(Configuration);
+
+            services.AddApplicationInsightsTelemetry();
 
             services.AddCors(options =>
             {
@@ -52,6 +53,8 @@ namespace ADE.ApiGateway
                     builder =>
                     {
                         builder.AllowAnyOrigin();
+                        builder.AllowAnyHeader();
+                        builder.AllowAnyMethod();
                     });
             });
 

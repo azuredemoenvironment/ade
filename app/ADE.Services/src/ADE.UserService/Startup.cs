@@ -1,3 +1,4 @@
+using ADE.ServiceBase;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +27,7 @@ namespace ADE.UserService
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ADE.UserService v1"));
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -41,7 +42,10 @@ namespace ADE.UserService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAdeConfiguration(Configuration);
+            services.AddApplicationInsightsTelemetry();
             services.AddControllers();
+            services.AddDataServices();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo

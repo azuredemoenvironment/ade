@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ADE.DataContracts;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using RestSharp;
-using RestSharp.Authenticators;
 
 namespace ADE.ApiGateway.Controllers
 {
@@ -17,9 +14,9 @@ namespace ADE.ApiGateway.Controllers
 
         private readonly ILogger<DataPointsController> _logger;
 
-        public DataPointsController(IOptions<ConnectionConfiguration> connectionConfiguration, ILogger<DataPointsController> logger)
+        public DataPointsController(ConnectionConfiguration connectionConfiguration, ILogger<DataPointsController> logger)
         {
-            _connectionConfiguration = connectionConfiguration.Value;
+            _connectionConfiguration = connectionConfiguration;
             _logger = logger;
         }
 
@@ -33,6 +30,17 @@ namespace ADE.ApiGateway.Controllers
             var userDataPoints = await client.GetAsync<IEnumerable<UserDataPoint>>(request);
 
             return userDataPoints;
+        }
+
+        [HttpPost]
+        public async Task<IEnumerable<UserDataPoint>> PostAsync([FromBody] UserDataPoint data)
+        {
+            var client = new RestClient(_connectionConfiguration.DataIngestorServiceUri);
+
+            var request = new RestRequest("dataingestion", DataFormat.Json);
+            request.AddJsonBody(data);
+
+            return await client.PostAsync<IEnumerable<UserDataPoint>>(request);
         }
     }
 }
