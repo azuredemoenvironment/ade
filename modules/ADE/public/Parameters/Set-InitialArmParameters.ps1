@@ -83,6 +83,16 @@ function Set-InitialArmParameters {
         'imageResizerpBackupStorageAccountName'             = "sa-$aliasRegion-bkpimgreszr".Replace('-', '')
         'imageResizerWebAppName'                            = "as-$aliasRegion-imgreszr".Replace('-', '')
         'imageResizerWebAppStorageAccountName'              = "sa-$aliasRegion-asimgreszr".Replace('-', '')
+        "inspectorGadgetAppInsightsName"                    = "appin-$aliasRegion-inspectorgadget"
+        "inspectorGadgetAppServicePrivateEndpointName"      = "pe-$aliasRegion-inspectorgadgetappservice"
+        "inspectorGadgetAzureSQLPrivateEndpointName"        = "pe-$aliasRegion-inspectorgadgetazuresql"
+        'inspectorGadgetFQDN'                               = "as-$aliasRegion-inspectorgadget.azurewebsites.net".Replace('-', '')
+        'inspectorGadgetHostName'                           = "inspectorgadget.$rootDomainName".replace('-', '')
+        "inspectorGadgetSqlAdminUserName"                   = $resourceUserName
+        "inspectorGadgetSqlDatabaseName"                    = "sqldb-$aliasRegion-inspectorgadget".replace('-', '')
+        "inspectorGadgetSqlServerName"                      = "sql-$aliasRegion-inspectorgadget".replace('-', '')
+        "inspectorGadgetWafPolicyName"                      = "wafp-$aliasRegion-inspectorgadget"
+        "inspectorGadgetWebAppName"                         = "as-$aliasRegion-inspectorgadget".replace('-', '')
         'internetRouteTableName'                            = "rt-$aliasRegion-internet"
         'jumpboxName'                                       = "vm-jumpbox01"
         'jumpboxNICName'                                    = "nic-$aliasRegion-jumpbox01"
@@ -166,6 +176,7 @@ function Set-InitialArmParameters {
         'developerResourceGroupName'                        = "$primaryRegionResourceGroupNamePrefix-developer"
         'dnsResourceGroupName'                              = "$primaryRegionResourceGroupNamePrefix-dns"
         'imageResizerResourceGroupName'                     = "$primaryRegionResourceGroupNamePrefix-imageresizer"
+        'inspectorGadgetResourceGroupName'                  = "$primaryRegionResourceGroupNamePrefix-inspectorgadget"
         'jumpboxResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-jumpbox"
         'keyVaultResourceGroupName'                         = "$primaryRegionResourceGroupNamePrefix-keyvault"
         'logAnalyticsWorkspaceResourceGroupName'            = "$primaryRegionResourceGroupNamePrefix-loganalytics"
@@ -174,6 +185,7 @@ function Set-InitialArmParameters {
         'ntierResourceGroupName'                            = "$primaryRegionResourceGroupNamePrefix-ntier"
         'primaryRegionAppServicePlanResourceGroupName'      = "$primaryRegionResourceGroupNamePrefix-asp"
         'primaryRegionHelloWorldWebAppResourceGroupName'    = "$primaryRegionResourceGroupNamePrefix-helloworld"
+        'privateDnsZoneResourceGroupName'                   = "$primaryRegionResourceGroupNamePrefix-privatedns"
         'secondaryRegionAppServicePlanResourceGroupName'    = "$secondaryRegionResourceGroupNamePrefix-asp"
         'secondaryRegionHelloWorldWebAppResourceGroupName'  = "$secondaryRegionResourceGroupNamePrefix-helloworld"
         'sqlTodoResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-sqltodo"

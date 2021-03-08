@@ -44,6 +44,7 @@ function Deploy-AzureDns {
         'wordpress'
         'sqltodo'
         'ntier'
+        'inspectorgadget'
     )
 
     $applicationGatewayResourceGroup = $armParameters.applicationGatewayResourceGroupName

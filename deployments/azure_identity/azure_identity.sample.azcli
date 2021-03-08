@@ -1,21 +1,21 @@
-#create user assigned managed identities
-#create resource group
+# create user assigned managed identities
+# create resource group
 $managedIdentityResourceGroupName = 'rg-alias-region-managedidentity'
 $location = 'eastus'
 az group create -n $managedIdentityResourceGroupName -l $location
 
-#create container registry user assigned managed identity
+# create container registry user assigned managed identity
 $managedIdentityResourceGroupName = 'rg-alias-region-managedidentity'
 $crManagedIdentityName = 'uami-alias-region-cr'
 az identity create -g $managedIdentityResourceGroupName -n $crManagedIdentityName
 
-#create application gateway user assigned managed identity
+# create application gateway user assigned managed identity
 $managedIdentityResourceGroupName = 'rg-alias-region-managedidentity'
 $appGWManagedIdentityName = 'uami-alias-region-appgw'
 az identity create -g $managedIdentityResourceGroupName -n $appGWManagedIdentityName
 
-#assign user assigned managed identities to key vault
-#assign container registry user assigned managed identity to key vault
+# assign user assigned managed identities to key vault
+# assign container registry user assigned managed identity to key vault
 $keyVaultResourceGroupName = 'rg-alias-region-keyvault'
 $keyVaultName = 'kv-alias-region-01'
 $managedIdentityResourceGroupName = 'rg-alias-region-managedidentity'
@@ -23,7 +23,7 @@ $crManagedIdentityName = 'uami-alias-region-cr'
 $crManagedIdentitySPNID = az identity show -g $managedIdentityResourceGroupName -n $crManagedIdentityName --query principalId
 az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --object-id $crManagedIdentitySPNID --key-permissions get unwrapKey wrapKey
 
-#assign application gateway user assigned managed identity to key vault
+# assign application gateway user assigned managed identity to key vault
 $keyVaultResourceGroupName = 'rg-alias-region-keyvault'
 $keyVaultName = 'kv-alias-region-01'
 $managedIdentityResourceGroupName = 'rg-alias-region-managedidentity'
@@ -31,8 +31,14 @@ $appGWManagedIdentityName = 'uami-alias-region-appgw'
 $appGWManagedIdentitySPNID = az identity show -g $managedIdentityResourceGroupName -n $appGWManagedIdentityName --query principalId
 az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --object-id $appGWManagedIdentitySPNID --secret-permissions get
 
-#create service principals
-#create rest api service principal
+# assign azure app service service principal to key vault
+$keyVaultResourceGroupName = 'rg-alias-region-keyvault'
+$keyVaultName = 'kv-alias-region-01'
+$appServiceSPN = 'abfa0a7c-a6b6-4736-8310-5855508787cd'
+az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --spn $appServiceSPN --secret-permissions get --certificate-permissions get
+
+# create service principals
+# create rest api service principal
 $keyVaultResourceGroupName='rg-alias-region-keyvault'
 $keyVaultName='kv-alias-region-01'
 $restAPISPNName = 'spn-alias-region-restapi'
@@ -49,7 +55,7 @@ echo "$restAPISPNAppID"
 echo "$restAPISPNPassword"
 echo "$restAPISPNObjectID"
 
-#create github actions servie principal
+# create github actions servie principal
 $keyVaultResourceGroupName='rg-alias-region-keyvault'
 $keyVaultName='kv-alias-region-01'
 $ghaSPNName = 'spn-alias-region-gha'
@@ -66,7 +72,7 @@ echo "$ghaSPNAppID"
 echo "$ghaSPNPassword"
 echo "$ghaSPNObjectID"
 
-#create container registry service principal
+# create container registry service principal
 $keyVaultResourceGroupName='rg-alias-region-keyvault'
 $keyVaultName='kv-alias-region-01'
 $crSPNName='spn-alias-region-cr'

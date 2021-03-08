@@ -11,8 +11,6 @@ processes take approximate two hours. Instructions are provided below. The Azure
 Demo Environment is an Open Source Project. Contributions are welcome and
 encouraged!
 
-[![Architecture Diagram of ADE](./assets/azure_demo_environment_1_0.jpg)](./assets/azure_demo_environment_1_0.jpg)
-
 ## Prerequisites
 
 To deploy, manage, and remove the Azure Demo Environment, the following
@@ -360,9 +358,10 @@ The links below detail each deployment including all services, and dependencies.
 - [Azure Networking](./deployments/azure_networking/azure_networking.md)
 - [Azure VPN Gateway](./deployments/azure_vpn_gateway/azure_vpn_gateway.md)
 - [Azure VNET Peering](./deployments/azure_vnet_peering/azure_vnet_peering.md)
-- [Azure Firewall](./deployments/azure_firewall/azure_firewall.md)
 - [Azure Storage Account VM Diagnostics](./deployments/azure_storage_account_vm_diagnostics/azure_storage_account_vm_diagnostics.md)
 - [Azure NSG FLow Logs](./deployments/azure_nsg_flow_logs/azure_nsg_flow_logs.md)
+- [Azure Firewall](./deployments/azure_firewall/azure_firewall.md)
+- [Azure Private DNS](deployments/azure_private_dns/azure_private_dns.md)
 - [Azure Bastion](./deployments/azure_bastion/azure_bastion/azure_bastion.md)
 - [Azure Virtual Machine Jumpbox](./deployments/azure_virtual_machine_jumpbox/azure_virtual_machine_jumpbox.md)
 - [Azure Virtual Machine Developer](./deployments/azure_virtual_machine_developer/azure_virtual_machine_developer.md)
@@ -377,6 +376,7 @@ The links below detail each deployment including all services, and dependencies.
 - [Azure App Service Plan Primary Region](./deployments/azure_app_service_plan_primary_region/azure_app_service_plan_primary_region.md)
 - [Azure App Service Plan Secondary Region](./deployments/azure_app_service_plan_secondary_region/azure_app_service_plan_secondary_region.md)
 - [Azure App Service Image Resizer](./deployments/azure_app_service_imageresizer/azure_app_service_imageresizer.md)
+- [Azure App Service Inspector Gadget](deployments/azure_private_link_inspectorgadget/azure_private_link_inspectorgadget.md)
 - [Azure App Service Hello World Primary Region](./deployments/azure_app_service_helloworld_primary_region/azure_app_service_helloworld_primary_region.md)
 - [Azure App Service Hello World Secondary Region](./deployments/azure_app_service_helloworld_secondary_region/azure_app_service_helloworld_secondary_region.md)
 - [Azure SQL ToDo](./deployments/azure_sql_todo/azure_sql_todo.md)

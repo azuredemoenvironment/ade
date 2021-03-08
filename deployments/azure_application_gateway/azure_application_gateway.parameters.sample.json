@@ -5,6 +5,9 @@
         "applicationGatewayPublicIPAddressName":{
             "value": "@@applicationGatewayPublicIPAddressName@@"
         },
+        "inspectorGadgetWafPolicyName":{
+            "value": "@@inspectorGadgetWafPolicyName@@"
+        },
         "applicationGatewayName":{
             "value": "@@applicationGatewayName@@"
         },
@@ -33,6 +36,12 @@
         },
         "imageResizerHostName":{
             "value": "@@imageResizerHostName@@"
+        },
+        "inspectorGadgetFQDN":{
+            "value": "@@inspectorGadgetFQDN@@"
+        },
+        "inspectorGadgetHostName":{
+            "value": "@@inspectorGadgetHostName@@"
         },
         "nTierHostName":{
             "value": "@@nTierHostName@@"

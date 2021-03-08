@@ -47,6 +47,10 @@ function Deploy-AzureIdentity {
     az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --object-id $appGWManagedIdentitySPNID --secret-permissions get
     Confirm-LastExitCode
 
+    Write-Log "Assigning 'Microsoft Azure App Service System Assigned Identity' to $keyVaultName Key Vault"
+    az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --spn abfa0a7c-a6b6-4736-8310-5855508787cd --secret-permissions get --certificate-permissions get
+    Confirm-LastExitCode
+
     Write-Status "Finished Assigning Managed Identities to Key Vault"
 
     Write-Status "Creating Service Principals"
