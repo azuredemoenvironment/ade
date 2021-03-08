@@ -33,14 +33,14 @@ namespace ADE.ApiGateway.Controllers
         }
 
         [HttpPost]
-        public async Task<IEnumerable<UserDataPoint>> PostAsync([FromBody] UserDataPoint data)
+        public async Task<UserDataPoint> PostAsync([FromBody] UserDataPoint data)
         {
             var client = new RestClient(_connectionConfiguration.DataIngestorServiceUri);
 
             var request = new RestRequest("dataingestion", DataFormat.Json);
             request.AddJsonBody(data);
 
-            return await client.PostAsync<IEnumerable<UserDataPoint>>(request);
+            return await client.PostAsync<UserDataPoint>(request);
         }
     }
 }

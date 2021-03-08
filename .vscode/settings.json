@@ -29,4 +29,7 @@
         "dockerfile",
         "powershell"
     ],
+    "files.watcherExclude": {
+        "**/target": true
+    },
 }

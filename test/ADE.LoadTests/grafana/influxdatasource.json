@@ -1,0 +1,20 @@
+{
+    "id": 1,
+    "orgId": 1,
+    "name": "InfluxDB",
+    "type": "influxdb",
+    "typeLogoUrl": "public/app/plugins/datasource/influxdb/img/influxdb_logo.svg",
+    "access": "proxy",
+    "url": "http://influxdb:8086",
+    "password": "",
+    "user": "",
+    "database": "graphite",
+    "basicAuth": false,
+    "basicAuthUser": "",
+    "basicAuthPassword": "",
+    "withCredentials": false,
+    "isDefault": true,
+    "jsonData": {
+    },
+    "secureJsonFields": null
+}

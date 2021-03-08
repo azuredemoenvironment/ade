@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+  ade_loadtesting_gatling:
+    image: ade_loadtesting_gatling
+    container_name: ade_loadtesting_gatling
+    build:
+      context: ./gatling
+      dockerfile: ./Dockerfile
+    network_mode: host
+    depends_on:
+      - ade_loadtesting_grafana
+    entrypoint:
+      - gatling.sh
+    environment:
+      - JAVA_OPTS=-Dusers=10 -Djsse.enableSNIExtension=false
+    volumes:
+      - ./gatling/conf:/opt/gatling/conf:cached
+      - ./gatling/results:/opt/gatling/results
+      - ./gatling/simulations:/opt/gatling/user-files/simulations:cached
+      - ./gatling/data:/opt/gatling/user-files/data:cached
+  ade_loadtesting_influxdb:
+    image: ade_loadtesting_influxdb
+    container_name: influxdb
+    build:
+      context: ./influxdb
+      dockerfile: ./Dockerfile
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+      - "2003:2003"
+  ade_loadtesting_grafana:
+    image: ade_loadtesting_grafana
+    container_name: grafana
+    build:
+      context: ./grafana
+      dockerfile: ./Dockerfile
+    ports:
+      - "3000:3000"

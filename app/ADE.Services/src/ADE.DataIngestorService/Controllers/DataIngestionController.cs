@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using ADE.DataAccess.SqlDatabase;
 using ADE.DataContracts;
@@ -14,9 +13,9 @@ namespace ADE.DataIngestorService.Controllers
     {
         private readonly AdeDataContext _adeDataContext;
 
-        private readonly TelemetryClient _telemetry;
-
         private readonly ILogger<DataIngestionController> _logger;
+
+        private readonly TelemetryClient _telemetry;
 
         public DataIngestionController(AdeDataContext adeDataContext, TelemetryClient telemetry, ILogger<DataIngestionController> logger)
         {
@@ -26,18 +25,20 @@ namespace ADE.DataIngestorService.Controllers
         }
 
         [HttpPost]
-        public async Task<int> PostAsync([FromBody] UserDataPoint data)
+        public async Task<UserDataPoint> PostAsync([FromBody] UserDataPoint data)
         {
             // TODO: Sanitize, append user info
             data.UserId = Guid.NewGuid();
             data.Id = Guid.NewGuid();
             data.CreatedAt = DateTime.UtcNow;
             data.DataSource = "Azure SQL Database";
-            
+
             _telemetry.TrackEvent("Data Ingestion", data.ToDictionary());
 
             await _adeDataContext.UserDataPoints.AddAsync(data);
-            return await _adeDataContext.SaveChangesAsync();
+            await _adeDataContext.SaveChangesAsync();
+
+            return data;
         }
     }
 }
