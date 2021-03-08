@@ -4,9 +4,10 @@ package ade
 import scala.concurrent.duration._
 
 import io.gatling.core.Predef._
+import io.gatling.core.structure._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
-import io.gatling.core.structure._
+import scala.util.Random
 
 class AdeSimulation extends Simulation {
   // User Agents
@@ -33,42 +34,49 @@ class AdeSimulation extends Simulation {
   val webBackEndHeaders  = baseHeaders + ("Host" -> webBackEndDomain)
   val webBackEndProtocol = http.baseUrl(webBackEndDomain)
 
+  // Value Generation
+  def decimalValue() = Random.nextInt(Integer.MAX_VALUE)
+  def integerValue() = Random.nextInt(Integer.MAX_VALUE)
+  def booleanValue() = Random.nextInt(Integer.MAX_VALUE) % 2
+  val wordListFeeder = csv("wordlist.txt").eager.random
+
+  // Scenario Steps
+  val navigateToHomePage = http("HomePage")
+    .get(webFrontEndBaseUrl)
+    .headers(webFrontEndHeaders)
+    .check(status.is(200))
+
+  val postDataToApi = http("DataPointsPost")
+    .post(webBackEndBaseUrl + "DataPoints")
+    .headers(webBackEndHeaders)
+    .body(
+      StringBody(
+        // """{ "booleanValue": ${booleanValue()}, "decimalValue": ${decimalValue()}, "integerValue": ${integerValue()}, "stringValue": "${Word}"}"""
+        """{ "booleanValue": false, "decimalValue": 1, "integerValue": 2, "stringValue": "${Word}"}"""
+      )
+    )
+    .asJson
+    .check(status.is(200));
+
+  val getDataFromApi = http("DataPointsGet")
+    .get(webBackEndBaseUrl + "DataPoints")
+    .headers(webBackEndHeaders)
+    .check(status.is(200))
+
+  // Build Scenario
   val scn = scenario("AdeSimulation")
-    // Navigate to Home Page
-    .exec(
-      http("HomePage")
-        .get(webFrontEndBaseUrl)
-        .headers(webFrontEndHeaders)
-        .check(status.is(200))
-    )
-    // Post Data to Data Entry
-    .exec(
-      http("DataPointsPost")
-        .post(webBackEndBaseUrl + "DataPoints")
-        .headers(webBackEndHeaders)
-        .body(
-          StringBody(
-            """{ "booleanValue": true, "createdAt": "2021-03-08T15:24:34.627Z", "dataSource": "string", "decimalValue": 0, "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6", "integerValue": 0, "stringValue": "string", "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"}"""
-          )
-        )
-        .asJson
-        .check(status.is(200))
-    )
-    // Get Data
-    .exec(
-      http("DataPointsGet")
-        .get(webBackEndBaseUrl + "DataPoints")
-        .headers(webBackEndHeaders)
-        .check(status.is(200))
-    )
+    .exec(navigateToHomePage)
+    .feed(wordListFeeder)
+    .exec(postDataToApi)
+    .exec(getDataFromApi)
 
   // https://gatling.io/docs/current/general/simulation_setup/
   setUp(
     scn
       .inject(
-        // atOnceUsers(5),
-        // rampUsersPerSec(10).to(100).during(2.minutes)
-        atOnceUsers(1)
+        atOnceUsers(5),
+        rampUsersPerSec(10).to(100).during(10.minutes)
+        // atOnceUsers(1)
       )
       .protocols(webFrontEndProtocol)
   ).assertions(

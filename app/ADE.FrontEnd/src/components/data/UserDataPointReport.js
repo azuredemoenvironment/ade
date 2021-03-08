@@ -56,10 +56,12 @@ function UserDataPointReport() {
 				<tbody>
 					{items.map((item) => (
 						<tr key={item.id}>
-							<td>{item.integerValue}</td>
+							<td>{item.id}</td>
+							<td>{item.userId}</td>
 							<td>{item.stringValue}</td>
-							<td>{item.booleanValue.toString()}</td>
+							<td>{item.integerValue}</td>
 							<td>{item.decimalValue}</td>
+							<td>{item.booleanValue.toString()}</td>
 							<td>{item.dataSource}</td>
 							<td>{item.createdAt}</td>
 						</tr>
