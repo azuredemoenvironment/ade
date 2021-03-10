@@ -75,7 +75,7 @@ services:
       - CONNECTIONS__SQLSERVERCONNECTIONSTRING
       - CONNECTIONS__USERSERVICEURI
   ade_userservice:
-    image: ade-ade_userservice
+    image: ade-userservice
     container_name: ade_userservice
     build:
       context: ./ADE.Services/src/

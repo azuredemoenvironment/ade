@@ -47,38 +47,47 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
     Deploy-AzureIdentity $armParameters
     Deploy-AzureNetworking $armParameters    
-    Deploy-AzureVpnGateway $armParameters
-    Deploy-VnetPeering $armParameters
-    Deploy-AzureStorageAccountVmDiagnostics $armParameters
-    Deploy-AzureNsgFlowLogs $armParameters
-    Deploy-AzureFirewall $armParameters
-    Deploy-AzurePrivateDns $armParameters
-    Deploy-StorageFirewallRules $armParameters
-    Deploy-AzureBastion $armParameters
-    Deploy-AzureVirtualMachineJumpbox $armParameters
-    Deploy-AzureVirtualMachineDeveloper $armParameters
-    Deploy-AzureVirtualMachineWindows10Client $armParameters
-    Deploy-AzureVirtualMachineNTier $armParameters
-    Deploy-AzureVirtualMachineScaleSets $armParameters
-    Deploy-AzureAlerts $armParameters
-    Deploy-AzureContainerRegistry $armParameters
-    Deploy-DockerImagesToAzureContainerRegistry $armParameters
-    Deploy-AzureContainerInstancesWordPress $armParameters
-    Deploy-AzureKubernetesServices $armParameters
-    Deploy-AzureKubernetesServicesVote $armParameters
-    Deploy-AzureAppServicePlanToPrimaryRegion $armParameters
-    Deploy-AzureAppServicePlanToSecondaryRegion $armParameters
-    Deploy-ImageResizerAppService $armParameters
-    Deploy-InspectorGadgetAppService $armParameters
-    Deploy-HelloWorldAppServiceToPrimaryRegion $armParameters
-    Deploy-HelloWorldAppServiceToSecondaryRegion $armParameters
-    Deploy-SqlToDoAppService $armParameters
-    Deploy-AzureTrafficManager $armParameters
-    Deploy-AzureAppServicePlanToPrimaryRegionScaleDown $armParameters
-    Deploy-AzureApplicationGateway $armParameters
-    Deploy-AzureDns $armParameters
-    Set-AzureAppServiceHostNames $armParameters
-    Deploy-AzureCognitiveServices $armParameters
+    # Deploy-AzureVpnGateway $armParameters
+    # Deploy-VnetPeering $armParameters
+    # Deploy-AzureStorageAccountVmDiagnostics $armParameters
+    # Deploy-AzureNsgFlowLogs $armParameters
+    # Deploy-AzureFirewall $armParameters
+    # Deploy-AzurePrivateDns $armParameters
+    # Deploy-StorageFirewallRules $armParameters
+    # Deploy-AzureBastion $armParameters
+    # Deploy-AzureVirtualMachineJumpbox $armParameters
+    # Deploy-AzureVirtualMachineDeveloper $armParameters
+    # Deploy-AzureVirtualMachineWindows10Client $armParameters
+    # Deploy-AzureVirtualMachineNTier $armParameters
+    # Deploy-AzureVirtualMachineScaleSets $armParameters
+    # Deploy-AzureAlerts $armParameters
+    # Deploy-AzureContainerRegistry $armParameters
+    # Deploy-DockerImagesToAzureContainerRegistry $armParameters
+    # Deploy-AzureContainerInstancesWordPress $armParameters
+    # Deploy-AzureKubernetesServices $armParameters
+    # Deploy-AzureKubernetesServicesVote $armParameters
+    # Deploy-AzureAppServicePlanToPrimaryRegion $armParameters
+    # Deploy-AzureAppServicePlanToSecondaryRegion $armParameters
+    # Deploy-ImageResizerAppService $armParameters
+    # Deploy-InspectorGadgetAppService $armParameters
+    # Deploy-HelloWorldAppServiceToPrimaryRegion $armParameters
+    # Deploy-HelloWorldAppServiceToSecondaryRegion $armParameters
+    # Deploy-SqlToDoAppService $armParameters
+    # Deploy-AzureTrafficManager $armParameters
+    # Deploy-AzureAppServicePlanToPrimaryRegionScaleDown $armParameters
+    # Deploy-AzureApplicationGateway $armParameters
+    # Deploy-AzureDns $armParameters
+    # Set-AzureAppServiceHostNames $armParameters
+    # Deploy-AzureCognitiveServices $armParameters
 
-    Write-ScriptSection "Finished Azure Development Environment Deployments"
+    # Stubbing out the upcoming new ADE App Infrastructure Commands
+    # Deploy-CoreServices
+    # Deploy-DataServices
+    # Deploy-AppContainers
+    # Deploy-VirtualMachineApp
+    # Deploy-AppServicesApp
+    # Deploy-AksApp
+    # Deploy-WireUp
+
+    Write-ScriptSection "Finished Azure Demo Environment Deployments"
 }
