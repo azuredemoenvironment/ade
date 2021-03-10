@@ -23,6 +23,8 @@ services:
     build:
       context: ./redis
       dockerfile: ./Dockerfile
+    ports:
+      - "6379:6379"
   ade_loadtesting_influxdb:
     image: ade_loadtesting_influxdb
     container_name: influxdb

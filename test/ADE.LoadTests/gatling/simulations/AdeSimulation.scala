@@ -7,6 +7,7 @@ import io.gatling.core.Predef._
 import io.gatling.core.structure._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
+import io.gatling.redis.Predef._
 import com.redis._
 
 class AdeSimulation extends Simulation {
@@ -35,8 +36,8 @@ class AdeSimulation extends Simulation {
   val webBackEndProtocol = http.baseUrl(webBackEndDomain)
 
   // Value Generation
-  val redisPool      = new RedisClientPool("redis", 6379)
-  val wordListFeeder = redisFeeder(redisPool, "data")
+  val redisPool      = new RedisClientPool("localhost", 6379)
+  val wordListFeeder = redisFeeder(redisPool, "DATA")
 
   // Scenario Steps
   val navigateToHomePage = http("HomePage")
@@ -71,9 +72,9 @@ class AdeSimulation extends Simulation {
   setUp(
     scn
       .inject(
-        atOnceUsers(5),
-        rampUsersPerSec(10).to(100).during(10.minutes)
-        // atOnceUsers(1)
+        // atOnceUsers(5),
+        // rampUsersPerSec(10).to(100).during(10.minutes)
+        atOnceUsers(1)
       )
       .protocols(webFrontEndProtocol)
   ).assertions(
