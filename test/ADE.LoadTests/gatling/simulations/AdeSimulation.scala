@@ -7,7 +7,7 @@ import io.gatling.core.Predef._
 import io.gatling.core.structure._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
-import scala.util.Random
+import com.redis._
 
 class AdeSimulation extends Simulation {
   // User Agents
@@ -35,10 +35,8 @@ class AdeSimulation extends Simulation {
   val webBackEndProtocol = http.baseUrl(webBackEndDomain)
 
   // Value Generation
-  def decimalValue() = Random.nextInt(Integer.MAX_VALUE)
-  def integerValue() = Random.nextInt(Integer.MAX_VALUE)
-  def booleanValue() = Random.nextInt(Integer.MAX_VALUE) % 2
-  val wordListFeeder = csv("wordlist.txt").eager.random
+  val redisPool      = new RedisClientPool("redis", 6379)
+  val wordListFeeder = redisFeeder(redisPool, "data")
 
   // Scenario Steps
   val navigateToHomePage = http("HomePage")
@@ -51,8 +49,7 @@ class AdeSimulation extends Simulation {
     .headers(webBackEndHeaders)
     .body(
       StringBody(
-        // """{ "booleanValue": ${booleanValue()}, "decimalValue": ${decimalValue()}, "integerValue": ${integerValue()}, "stringValue": "${Word}"}"""
-        """{ "booleanValue": false, "decimalValue": 1, "integerValue": 2, "stringValue": "${Word}"}"""
+        """{ "booleanValue": ${verified}, "decimalValue": ${overall}, "integerValue": ${unixReviewTime}, "stringValue": "${reviewerName}"}"""
       )
     )
     .asJson

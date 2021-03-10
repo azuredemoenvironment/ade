@@ -26,10 +26,6 @@ WORKDIR  /opt/gatling
 # set directories below to be mountable from host
 VOLUME ["/opt/gatling/conf", "/opt/gatling/results", "/opt/gatling/user-files/simulations/", "/opt/gatling/user-files/data/"]
 
-# Download Data (Word Lists, Etc)
-RUN wget -q -O /opt/gatling/user-files/resources/wordlist.txt https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt \
-    && sed -i '1 i Word' /opt/gatling/user-files/resources/wordlist.txt
-
 # set environment variables
 ENV PATH /opt/gatling/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV GATLING_HOME /opt/gatling

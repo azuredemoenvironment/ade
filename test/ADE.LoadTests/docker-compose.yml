@@ -10,8 +10,6 @@ services:
     network_mode: host
     depends_on:
       - ade_loadtesting_grafana
-    entrypoint:
-      - gatling.sh
     environment:
       - JAVA_OPTS=-Dusers=10 -Djsse.enableSNIExtension=false
     volumes:
@@ -19,6 +17,12 @@ services:
       - ./gatling/results:/opt/gatling/results
       - ./gatling/simulations:/opt/gatling/user-files/simulations:cached
       - ./gatling/data:/opt/gatling/user-files/data:cached
+  ade_loadtesting_redis:
+    image: ade_loadtesting_redis
+    container_name: redis
+    build:
+      context: ./redis
+      dockerfile: ./Dockerfile
   ade_loadtesting_influxdb:
     image: ade_loadtesting_influxdb
     container_name: influxdb
