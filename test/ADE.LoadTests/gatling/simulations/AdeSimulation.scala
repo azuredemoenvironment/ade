@@ -13,9 +13,13 @@ import scala.util.parsing.json.JSON
 
 class AdeSimulation extends Simulation {
   // Environment Variables
+  val webFrontEndDomain         = System.getProperty("webFrontEndDomain", "localhost:8080")
+  val webBackEndDomain          = System.getProperty("webBackEndDomain", "localhost:8888")
+  val redisHost                 = System.getProperty("redisHost", "localhost")
+  val redisPort                 = Integer.getInteger("redisPort", 6379)
   val usersPerSecond: Double    = System.getProperty("usersPerSecond", "10").toDouble
   val maxUsersPerSecond: Double = System.getProperty("maxUsersPerSecond", "200").toDouble
-  val overMinutes               = Integer.getInteger("overMinutes", 10)
+  val overMinutes: Integer      = Integer.getInteger("overMinutes", 10)
 
   // User Agents
   var userAgentString = "Gatling/3.5.1 (ADE.LoadTests)"
@@ -31,18 +35,16 @@ class AdeSimulation extends Simulation {
   )
 
   // Test Run Configuration TODO: inject from Environment Variables
-  val webFrontEndDomain   = "localhost:8080"
   val webFrontEndBaseUrl  = "http://" + webFrontEndDomain + "/"
   val webFrontEndHeaders  = baseHeaders + ("Host" -> webFrontEndDomain)
   val webFrontEndProtocol = http.baseUrl(webFrontEndDomain)
 
-  val webBackEndDomain   = "localhost:8888"
   val webBackEndBaseUrl  = "http://" + webBackEndDomain + "/"
   val webBackEndHeaders  = baseHeaders + ("Host" -> webBackEndDomain)
   val webBackEndProtocol = http.baseUrl(webBackEndDomain)
 
   // Value Generation
-  val redisPool      = new RedisClientPool("localhost", 6379)
+  val redisPool      = new RedisClientPool(redisHost, redisPort)
   val wordListFeeder = redisFeeder(redisPool, "DATA")
 
   // Scenario Steps

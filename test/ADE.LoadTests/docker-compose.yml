@@ -11,7 +11,7 @@ services:
     depends_on:
       - ade_loadtesting_grafana
     environment:
-      - JAVA_OPTS=-DusersPerSecond=${USERS_PER_SECOND} -DmaxUsersPerSecond=${MAX_USERS_PER_SECOND} -DoverMinutes=${OVER_MINUTES} -Djsse.enableSNIExtension=false
+      - JAVA_OPTS=-DwebFrontEndDomain=${WEB_FRONTEND_DOMAIN} -DwebBackEndDomain=${WEB_BACKEND_DOMAIN} -DredisHost=${REDIS_HOST} -DredisPort=${REDIS_PORT} -DusersPerSecond=${USERS_PER_SECOND} -DmaxUsersPerSecond=${MAX_USERS_PER_SECOND} -DoverMinutes=${OVER_MINUTES} -Djsse.enableSNIExtension=false
     volumes:
       - ./gatling/conf:/opt/gatling/conf:cached
       - ./gatling/results:/opt/gatling/results
