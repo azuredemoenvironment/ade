@@ -12,6 +12,11 @@ import io.gatling.redis.Predef._
 import scala.util.parsing.json.JSON
 
 class AdeSimulation extends Simulation {
+  // Environment Variables
+  val usersPerSecond: Double    = System.getProperty("usersPerSecond", "10").toDouble
+  val maxUsersPerSecond: Double = System.getProperty("maxUsersPerSecond", "200").toDouble
+  val overMinutes               = Integer.getInteger("overMinutes", 10)
+
   // User Agents
   var userAgentString = "Gatling/3.5.1 (ADE.LoadTests)"
 
@@ -84,8 +89,7 @@ class AdeSimulation extends Simulation {
   setUp(
     scn
       .inject(
-        atOnceUsers(5),
-        rampUsersPerSec(10).to(100).during(10.minutes)
+        rampUsersPerSec(usersPerSecond).to(maxUsersPerSecond).during(overMinutes.minutes)
       )
       .protocols(webFrontEndProtocol)
   ).assertions(

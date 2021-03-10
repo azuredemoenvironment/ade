@@ -1,2 +1,3 @@
 .metals
 gatling/results
+.env
