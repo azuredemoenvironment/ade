@@ -15,7 +15,6 @@ gzip -d $DOWNLOADED_FILE.gz
 
 echo Sanitizing Downloaded Set
 
-
 # Sanitize Quotes
 sed -i 's/\"/\\\"/g' $DOWNLOADED_FILE
 

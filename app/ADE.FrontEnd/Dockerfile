@@ -39,5 +39,7 @@ FROM base AS final
 # Copy artifacts from the previous stage into this stage
 COPY --from=publish /app/build ./
 
+# TODO: add a script that starts the http server, but first updates the configured connection endpoints
+
 # Setting the executable that will run in the lifetime of this container
 ENTRYPOINT ["http-server", "./", "-p", "80"]
