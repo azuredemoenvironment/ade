@@ -3,12 +3,13 @@ package ade
 
 import scala.concurrent.duration._
 
+import com.redis._
 import io.gatling.core.Predef._
 import io.gatling.core.structure._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 import io.gatling.redis.Predef._
-import com.redis._
+import scala.util.parsing.json.JSON
 
 class AdeSimulation extends Simulation {
   // User Agents
@@ -50,7 +51,7 @@ class AdeSimulation extends Simulation {
     .headers(webBackEndHeaders)
     .body(
       StringBody(
-        """{ "booleanValue": ${verified}, "decimalValue": ${overall}, "integerValue": ${unixReviewTime}, "stringValue": "${reviewerName}"}"""
+        """{ "booleanValue": ${verified}, "decimalValue": ${overall}, "integerValue": 1, "stringValue": "${reviewerName}"}"""
       )
     )
     .asJson
@@ -65,6 +66,17 @@ class AdeSimulation extends Simulation {
   val scn = scenario("AdeSimulation")
     .exec(navigateToHomePage)
     .feed(wordListFeeder)
+    .exec({ session =>
+      // Pull the "DATA" attribute that came from redis and convert it to JSON
+      val data              = session("DATA").as[String]
+      val json: Option[Any] = JSON.parseFull(data)
+
+      // Next convert that JSON into a Map
+      val map: Map[String, Any] = json.get.asInstanceOf[Map[String, Any]]
+
+      // Remove the original DATA attribute and assign the map values to the session
+      session.remove("DATA").setAll(map)
+    })
     .exec(postDataToApi)
     .exec(getDataFromApi)
 
@@ -72,9 +84,8 @@ class AdeSimulation extends Simulation {
   setUp(
     scn
       .inject(
-        // atOnceUsers(5),
-        // rampUsersPerSec(10).to(100).during(10.minutes)
-        atOnceUsers(1)
+        atOnceUsers(5),
+        rampUsersPerSec(10).to(100).during(10.minutes)
       )
       .protocols(webFrontEndProtocol)
   ).assertions(
