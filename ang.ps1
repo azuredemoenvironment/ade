@@ -12,7 +12,9 @@ param (
     [Parameter(Position = 5, mandatory = $false)]
     [string]$number,
     [Parameter(Position = 6, mandatory = $false)]
-    [string]$format
+    [string]$format,
+    [Parameter(Position = 7, mandatory = $false)]
+    [switch]$shortRegion
 )
 
 # We want to stop if *any* error occurs
@@ -218,11 +220,79 @@ $tokenType = switch ($resourceType) {
 $tokenWorkload = $workload
 
 # Determine Region
-$tokenRegion = switch ($region) {
-    'eastus' { 'eus' }
-    'eastus2' { 'eus2' }
-    'westus' { 'wus' }
-    Default {}
+if ($shortRegion) {
+    # regions retrieved with the following query, shortcodes are custom:
+    # az account list-locations --query "sort_by([].{DisplayName:displayName, Name:name}, &DisplayName)" --output table
+    $tokenRegion = switch ($region) {
+        'asia' { 'as' }
+        'asiapacific' { 'apac' }
+        'australia' { 'aus' }
+        'australiacentral' { 'ausc' }
+        'australiacentral2' { 'ausc2' }
+        'australiaeast' { 'ause' }
+        'australiasoutheast' { 'ausse' }
+        'brazil' { 'bra' }
+        'brazilsouth' { 'bras' }
+        'brazilsoutheast' { 'brase' }
+        'canada' { 'can' }
+        'canadacentral' { 'canc' }
+        'canadaeast' { 'cane' }
+        'centralindia' { 'cin' }
+        'centralus' { 'cus' }
+        'centralusstage' { 'cuss' }
+        'centraluseuap' { 'cusu' }
+        'eastasia' { 'eas' }
+        'eastasiastage' { 'eass' }
+        'eastus' { 'eus' }
+        'eastusstage' { 'euss' }
+        'eastus2' { 'eus2' }
+        'eastus2stage' { 'eus2s' }
+        'eastus2euap' { 'eus2su' }
+        'europe' { 'eur' }
+        'francecentral' { 'frc' }
+        'francesouth' { 'frs' }
+        'germanynorth' { 'grn' }
+        'germanywestcentral' { 'grwc' }
+        'global' { 'global' }
+        'india' { 'in' }
+        'japan' { 'jp' }
+        'japaneast' { 'jpe' }
+        'japanwest' { 'jpw' }
+        'koreacentral' { 'krc' }
+        'koreasouth' { 'krs' }
+        'northcentralus' { 'ncus' }
+        'northcentralusstage' { 'ncuss' }
+        'northeurope' { 'neur' }
+        'norwayeast' { 'nwe' }
+        'norwaywest' { 'nww' }
+        'southafricanorth' { 'safn' }
+        'southafricawest' { 'safw' }
+        'southcentralus' { 'scus' }
+        'southcentralusstage' { 'scuss' }
+        'southindia' { 'sin' }
+        'southeastasia' { 'seas' }
+        'southeastasiastage' { 'seass' }
+        'switzerlandnorth' { 'swn' }
+        'switzerlandwest' { 'sww' }
+        'uaecentral' { 'uaec' }
+        'uaenorth' { 'uaen' }
+        'uksouth' { 'uks' }
+        'ukwest' { 'ukw' }
+        'unitedkingdom' { 'uk' }
+        'unitedstates' { 'us' }
+        'westcentralus' { 'wcus' }
+        'westeurope' { 'weur' }
+        'westindia' { 'win' }
+        'westus' { 'wus' }
+        'westusstage' { 'wuss' }
+        'westus2' { 'wus2' }
+        'westus2stage' { 'wus2s' }
+        'westus3' { 'wus3' }
+        Default { $region }
+    }
+}
+else {
+    $tokenRegion = $region
 }
 
 # Determine Name
@@ -233,7 +303,7 @@ $tokenNumber = $number
 
 $replacedString = $format.Replace('{type}', $tokenType).Replace('{workload}', $tokenWorkload).Replace('{region}', $tokenRegion).Replace('{environment}', $tokenEnvironment).Replace('{number}', $tokenNumber)
 
-# Check if we violate any naming restrictions (lengths, characters, etc)
+# Check if we violate any naming restrictionslengths, characters, etc)
 # Based on: https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules
 
 # Common Errors
