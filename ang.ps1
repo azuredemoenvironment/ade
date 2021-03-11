@@ -167,6 +167,7 @@ $tokenType = switch ($resourceType) {
     'postgresql' { 'psql' }
     'postgresqldatabase' { 'psql' }
     'powerbiembedded' { 'pbi' }
+    'publicip' { 'pip' }
     'publicipaddress' { 'pip' }
     'purview' { 'pview' }
     'purviewinstance' { 'pview' }
@@ -312,7 +313,7 @@ $NameTooLong = "The generated resource name {replacedString} is longer than the 
 # using token type since it would be consolidated from naming possiblities
 switch ($tokenType) {
     's' {
-        $replacedString = $replacedString -replace '[^a-z]'
+        $replacedString = $replacedString -replace '[^a-z0-9]'
         $maxLength = 24
         if ($replacedString.Length -gt $maxLength) {
             $warning = $NameTooLong.Replace('{replacedString}', $replacedString).Replace('{maxLength}', $maxLength)
