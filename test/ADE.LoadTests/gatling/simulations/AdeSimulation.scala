@@ -72,6 +72,12 @@ class AdeSimulation extends Simulation {
   // Build Scenario
   val scn = scenario("AdeSimulation")
     .exec(navigateToHomePage)
+    .exec(
+      pause(
+        1.second,
+        10.seconds
+      )
+    )
     .feed(wordListFeeder)
     .exec({ session =>
       // Pull the "DATA" attribute that came from redis and convert it to JSON
@@ -81,10 +87,20 @@ class AdeSimulation extends Simulation {
       // Next convert that JSON into a Map
       val map: Map[String, Any] = json.get.asInstanceOf[Map[String, Any]]
 
+      // Fill in any missing values
+      val overall = map.getOrElse("overall", 5.0)
+      val verified = map.getOrElse("verified", false)
+
       // Remove the original DATA attribute and assign the map values to the session
-      session.remove("DATA").setAll(map)
+      session.remove("DATA").setAll(map).set("overall", overall).set("verified", verified)
     })
     .exec(postDataToApi)
+    .exec(
+      pause(
+        1.second,
+        10.seconds
+      )
+    )
     .exec(getDataFromApi)
 
   // https://gatling.io/docs/current/general/simulation_setup/
