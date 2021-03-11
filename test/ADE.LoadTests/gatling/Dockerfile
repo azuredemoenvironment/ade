@@ -25,6 +25,7 @@ WORKDIR  /opt/gatling
 
 # Remove Samples and Copy Ours
 RUN rm -Rf /opt/gatling/user-files/resources/* && rm -Rf /opt/gatling/user-files/simulations/*
+COPY ./conf ./conf
 COPY ./simulations/ ./user-files/simulations/
 
 # set directories below to be mountable from host
