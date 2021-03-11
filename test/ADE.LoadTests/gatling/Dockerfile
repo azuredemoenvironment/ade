@@ -23,6 +23,10 @@ RUN    apk update \
 # Switch to Gatling Direcotry
 WORKDIR  /opt/gatling
 
+# Remove Samples and Copy Ours
+RUN rm -Rf /opt/gatling/user-files/resources/* && rm -Rf /opt/gatling/user-files/simulations/*
+COPY ./simulations/ ./user-files/simulations/
+
 # set directories below to be mountable from host
 VOLUME ["/opt/gatling/conf", "/opt/gatling/results", "/opt/gatling/user-files/simulations/", "/opt/gatling/user-files/data/"]
 
