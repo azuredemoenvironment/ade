@@ -4,11 +4,11 @@ param (
     [Parameter(Position = 1, mandatory = $true)]
     [string]$resourceType,
     [Parameter(Position = 2, mandatory = $true)]
-    [string]$prefix,
+    [string]$workload,
     [Parameter(Position = 3, mandatory = $true)]
-    [string]$region,
+    [string]$environment,
     [Parameter(Position = 4, mandatory = $true)]
-    [string]$name,
+    [string]$region,
     [Parameter(Position = 5, mandatory = $false)]
     [string]$number,
     [Parameter(Position = 6, mandatory = $false)]
@@ -24,25 +24,32 @@ $PSDefaultParameterValues['*:ErrorAction'] = 'Stop'
 
 # Sanitize inputs
 if ([string]::IsNullOrWhiteSpace($format)) {
-    # Based on https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming
-    $format = "{type}-{prefix}-{region}-{name}{number}"
+    # Based on: https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming
+    $format = "{type}-{workload}-{environment}-{region}{number}"
 }
 
 $resourceType = ($resourceType -replace '[^A-z]').ToLowerInvariant()
-$prefix = ($prefix -replace '[^A-z0-9]').ToLowerInvariant()
+$workload = ($workload -replace '[^A-z0-9]').ToLowerInvariant()
 $region = ($region -replace '[^A-z]').ToLowerInvariant()
-$name = ($name -replace '[^A-z0-9]').ToLowerInvariant()
+$environment = ($environment -replace '[^A-z0-9]').ToLowerInvariant()
+$number = ($number -replace '[^0-9]')
+
+# If a number is specified, prefix with a hyphen and pad it to three digits
+if (-not [string]::IsNullOrWhiteSpace($number)) {
+    $number = '-' + $number.PadLeft(3, '0')
+}
+
 $removeHyphens = $false
 
 # Token Values
 $tokenType = ''
-$tokenPrefix = ''
+$tokenWorkload = ''
 $tokenRegion = ''
-$tokenName = ''
+$tokenEnvironment = ''
 $tokenNumber = ''
 
 # Determine Resource Type Short Code
-# https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations
+# Based on: https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations
 $tokenType = switch ($resourceType) {
     'akscluster' { 'aks' }
     'analysisservices' { 'a' }
@@ -207,8 +214,8 @@ $tokenType = switch ($resourceType) {
     Default { $resourceType }
 }
 
-# Determine Prefix
-$tokenPrefix = $prefix
+# Determine Workload
+$tokenWorkload = $workload
 
 # Determine Region
 $tokenRegion = switch ($region) {
@@ -219,12 +226,30 @@ $tokenRegion = switch ($region) {
 }
 
 # Determine Name
-$tokenName = $name
+$tokenEnvironment = $environment
 
 # Determine Number
 $tokenNumber = $number
 
-$replacedString = $format.Replace('{type}', $tokenType).Replace('{prefix}', $tokenPrefix).Replace('{region}', $tokenRegion).Replace('{name}', $tokenName).Replace('{number}', $tokenNumber)
+$replacedString = $format.Replace('{type}', $tokenType).Replace('{workload}', $tokenWorkload).Replace('{region}', $tokenRegion).Replace('{environment}', $tokenEnvironment).Replace('{number}', $tokenNumber)
+
+# Check if we violate any naming restrictions (lengths, characters, etc)
+# Based on: https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules
+
+# Common Errors
+$NameTooLong = "The generated resource name {replacedString} is longer than the max length of {maxLength}. Consider modifying the name manually to meet that restriction."
+
+# using token type since it would be consolidated from naming possiblities
+switch ($tokenType) {
+    's' {
+        $replacedString = $replacedString -replace '[^a-z]'
+        $maxLength = 24
+        if ($replacedString.Length -gt $maxLength) {
+            $warning = $NameTooLong.Replace('{replacedString}', $replacedString).Replace('{maxLength}', $maxLength)
+            Write-Warning $warning
+        }
+    }
+}
 
 if ($removeHyphens) {
     $replacedString = $replacedString.Replace('-', '')
