@@ -92,24 +92,17 @@ class AdeSimulation extends Simulation {
       val booleanValue = map.getOrElse("verified", false)
       val stringValue  = map.getOrElse("reviewerName", "N/A")
       val integerValue = scala.util.Random.nextInt(100)
+      val newValueMap = Map(
+        "decimalValue" -> decimalValue,
+        "booleanValue" -> booleanValue,
+        "stringValue"  -> stringValue,
+        "integerValue" -> integerValue
+      )
 
       // Remove the original DATA attribute and assign the map values to the session
-      val cleanedUpSession =
-        session
-          .remove("DATA")
-          .set("decimalValue", decimalValue)
-          .set("booleanValue", booleanValue)
-          .set("stringValue", stringValue)
-          .set("integerValue", integerValue)
-
-      // Compare Original to New
-      println("Original Session")
-      println(session)
-      println("Revised Session")
-      println(cleanedUpSession)
-
-      // Return
-      cleanedUpSession
+      session
+        .remove("DATA")
+        .setAll(newValueMap)
     })
     .exec(postDataToApi)
     .exec(
