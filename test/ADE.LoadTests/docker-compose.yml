@@ -11,7 +11,7 @@ services:
     depends_on:
       - ade_loadtesting_grafana
     environment:
-      - JAVA_OPTS=-D=gatling.data.graphite.host=${GRAPHITE_HOST} -D=gatling.data.graphite.port=${GRAPHITE_PORT} -DwebFrontEndDomain=${WEB_FRONTEND_DOMAIN} -DwebBackEndDomain=${WEB_BACKEND_DOMAIN} -DredisHost=${REDIS_HOST} -DredisPort=${REDIS_PORT} -DusersPerSecond=${USERS_PER_SECOND} -DmaxUsersPerSecond=${MAX_USERS_PER_SECOND} -DoverMinutes=${OVER_MINUTES} -Djsse.enableSNIExtension=false
+      - JAVA_OPTS=-Dgatling.data.graphite.host=${GRAPHITE_HOST} -Dgatling.data.graphite.port=${GRAPHITE_PORT} -DwebFrontEndDomain=${WEB_FRONTEND_DOMAIN} -DwebBackEndDomain=${WEB_BACKEND_DOMAIN} -DredisHost=${REDIS_HOST} -DredisPort=${REDIS_PORT} -DusersPerSecond=${USERS_PER_SECOND} -DmaxUsersPerSecond=${MAX_USERS_PER_SECOND} -DoverMinutes=${OVER_MINUTES} -Djsse.enableSNIExtension=false
     volumes:
       - ./gatling/conf:/opt/gatling/conf:cached
       - ./gatling/results:/opt/gatling/results

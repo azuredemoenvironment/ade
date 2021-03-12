@@ -80,29 +80,21 @@ class AdeSimulation extends Simulation {
     )
     .feed(wordListFeeder)
     .exec({ session =>
-      // Pull the "DATA" attribute that came from redis and convert it to JSON
-      val data              = session("DATA").as[String]
-      val json: Option[Any] = JSON.parseFull(data)
-
       // Next convert that JSON into a Map
-      val map: Map[String, Any] = json.get.asInstanceOf[Map[String, Any]]
-
-      // Build Values from Data Source to Create Map
-      val decimalValue = map.getOrElse("overall", 5.0)
-      val booleanValue = map.getOrElse("verified", false)
-      val stringValue  = map.getOrElse("reviewerName", "N/A")
-      val integerValue = scala.util.Random.nextInt(100)
-      val newValueMap = Map(
-        "decimalValue" -> decimalValue,
-        "booleanValue" -> booleanValue,
-        "stringValue"  -> stringValue,
-        "integerValue" -> integerValue
-      )
+      val map: Map[String, Any] =
+        JSON.parseFull(session("DATA").as[String]).get.asInstanceOf[Map[String, Any]]
 
       // Remove the original DATA attribute and assign the map values to the session
       session
         .remove("DATA")
-        .setAll(newValueMap)
+        .setAll(
+          Map(
+            "decimalValue" -> map.getOrElse("overall", 5.0),
+            "booleanValue" -> map.getOrElse("verified", false),
+            "stringValue"  -> map.getOrElse("reviewerName", "N/A"),
+            "integerValue" -> scala.util.Random.nextInt(100)
+          )
+        )
     })
     .exec(postDataToApi)
     .exec(
