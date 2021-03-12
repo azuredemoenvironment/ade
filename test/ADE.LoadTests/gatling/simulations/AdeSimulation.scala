@@ -58,7 +58,7 @@ class AdeSimulation extends Simulation {
     .headers(webBackEndHeaders)
     .body(
       StringBody(
-        """{ "booleanValue": ${verified}, "decimalValue": ${overall}, "integerValue": 1, "stringValue": "${reviewerName}"}"""
+        """{ "booleanValue": ${booleanValue}, "decimalValue": ${decimalValue}, "integerValue": ${integerValue}, "stringValue": "${stringValue}"}"""
       )
     )
     .asJson
@@ -87,12 +87,29 @@ class AdeSimulation extends Simulation {
       // Next convert that JSON into a Map
       val map: Map[String, Any] = json.get.asInstanceOf[Map[String, Any]]
 
-      // Fill in any missing values
-      val overall = map.getOrElse("overall", 5.0)
-      val verified = map.getOrElse("verified", false)
+      // Build Values from Data Source to Create Map
+      val decimalValue = map.getOrElse("overall", 5.0)
+      val booleanValue = map.getOrElse("verified", false)
+      val stringValue  = map.getOrElse("reviewerName", "N/A")
+      val integerValue = scala.util.Random.nextInt(100)
 
       // Remove the original DATA attribute and assign the map values to the session
-      session.remove("DATA").setAll(map).set("overall", overall).set("verified", verified)
+      val cleanedUpSession =
+        session
+          .remove("DATA")
+          .set("decimalValue", decimalValue)
+          .set("booleanValue", booleanValue)
+          .set("stringValue", stringValue)
+          .set("integerValue", integerValue)
+
+      // Compare Original to New
+      println("Original Session")
+      println(session)
+      println("Revised Session")
+      println(cleanedUpSession)
+
+      // Return
+      cleanedUpSession
     })
     .exec(postDataToApi)
     .exec(
