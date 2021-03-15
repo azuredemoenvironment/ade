@@ -1,0 +1,10 @@
+apiVersion: 1
+
+datasources:
+    - name: InfluxDB
+      type: influxdb
+      access: proxy
+      url: http://${INFLUXDB_HOSTNAME}:${INFLUXDB_PORT}
+      database: graphite
+      version: 1
+      editable: false

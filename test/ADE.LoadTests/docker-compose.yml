@@ -41,5 +41,8 @@ services:
     build:
       context: ./grafana
       dockerfile: ./Dockerfile
+    environment:
+      - INFLUXDB_HOSTNAME
+      - INFLUXDB_PORT
     ports:
       - "3000:3000"

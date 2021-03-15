@@ -1,10 +1,10 @@
-FROM grafana/grafana:4.6.5
-COPY grafana.ini /etc/grafana/grafana.ini
-COPY gatling-dashboard.json /var/lib/grafana/dashboards/gatling-dashboard.json
-COPY influxdatasource.json  /etc/grafana/datasources/influxdatasource.json
-COPY run.sh /run.sh
+FROM grafana/grafana:7.4.3
 
-# Workaround until Grafana 5 - Cannot import datasource as a file !!!
-COPY ./docker-entrypoint.sh /docker-entrypoint.sh
-ENTRYPOINT ["/bin/bash"]
-CMD ["/docker-entrypoint.sh"]
+# Copy configuration
+COPY grafana.ini /etc/grafana/
+COPY influxdb.yaml /etc/grafana/provisioning/datasources/
+COPY gatling.yml /etc/grafana/provisioning/dashboards/
+
+# Copy Dashboard Files
+RUN mkdir -p /var/lib/grafana/dashboards
+COPY gatling.json /var/lib/grafana/dashboards
