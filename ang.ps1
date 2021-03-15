@@ -75,7 +75,7 @@ $tokenType = switch ($resourceType) {
     'azurecacheforredisinstance' { 'redis' }
     'azurecognitivesearch' { 'srch' }
     'azurecognitiveservices' { 'cog' }
-    'azurecontainerregistry' { 'ac' }
+    'azurecontainerregistry' { 'acr' }
     'azurecosmosdb' { 'cosmos' }
     'azurecosmosdbdatabase' { 'cosmos' }
     'azuredatabricksworkspace' { 'dbw' }
@@ -102,8 +102,7 @@ $tokenType = switch ($resourceType) {
     'cognitivesearch' { 'srch' }
     'cognitiveservices' { 'cog' }
     'containerinstance' { 'ci' }
-    'containerregistry' { 'ac' }
-    'containerregistry' { 'c' }
+    'containerregistry' { 'acr' }
     'cosmosdb' { 'cosmos' }
     'cosmosdbdatabase' { 'cosmos' }
     'databasemigrationservice' { 'dms' }
@@ -315,6 +314,14 @@ switch ($tokenType) {
     's' {
         $replacedString = $replacedString -replace '[^a-z0-9]'
         $maxLength = 24
+        if ($replacedString.Length -gt $maxLength) {
+            $warning = $NameTooLong.Replace('{replacedString}', $replacedString).Replace('{maxLength}', $maxLength)
+            Write-Warning $warning
+        }
+    }
+    'acr' {
+        $replacedString = $replacedString -replace '[^a-z0-9]'
+        $maxLength = 50
         if ($replacedString.Length -gt $maxLength) {
             $warning = $NameTooLong.Replace('{replacedString}', $replacedString).Replace('{maxLength}', $maxLength)
             Write-Warning $warning
