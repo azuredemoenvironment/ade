@@ -1,15 +1,49 @@
 // Idea borrowed from https://medium.com/@SamPFacer/a-different-way-of-writing-gatling-scenarios-5d45168b6199
 package ade
 
-import scala.concurrent.duration._
-
 import com.redis._
+import com.redis.{RedisClient, RedisClientPool}
+import io.gatling.core.feeder.{Feeder, FeederBuilder}
 import io.gatling.core.Predef._
 import io.gatling.core.structure._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
-import io.gatling.redis.Predef._
+import scala.concurrent.duration._
 import scala.util.parsing.json.JSON
+
+final case class RedisDataSetFeeder(
+    clientPool: RedisClientPool,
+    key: String
+) extends FeederBuilder {
+
+  override def apply(): Feeder[Any] = {
+    def next: Option[Map[String, String]] = clientPool.withClient { client =>
+      val value = client.lpop(key)
+
+      value match {
+        case Some(data) => {
+          val jsonMap: Map[String, Any] =
+            JSON.parseFull(data).get.asInstanceOf[Map[String, Any]]
+
+          val mappedValues: Map[String, String] = Map(
+            "decimalValue" -> jsonMap.getOrElse("overall", 5.0).toString,
+            "booleanValue" -> jsonMap.getOrElse("verified", false).toString,
+            "stringValue"  -> jsonMap.getOrElse("reviewerName", "N/A").toString,
+            "integerValue" -> scala.util.Random.nextInt(100).toString
+          )
+
+          Some(mappedValues)
+        }
+        case None => None
+      }
+    }
+
+    Iterator
+      .continually(next)
+      .takeWhile(_.isDefined)
+      .map(_.get)
+  }
+}
 
 class AdeSimulation extends Simulation {
   // Environment Variables
@@ -45,7 +79,13 @@ class AdeSimulation extends Simulation {
 
   // Value Generation
   val redisPool      = new RedisClientPool(redisHost, redisPort)
-  val wordListFeeder = redisFeeder(redisPool, "DATA")
+  val wordListFeeder = RedisDataSetFeeder(redisPool, "DATA")
+
+  println(
+    wordListFeeder.getClass.getMethods
+      .map(_.getName)
+      .sorted
+  )
 
   // Scenario Steps
   val navigateToHomePage = http("HomePage")
@@ -79,23 +119,6 @@ class AdeSimulation extends Simulation {
       )
     )
     .feed(wordListFeeder)
-    .exec({ session =>
-      // Next convert that JSON into a Map
-      val map: Map[String, Any] =
-        JSON.parseFull(session("DATA").as[String]).get.asInstanceOf[Map[String, Any]]
-
-      // Remove the original DATA attribute and assign the map values to the session
-      session
-        .remove("DATA")
-        .setAll(
-          Map(
-            "decimalValue" -> map.getOrElse("overall", 5.0),
-            "booleanValue" -> map.getOrElse("verified", false),
-            "stringValue"  -> map.getOrElse("reviewerName", "N/A"),
-            "integerValue" -> scala.util.Random.nextInt(100)
-          )
-        )
-    })
     .exec(postDataToApi)
     .exec(
       pause(
