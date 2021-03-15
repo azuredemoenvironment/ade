@@ -2,7 +2,7 @@
 
 echo Starting Redis
 
-redis-server --daemonize yes
+redis-server /usr/local/etc/redis/redis.conf
 
 DOWNLOADED_FILE=/opt/ade/data.txt
 FILE_TO_DOWNLOAD=http://deepyeti.ucsd.edu/jianmo/amazon/categoryFilesSmall/Grocery_and_Gourmet_Food_5.json.gz

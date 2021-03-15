@@ -9,6 +9,9 @@ RUN apk update \
     && apk upgrade \
     && apk add wget bash libc6-compat gzip dos2unix
 
+# Copy Redis Config
+COPY redis.conf /usr/local/etc/redis/redis.conf
+
 # COPY Start Script
 WORKDIR /opt/ade
 COPY ./start.sh ./
