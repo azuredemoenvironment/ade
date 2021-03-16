@@ -36,6 +36,7 @@ final case class RedisDataSetFeeder(
     }
 
     def next: Option[Map[String, String]] = clientPool.withClient { client =>
+      // TODO: if there's bad data that doesn't translate, try getting a new value before quitting
       println("Getting Value from Redis")
       val value = client.lpop(key)
       println(value)
