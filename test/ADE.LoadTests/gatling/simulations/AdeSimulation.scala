@@ -1,60 +1,10 @@
-// Idea borrowed from https://medium.com/@SamPFacer/a-different-way-of-writing-gatling-scenarios-5d45168b6199
 package ade
 
-import com.redis._
-import com.redis.{RedisClient, RedisClientPool}
-import io.gatling.core.feeder.{Feeder, FeederBuilder}
 import io.gatling.core.Predef._
 import io.gatling.core.structure._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 import scala.concurrent.duration._
-import scala.util.parsing.json.JSON
-
-final case class RedisDataSetFeeder(
-    clientPool: RedisClientPool,
-    key: String
-) extends FeederBuilder {
-
-  override def apply(): Feeder[Any] = {
-    def mapJson(data: String): Map[String, String] = {
-      val sanitizedData = data.filter(_ >= ' ')
-      println("Mapping Value to JSON")
-      println(sanitizedData)
-      val jsonMap: Map[String, Any] =
-        JSON.parseFull(sanitizedData).get.asInstanceOf[Map[String, Any]]
-
-      println("Mapping JSON to Map")
-      val mappedValues: Map[String, String] = Map(
-        "decimalValue" -> jsonMap.getOrElse("overall", 5.0).toString,
-        "booleanValue" -> jsonMap.getOrElse("verified", false).toString,
-        "stringValue"  -> jsonMap.getOrElse("reviewerName", "N/A").toString,
-        "integerValue" -> scala.util.Random.nextInt(100).toString
-      )
-
-      mappedValues
-    }
-
-    def next: Option[Map[String, String]] = clientPool.withClient { client =>
-      // TODO: if there's bad data that doesn't translate, try getting a new value before quitting
-      println("Getting Value from Redis")
-      val value = client.lpop(key)
-      println(value)
-
-      println("Assigning Map to Return Value")
-      val mappedValue = value.map(value => mapJson(value))
-
-      println(mappedValue)
-      println(mappedValue.isDefined)
-      mappedValue
-    }
-
-    Iterator
-      .continually(next)
-      .takeWhile(_.isDefined)
-      .map(_.get)
-  }
-}
 
 class AdeSimulation extends Simulation {
   // Environment Variables
@@ -62,6 +12,7 @@ class AdeSimulation extends Simulation {
   val webBackEndDomain          = System.getProperty("webBackEndDomain", "localhost:8888")
   val redisHost                 = System.getProperty("redisHost", "localhost")
   val redisPort                 = Integer.getInteger("redisPort", 6379)
+  val redisKey                  = System.getProperty("redisKey", "DATA")
   val usersPerSecond: Double    = System.getProperty("usersPerSecond", "10").toDouble
   val maxUsersPerSecond: Double = System.getProperty("maxUsersPerSecond", "200").toDouble
   val overMinutes: Integer      = Integer.getInteger("overMinutes", 10)
@@ -89,8 +40,7 @@ class AdeSimulation extends Simulation {
   val webBackEndProtocol = http.baseUrl(webBackEndDomain)
 
   // Value Generation
-  val redisPool      = new RedisClientPool(redisHost, redisPort)
-  val wordListFeeder = RedisDataSetFeeder(redisPool, "DATA")
+  val adeDataFeeder = AdeDataFeeder(redisHost, redisPort, redisKey)
 
   // Scenario Steps
   val navigateToHomePage = http("HomePage")
@@ -116,7 +66,6 @@ class AdeSimulation extends Simulation {
 
   // Build Scenario
   val scn = scenario("AdeSimulation")
-    .feed(wordListFeeder)
     .exec(navigateToHomePage)
     .exec(
       pause(
@@ -124,6 +73,7 @@ class AdeSimulation extends Simulation {
         10.seconds
       )
     )
+    .feed(adeDataFeeder)
     .exec(postDataToApi)
     .exec(
       pause(
