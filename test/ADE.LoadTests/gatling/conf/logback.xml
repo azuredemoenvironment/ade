@@ -19,7 +19,7 @@
 	<root level="WARN">
 		<appender-ref ref="CONSOLE" />
 	</root>
-	<root level="DEBUG">
+	<root level="WARN">
 		<appender-ref ref="FILE" />
 	</root>
 </configuration>

@@ -17,25 +17,35 @@ final case class RedisDataSetFeeder(
 ) extends FeederBuilder {
 
   override def apply(): Feeder[Any] = {
+    def mapJson(data: String): Map[String, String] = {
+      val sanitizedData = data.filter(_ >= ' ')
+      println("Mapping Value to JSON")
+      println(sanitizedData)
+      val jsonMap: Map[String, Any] =
+        JSON.parseFull(sanitizedData).get.asInstanceOf[Map[String, Any]]
+
+      println("Mapping JSON to Map")
+      val mappedValues: Map[String, String] = Map(
+        "decimalValue" -> jsonMap.getOrElse("overall", 5.0).toString,
+        "booleanValue" -> jsonMap.getOrElse("verified", false).toString,
+        "stringValue"  -> jsonMap.getOrElse("reviewerName", "N/A").toString,
+        "integerValue" -> scala.util.Random.nextInt(100).toString
+      )
+
+      mappedValues
+    }
+
     def next: Option[Map[String, String]] = clientPool.withClient { client =>
+      println("Getting Value from Redis")
       val value = client.lpop(key)
+      println(value)
 
-      value match {
-        case Some(data) => {
-          val jsonMap: Map[String, Any] =
-            JSON.parseFull(data).get.asInstanceOf[Map[String, Any]]
+      println("Assigning Map to Return Value")
+      val mappedValue = value.map(value => mapJson(value))
 
-          val mappedValues: Map[String, String] = Map(
-            "decimalValue" -> jsonMap.getOrElse("overall", 5.0).toString,
-            "booleanValue" -> jsonMap.getOrElse("verified", false).toString,
-            "stringValue"  -> jsonMap.getOrElse("reviewerName", "N/A").toString,
-            "integerValue" -> scala.util.Random.nextInt(100).toString
-          )
-
-          Some(mappedValues)
-        }
-        case None => None
-      }
+      println(mappedValue)
+      println(mappedValue.isDefined)
+      mappedValue
     }
 
     Iterator
@@ -81,12 +91,6 @@ class AdeSimulation extends Simulation {
   val redisPool      = new RedisClientPool(redisHost, redisPort)
   val wordListFeeder = RedisDataSetFeeder(redisPool, "DATA")
 
-  println(
-    wordListFeeder.getClass.getMethods
-      .map(_.getName)
-      .sorted
-  )
-
   // Scenario Steps
   val navigateToHomePage = http("HomePage")
     .get(webFrontEndBaseUrl)
@@ -111,6 +115,7 @@ class AdeSimulation extends Simulation {
 
   // Build Scenario
   val scn = scenario("AdeSimulation")
+    .feed(wordListFeeder)
     .exec(navigateToHomePage)
     .exec(
       pause(
@@ -118,7 +123,6 @@ class AdeSimulation extends Simulation {
         10.seconds
       )
     )
-    .feed(wordListFeeder)
     .exec(postDataToApi)
     .exec(
       pause(

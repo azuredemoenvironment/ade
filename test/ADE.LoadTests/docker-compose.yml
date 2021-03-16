@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   ade_loadtesting_gatling:
-    image: ade_loadtesting_gatling
+    image: ade-loadtesting-gatling
     container_name: ade_loadtesting_gatling
     build:
       context: ./gatling
@@ -18,7 +18,7 @@ services:
       - ./gatling/simulations:/opt/gatling/user-files/simulations:cached
       - ./gatling/data:/opt/gatling/user-files/data:cached
   ade_loadtesting_redis:
-    image: ade_loadtesting_redis
+    image: ade-loadtesting-redis
     container_name: redis
     build:
       context: ./redis
@@ -26,7 +26,7 @@ services:
     ports:
       - "6379:6379"
   ade_loadtesting_influxdb:
-    image: ade_loadtesting_influxdb
+    image: ade-loadtesting-influxdb
     container_name: influxdb
     build:
       context: ./influxdb
@@ -36,7 +36,7 @@ services:
       - "8086:8086"
       - "2003:2003"
   ade_loadtesting_grafana:
-    image: ade_loadtesting_grafana
+    image: ade-loadtesting-grafana
     container_name: grafana
     build:
       context: ./grafana
