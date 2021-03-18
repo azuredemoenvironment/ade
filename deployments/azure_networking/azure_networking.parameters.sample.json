@@ -2,41 +2,11 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "natGatewayPublicIPAddressName": {
-            "value": "@@natGatewayPublicIPAddressName@@"
+        "aliasRegion": {
+            "value": "@@aliasRegion@@"
         },
-        "natGatewayPublicIPPrefixName": {
-            "value": "@@natGatewayPublicIPPrefixName@@"
-        },
-        "natGatewayName": {
-            "value": "@@natGatewayName@@"
-        },
-        "azureBastionSubnetNetworkSecurityGroupName": {
-            "value": "@@azureBastionSubnetNetworkSecurityGroupName@@"
-        },
-        "managementSubnetNetworkSecurityGroupName": {
-            "value": "@@managementSubnetNetworkSecurityGroupName@@"
-        },
-        "directoryServicesSubnetNetworkSecurityGroupName": {
-            "value": "@@directoryServicesSubnetNetworkSecurityGroupName@@"
-        },
-        "developerSubnetNetworkSecurityGroupName": {
-            "value": "@@developerSubnetNetworkSecurityGroupName@@"
-        },
-        "nTierWebSubnetNetworkSecurityGroupName": {
-            "value": "@@nTierWebSubnetNetworkSecurityGroupName@@"
-        },
-        "nTierDBSubnetNetworkSecurityGroupName": {
-            "value": "@@nTierDBSubnetNetworkSecurityGroupName@@"
-        },
-        "vmssSubnetNetworkSecurityGroupName": {
-            "value": "@@vmssSubnetNetworkSecurityGroupName@@"
-        },
-        "clientServicesSubnetNetworkSecurityGroupName": {
-            "value": "@@clientServicesSubnetNetworkSecurityGroupName@@"
-        },
-        "internetRouteTableName": {
-            "value": "@@internetRouteTableName@@"
+        "virtualNetwork01ResourceGroupName": {
+            "value": "@@networkingResourceGroupName@@"
         },
         "virtualNetwork01Name": {
             "value": "@@virtualNetwork01Name@@"

@@ -3,5 +3,5 @@ function Deploy-AzureActivityLog {
         [object] $armParameters
     )
 
-    Deploy-ArmTemplate 'Azure Activity Log' $armParameters -resourceLevel 'sub'
+    Deploy-ArmTemplate 'Azure Activity Log' $armParameters -resourceLevel 'sub' -bicep
 }

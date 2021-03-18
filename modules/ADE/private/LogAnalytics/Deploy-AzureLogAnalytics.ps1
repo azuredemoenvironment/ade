@@ -3,5 +3,5 @@ function Deploy-AzureLogAnalytics {
         [object] $armParameters
     )
 
-    Deploy-ArmTemplate 'Azure Log Analytics' $armParameters -resourceGroupName $armParameters.logAnalyticsWorkspaceResourceGroupName
+    Deploy-ArmTemplate 'Azure Log Analytics' $armParameters -resourceGroupName $armParameters.logAnalyticsWorkspaceResourceGroupName -bicep
 }
