@@ -30,7 +30,7 @@ function Remove-AzureResourceGroups {
         $armParameters.storageResourceGroupName
         $armParameters.privateDnsZoneResourceGroupName
         $armParameters.networkingResourceGroupName
-        # $armParameters.managedIdentityResourceGroupName
+        $armParameters.managedIdentityResourceGroupName
     )
 
     $resourceGroupsToRemove | ForEach-Object {
