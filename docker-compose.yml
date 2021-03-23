@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+  ade:
+    image: azure-demo-environment
+    container_name: ade
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    stdin_open: true
+    tty: true
+    network_mode: host
