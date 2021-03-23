@@ -1,5 +1,11 @@
 FROM mcr.microsoft.com/azure-cli:latest
 
+# Install Docker Client
+################################################
+
+RUN    apk add --update docker openrc \
+    && rc-update add docker boot
+
 # Install PowerShell Core
 ################################################
 
@@ -19,10 +25,13 @@ RUN    curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.1.3
 
 # Copy ADE Assets
 ################################################
+
+# Make necessary directories
 RUN mkdir -p /opt/ade \
     && mkdir /opt/ade/deployments \
     && mkdir -p /opt/ade/modules/ADE
 
+# Switch to new root directory and copy assets
 WORKDIR /opt/ade
 
 COPY ./deployments/ deployments
@@ -32,4 +41,5 @@ COPY ade.ps1 .
 RUN chmod 777 ade.ps1
 
 # Start the Shell
+################################################
 CMD [ "pwsh" ]
