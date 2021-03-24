@@ -1,4 +1,4 @@
-# Azure App Service Plan (Primary Region)
+# Azure App Service Plan
 
 - [Azure App Service Plan Documentation](https://docs.microsoft.com/en-us/azure/app-service/overview-hosting-plans "Azure App Service Plan Documentation")
 

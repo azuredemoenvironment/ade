@@ -9,48 +9,40 @@
 
 created insert text here...
 
-modified $primaryRegionResourceGroupNamePrefix = "rg-ade-$aliasRegion"
-$secondaryRegionResourceGroupNamePrefix = "rg-ade-$aliasSecondaryRegion"
+modified $primaryRegionResourceGroupNamePrefix      = "rg-ade-$aliasRegion"
+$secondaryRegionResourceGroupNamePrefix             = "rg-ade-$aliasSecondaryRegion"
 
-'applicationGatewayManagedIdentityName' =
-"uami-$aliasRegion-applicationgateway"
+'applicationGatewayManagedIdentityName'             = "uami-$aliasRegion-applicationgateway"
 'containerRegistryManagedIdentityName'              = "uami-$aliasRegion-containerregistry"
-'containerRegistrySPNName' =
-"spn-ade-$aliasRegion-containerregistry"
+'containerRegistrySPNName'                          = "spn-ade-$aliasRegion-containerregistry"
 'githubActionsSPNName'                              = "spn-ade-$aliasRegion-githubactions"
-'keyVaultName' =
-"kv-ade-$aliasRegion-001"
+'keyVaultName'                                      = "kv-ade-$aliasRegion-001"
 'logAnalyticsWorkspaceName'                         = "log-ade-$aliasRegion-001"
-'natGatewayName' =
-"natgw-$aliasRegion-001"
+'natGatewayName'                                    = "natgw-$aliasRegion-001"
 'natGatewayPublicIPPrefixName'                      = "pipp-$aliasRegion-001"
-'restAPISPNName' = "spn-ade-$aliasRegion-restapi"
+'restAPISPNName'                                    = "spn-ade-$aliasRegion-restapi"
 
-'managedIdentityResourceGroupName' =
-"$primaryRegionResourceGroupNamePrefix-identity"
+'managedIdentityResourceGroupName'                  = "$primaryRegionResourceGroupNamePrefix-identity"
+'primaryRegionAppServicePlanResourceGroupName'      = "$primaryRegionResourceGroupNamePrefix-appserviceplan"
+'secondaryRegionAppServicePlanResourceGroupName'    = "$secondaryRegionResourceGroupNamePrefix-appserviceplan"
 
-removed 'automationAccountName' =
-"aa-$aliasRegion-01"
+removed 'automationAccountName'                     = "aa-ade-$aliasRegion-001"
 'azureBastionName'                                  = "bastion-ade-$aliasRegion-001"
-'azureBastionPublicIPAddressName' =
-"pip-ade-$aliasRegion-bastion001"
+'azureBastionPublicIPAddressName'                   = "pip-ade-$aliasRegion-bastion001"
 'azureBastionSubnetNSGName'                         = "nsg-ade-$aliasRegion-azurebastion"
-'clientServicesSubnetNSGName' =
-"nsg-ade-$aliasRegion-clientservices"
+'clientServicesSubnetNSGName'                       = "nsg-ade-$aliasRegion-clientservices"
 'developerSubnetNSGName'                            = "nsg-ade-$aliasRegion-developer"
-'directoryServicesSubnetNSGName' =
-"nsg-ade-$aliasRegion-directoryservices"
+'directoryServicesSubnetNSGName'                    = "nsg-ade-$aliasRegion-directoryservices"
 'internetRouteTableName'                            = "route-ade-$aliasRegion-internet"
-'managementSubnetNSGName' =
-"nsg-ade-$aliasRegion-management"
+'managementSubnetNSGName'                           = "nsg-ade-$aliasRegion-management"
 'natGatewayName'                                    = "ngw-ade-$aliasRegion-001"
-'natGatewayPublicIPPrefixName' =
-"pipp-ade-$aliasRegion-ngw001"
-'natGatewayPublicIPAddressName'                     = "pip-$aliasRegion-natgw01"
-'nTierDBSubnetNSGName' =
-"nsg-ade-$aliasRegion-ntierdb"
+'natGatewayPublicIPPrefixName'                      = "pipp-ade-$aliasRegion-ngw001"
+'natGatewayPublicIPAddressName'                     = "pip-ade-$aliasRegion-natgw01"
+'nTierDBSubnetNSGName'                              = "nsg-ade-$aliasRegion-ntierdb"
 'nTierWebSubnetNSGName'                             = "nsg-ade-$aliasRegion-ntierweb"
-'vmssSubnetNSGName' = "nsg-$aliasRegion-vmss"
+'primaryRegionAppServicePlanName'                   = "plan-ade-$aliasRegion-001"
+'secondaryRegionAppServicePlanName'                 = "plan-ade-$aliasSecondaryRegion-001"
+'vmssSubnetNSGName'                                 = "nsg-ade-$aliasRegion-vmss"
 
 ## deployments
 
