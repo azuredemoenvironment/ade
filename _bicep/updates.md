@@ -9,40 +9,54 @@
 
 created insert text here...
 
-modified $primaryRegionResourceGroupNamePrefix      = "rg-ade-$aliasRegion"
-$secondaryRegionResourceGroupNamePrefix             = "rg-ade-$aliasSecondaryRegion"
+modified $primaryRegionResourceGroupNamePrefix = "rg-ade-$aliasRegion"
+$secondaryRegionResourceGroupNamePrefix = "rg-ade-$aliasSecondaryRegion"
 
-'applicationGatewayManagedIdentityName'             = "uami-$aliasRegion-applicationgateway"
-'containerRegistryManagedIdentityName'              = "uami-$aliasRegion-containerregistry"
-'containerRegistrySPNName'                          = "spn-ade-$aliasRegion-containerregistry"
-'githubActionsSPNName'                              = "spn-ade-$aliasRegion-githubactions"
-'keyVaultName'                                      = "kv-ade-$aliasRegion-001"
-'logAnalyticsWorkspaceName'                         = "log-ade-$aliasRegion-001"
-'natGatewayName'                                    = "natgw-$aliasRegion-001"
-'natGatewayPublicIPPrefixName'                      = "pipp-$aliasRegion-001"
-'restAPISPNName'                                    = "spn-ade-$aliasRegion-restapi"
+'applicationGatewayManagedIdentityName' =
+"uami-$aliasRegion-applicationgateway"
+'containerRegistryManagedIdentityName' = "uami-$aliasRegion-containerregistry"
+'containerRegistrySPNName' =
+"spn-ade-$aliasRegion-containerregistry"
+'githubActionsSPNName'= "spn-ade-$aliasRegion-githubactions"
+'keyVaultName' =
+"kv-ade-$aliasRegion-001"
+'logAnalyticsWorkspaceName' = "log-ade-$aliasRegion-001"
+'natGatewayName' =
+"natgw-$aliasRegion-001"
+'natGatewayPublicIPPrefixName' = "pipp-$aliasRegion-001"
+'restAPISPNName' = "spn-ade-$aliasRegion-restapi"
 
-'managedIdentityResourceGroupName'                  = "$primaryRegionResourceGroupNamePrefix-identity"
-'primaryRegionAppServicePlanResourceGroupName'      = "$primaryRegionResourceGroupNamePrefix-appserviceplan"
-'secondaryRegionAppServicePlanResourceGroupName'    = "$secondaryRegionResourceGroupNamePrefix-appserviceplan"
+'managedIdentityResourceGroupName' =
+"$primaryRegionResourceGroupNamePrefix-identity"
+'primaryRegionAppServicePlanResourceGroupName' = "$primaryRegionResourceGroupNamePrefix-appserviceplan"
+'secondaryRegionAppServicePlanResourceGroupName' =
+"$secondaryRegionResourceGroupNamePrefix-appserviceplan"
 
-removed 'automationAccountName'                     = "aa-ade-$aliasRegion-001"
+removed 'automationAccountName' =
+"aa-ade-$aliasRegion-001"
 'azureBastionName'                                  = "bastion-ade-$aliasRegion-001"
-'azureBastionPublicIPAddressName'                   = "pip-ade-$aliasRegion-bastion001"
+'azureBastionPublicIPAddressName' =
+"pip-ade-$aliasRegion-bastion001"
 'azureBastionSubnetNSGName'                         = "nsg-ade-$aliasRegion-azurebastion"
-'clientServicesSubnetNSGName'                       = "nsg-ade-$aliasRegion-clientservices"
+'clientServicesSubnetNSGName' =
+"nsg-ade-$aliasRegion-clientservices"
 'developerSubnetNSGName'                            = "nsg-ade-$aliasRegion-developer"
-'directoryServicesSubnetNSGName'                    = "nsg-ade-$aliasRegion-directoryservices"
+'directoryServicesSubnetNSGName' =
+"nsg-ade-$aliasRegion-directoryservices"
 'internetRouteTableName'                            = "route-ade-$aliasRegion-internet"
-'managementSubnetNSGName'                           = "nsg-ade-$aliasRegion-management"
+'managementSubnetNSGName' =
+"nsg-ade-$aliasRegion-management"
 'natGatewayName'                                    = "ngw-ade-$aliasRegion-001"
-'natGatewayPublicIPPrefixName'                      = "pipp-ade-$aliasRegion-ngw001"
+'natGatewayPublicIPPrefixName' =
+"pipp-ade-$aliasRegion-ngw001"
 'natGatewayPublicIPAddressName'                     = "pip-ade-$aliasRegion-natgw01"
-'nTierDBSubnetNSGName'                              = "nsg-ade-$aliasRegion-ntierdb"
+'nTierDBSubnetNSGName' =
+"nsg-ade-$aliasRegion-ntierdb"
 'nTierWebSubnetNSGName'                             = "nsg-ade-$aliasRegion-ntierweb"
-'primaryRegionAppServicePlanName'                   = "plan-ade-$aliasRegion-001"
+'primaryRegionAppServicePlanName' =
+"plan-ade-$aliasRegion-001"
 'secondaryRegionAppServicePlanName'                 = "plan-ade-$aliasSecondaryRegion-001"
-'vmssSubnetNSGName'                                 = "nsg-ade-$aliasRegion-vmss"
+'vmssSubnetNSGName' = "nsg-ade-$aliasRegion-vmss"
 
 ## deployments
 
@@ -71,9 +85,9 @@ removed 'automationAccountName'                     = "aa-ade-$aliasRegion-001"
 - converted to key_vault.bicep
 - modified function tag to 'key vault'
 - updated vaults api to 2019-09-01
-- added creation of encryption key to template file TODO: need to consider
-  adding enableRbacAuthorization to the properties and enabling rbac
-  authorization
+- added creation of encryption key to template file
+- TODO: need to consider adding enableRbacAuthorization to the properties and
+  enabling rbac authorization
 
 removed azure_key_vault.key.sample
 
@@ -83,6 +97,24 @@ removed azure_key_vault.key.sample
 - removed natGatewayPublicIPAddressName in favor of natGatewayPublicIPPrefixName
 - updated publicIPPrefixes api to 2020-06-01
 - updated natGateways api to 2020-06-01
+
+### azure_app_service_plan
+
+- updated deployment that merges both the primary region and secondary region
+  deployments
+- converted to azure_app_service_plan.bicep
+- updated serverFarms api to 2020-10-01
+- added an autoscale setting to scale out and in based on cpu utilization to a
+  maximum of 10 instances
+- updated documentation
+
+### azure_app_service_plan_primary_region
+
+- removed deployment
+
+### azure_app_service_plan_secondary_region
+
+- removed deployment
 
 ## modules
 
