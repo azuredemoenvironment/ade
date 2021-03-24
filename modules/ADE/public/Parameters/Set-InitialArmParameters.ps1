@@ -111,13 +111,11 @@ function Set-InitialArmParameters {
         'peering02'                                         = "vnet-$aliasRegion-02-to-vnet-$aliasRegion-01"
         'peering03'                                         = "vnet-$aliasRegion-01-to-vnet-$aliasRegion-03"
         'peering04'                                         = "vnet-$aliasRegion-03-to-vnet-$aliasRegion-01"
-        'primaryRegionAppServicePlanName'                   = "asp-$aliasRegion-01"
         'primaryRegionHelloWorldAppInsightsName'            = "appin-$aliasRegion-helloworld"
         'primaryRegionHelloWorldEndpointName'               = "helloworld-$defaultPrimaryRegionShortName".replace('-', '')
         'primaryRegionHelloWorldWebAppName'                 = "as-$aliasRegion-helloworld".replace('-', '')
         'primaryRegionHelloWorldWebAppStorageAccountName'   = "sa-$aliasRegion-bkphello".replace('-', '')
         'restAPISPNName'                                    = "spn-ade-$aliasRegion-restapi"
-        'secondaryRegionAppServicePlanName'                 = "asp-$aliasSecondaryRegion-01"
         'secondaryRegionHelloWorldAppInsightsName'          = "appin-$aliasSecondaryRegion-helloworld"
         'secondaryRegionHelloWorldEndpointName'             = "helloworld-$defaultSecondaryRegionShortName".replace('-', '')
         'secondaryRegionHelloWorldWebAppName'               = "as-$aliasSecondaryRegion-helloworld".replace('-', '')
@@ -168,10 +166,10 @@ function Set-InitialArmParameters {
         'managedIdentityResourceGroupName'                  = "$primaryRegionResourceGroupNamePrefix-identity"
         'networkingResourceGroupName'                       = "$primaryRegionResourceGroupNamePrefix-networking"
         'ntierResourceGroupName'                            = "$primaryRegionResourceGroupNamePrefix-ntier"
-        'primaryRegionAppServicePlanResourceGroupName'      = "$primaryRegionResourceGroupNamePrefix-asp"
+        'primaryRegionAppServicePlanResourceGroupName'      = "$primaryRegionResourceGroupNamePrefix-appserviceplan"
         'primaryRegionHelloWorldWebAppResourceGroupName'    = "$primaryRegionResourceGroupNamePrefix-helloworld"
         'privateDnsZoneResourceGroupName'                   = "$primaryRegionResourceGroupNamePrefix-privatedns"
-        'secondaryRegionAppServicePlanResourceGroupName'    = "$secondaryRegionResourceGroupNamePrefix-asp"
+        'secondaryRegionAppServicePlanResourceGroupName'    = "$secondaryRegionResourceGroupNamePrefix-appserviceplan"
         'secondaryRegionHelloWorldWebAppResourceGroupName'  = "$secondaryRegionResourceGroupNamePrefix-helloworld"
         'sqlTodoResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-sqltodo"
         'storageResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-diagnostics"
