@@ -45,6 +45,7 @@ WORKDIR /opt/ade
 COPY ./deployments/ deployments
 COPY ./modules/ modules
 COPY ade.ps1 .
+COPY login.ps1 .
 
 RUN chmod 777 ade.ps1
 

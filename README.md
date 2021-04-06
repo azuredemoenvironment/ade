@@ -139,7 +139,7 @@ following command:
 docker-compose run --rm ade
 ```
 
-You now have the ADE shell environment! The Azure Demo Environment is deployed
+You now have the ADE Shell Environment! The Azure Demo Environment is deployed
 via a PowerShell Script and a series of ARM Templates and Azure CLI commands.
 There are two methods of utilizing the script, a pipeline friendly CLI Script,
 and a CLI Script Wizard. To deploy the Azure Demo Environment, execute the
@@ -147,41 +147,12 @@ following steps:
 
 - Login to Azure
 
-  - To login to Azure using `az`, run the following command:
+  - To login to both the `az` CLI and Azure PowerShell modules, run the
+    following from the ADE Shell Environment:
 
-    ```sh
-    az login
-    ```
-
-    The CLI will open a default browser and redirect to the Azure login page.
-    Enter the appropriate credentials and return to the Terminal, Command
-    Prompt, or PowerShell session.
-
-  - To retrieve a list of available subscriptions associated with the
-    credentials used in the previous step using `az`, run the following command:
-
-    ```sh
-    az account list --output table
-    ```
-
-  - To select the subscription to use with ADE using `az`, run the following
-    command:
-
-    ```sh
-    az account set --subscription "Subscription Name"
-    ```
-
-  - To login to Azure using Az PowerShell scripts, run the following command:
-
-    ```ps
-    Connect-AzAccount -UseDeviceAuthentication
-    ```
-
-  - To select the subscription to use, run the following command:
-
-    ```ps
-    Get-AzSubscription -SubscriptionName "Subscription Name" | Set-AzContext
-    ```
+  ```ps
+  ./login.ps1 -SubscriptionName "Your Subscription Name"
+  ```
 
 - Deploy the Azure Demo Environment Using the CLI Script (Pipeline Friendly)
 
