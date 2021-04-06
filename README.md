@@ -36,78 +36,16 @@ Certificate Services.
 
 ### Software Installations
 
-- [PowerShell Core](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7)
-- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
+The only software prerequisite is a local installation of
+[Docker](https://docs.docker.com/get-docker/). Prior to the deployment of ADE,
+ensure that Docker is **running**.
 
-  The Azure CLI is available to install in Windows, macOS and Linux
-  environments.
+Once Docker is installed, open a terminal and navigate to the ADE directory. Run
+the following command to build all of the required ADE Docker images:
 
-  - [AZ AKS Preview Extension](https://docs.microsoft.com/en-us/azure/aks/start-stop-cluster)
-
-    To install the AZ AKS Preview Extension, run the following command from a
-    terminal:
-
-    ```sh
-    az extension add --name aks-preview
-    ```
-
-    To update to the latest version of the AZ AKS Preview Extension, run the
-    following command from a terminal:
-
-    ```sh
-    az extension update --name aks-preview
-    ```
-
-  - [AZ AKS StartStopPreview feature](https://docs.microsoft.com/en-us/azure/aks/start-stop-cluster#register-the-startstoppreview-preview-feature)
-
-    To install the AZ AKS "StartStopPreview" Feature, run the following command
-    from a terminal:
-
-    ```sh
-    az feature register --namespace "Microsoft.ContainerService" --name "StartStopPreview"
-    ```
-
-    After registration has finished, enable the "StartStopPreview" feature
-    functionality by running the following command from a terminal:
-
-    ```sh
-    az provider register --namespace Microsoft.ContainerService
-    ```
-
-  - [az aks kubectl](https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az_aks_install_cli)
-
-    To install the AZ AKS Kubectl CLI, run the following command from a
-    terminal:
-
-    ```sh
-    az aks install-cli
-    ```
-
-- [Azure PowerShell Cmdlets](https://docs.microsoft.com/en-us/powershell/azure/install-az-ps)
-
-  Azure PowerShell works with PowerShell 6.2.4 and later on all platforms. It is
-  also supported with PowerShell 5.1 on Windows
-
-  To install the Azure PowerShell Cmdlets, run the following from an elevated
-  PowerShell terminal:
-
-  ```ps
-  Install-Module -Name Az -AllowClobber -Scope CurrentUser
-  ```
-
-  If the following error occurs, "execution of scripts is disabled on this
-  system", it is necessary to change the execution policy to allow the running
-  of scripts. To modify the PowerShell execution policy, run the following from
-  an elevated PowerShell terminal:
-
-  ```ps
-  Set-ExecutionPolicy -executionpolicy unrestricted
-  ```
-
-- [Docker](https://docs.docker.com/get-docker/)
-
-  A system restart is required after the Docker installation. Prior to the
-  deployment of ADE, ensure that Docker is **running**.
+```bash
+docker-compose build
+```
 
 ### DNS
 
@@ -193,10 +131,19 @@ Certificate Services.
 
 ### Deploying the Azure Demo Environment
 
-The Azure Demo Environment is deployed via a PowerShell Script and a series of
-ARM Templates and Azure CLI commands. There are two methods of utilizing the
-script, a pipeline friendly CLI Script, and a CLI Script Wizard. To deploy the
-Azure Demo Environment, execute the following steps:
+The Azure Demo Environment is designed to run within a Docker container. To
+start ADE, open a terminal and navigate to the ADE directory. Then, run the
+following command:
+
+```bash
+docker-compose run --rm ade
+```
+
+You now have the ADE shell environment! The Azure Demo Environment is deployed
+via a PowerShell Script and a series of ARM Templates and Azure CLI commands.
+There are two methods of utilizing the script, a pipeline friendly CLI Script,
+and a CLI Script Wizard. To deploy the Azure Demo Environment, execute the
+following steps:
 
 - Login to Azure
 
