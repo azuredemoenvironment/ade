@@ -1,9 +1,10 @@
 // parameters
 param location string = resourceGroup().location
-param applicationGatewayManagedIdentityName string
-param containerRegistryManagedIdentityName string
+param aliasRegion string
 
 //variables
+var applicationGatewayManagedIdentityName = 'id-ade-${aliasRegion}-agw'
+var containerRegistryManagedIdentityName = 'id-ade-${aliasRegion}-acr'
 var environmentName = 'production'
 var functionName = 'identity'
 var costCenterName = 'it'

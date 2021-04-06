@@ -1,8 +1,9 @@
 // parameters
 param location string = resourceGroup().location
-param logAnalyticsWorkspaceName string
+param aliasRegion string
 
 // variables
+var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 var containerInsights = {
   name: 'ContainerInsights(${logAnalyticsWorkspaceName})'
   galleryName: 'ContainerInsights'

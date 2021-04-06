@@ -1,16 +1,19 @@
 // target scope
 targetScope = 'subscription'
 
+// parameters
+param aliasRegion string
+
 // variables
 var diagnosticSettingsName = 'subscriptionactivitylog'
 
 // existing resources
 // log analytics
-param logAnalyticsWorkspaceResourceGroupName string
-param logAnalyticsWorkspaceName string
+var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
+var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
   name: logAnalyticsWorkspaceName
-  scope: resourceGroup(logAnalyticsWorkspaceResourceGroupName)
+  scope: resourceGroup(monitorResourceGroupName)
 }
 
 // resource - subscription activity log - diagnostic settings

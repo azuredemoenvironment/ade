@@ -2,6 +2,7 @@
 targetScope = 'subscription'
 
 // parameters
+param aliasRegion string
 param defaultPrimaryRegion string
 param listOfAllowedLocations array
 param listOfAllowedSKUs array
@@ -11,11 +12,11 @@ var initiativeDefinitionName = 'ADE Policy Initiative Definition'
 
 // existing resources
 // log analytics
-param logAnalyticsWorkspaceResourceGroupName string
-param logAnalyticsWorkspaceName string
+var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
+var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
   name: logAnalyticsWorkspaceName
-  scope: resourceGroup(logAnalyticsWorkspaceResourceGroupName)
+  scope: resourceGroup(monitorResourceGroupName)
 }
 
 // resource - policy initiative definition

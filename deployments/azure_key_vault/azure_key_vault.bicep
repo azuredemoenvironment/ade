@@ -1,6 +1,6 @@
 // parameters
 param location string = resourceGroup().location
-param keyVaultName string
+param aliasRegion string
 param azureActiveDirectoryTenantID string
 param azureActiveDirectoryUserID string
 param applicationGatewayManagedIdentitySPNID string
@@ -16,17 +16,18 @@ param restAPISPNAppID string
 param restAPIObjectId string
 
 //variables
+var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var environmentName = 'production'
 var functionName = 'key vault'
 var costCenterName = 'it'
 
 // existing resources
 // log analytics
-param logAnalyticsWorkspaceResourceGroupName string
-param logAnalyticsWorkspaceName string
+var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
+var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
   name: logAnalyticsWorkspaceName
-  scope: resourceGroup(logAnalyticsWorkspaceResourceGroupName)
+  scope: resourceGroup(monitorResourceGroupName)
 }
 
 // resource - key vault
@@ -84,12 +85,6 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' = {
             'unwrapKey'
             'wrapKey'
           ]
-          secrets: [
-            'all'
-          ]
-          certificates: [
-            'all'
-          ]
         }
       }
       {
@@ -144,10 +139,6 @@ resource keyVaultKey 'Microsoft.KeyVault/vaults/keys@2019-09-01' = {
   name: '${keyVault.name}/${'encryptionKey'}'
   properties: {
     kty: 'RSA'
-    keyOps: [
-      'encrypt'
-      'decrypt'
-    ]
     keySize: 4096
   }
 }

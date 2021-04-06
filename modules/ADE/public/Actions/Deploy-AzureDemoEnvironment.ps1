@@ -41,11 +41,10 @@ function Deploy-AzureDemoEnvironment {
 
     # ORDER MATTERS!!
     
-    Deploy-AzureLogAnalytics $armParameters
-    # Deploy-AzurePolicy $armParameters
-    # Deploy-AzureActivityLog $armParameters
-    # Deploy-AzureIdentity $armParameters
-    # Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
+    # Deploy-AzureMonitor $armParameters
+    # Deploy-AzurePolicy $armParameters    
+    Deploy-AzureIdentity $armParameters
+    Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
     # Deploy-AzureNetworking $armParameters    
     # Deploy-AzureVpnGateway $armParameters
     # Deploy-VnetPeering $armParameters
