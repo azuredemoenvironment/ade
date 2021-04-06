@@ -43,7 +43,7 @@ ensure that Docker is **running**.
 Once Docker is installed, open a terminal and navigate to the ADE directory. Run
 the following command to build all of the required ADE Docker images:
 
-```bash
+```sh
 docker-compose build
 ```
 
@@ -135,7 +135,7 @@ The Azure Demo Environment is designed to run within a Docker container. To
 start ADE, open a terminal and navigate to the ADE directory. Then, run the
 following command:
 
-```bash
+```sh
 docker-compose run --rm ade
 ```
 
@@ -147,8 +147,6 @@ following steps:
 
 - Login to Azure
 
-  - Open a Terminal, Command Prompt, or PowerShell session, and navigate to the
-    root of the cloned repository.
   - To login to Azure using `az`, run the following command:
 
     ```sh
@@ -171,6 +169,18 @@ following steps:
 
     ```sh
     az account set --subscription "Subscription Name"
+    ```
+
+  - To login to Azure using Az PowerShell scripts, run the following command:
+
+    ```ps
+    Connect-AzAccount -UseDeviceAuthentication
+    ```
+
+  - To select the subscription to use, run the following command:
+
+    ```ps
+    Get-AzSubscription -SubscriptionName "Subscription Name" | Set-AzContext
     ```
 
 - Deploy the Azure Demo Environment Using the CLI Script (Pipeline Friendly)

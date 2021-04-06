@@ -24,8 +24,7 @@ RUN    curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.1.3
     && ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh
 
 # Install Needed Commandlets
-RUN    pwsh -Command { Install-Module -Name Az -AllowClobber -Scope CurrentUser } \
-    && pwsh -Command { Set-ExecutionPolicy -executionpolicy unrestricted }
+RUN    pwsh -Command "Install-Module -Name Az -AllowClobber -Scope CurrentUser -Force"
 
 # Install AZ Cli Extensions and Configure Environment
 ################################################
