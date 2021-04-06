@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 
 services:
   # This is the primary Azure Demo Environment Image, and will be used as the main

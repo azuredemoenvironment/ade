@@ -11,14 +11,14 @@ EXPOSE 443
 ##################################################################
 # Stage 1: Set the Base Development Image of the App
 ##################################################################
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS baseDev
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS basedev
 
 WORKDIR /app
 
 ##################################################################
 # Stage 2: Build the .NET Core App
 ##################################################################
-FROM baseDev AS publish
+FROM basedev AS publish
 
 # Copy all needed project files for restore purposes (sorted by likeliness of change)
 # NOTE: this is assuming the context is set to the parent directory
