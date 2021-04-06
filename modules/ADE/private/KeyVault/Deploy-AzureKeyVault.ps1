@@ -12,6 +12,7 @@ function Deploy-AzureKeyVault {
 
     Set-AzureKeyVaultSecret $armParameters.keyVaultName 'resourcePassword' $secureResourcePassword
     Deploy-WildcardCertificateToAzureKeyVault $armParameters.keyVaultName $secureCertificatePassword $wildcardCertificatePath
+    New-AzureKeyVaultKey $armParameters.keyVaultName 'containerRegistry'
     
     Set-AzureKeyVaultResourceId $armParameters
 
