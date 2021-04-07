@@ -8,19 +8,19 @@ function Write-Header {
 }
 
 function Deploy {
-    /opt/ade/ade.ps1 -deploy
+    Invoke-Expression "& `"/opt/ade/ade.ps1`" -deploy $args"
 }
 
 function Remove {
-    /opt/ade/ade.ps1 -remove
+    Invoke-Expression "& `"/opt/ade/ade.ps1`" -remove $args"
 }
 
 function Deallocate {
-    /opt/ade/ade.ps1 -deallocate
+    Invoke-Expression "& `"/opt/ade/ade.ps1`" -deallocate $args"
 }
 
-function allocate {
-    /opt/ade/ade.ps1 -allocate
+function Allocate {
+    Invoke-Expression "& `"/opt/ade/ade.ps1`" -allocate $args"
 }
 
 function Prompt {
