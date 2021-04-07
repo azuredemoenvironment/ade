@@ -41,9 +41,14 @@ The only software prerequisite is a local installation of
 ensure that Docker is **running**.
 
 Once Docker is installed, open a terminal and navigate to the ADE directory. Run
-the following command to build all of the required ADE Docker images:
+the following commands to build all of the required ADE Docker images:
 
 ```sh
+copy .env.sample .env
+
+# For macOS/*nix, run this instead:
+# cp .env.sample .env
+
 docker-compose build
 ```
 
