@@ -118,8 +118,8 @@ docker-compose build
 ### Certificate Services
 
 - The Azure Demo Environment utilizes a Wildcard SSL Certificate to secure
-  multiple services including App Services and Application Gateway. There are
-  multiple online services, such as
+  multiple services including App Services and Application Gateway. The Wildcard
+  PFX must have a password set. There are multiple online services, such as
   [Let's Encrypt](https://letsencrypt.org/getting-started/), that provide free
   to low cost SSL Certificates.
 
@@ -148,10 +148,10 @@ following steps:
 - Login to Azure
 
   - To login to both the `az` CLI and Azure PowerShell modules, run the
-    following from the ADE Shell Environment:
+    following from the ADE Shell Environment and follow the prompts:
 
   ```ps
-  ./login.ps1 -SubscriptionName "Your Subscription Name"
+  ./login.ps1
   ```
 
 - Deploy the Azure Demo Environment Using the CLI Script (Pipeline Friendly)

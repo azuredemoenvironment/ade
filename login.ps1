@@ -5,38 +5,29 @@ param (
     [string]$subscriptionName
 )
 
-function Write-Divider {
+function Write-Header {
+    param([string] $message)
+
     Write-Host "************************************************************************" -ForegroundColor Cyan | Out-Null
+    Write-Host $message -ForegroundColor Yellow | Out-Null
+    Write-Host "************************************************************************" -ForegroundColor Cyan | Out-Null
+    Write-Host "" | Out-Null
 }
 
-Write-Divider
-Write-Host "Logging in to az CLI" -ForegroundColor Yellow | Out-Null
-Write-Divider
-Write-Host "" | Out-Null
+Write-Header "Logging in to az CLI"
 
 az login
 
-Write-Divider
-Write-Host "Setting az CLI Subscription to $subscriptionName" -ForegroundColor Yellow | Out-Null
-Write-Divider
-Write-Host "" | Out-Null
+Write-Header "Setting az CLI Subscription to $subscriptionName"
 
 az account set --subscription $subscriptionName
 
-Write-Divider
-Write-Host "Logging in to Az PowerShell" -ForegroundColor Yellow | Out-Null
-Write-Divider
-Write-Host "" | Out-Null
+Write-Header "Logging in to Az PowerShell"
 
 Connect-AzAccount -UseDeviceAuthentication
 
-Write-Divider
-Write-Host "Setting Az PowerShell Subscription to $subscriptionName" -ForegroundColor Yellow | Out-Null
-Write-Divider
-Write-Host "" | Out-Null
+Write-Header "Setting Az PowerShell Subscription to $subscriptionName"
 
 Get-AzSubscription -SubscriptionName $subscriptionName | Set-AzContext
 
-Write-Divider
-Write-Host "Done! Use ./ade.ps1 -deploy to start deploying the Azure Demo Environment!" -ForegroundColor Yellow | Out-Null
-Write-Divider
+Write-Header "Done! Use ./ade.ps1 -deploy to start deploying the Azure Demo Environment!"
