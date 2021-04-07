@@ -25,7 +25,12 @@ namespace ADE.EventIngestorService.Controllers
             _logger = logger;
             _connectionConfiguration = connectionConfiguration;
         }
-
+        private static EventData CreateEventData(FacilityEvent data)
+        {
+            var dataAsJson = Newtonsoft.Json.JsonConvert.SerializeObject(data);
+            var eventData = new EventData(Encoding.UTF8.GetBytes(dataAsJson));
+            return eventData;
+        }
 
         [HttpPost]
         public async Task<FacilityEvent> PostAsync([FromBody] FacilityEvent facilityEvent)
@@ -45,9 +50,8 @@ namespace ADE.EventIngestorService.Controllers
                 using EventDataBatch eventBatch = await producerClient.CreateBatchAsync();
 
                 // Add events to the batch. An event is a represented by a collection of bytes and metadata. 
-                eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes("Sink One")));
-                eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes("Sink Two")));
-                eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes("Sink Three")));
+                eventBatch.TryAdd(CreateEventData(facilityEvent));
+            
 
                 // Use the producer client to send the batch of events to the event hub
                 await producerClient.SendAsync(eventBatch);
