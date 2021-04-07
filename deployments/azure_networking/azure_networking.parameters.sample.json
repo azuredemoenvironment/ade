@@ -5,26 +5,8 @@
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
-        "virtualNetwork01ResourceGroupName": {
-            "value": "@@networkingResourceGroupName@@"
-        },
-        "virtualNetwork01Name": {
-            "value": "@@virtualNetwork01Name@@"
-        },
-        "virtualNetwork02Name": {
-            "value": "@@virtualNetwork02Name@@"
-        },
-        "virtualNetwork03Name": {
-            "value": "@@virtualNetwork03Name@@"
-        },
         "sourceAddressPrefix": {
             "value": "@@sourceAddressPrefix@@"
-        },
-        "logAnalyticsWorkspaceResourceGroupName": {
-            "value": "@@logAnalyticsWorkspaceResourceGroupName@@"
-        },
-        "logAnalyticsWorkspaceName": {
-            "value": "@@logAnalyticsWorkspaceName@@"
         }
     }
 }

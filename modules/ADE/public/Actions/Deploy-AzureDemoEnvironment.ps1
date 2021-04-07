@@ -43,17 +43,15 @@ function Deploy-AzureDemoEnvironment {
     
     # Deploy-AzureMonitor $armParameters
     # Deploy-AzurePolicy $armParameters    
-    Deploy-AzureIdentity $armParameters
-    Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
-    # Deploy-AzureNetworking $armParameters    
+    # Deploy-AzureIdentity $armParameters
+    # Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
+    Deploy-AzureNetworking $armParameters    
     # Deploy-AzureVpnGateway $armParameters
     # Deploy-VnetPeering $armParameters
     # Deploy-AzureStorageAccountVmDiagnostics $armParameters
-    # Deploy-AzureNsgFlowLogs $armParameters
-    # Deploy-AzureFirewall $armParameters
+    # Deploy-AzureNsgFlowLogs $armParameters    
     # Deploy-AzurePrivateDns $armParameters
-    # Deploy-StorageFirewallRules $armParameters
-    # Deploy-AzureBastion $armParameters
+    # Deploy-StorageFirewallRules $armParameters    
     # Deploy-AzureVirtualMachineJumpbox $armParameters
     # Deploy-AzureVirtualMachineDeveloper $armParameters
     # Deploy-AzureVirtualMachineWindows10Client $armParameters

@@ -36,6 +36,8 @@ function Set-InitialArmParameters {
         'contactEmailAddress'                               = $email
         'defaultPrimaryRegion'                              = $defaultPrimaryRegion
         'defaultSecondaryRegion'                            = $defaultSecondaryRegion
+        'deployAzureFirewall'                               = 'true'
+        'deployAzureVpnGateway'                             = 'false'
         'module'                                            = $module
         'overwriteParameterFiles'                           = $overwriteParameterFiles
         'rootDomainName'                                    = $rootDomainName
@@ -64,9 +66,7 @@ function Set-InitialArmParameters {
         'developerName'                                     = "vm-developer01"
         'developerNICName'                                  = "nic-$aliasRegion-developer01"
         'developerOSDiskName'                               = "disk-$aliasRegion-developer01-os"
-        'developerPublicIPAddressName'                      = "pip-$aliasRegion-developer01"        
-        'firewallName'                                      = "fw-$aliasRegion-01"
-        'firewallPublicIPAddressName'                       = "pip-$aliasRegion-fw01"
+        'developerPublicIPAddressName'                      = "pip-$aliasRegion-developer01"   
         'githubActionsSPNName'                              = "spn-ade-$aliasRegion-gha"        
         'imageResizerFQDN'                                  = "as-$aliasRegion-imgreszr.azurewebsites.net".Replace('-', '')
         'imageResizerFunctionAppName'                       = "fa-$aliasRegion-imgreszr".replace('-', '')
@@ -126,10 +126,7 @@ function Set-InitialArmParameters {
         'sslCertificateName'                                = $rootDomainName
         'texAnalyticsAccountName'                           = "textanalytics"
         'trafficManagerProfileDNSName'                      = "tmp-$aliasRegion-helloworld".replace('-', '')
-        'trafficManagerProfileName'                         = "tmp-$aliasRegion-helloworld"
-        'virtualNetwork01Name'                              = "vnet-$aliasRegion-01"
-        'virtualNetwork02Name'                              = "vnet-$aliasRegion-02"
-        'virtualNetwork03Name'                              = "vnet-$aliasRegion-03"
+        'trafficManagerProfileName'                         = "tmp-$aliasRegion-helloworld"        
         'virtualNetworkGatewayName'                         = "vng-$aliasRegion-01"
         'virtualNetworkGatewayPublicIPAddressName'          = "pip-$aliasRegion-vng01"
         'vmDiagnosticsStorageAccountName'                   = "sa-$aliasRegion-vmdiags".replace('-', '')

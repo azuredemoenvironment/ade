@@ -38,6 +38,8 @@ removed
 'clientServicesSubnetNSGName'                       = "nsg-ade-$aliasRegion-clientservices"
 'developerSubnetNSGName'                            = "nsg-ade-$aliasRegion-developer"
 'directoryServicesSubnetNSGName'                    = "nsg-ade-$aliasRegion-directoryservices"
+'firewallName'                                      = "fw-$aliasRegion-01"
+'firewallPublicIPAddressName'                       = "pip-$aliasRegion-fw01"
 'imageResizerAppInsightsName'                       = "appin-$aliasRegion-imageresizer"
 "inspectorGadgetAppInsightsName"                    = "appin-$aliasRegion-inspectorgadget"
 'internetRouteTableName'                            = "route-ade-$aliasRegion-internet"
@@ -53,6 +55,9 @@ removed
 'secondaryRegionAppServicePlanName'                 = "plan-ade-$aliasSecondaryRegion-001"
 'secondaryRegionHelloWorldAppInsightsName'          = "appin-$aliasSecondaryRegion-helloworld"
 'sqlToDoAppInsightsName'                            = "appin-$aliasRegion-sqltodo"
+'virtualNetwork01Name'                              = "vnet-$aliasRegion-01"
+'virtualNetwork02Name'                              = "vnet-$aliasRegion-02"
+'virtualNetwork03Name'                              = "vnet-$aliasRegion-03"
 'vmssSubnetNSGName'                                 = "nsg-ade-$aliasRegion-vmss"
 
 
@@ -60,6 +65,8 @@ removed
 
 removed
 # Deploy-AzureActivityLog $armParameters
+# Deploy-AzureFirewall $armParameters
+# Deploy-AzureBastion $armParameters
 
 
 ## deployments
@@ -92,18 +99,26 @@ removed
 - converted to key_vault.bicep
 - modified function tag to 'key vault'
 - updated vaults api to 2019-09-01
-- added creation of encryption key to template file
 - TODO: need to consider adding enableRbacAuthorization to the properties and
   enabling rbac authorization
 
+removed azure_key_vault.certificate.sample
 removed azure_key_vault.key.sample
+removed azure_key_vault.secret.sample
 
 ### azure_networking.json
+
+TODO: update this section
 
 - converted to networking.bicep
 - removed natGatewayPublicIPAddressName in favor of natGatewayPublicIPPrefixName
 - updated publicIPPrefixes api to 2020-06-01
 - updated natGateways api to 2020-06-01
+- removed virtual network 003
+- removed directoryServices subnet
+- removed directoryServices network security group
+- removed developer subnet
+- removed developer network security group
 
 ### azure_app_service_plan
 

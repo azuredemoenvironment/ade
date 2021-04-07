@@ -1,10 +1,9 @@
 // parameters
-param location string = resourceGroup().location
-param aliasRegion string
+param location string
+param natGatewayPublicIPPrefixName string
+param natGatewayName string
 
 // variables
-var natGatewayPublicIPPrefixName = 'pipp-ade-${aliasRegion}-ngw001'
-var natGatewayName = 'ngw-ade-${aliasRegion}-001'
 var environmentName = 'production'
 var functionName = 'networking'
 var costCenterName = 'it'

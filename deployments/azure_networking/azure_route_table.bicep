@@ -1,9 +1,8 @@
 // parameters
-param location string = resourceGroup().location
-param aliasRegion string
+param location string
+param internetRouteTableName string
 
 // variables
-var internetRouteTableName = 'route-ade-${aliasRegion}-internet'
 var environmentName = 'production'
 var functionName = 'networking'
 var costCenterName = 'it'

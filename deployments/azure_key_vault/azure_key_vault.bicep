@@ -134,15 +134,6 @@ resource keyVaultDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-p
   }
 }
 
-// resource - key vault - encryption key
-resource keyVaultKey 'Microsoft.KeyVault/vaults/keys@2019-09-01' = {
-  name: '${keyVault.name}/${'encryptionKey'}'
-  properties: {
-    kty: 'RSA'
-    keySize: 4096
-  }
-}
-
 // resource - key vault - secret - containerRegistryUserName
 resource containerRegistryUserNameSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
   name: '${keyVault.name}/${'containerRegistryUserName'}'
