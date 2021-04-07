@@ -4,3 +4,4 @@
 *.personal.*
 data/**
 .metals
+/.vs
