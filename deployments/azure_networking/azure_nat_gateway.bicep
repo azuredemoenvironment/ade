@@ -9,7 +9,7 @@ var functionName = 'networking'
 var costCenterName = 'it'
 
 // resource - public ip prefix
-resource natGatewaypublicIPPrefix 'Microsoft.Network/publicIPPrefixes@2020-06-01' = {
+resource natGatewaypublicIPPrefix 'Microsoft.Network/publicIPPrefixes@2020-07-01' = {
   name: natGatewayPublicIPPrefixName
   location: location
   tags: {
@@ -27,7 +27,7 @@ resource natGatewaypublicIPPrefix 'Microsoft.Network/publicIPPrefixes@2020-06-01
 }
 
 // resource - nat gateway
-resource natGateway 'Microsoft.Network/natGateways@2020-06-01' = {
+resource natGateway 'Microsoft.Network/natGateways@2020-07-01' = {
   name: natGatewayName
   location: location
   tags: {
@@ -50,4 +50,3 @@ resource natGateway 'Microsoft.Network/natGateways@2020-06-01' = {
 
 // outputs
 output natGatewayId string = natGateway.id
-output natGatewaypublicIPPrefixId string = natGatewaypublicIPPrefix.id

@@ -8,7 +8,7 @@ var functionName = 'networking'
 var costCenterName = 'it'
 
 // resource - route table
-resource internetRouteTable 'Microsoft.Network/routeTables@2020-06-01' = {
+resource internetRouteTable 'Microsoft.Network/routeTables@2020-07-01' = {
   name: internetRouteTableName
   location: location
   tags: {

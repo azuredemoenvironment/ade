@@ -40,7 +40,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
 }
 
 // resource - virtual network 002
-resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
   name: virtualNetwork002Name
   location: location
   tags: {
@@ -193,3 +193,5 @@ resource virtualNetwork002Diagnostics 'microsoft.insights/diagnosticSettings@201
     ]
   }
 }
+
+output virtualNetwork002Id string = virtualNetwork002.id

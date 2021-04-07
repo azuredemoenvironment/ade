@@ -36,6 +36,7 @@ removed
 'azureBastionPublicIPAddressName'                   = "pip-ade-$aliasRegion-bastion001"
 'azureBastionSubnetNSGName'                         = "nsg-ade-$aliasRegion-azurebastion"
 'clientServicesSubnetNSGName'                       = "nsg-ade-$aliasRegion-clientservices"
+'connectionName'                                    = "cn-$aliasRegion-01"
 'developerSubnetNSGName'                            = "nsg-ade-$aliasRegion-developer"
 'directoryServicesSubnetNSGName'                    = "nsg-ade-$aliasRegion-directoryservices"
 'firewallName'                                      = "fw-$aliasRegion-01"
@@ -43,6 +44,7 @@ removed
 'imageResizerAppInsightsName'                       = "appin-$aliasRegion-imageresizer"
 "inspectorGadgetAppInsightsName"                    = "appin-$aliasRegion-inspectorgadget"
 'internetRouteTableName'                            = "route-ade-$aliasRegion-internet"
+'localNetworkGatewayName'                           = "lng-$aliasRegion-01"
 'logAnalyticsWorkspaceName'                         = "log-ade-$aliasRegion-001"
 'managementSubnetNSGName'                           = "nsg-ade-$aliasRegion-management"
 'natGatewayName'                                    = "ngw-ade-$aliasRegion-001"
@@ -58,6 +60,8 @@ removed
 'virtualNetwork01Name'                              = "vnet-$aliasRegion-01"
 'virtualNetwork02Name'                              = "vnet-$aliasRegion-02"
 'virtualNetwork03Name'                              = "vnet-$aliasRegion-03"
+'virtualNetworkGatewayName'                         = "vng-$aliasRegion-01"
+'virtualNetworkGatewayPublicIPAddressName'          = "pip-$aliasRegion-vng01"
 'vmssSubnetNSGName'                                 = "nsg-ade-$aliasRegion-vmss"
 
 
@@ -65,8 +69,11 @@ removed
 
 removed
 # Deploy-AzureActivityLog $armParameters
+# Deploy-AzureVpnGateway $armParameters
 # Deploy-AzureFirewall $armParameters
 # Deploy-AzureBastion $armParameters
+# Deploy-AzurePrivateDns $armParameters
+# Deploy-VnetPeering $armParameters
 
 
 ## deployments

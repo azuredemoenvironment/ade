@@ -1,29 +1,25 @@
 // parameters
-param location string = resourceGroup().location
-param aliasRegion string
-
-// parameters - modules
+param location string
+param monitorResourceGroupName string
+param logAnalyticsWorkspaceName string
+param networkingResourceGroupName string
+param virtualNetwork001Name string
+param azureBastionPublicIpAddressName string
+param azureBastionName string
 param azureBastionSubnetId string
 
 // variables
-var azureBastionPublicIpAddressName = 'pip-ade-${aliasRegion}-bastion001'
-var azureBastionName = 'bastion-ade-${aliasRegion}-001'
 var environmentName = 'production'
 var functionName = 'networking'
 var costCenterName = 'it'
 
 // existing resources
 // log analytics
-var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
-var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
   name: logAnalyticsWorkspaceName
   scope: resourceGroup(monitorResourceGroupName)
 }
 // virtual network
-var networkingResourceGroupName = 'rg-ade=${aliasRegion}-networking'
-var virtualNetwork001Name = 'vnet-ade-${aliasRegion}-001'
-var azureBastionSubnetName = 'AzureBastionSubnet'
 resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-06-01' existing = {
   name: virtualNetwork001Name
 }
@@ -92,7 +88,7 @@ resource azureBastionPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSe
 }
 
 // resource - azure bastion
-resource azureBastion 'Microsoft.Network/bastionHosts@2020-06-01' = {
+resource azureBastion 'Microsoft.Network/bastionHosts@2020-07-01' = {
   name: azureBastionName
   location: location
   tags: {

@@ -55,8 +55,7 @@ function Set-InitialArmParameters {
         'applicationGatewayPublicIPAddressName'             = "pip-$aliasRegion-appgw01"
         'azureActiveDirectoryTenantID'                      = $currentAccount.tenantId
         'azureActiveDirectoryUserID'                        = $adSignedInUser.objectId
-        'computerVisionAccountName'                         = "computervision"
-        'connectionName'                                    = "cn-$aliasRegion-01"
+        'computerVisionAccountName'                         = "computervision"        
         'containerGroupMySQLImage'                          = "$acrName.azurecr.io/mysql:latest"
         'containerGroupShareImage'                          = "$acrName.azurecr.io/azure-cli:latest"
         'containerGroupWordPressImage'                      = "$acrName.azurecr.io/wordpress:latest"
@@ -89,8 +88,7 @@ function Set-InitialArmParameters {
         'jumpboxOSDiskName'                                 = "disk-$aliasRegion-jumpbox01-os"
         'jumpboxPublicIPAddressName'                        = "pip-$aliasRegion-jumpbox01"
         'keyVaultName'                                      = "kv-ade-$aliasRegion-001"
-        'localNetworkGatewayAddressPrefix'                  = $localNetworkRange
-        'localNetworkGatewayName'                           = "lng-$aliasRegion-01"
+        'localNetworkGatewayAddressPrefix'                  = $localNetworkRange      
         'nsgFlowLogsStorageAccountName'                     = "sa-$aliasRegion-nsgflow".replace('-', '')
         'nTierDB01NICName'                                  = "nic-$aliasRegion-ntierdb01"
         'nTierDB01OSDiskName'                               = "disk-$aliasRegion-ntierdb01-os"
@@ -127,8 +125,6 @@ function Set-InitialArmParameters {
         'texAnalyticsAccountName'                           = "textanalytics"
         'trafficManagerProfileDNSName'                      = "tmp-$aliasRegion-helloworld".replace('-', '')
         'trafficManagerProfileName'                         = "tmp-$aliasRegion-helloworld"        
-        'virtualNetworkGatewayName'                         = "vng-$aliasRegion-01"
-        'virtualNetworkGatewayPublicIPAddressName'          = "pip-$aliasRegion-vng01"
         'vmDiagnosticsStorageAccountName'                   = "sa-$aliasRegion-vmdiags".replace('-', '')
         'vmssLoadBalancerName'                              = "lb-$aliasRegion-vmss01"
         'vmssLoadBalancerPublicIPAddressName'               = "pip-$aliasRegion-lb-vmss01"

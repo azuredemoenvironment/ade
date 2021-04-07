@@ -20,7 +20,6 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
   scope: resourceGroup(monitorResourceGroupName)
 }
 // virtual network
-var azureFirewallSubnetName = 'AzureFirewallSubnet'
 resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-06-01' existing = {
   name: virtualNetwork001Name
 }
@@ -43,7 +42,7 @@ resource azureFirewallPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-
 }
 
 // resource - public ip address - azure firewall - diagnostic settings
-resource azureFirewallPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource azureFirewallPublicIpAddressDiagnostics 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
   name: '${azureFirewallPublicIpAddress.name}-diagnostics'
   scope: azureFirewallPublicIpAddress
   properties: {
@@ -88,7 +87,8 @@ resource azureFirewallPublicIpAddressDiagnostics 'microsoft.insights/diagnosticS
   }
 }
 
-resource azureFirewall 'Microsoft.Network/azureFirewalls@2020-08-01' = {
+// resource - azure firewall
+resource azureFirewall 'Microsoft.Network/azureFirewalls@2020-07-01' = {
   name: azureFirewallName
   location: location
   tags: {
@@ -162,7 +162,7 @@ resource azureFirewall 'Microsoft.Network/azureFirewalls@2020-08-01' = {
 }
 
 // resource - azure firewall - diagnostic settings
-resource azureFirewallDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource azureFirewallDiagnostics 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
   name: '${azureFirewall.name}-diagnostics'
   scope: azureFirewall
   properties: {

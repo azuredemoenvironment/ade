@@ -24,7 +24,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
 }
 
 // resource - network security group - azure bastion subnet
-resource azureBastionSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+resource azureBastionSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: azureBastionSubnetNSGName
   location: location
   tags: {
@@ -126,7 +126,7 @@ resource azureBastionSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings
 }
 
 // resource - network security group - management subnet
-resource managementSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+resource managementSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: managementSubnetNSGName
   location: location
   tags: {
@@ -183,7 +183,7 @@ resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2
 }
 
 // resource - network security group - ntier web subnet
-resource nTierWebSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+resource nTierWebSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: nTierWebSubnetNSGName
   location: location
   tags: {
@@ -225,7 +225,7 @@ resource nTierWebSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@201
 }
 
 // resource - network security group - ntier app subnet
-resource nTierAppSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+resource nTierAppSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: nTierAppSubnetNSGName
   location: location
   tags: {
@@ -267,7 +267,7 @@ resource nTierAppSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@201
 }
 
 // resource - network security group - ntier db subnet
-resource nTierDBSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+resource nTierDBSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: nTierDBSubnetNSGName
   location: location
   tags: {
@@ -309,7 +309,7 @@ resource nTierDBSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017
 }
 
 // resource - network security group - vmss subnet
-resource vmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+resource vmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: vmssSubnetNSGName
   location: location
   tags: {
@@ -366,7 +366,7 @@ resource vmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05
 }
 
 // resource - network security group - client services subnet
-resource clientServicesSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+resource clientServicesSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: clientServicesSubnetNSGName
   location: location
   tags: {

@@ -31,7 +31,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
 }
 
 // resource - virtual network 001
-resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
   name: virtualNetwork001Name
   location: location
   tags: {
@@ -129,5 +129,7 @@ resource virtualNetwork001Diagnostics 'microsoft.insights/diagnosticSettings@201
   }
 }
 
+output virtualNetwork001Id string = virtualNetwork001.id
 output azureFirewallSubnetId string = virtualNetwork001.properties.subnets[0].id
 output azureBastionSubnetId string = virtualNetwork001.properties.subnets[2].id
+output gatewaySubnetId string = virtualNetwork001.properties.subnets[4].id

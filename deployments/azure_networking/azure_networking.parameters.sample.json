@@ -7,6 +7,17 @@
         },
         "sourceAddressPrefix": {
             "value": "@@sourceAddressPrefix@@"
+        },
+        "localNetworkGatewayAddressPrefix": {
+            "value": "@@localNetworkGatewayAddressPrefix@@"
+        },
+        "connectionSharedKey": {
+            "reference": {
+                "keyVault": {
+                    "id": "@@keyVaultResourceID@@"
+                },
+                "secretName": "resourcePassword"
+            }
         }
     }
 }

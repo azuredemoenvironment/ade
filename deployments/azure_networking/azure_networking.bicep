@@ -2,8 +2,10 @@
 param location string = resourceGroup().location
 param aliasRegion string
 param sourceAddressPrefix string
+param localNetworkGatewayAddressPrefix string
+param connectionSharedKey string
 param deployAzureFirewall bool = false
-param deployAzureVpnGateway bool = false
+param deployVpnGateway bool = false
 
 // variables - existing resources - log analytics
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
@@ -66,6 +68,20 @@ var aksSubnetPrefix = '10.102.201.0/24'
 var azureFirewallPublicIpAddressName = 'pip-ade-${aliasRegion}-fw001'
 var azureFirewallName = 'fw-ade-${aliasRegion}-001'
 
+// variables - azure bastion
+var azureBastionPublicIpAddressName = 'pip-ade-${aliasRegion}-bastion001'
+var azureBastionName = 'bastion-ade-${aliasRegion}-001'
+
+// variables - vpn gateway
+var vpnGatewayPublicIpAddressName = 'pip-ade-${aliasRegion}-vgw001'
+var localNetworkGatewayName = 'lgw-ade-${aliasRegion}-vgw001'
+var vpnGatewayName = 'vgw-ade-${aliasRegion}-001'
+var connectionName = 'cn-ade-${aliasRegion}-vgw001'
+
+// variables - private dns
+var appServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
+var azureSQLprivateDnsZoneName = 'privatelink.database.windows.net'
+
 // module - nat gateway
 module natGatewayModule './azure_nat_gateway.bicep' = {
   name: 'natGatewayDeployment'
@@ -122,8 +138,8 @@ module virtualNetwork001Module './azure_virtual_network_001.bicep' = {
     managementSubnetPrefix: managementSubnetPrefix
     gatewaySubnetName: gatewaySubnetName
     gatewaySubnetPrefix: gatewaySubnetPrefix
-    azureBastionSubnetNSGId: networkSecurityGroupsModule.outputs.nTierWebSubnetNSGId
-    managementSubnetNSGId: networkSecurityGroupsModule.outputs.nTierAppSubnetNSGId
+    azureBastionSubnetNSGId: networkSecurityGroupsModule.outputs.azureBastionSubnetNSGId
+    managementSubnetNSGId: networkSecurityGroupsModule.outputs.managementSubnetNSGId
     natGatewayId: natGatewayModule.outputs.natGatewayId
   }
 }
@@ -181,27 +197,68 @@ module azureFirewallModule './azure_firewall.bicep' = if (deployAzureFirewall ==
 module azureBastionModule './azure_bastion.bicep' = {
   name: 'azureBastionDeployment'
   params: {
-    aliasRegion: aliasRegion
+    location: location
+    monitorResourceGroupName: monitorResourceGroupName
+    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
+    networkingResourceGroupName: networkingResourceGroupName
+    virtualNetwork001Name: virtualNetwork001Name
+    azureBastionPublicIpAddressName: azureBastionPublicIpAddressName
+    azureBastionName: azureBastionName
     azureBastionSubnetId: virtualNetwork001Module.outputs.azureBastionSubnetId
   }
 }
 
 // module - azure vpn gateway
-// module azureVpnGatewayModule './azure_vpn_gateway.bicep' = if (deployAzureVpnGateway == true) {
-//   name: 'azureVpnGatewayDeployment'
-//   params: {
-//     aliasRegion: aliasRegion
-//   }
-// }
-//   }
-// }
+module azureVpnGatewayModule './azure_vpn_gateway.bicep' = if (deployVpnGateway == true) {
+  name: 'vpnGatewayDeployment'
+  params: {
+    location: location
+    sourceAddressPrefix: sourceAddressPrefix
+    localNetworkGatewayAddressPrefix: localNetworkGatewayAddressPrefix
+    connectionSharedKey: connectionSharedKey
+    monitorResourceGroupName: monitorResourceGroupName
+    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
+    networkingResourceGroupName: networkingResourceGroupName
+    virtualNetwork001Name: virtualNetwork001Name
+    vpnGatewayPublicIpAddressName: vpnGatewayPublicIpAddressName
+    localNetworkGatewayName: localNetworkGatewayName
+    vpnGatewayName: vpnGatewayName
+    connectionName: connectionName
+    gatewaySubnetId: virtualNetwork001Module.outputs.gatewaySubnetId
+  }
+}
 
 // module - private dns
-// module privateDnsModule './azure_private_dns.bicep' = {
-//   name: 'privateDnsDeployment'
-//   params: {
-//     aliasRegion: aliasRegion
-//   }
-// }
-//   }
-// }
+module privateDnsModule './azure_private_dns.bicep' = {
+  name: 'privateDnsDeployment'
+  params: {
+    location: location
+    networkingResourceGroupName: networkingResourceGroupName
+    virtualNetwork001Name: virtualNetwork001Name
+    virtualNetwork002Name: virtualNetwork002Name
+    appServicePrivateDnsZoneName: appServicePrivateDnsZoneName
+    azureSQLPrivateDnsZoneName: azureSQLprivateDnsZoneName
+    virtualNetwork001Id: virtualNetwork001Module.outputs.virtualNetwork001Id
+    virtualNetwork002Id: virtualNetwork002Module.outputs.virtualNetwork002Id
+  }
+}
+
+// module - virtual network peering (with vpn gateway)
+module vnetPeeringVgwModule './azure_vnet_peering_vgw.bicep' = if (deployVpnGateway == true) {
+  name: 'vnetPeeringVgwDeployment'
+  params: {
+    networkingResourceGroupName: networkingResourceGroupName
+    virtualNetwork001Name: virtualNetwork001Name
+    virtualNetwork002Name: virtualNetwork002Name
+  }
+}
+
+// module - virtual network peering (without vpn gateway)
+module vnetPeeringNoVgwModule './azure_vnet_peering_no_vgw.bicep' = if (deployVpnGateway == false) {
+  name: 'vnetPeeringNoVgwDeployment'
+  params: {
+    networkingResourceGroupName: networkingResourceGroupName
+    virtualNetwork001Name: virtualNetwork001Name
+    virtualNetwork002Name: virtualNetwork002Name
+  }
+}
