@@ -46,10 +46,11 @@ COPY ./deployments/ deployments
 COPY ./modules/ modules
 COPY ade.ps1 .
 COPY login.ps1 .
+COPY profile.ps1 /root/.config/powershell/Microsoft.PowerShell_profile.ps1
 
 RUN    chmod 777 ade.ps1 \
     && chmod 777 login.ps1
 
 # Start the Shell
 ################################################
-CMD [ "pwsh" ]
+CMD [ "pwsh", "-nologo" ]

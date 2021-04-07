@@ -15,6 +15,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw
       - ./:/opt/ade:rw
+      - ./profile.ps1:/root/.config/powershell/Microsoft.PowerShell_profile.ps1
   # ADE App
   ########################################################
   # These images are the main application that gets
