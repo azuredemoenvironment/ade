@@ -31,7 +31,7 @@ namespace ADE.EventIngestorService.Controllers
             //_telemetry.TrackEvent("Event Ingest", facilityEvent.ToDictionary());
 
             //add code to send to event hub
-          
+            
 
             return facilityEvent;
         }

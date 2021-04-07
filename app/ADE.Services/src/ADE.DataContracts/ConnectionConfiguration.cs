@@ -20,6 +20,10 @@ namespace ADE.DataContracts
 
         public string SqlServerConnectionString { get; set; }
 
+        public string EventHubConnectionString { get; set; }
+
+        public string EventHubNameSpace { get; set; }
+
         public string UserServiceUri { get; set; }
     }
 }
