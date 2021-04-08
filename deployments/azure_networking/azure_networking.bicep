@@ -260,5 +260,7 @@ module vnetPeeringNoVgwModule './azure_vnet_peering_no_vgw.bicep' = if (deployVp
     networkingResourceGroupName: networkingResourceGroupName
     virtualNetwork001Name: virtualNetwork001Name
     virtualNetwork002Name: virtualNetwork002Name
+    virtualNetwork001Id: virtualNetwork001Module.outputs.virtualNetwork001Id
+    virtualNetwork002Id: virtualNetwork002Module.outputs.virtualNetwork002Id
   }
 }

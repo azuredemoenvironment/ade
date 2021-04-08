@@ -25,10 +25,7 @@ function Remove-AzureResourceGroups {
         $armParameters.ntierResourceGroupName
         $armParameters.w10clientResourceGroupName
         $armParameters.developerResourceGroupName
-        $armParameters.jumpboxResourceGroupName
-        $armParameters.bastionResourceGroupName
-        $armParameters.storageResourceGroupName
-        $armParameters.privateDnsZoneResourceGroupName
+        $armParameters.jumpboxResourceGroupName        
         $armParameters.networkingResourceGroupName
         $armParameters.managedIdentityResourceGroupName
     )

@@ -1,21 +1,12 @@
 // parameters
-param location string = resourceGroup().location
-param aliasRegion string
+param location string
+param applicationInsightsName string
+param logAnalyticsWorkspaceId string
 
 // variables
-var applicationInsightsName = 'appinsights-ade-${aliasRegion}-001'
 var environmentName = 'production'
 var functionName = 'monitoring and diagnostics'
 var costCenterName = 'it'
-
-// existing resources
-// log analytics
-var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
-var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
-  scope: resourceGroup(monitorResourceGroupName)
-}
 
 // resource - application insights
 resource applicationInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
@@ -29,7 +20,7 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02-preview' 
   kind: 'web'
   properties: {
     Application_Type: 'web'
-    WorkspaceResourceId: logAnalyticsWorkspace.id
+    WorkspaceResourceId: logAnalyticsWorkspaceId
   }
 }
 
@@ -38,7 +29,7 @@ resource pplicationInsightsDiagnostics 'microsoft.insights/diagnosticSettings@20
   name: '${applicationInsights.name}-diagnostics'
   scope: applicationInsights
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {

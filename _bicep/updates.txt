@@ -16,6 +16,7 @@ modified
 $primaryRegionResourceGroupNamePrefix               = "rg-ade-$aliasRegion"
 $secondaryRegionResourceGroupNamePrefix             = "rg-ade-$aliasSecondaryRegion"
 
+'activityLogDiagnosticsName'                        = 'subscriptionactivitylog'
 'applicationGatewayManagedIdentityName'             = "id-ade-$aliasRegion-agw"
 'containerRegistryManagedIdentityName'              = "id-ade-$aliasRegion-acr"
 'containerRegistrySPNName'                          = "spn-ade-$aliasRegion-acr"
@@ -33,9 +34,8 @@ $secondaryRegionResourceGroupNamePrefix             = "rg-ade-$aliasSecondaryReg
 removed 
 'automationAccountName'                             = "aa-ade-$aliasRegion-001"
 'azureBastionName'                                  = "bastion-ade-$aliasRegion-001"
-'azureBastionPublicIPAddressName'                   = "pip-ade-$aliasRegion-bastion001"
-'azureBastionSubnetNSGName'                         = "nsg-ade-$aliasRegion-azurebastion"
-'clientServicesSubnetNSGName'                       = "nsg-ade-$aliasRegion-clientservices"
+'azureBast
+
 'connectionName'                                    = "cn-$aliasRegion-01"
 'developerSubnetNSGName'                            = "nsg-ade-$aliasRegion-developer"
 'directoryServicesSubnetNSGName'                    = "nsg-ade-$aliasRegion-directoryservices"
@@ -45,13 +45,9 @@ removed
 "inspectorGadgetAppInsightsName"                    = "appin-$aliasRegion-inspectorgadget"
 'internetRouteTableName'                            = "route-ade-$aliasRegion-internet"
 'localNetworkGatewayName'                           = "lng-$aliasRegion-01"
-'logAnalyticsWorkspaceName'                         = "log-ade-$aliasRegion-001"
-'managementSubnetNSGName'                           = "nsg-ade-$aliasRegion-management"
 'natGatewayName'                                    = "ngw-ade-$aliasRegion-001"
 'natGatewayPublicIPPrefixName'                      = "pipp-ade-$aliasRegion-ngw001"
 'natGatewayPublicIPAddressName'                     = "pip-ade-$aliasRegion-natgw01"
-'nTierDBSubnetNSGName'                              = "nsg-ade-$aliasRegion-ntierdb"
-'nTierWebSubnetNSGName'                             = "nsg-ade-$aliasRegion-ntierweb"
 'primaryRegionAppServicePlanName'                   = "plan-ade-$aliasRegion-001"
 'primaryRegionHelloWorldAppInsightsName'            = "appin-$aliasRegion-helloworld"
 'secondaryRegionAppServicePlanName'                 = "plan-ade-$aliasSecondaryRegion-001"
@@ -62,7 +58,11 @@ removed
 'virtualNetwork03Name'                              = "vnet-$aliasRegion-03"
 'virtualNetworkGatewayName'                         = "vng-$aliasRegion-01"
 'virtualNetworkGatewayPublicIPAddressName'          = "pip-$aliasRegion-vng01"
-'vmssSubnetNSGName'                                 = "nsg-ade-$aliasRegion-vmss"
+
+'bastionResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-bastion"
+'privateDnsZoneResourceGroupName'                   = "$primaryRegionResourceGroupNamePrefix-privatedns"
+
+'storageResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-diagnostics"
 
 
 ### Deploy-AzureDemoEnvironment.ps1
@@ -74,6 +74,15 @@ removed
 # Deploy-AzureBastion $armParameters
 # Deploy-AzurePrivateDns $armParameters
 # Deploy-VnetPeering $armParameters
+# Deploy-AzureStorageAccountVmDiagnostics $armParameters
+
+
+### Remove-AzureResourceGroups.ps1
+
+removed
+$armParameters.bastionResourceGroupName
+$armParameters.privateDnsZoneResourceGroupName
+$armParameters.storageResourceGroupName
 
 
 ## deployments

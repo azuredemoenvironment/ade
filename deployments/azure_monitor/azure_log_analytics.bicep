@@ -1,9 +1,8 @@
 // parameters
-param location string = resourceGroup().location
-param aliasRegion string
+param location string
+param logAnalyticsWorkspaceName string
 
 // variables
-var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 var containerInsights = {
   name: 'ContainerInsights(${logAnalyticsWorkspaceName})'
   galleryName: 'ContainerInsights'
@@ -16,7 +15,6 @@ var vmInsights = {
   name: 'VMInsights(${logAnalyticsWorkspaceName})'
   galleryName: 'VMInsights'
 }
-
 var environmentName = 'production'
 var functionName = 'monitoring and diagnostics'
 var costCenterName = 'it'
@@ -79,7 +77,7 @@ resource solutionsContainerInsights 'Microsoft.OperationsManagement/solutions@20
     workspaceResourceId: logAnalyticsWorkspace.id
   }
   plan: {
-    name: '${containerInsights}.Name'
+    name: '${containerInsights.name}'
     publisher: 'Microsoft'
     product: 'OMSGallery/${containerInsights.galleryName}'
     promotionCode: ''
@@ -97,7 +95,7 @@ resource solutionsKeyVaultAnalytics 'Microsoft.OperationsManagement/solutions@20
     workspaceResourceId: logAnalyticsWorkspace.id
   }
   plan: {
-    name: '${keyVaultAnalytics}.Name'
+    name: '${keyVaultAnalytics.name}'
     publisher: 'Microsoft'
     product: 'OMSGallery/${keyVaultAnalytics.galleryName}'
     promotionCode: ''
@@ -115,7 +113,7 @@ resource solutionsVMInsights 'Microsoft.OperationsManagement/solutions@2015-11-0
     workspaceResourceId: logAnalyticsWorkspace.id
   }
   plan: {
-    name: '${vmInsights}.Name'
+    name: '${vmInsights.name}'
     publisher: 'Microsoft'
     product: 'OMSGallery/${vmInsights.galleryName}'
     promotionCode: ''
