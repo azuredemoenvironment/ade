@@ -38,7 +38,5 @@ function Deploy-AzureContainerRegistry {
         'loadtesting-redis'
     )
     
-    $imagesToPush | ForEach-Object {
-        TagAndPush $_
-    }
+    $imagesToPush | ForEach-Object { TagAndPush $_ }
 }
