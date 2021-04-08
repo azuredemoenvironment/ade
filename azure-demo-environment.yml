@@ -1,0 +1,135 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ade-apigateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ade-apigateway
+  template:
+    metadata:
+      labels:
+        app: ade-apigateway
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: ade-apigateway
+        image: acradebrmareus.azurecr.io/ade-apigateway:latest
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        ports:
+        - containerPort: 80
+---
+apiVersion: latest
+kind: Service
+metadata:
+  name: ade-apigateway
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: ade-apigateway
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ade-dataingestorservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ade-dataingestorservice
+  template:
+    metadata:
+      labels:
+        app: ade-dataingestorservice
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: ade-dataingestorservice
+        image: acradebrmareus.azurecr.io/ade-dataingestorservice:latest
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        ports:
+        - containerPort: 80
+---
+apiVersion: latest
+kind: Service
+metadata:
+  name: ade-dataingestorservice
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: ade-dataingestorservice
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ade-datareporterservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ade-datareporterservice
+  template:
+    metadata:
+      labels:
+        app: ade-datareporterservice
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: ade-datareporterservice
+        image: acradebrmareus.azurecr.io/ade-datareporterservice:latest
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        ports:
+        - containerPort: 80
+---
+apiVersion: latest
+kind: Service
+metadata:
+  name: ade-datareporterservice
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: ade-datareporterservice
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ade-loadtesting-gatling
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ade-loadtesting-gatling
+  template:
+    metadata:
+      labels:
+        app: ade-loadtesting-gatling
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: ade-loadtesting-gatling
+        image: acradebrmareus.azurecr.io/ade-loadtesting-gatling:latest
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+---
+apiVersion: latest
+kind: Service
+metadata:
+  name: ade-loadtesting-gatling
+spec:
+  selector:
+    app: ade-loadtesting-gatling
