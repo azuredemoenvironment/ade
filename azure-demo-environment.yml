@@ -23,7 +23,7 @@ spec:
         ports:
         - containerPort: 80
 ---
-apiVersion: latest
+apiVersion: v1
 kind: Service
 metadata:
   name: ade-apigateway
@@ -58,7 +58,7 @@ spec:
         ports:
         - containerPort: 80
 ---
-apiVersion: latest
+apiVersion: v1
 kind: Service
 metadata:
   name: ade-dataingestorservice
@@ -93,7 +93,7 @@ spec:
         ports:
         - containerPort: 80
 ---
-apiVersion: latest
+apiVersion: v1
 kind: Service
 metadata:
   name: ade-datareporterservice
@@ -102,6 +102,42 @@ spec:
   - port: 80
   selector:
     app: ade-datareporterservice
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ade-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ade-frontend
+  template:
+    metadata:
+      labels:
+        app: ade-frontend
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: ade-frontend
+        image: acradebrmareus.azurecr.io/ade-frontend:latest
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ade-frontend
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: ade-frontend
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -125,11 +161,199 @@ spec:
         env:
         - name: ALLOW_EMPTY_PASSWORD
           value: "yes"
+        ports:
+        - containerPort: 80
 ---
-apiVersion: latest
+apiVersion: v1
 kind: Service
 metadata:
   name: ade-loadtesting-gatling
 spec:
+  ports:
+  - port: 80
   selector:
     app: ade-loadtesting-gatling
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ade-loadtesting-grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ade-loadtesting-grafana
+  template:
+    metadata:
+      labels:
+        app: ade-loadtesting-grafana
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: ade-loadtesting-grafana
+        image: acradebrmareus.azurecr.io/ade-loadtesting-grafana:latest
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ade-loadtesting-grafana
+spec:
+  ports:
+  - port: 3000
+  selector:
+    app: ade-loadtesting-grafana
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ade-loadtesting-influxdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ade-loadtesting-influxdb
+  template:
+    metadata:
+      labels:
+        app: ade-loadtesting-influxdb
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: ade-loadtesting-influxdb
+        image: acradebrmareus.azurecr.io/ade-loadtesting-influxdb:latest
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        ports:
+        - containerPort: 8083
+          name: influxdb-8083
+        - containerPort: 8086
+          name: influxdb-8086
+        - containerPort: 2003
+          name: influxdb-2003
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ade-loadtesting-influxdb
+spec:
+  ports:
+  - port: 8083
+    name: nginx-8083
+  - port: 8086
+    name: nginx-8086
+  - port: 2003
+    name: nginx-2003
+  selector:
+    app: ade-loadtesting-influxdb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ade-loadtesting-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ade-loadtesting-redis
+  template:
+    metadata:
+      labels:
+        app: ade-loadtesting-redis
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: ade-loadtesting-redis
+        image: acradebrmareus.azurecr.io/ade-loadtesting-redis:latest
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ade-loadtesting-redis
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: ade-loadtesting-redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ade-userservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ade-userservice
+  template:
+    metadata:
+      labels:
+        app: ade-userservice
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: ade-userservice
+        image: acradebrmareus.azurecr.io/ade-userservice:latest
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ade-userservice
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: ade-userservice
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        ports:
+        - containerPort: 8080
+          name: nginx-8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  ports:
+  - port: 8080
+  selector:
+    app: nginx
