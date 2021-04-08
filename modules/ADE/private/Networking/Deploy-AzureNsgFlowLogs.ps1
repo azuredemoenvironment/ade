@@ -6,35 +6,30 @@ function Deploy-AzureNsgFlowLogs {
     Write-ScriptSection "Deploying Azure NSG Flow Logs"
 
     # Standard Names
-    $nsgFlowLogStorageAccountResourceGroupName = $armParameters.storageResourceGroupName
+    $nsgFlowLogStorageAccountResourceGroupName = $armParameters.monitorResourceGroupName
     $nsgFlowLogStorageAccountName = $armParameters.nsgFlowLogsStorageAccountName
 
     # Shared Tags
-    $tag1 = 'Environment=Production'
-    $tag2 = 'Function=Diagnostics'
-    $tag3 = 'Cost Center=IT'
-
-    Write-Status "Creating Storage Account $nsgFlowLogStorageAccountName for NSG Flow Logs"
-    az storage account create -g $nsgFlowLogStorageAccountResourceGroupName -n $nsgFlowLogStorageAccountName --sku Standard_LRS --kind StorageV2 --access-tier Hot --https-only true --tags $tag1 $tag2 $tag3
-    Confirm-LastExitCode
+    $tag1 = 'environment=production'
+    $tag2 = 'function=monitoring and diagnostics'
+    $tag3 = 'costCenter=it'
 
     Write-Status "Creating NSG Flow Logs"
     $location = $armParameters.defaultPrimaryRegion
     $networkingResourceGroupName = $armParameters.networkingResourceGroupName
-    $logAnalyticsWorkspaceResourceGroupName = $armParameters.logAnalyticsWorkspaceResourceGroupName
+    $monitorResourceGroupName = $armParameters.monitorResourceGroupName
     $logAnalyticsWorkspaceName = $armParameters.logAnalyticsWorkspaceName
     $nsgFlowLogStorageAccountID = az storage account show -g $nsgFlowLogStorageAccountResourceGroupName -n $nsgFlowLogStorageAccountName --query id --output tsv
-    $logAnalyticsWorkspaceID = az monitor log-analytics workspace show -g $logAnalyticsWorkspaceResourceGroupName --workspace-name $logAnalyticsWorkspaceName --query id --output tsv
+    $logAnalyticsWorkspaceID = az monitor log-analytics workspace show -g $monitorResourceGroupName --workspace-name $logAnalyticsWorkspaceName --query id --output tsv
     
     $nsgFlowLogEntries = @(
-        @{ NsgName = $armParameters.azureBastionSubnetNetworkSecurityGroupName; FlowLogName = 'azureBastion' }
-        @{ NsgName = $armParameters.managementSubnetNetworkSecurityGroupName; FlowLogName = 'management' }
-        @{ NsgName = $armParameters.directoryServicesSubnetNetworkSecurityGroupName; FlowLogName = 'directoryServices' }
-        @{ NsgName = $armParameters.developerSubnetNetworkSecurityGroupName; FlowLogName = 'developer' }
-        @{ NsgName = $armParameters.nTierWebSubnetNetworkSecurityGroupName; FlowLogName = 'ntierWeb' }
-        @{ NsgName = $armParameters.nTierDBSubnetNetworkSecurityGroupName; FlowLogName = 'ntierDB' }
-        @{ NsgName = $armParameters.vmssSubnetNetworkSecurityGroupName; FlowLogName = 'vmss' }
-        @{ NsgName = $armParameters.clientServicesSubnetNetworkSecurityGroupName; FlowLogName = 'clientServices' }
+        @{ NsgName = $armParameters.azureBastionSubnetNSGName; FlowLogName = 'azureBastion' }
+        @{ NsgName = $armParameters.managementSubnetNSGName; FlowLogName = 'management' }
+        @{ NsgName = $armParameters.nTierWebSubnetNSGName; FlowLogName = 'nTierWeb' }
+        @{ NsgName = $armParameters.nTierAppSubnetNSGName; FlowLogName = 'nTierApp' }
+        @{ NsgName = $armParameters.nTierDBSubnetNSGName; FlowLogName = 'nTierDB' }
+        @{ NsgName = $armParameters.vmssSubnetNSGName; FlowLogName = 'vmss' }
+        @{ NsgName = $armParameters.clientServicesSubnetNSGName; FlowLogName = 'clientServices' }
     )
 
     $nsgFlowLogEntries | ForEach-Object {

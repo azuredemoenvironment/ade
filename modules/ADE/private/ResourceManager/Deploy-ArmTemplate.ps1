@@ -5,7 +5,8 @@ function Deploy-ArmTemplate {
         [string] $resourceGroupName = '',
         [string] $region = 'EastUS',
         [string] $resourceLevel = 'group',
-        [switch] $noWait = $false
+        [switch] $noWait = $false,
+        [switch] $bicep = $false
     )
 
     $overwriteParameterFiles = [System.Convert]::ToBoolean($armParameters.overwriteParameterFiles)
@@ -15,7 +16,13 @@ function Deploy-ArmTemplate {
     $deploymentName = $stepName.replace(' ', '').replace(':', '') + 'Deployment'
     # TODO: move the templates to be in the module
     $deploymentRootFolder = "$PSScriptRoot/../../../../deployments/$folderName"
-    $templateFile = "$deploymentRootFolder/$fileName.json"
+    $templateFile = "$deploymentRootFolder/$fileName."
+    if ($bicep) {
+        $templateFile += "bicep"
+    }
+    else {
+        $templateFile += "json"
+    }
     $parametersSampleFile = "$deploymentRootFolder/$fileName.parameters.sample.json"
     $parametersFile = "$deploymentRootFolder/$fileName.parameters.json"
 
