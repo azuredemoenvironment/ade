@@ -4,3 +4,5 @@
 *.personal.*
 data/**
 .metals
+.env
+test/ADE.LoadTests/gatling/results

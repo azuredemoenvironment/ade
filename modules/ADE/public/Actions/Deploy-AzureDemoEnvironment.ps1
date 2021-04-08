@@ -56,7 +56,7 @@ function Deploy-AzureDemoEnvironment {
     Deploy-StorageFirewallRules $armParameters
     Deploy-AzureBastion $armParameters
     Deploy-AzureVirtualMachineJumpbox $armParameters
-    Deploy-AzureVirtualMachineDeveloper $armParameters
+    # Deploy-AzureVirtualMachineDeveloper $armParameters
     Deploy-AzureVirtualMachineWindows10Client $armParameters
     Deploy-AzureVirtualMachineNTier $armParameters
     Deploy-AzureVirtualMachineScaleSets $armParameters
@@ -76,7 +76,7 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureTrafficManager $armParameters
     Deploy-AzureAppServicePlanToPrimaryRegionScaleDown $armParameters
     Deploy-AzureApplicationGateway $armParameters
-    Deploy-AzureDns $armParameters    
+    Deploy-AzureDns $armParameters
     Set-HelloWorldCertificateAndHostName $armParameters
     Deploy-AzureCognitiveServices $armParameters
 
