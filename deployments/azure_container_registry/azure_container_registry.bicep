@@ -4,7 +4,7 @@ param aliasRegion string
 param acrServicePrincipalClientId string
 
 // variables
-var azureContainerRegistryName = 'acr-ade-${aliasRegion}-001'
+var azureContainerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
 var environmentName = 'production'
 var functionName = 'networking'
 var costCenterName = 'it'
@@ -73,10 +73,14 @@ resource azureContainerRegistryDiagnostics 'microsoft.insights/diagnosticSetting
   }
 }
 
-resource azureContainerRegistryRoleAssignments 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(resourceGroup().id, deployment().name)
-  properties: {
-    roleDefinitionId: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
-    principalId: acrServicePrincipalClientId
-  }
-}
+// TODO: enable this for ACI
+// ACR Pull Role GUID
+// var roleDefinitionId = '7f951dda-4ed3-4680-a7ca-43fe172d538d'
+// resource azureContainerRegistryRoleAssignments 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+//   name: guid(acrServicePrincipalClientId, roleDefinitionId, resourceGroup().name)
+//   scope: azureContainerRegistry
+//   properties: {
+//     roleDefinitionId: roleDefinitionId
+//     principalId: acrServicePrincipalClientId
+//   }
+// }

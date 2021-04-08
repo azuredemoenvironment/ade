@@ -21,7 +21,7 @@ function Set-InitialArmParameters {
     $primaryRegionResourceGroupNamePrefix = "rg-ade-$aliasRegion"
     $secondaryRegionResourceGroupNamePrefix = "rg-ade-$aliasSecondaryRegion"
     $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
-    $acrName = "acr-$aliasRegion-01".replace('-', '')
+    $acrName = "acr-ade-$aliasRegion-001".replace('-', '')
 
     Write-Log 'Gathering User Information from az'
     $currentAccount = az account show | ConvertFrom-Json
