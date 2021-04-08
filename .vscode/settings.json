@@ -18,6 +18,7 @@
         "Deallocated",
         "Deallocating",
         "Deallocation",
+        "Ingestor",
         "Kubernetes",
         "deallocate",
         "deallocates"
@@ -28,4 +29,7 @@
         "dockerfile",
         "powershell"
     ],
+    "files.watcherExclude": {
+        "**/target": true
+    },
 }
