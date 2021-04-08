@@ -3,5 +3,5 @@ function Deploy-AzureNetworking {
         [object] $armParameters
     )
 
-    Deploy-ArmTemplate 'Azure Networking' $armParameters -resourceGroupName $armParameters.networkingResourceGroupName
+    Deploy-ArmTemplate 'Azure Networking' $armParameters -resourceGroupName $armParameters.networkingResourceGroupName -bicep
 }

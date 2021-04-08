@@ -2,11 +2,16 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "aliasRegion": {
+            "value": "@@aliasRegion@@"
+        },
+        "defaultPrimaryRegion": {
+            "value": "@@defaultPrimaryRegion@@"
+        },
         "listOfAllowedLocations": {
             "value": [
-                "eastus",
-                "eastus2",
-                "westus"
+                "@@defaultPrimaryRegion@@",
+                "@@defaultSecondaryRegion@@"
             ]
         },
         "listOfAllowedSKUs": {
@@ -21,12 +26,6 @@
                 "Standard_D2s_v3",
                 "Standard_D4s_v3"
             ]
-        },
-        "logAnalyticsWorkspaceResourceGroupName": {
-            "value": "@@logAnalyticsWorkspaceResourceGroupName@@"
-        },
-        "logAnalyticsWorkspaceName": {
-            "value": "@@logAnalyticsWorkspaceName@@"
         }
     }
 }

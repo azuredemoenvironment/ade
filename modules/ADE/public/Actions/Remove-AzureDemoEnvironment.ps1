@@ -38,7 +38,7 @@ function Remove-AzureDemoEnvironment {
 
     Remove-AzureActivityLogDiagnostics $armParameters
     Remove-AzurePolicyAssignmentsAndDefinitions $armParameters
-    Remove-AzureLogAnalyticsResourceGroup $armParameters
+    Remove-AzureMonitorResourceGroup $armParameters
 
     Write-ScriptSection "Finished Removal"
 }

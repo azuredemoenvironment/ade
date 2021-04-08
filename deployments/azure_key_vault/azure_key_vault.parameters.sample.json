@@ -2,8 +2,8 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "keyVaultName": {
-            "value": "@@keyVaultName@@"
+        "aliasRegion": {
+            "value": "@@aliasRegion@@"
         },
         "azureActiveDirectoryTenantID": {
             "value": "@@azureActiveDirectoryTenantID@@"
@@ -11,11 +11,38 @@
         "azureActiveDirectoryUserID": {
             "value": "@@azureActiveDirectoryUserID@@"
         },
-        "logAnalyticsWorkspaceResourceGroupName": {
-            "value": "@@logAnalyticsWorkspaceResourceGroupName@@"
+        "applicationGatewayManagedIdentitySPNID": {
+            "value": "@@applicationGatewayManagedIdentitySPNID@@"
         },
-        "logAnalyticsWorkspaceName": {
-            "value": "@@logAnalyticsWorkspaceName@@"
+        "containerRegistryManagedIdentitySPNID": {
+            "value": "@@containerRegistryManagedIdentitySPNID@@"
+        },
+        "containerRegistrySPNPassword": {
+            "value": "@@containerRegistrySPNPassword@@"
+        },
+        "containerRegistrySPNAppID": {
+            "value": "@@containerRegistrySPNAppID@@"
+        },
+        "containerRegistryObjectId": {
+            "value": "@@containerRegistryObjectId@@"
+        },
+        "githubActionsSPNPassword": {
+            "value": "@@githubActionsSPNPassword@@"
+        },
+        "githubActionsSPNAppID": {
+            "value": "@@githubActionsSPNAppID@@"
+        },
+        "githubActionsObjectId": {
+            "value": "@@githubActionsObjectId@@"
+        },
+        "restAPISPNPassword": {
+            "value": "@@restAPISPNPassword@@"
+        },
+        "restAPISPNAppID": {
+            "value": "@@restAPISPNAppID@@"
+        },
+        "restAPIObjectId": {
+            "value": "@@restAPIObjectId@@"
         }
     }
 }

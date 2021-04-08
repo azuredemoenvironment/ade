@@ -3,5 +3,5 @@ function Deploy-AzurePolicy {
         [object] $armParameters
     )
 
-    Deploy-ArmTemplate 'Azure Policy' $armParameters -resourceLevel 'sub'
+    Deploy-ArmTemplate 'Azure Policy' $armParameters -resourceLevel 'sub' -bicep
 }

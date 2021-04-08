@@ -11,15 +11,15 @@ function Remove-AzureServicePrincipals {
         Confirm-LastExitCode
     }
 
-    $ghaSPNName = $armParameters.ghaSPNName
-    if (Confirm-AzureResourceExists 'service principal' $ghaSPNName) {
-        az ad sp delete --id http://$ghaSPNName
+    $githubActionsSPNName = $armParameters.githubActionsSPNName
+    if (Confirm-AzureResourceExists 'service principal' $githubActionsSPNName) {
+        az ad sp delete --id http://$githubActionsSPNName
         Confirm-LastExitCode
     }
 
-    $crSPNName = $armParameters.crSPNName
-    if (Confirm-AzureResourceExists 'service principal' $crSPNName) {
-        az ad sp delete --id http://$crSPNName
+    $containerRegistrySPNName = $armParameters.containerRegistrySPNName
+    if (Confirm-AzureResourceExists 'service principal' $containerRegistrySPNName) {
+        az ad sp delete --id http://$containerRegistrySPNName
         Confirm-LastExitCode
     }
 

@@ -7,10 +7,9 @@ function Remove-AzureNsgFlowLogs {
     $nsgFlowLogEntries = @(
         'azureBastion'
         'management'
-        'directoryServices'
-        'developer'
-        'ntierWeb'
-        'ntierDB'
+        'nTierWeb'
+        'nTierApp'
+        'nTierDB'
         'vmss'
         'clientServices'
     )
