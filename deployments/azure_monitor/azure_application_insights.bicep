@@ -25,7 +25,7 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02-preview' 
 }
 
 // resource - application insights - diagnostic settings
-resource pplicationInsightsDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource applicationInsightsDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
   name: '${applicationInsights.name}-diagnostics'
   scope: applicationInsights
   properties: {

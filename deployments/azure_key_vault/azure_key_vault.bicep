@@ -15,7 +15,7 @@ param restAPISPNPassword string
 param restAPISPNAppID string
 param restAPIObjectId string
 
-//variables
+// variables
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var environmentName = 'production'
 var functionName = 'key vault'
