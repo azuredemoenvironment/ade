@@ -10,20 +10,14 @@ function Remove-AzureResourceGroups {
         $armParameters.cognitiveServicesResourceGroupName
         $armParameters.applicationGatewayResourceGroupName
         $armParameters.trafficManagerResourceGroupName
-        $armParameters.sqlTodoResourceGroupName
-        $armParameters.secondaryRegionHelloWorldWebAppResourceGroupName
-        $armParameters.primaryRegionHelloWorldWebAppResourceGroupName
         $armParameters.inspectorGadgetResourceGroupName
-        $armParameters.imageResizerResourceGroupName
-        $armParameters.secondaryRegionAppServicePlanResourceGroupName
-        $armParameters.primaryRegionAppServicePlanResourceGroupName
+        $armParameters.appServicePlanResourceGroupName
         $armParameters.aksResourceGroupName
         $armParameters.wordpressResourceGroupName
         $armParameters.containerRegistryResourceGroupName
         $armParameters.vmssResourceGroupName
         $armParameters.ntierResourceGroupName
         $armParameters.w10clientResourceGroupName
-        $armParameters.developerResourceGroupName
         $armParameters.jumpboxResourceGroupName        
         $armParameters.networkingResourceGroupName
         $armParameters.managedIdentityResourceGroupName

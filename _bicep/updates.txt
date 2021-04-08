@@ -48,7 +48,6 @@ removed
 'natGatewayName'                                    = "ngw-ade-$aliasRegion-001"
 'natGatewayPublicIPPrefixName'                      = "pipp-ade-$aliasRegion-ngw001"
 'natGatewayPublicIPAddressName'                     = "pip-ade-$aliasRegion-natgw01"
-'primaryRegionAppServicePlanName'                   = "plan-ade-$aliasRegion-001"
 'primaryRegionHelloWorldAppInsightsName'            = "appin-$aliasRegion-helloworld"
 'secondaryRegionAppServicePlanName'                 = "plan-ade-$aliasSecondaryRegion-001"
 'secondaryRegionHelloWorldAppInsightsName'          = "appin-$aliasSecondaryRegion-helloworld"

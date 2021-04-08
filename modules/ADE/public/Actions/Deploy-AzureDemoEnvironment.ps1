@@ -48,29 +48,59 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureNetworking $armParameters    
     Deploy-AzureNsgFlowLogs $armParameters    
     # Deploy-StorageFirewallRules $armParameters    
+
     # Deploy-AzureVirtualMachineJumpbox $armParameters
-    # Deploy-AzureVirtualMachineDeveloper $armParameters
-    # Deploy-AzureVirtualMachineWindows10Client $armParameters
+
     # Deploy-AzureVirtualMachineNTier $armParameters
     # Deploy-AzureVirtualMachineScaleSets $armParameters
-    # Deploy-AzureAlerts $armParameters
+    # Deploy-AzureVirtualMachineWindows10Client $armParameters
+
+    
+
     # Deploy-AzureContainerRegistry $armParameters
-    # Deploy-DockerImagesToAzureContainerRegistry $armParameters
-    # Deploy-AzureContainerInstancesWordPress $armParameters
-    # Deploy-AzureKubernetesServices $armParameters
-    # Deploy-AzureKubernetesServicesVote $armParameters
-    # Deploy-AzureAppServicePlanToPrimaryRegion $armParameters
-    # Deploy-AzureAppServicePlanToSecondaryRegion $armParameters
-    # Deploy-ImageResizerAppService $armParameters
+        # Dedicated Resource Group
+        # Include deployment of images to registry
+    # Deploy-AzureContainerInstances $armParameters
+        # Dedicated Resource Group
+        # Load Testing
+    # Deploy-AzureSQL-ADEApp $armParameters
+        # Dedicated Resource Group
+    # Deploy-AzureAppServicePlan $armParameters
+        # Dedicated Resource Group
+
+    # Parallel
+    # Deploy-AzureVirtualMachine-ADEApp $armParameters
+        # Dedicated Resource Group
+        
+    # Parallel
     # Deploy-InspectorGadgetAppService $armParameters
-    # Deploy-HelloWorldAppServiceToPrimaryRegion $armParameters
-    # Deploy-HelloWorldAppServiceToSecondaryRegion $armParameters
-    # Deploy-SqlToDoAppService $armParameters
-    # Deploy-AzureTrafficManager $armParameters
-    # Deploy-AzureAppServicePlanToPrimaryRegionScaleDown $armParameters
+
+    # Parallel
+    # Deploy-AzureAppService-ADEApp $armParameters
+        # Dedicated Resource Group
+        # adefrontend (public)
+        # adeapigateway (public)
+        # adeuserservice
+        # adedataingestorservice
+        # adedatareporterservice
+
+    # Parallel
+    # Deploy-AzureKubernetesService-ADEApp $armParameters
+        # Dedicated Resource Group
+
+    #Serial
     # Deploy-AzureApplicationGateway $armParameters
-    # Deploy-AzureDns $armParameters    
-    # Set-HelloWorldCertificateAndHostName $armParameters
+        # Dedicated Resource Group
+    # Deploy-AzureFrontDoor $armParameters
+        # Dedicated Resource Group
+    
+    # Deploy-AzureAppServicePlanScaleDown $armParameters 
+    # Deploy-AzureAlerts $armParameters
+        # Existing Resource Group
+    # Deploy-AzureDns $armParameters
+        # Existing Resource Group
+
+    # Deploy-AzureTrafficManager $armParameters
     # Deploy-AzureCognitiveServices $armParameters
 
     Write-ScriptSection "Finished Azure Development Environment Deployments"
