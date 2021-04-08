@@ -20,7 +20,6 @@ function Remove-AzureResourceGroups {
         $armParameters.aksResourceGroupName
         $armParameters.wordpressResourceGroupName
         $armParameters.containerRegistryResourceGroupName
-        $armParameters.alertsResourceGroupName
         $armParameters.vmssResourceGroupName
         $armParameters.ntierResourceGroupName
         $armParameters.w10clientResourceGroupName

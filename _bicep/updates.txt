@@ -59,9 +59,9 @@ removed
 'virtualNetworkGatewayName'                         = "vng-$aliasRegion-01"
 'virtualNetworkGatewayPublicIPAddressName'          = "pip-$aliasRegion-vng01"
 
+'alertsResourceGroupName'                           = "$primaryRegionResourceGroupNamePrefix-alerts"
 'bastionResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-bastion"
 'privateDnsZoneResourceGroupName'                   = "$primaryRegionResourceGroupNamePrefix-privatedns"
-
 'storageResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-diagnostics"
 
 

@@ -146,7 +146,6 @@ function Set-InitialArmParameters {
         # Resource Group Names
         'aksNodeResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-aks-node"
         'aksResourceGroupName'                              = "$primaryRegionResourceGroupNamePrefix-aks"
-        'alertsResourceGroupName'                           = "$primaryRegionResourceGroupNamePrefix-alerts"
         'applicationGatewayResourceGroupName'               = "$primaryRegionResourceGroupNamePrefix-applicationgateway"
         'cognitiveServicesResourceGroupName'                = "$primaryRegionResourceGroupNamePrefix-cognitiveservices"
         'containerRegistryResourceGroupName'                = "$primaryRegionResourceGroupNamePrefix-containerregistry"
