@@ -4,61 +4,79 @@ function Deploy-AzureIdentity {
     )
 
     $managedIdentityResourceGroupName = $armParameters.managedIdentityResourceGroupName
-    $crManagedIdentityName = $armParameters.crManagedIdentityName
-    $appGWManagedIdentityName = $armParameters.appGWManagedIdentityName
-    $keyVaultResourceGroupName = $armParameters.keyVaultResourceGroupName
-    $keyVaultName = $armParameters.keyVaultName
+    $applicationGatewayManagedIdentityName = $armParameters.applicationGatewayManagedIdentityName
+    $containerRegistryManagedIdentityName = $armParameters.containerRegistryManagedIdentityName
+    $containerRegistrySPNName = $armParameters.containerRegistrySPNName
+    $githubActionsSPNName = $armParameters.githubActionsSPNName
     $restAPISPNName = $armParameters.restAPISPNName
-    $ghaSPNName = $armParameters.ghaSPNName
-    $crSPNName = $armParameters.crSPNName
-    
-    Write-ScriptSection "Starting Azure Identity Deployment"
+        
+    # BICEP Template Deployment
+    Deploy-ArmTemplate 'Azure Identity' $armParameters -resourceGroupName $armParameters.managedIdentityResourceGroupName -bicep
 
-    New-ResourceGroup $managedIdentityResourceGroupName $armParameters.defaultPrimaryRegion
-
-    Write-Status "Creating Managed Identities"
-
-    Write-Log "Creating Managed Identity $($armParameters.crManagedIdentityName)"
-    az identity create -g $managedIdentityResourceGroupName -n $armParameters.crManagedIdentityName
+    # Assign Managed Identity Principal Ids to Parameter Values
+    Write-Status "Assign Managed Identity Principal Ids to Parameter Values"
+    $appGWManagedIdentitySPNID = az identity show -g $managedIdentityResourceGroupName -n $applicationGatewayManagedIdentityName --query principalId
     Confirm-LastExitCode
 
-    Write-Log "Creating Managed Identity $($armParameters.appGWManagedIdentityName)"
-    az identity create -g $managedIdentityResourceGroupName -n $armParameters.appGWManagedIdentityName
+    $armParameters['applicationGatewayManagedIdentitySPNID'] = $appGWManagedIdentitySPNID.replace('"','')
+
+    $crManagedIdentitySPNID = az identity show -g $managedIdentityResourceGroupName -n $containerRegistryManagedIdentityName --query principalId
     Confirm-LastExitCode
 
-    Write-Status "Finished Creating Managed Identities"
+    $armParameters['containerRegistryManagedIdentitySPNID'] = $crManagedIdentitySPNID.replace('"','')
 
-    Write-Status "Assigning Managed Identities to Key Vault"
-    $crManagedIdentitySPNID = az identity show -g $managedIdentityResourceGroupName -n $crManagedIdentityName --query principalId
-    Confirm-LastExitCode
+    Write-Status "Finished Assigning Managed Identity Principal Ids to Parameter Values"
 
-    $armParameters['crManagedIdentitySPNID'] = $crManagedIdentitySPNID
-
-    Write-Log "Assigning $crManagedIdentitySPNID to $keyVaultName Key Vault"
-    az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --object-id $crManagedIdentitySPNID --key-permissions get unwrapKey wrapKey
-    Confirm-LastExitCode
-
-    $appGWManagedIdentitySPNID = az identity show -g $managedIdentityResourceGroupName -n $appGWManagedIdentityName --query principalId
-    Confirm-LastExitCode
-
-    $armParameters['appGWManagedIdentitySPNID'] = $appGWManagedIdentitySPNID
-
-    Write-Log "Assigning $appGWManagedIdentitySPNID to $keyVaultName Key Vault"
-    az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --object-id $appGWManagedIdentitySPNID --secret-permissions get
-    Confirm-LastExitCode
-
-    Write-Log "Assigning 'Microsoft Azure App Service System Assigned Identity' to $keyVaultName Key Vault"
-    az keyvault set-policy -g $keyVaultResourceGroupName -n $keyVaultName --spn abfa0a7c-a6b6-4736-8310-5855508787cd --secret-permissions get --certificate-permissions get
-    Confirm-LastExitCode
-
-    Write-Status "Finished Assigning Managed Identities to Key Vault"
-
+    # Create Service Principals
     Write-Status "Creating Service Principals"
 
-    # TODO: this could be made into a function
+    # # TODO: this could be made into a function
+    # Create Container Registry Service Principal
+    Write-Log "Creating Container Registry Service Principal $containerRegistrySPNName"
+
+    $containerRegistrySPNPassword = az ad sp create-for-rbac -n http://$containerRegistrySPNName --skip-assignment true --role acrpull --query password --output tsv
+    Confirm-LastExitCode
+    $armParameters['crSPNPassword'] = $containerRegistrySPNPassword
+
+    Write-Log "Pausing for 10 seconds to allow for propagation."
+    Start-Sleep -Seconds 10
+
+    $containerRegistrySPNAppID = az ad sp show --id http://$containerRegistrySPNName --query appId --output tsv
+    Confirm-LastExitCode
+    $armParameters['crSPNAppID'] = $containerRegistrySPNAppID
+
+    $containerRegistrySPNObjectID = az ad sp show --id http://$containerRegistrySPNName --query objectId --output tsv
+    Confirm-LastExitCode
+    $armParameters['containerRegistryObjectId'] = $containerRegistrySPNObjectID
+
+    Write-Log "Finished Creating Container Registry Service Principal $containerRegistrySPNName"
+
+    # # TODO: this could be made into a function
+    # Create GitHub Actions Service Principal
+    Write-Log "Creating GitHub Actions Service Principal $githubActionsSPNName"
+
+    $githubActionsSPNPassword = az ad sp create-for-rbac -n http://$githubActionsSPNName --role Contributor --query password --output tsv
+    Confirm-LastExitCode
+    $armParameters['githubActionsSPNPassword'] = $githubActionsSPNPassword
+
+    Write-Log "Pausing for 10 seconds to allow for propagation."
+    Start-Sleep -Seconds 10
+
+    $githubActionsSPNAppID = az ad sp show --id http://$githubActionsSPNName --query appId --output tsv
+    Confirm-LastExitCode
+    $armParameters['githubActionsSPNAppID'] = $githubActionsSPNAppID
+
+    $githubActionsSPNObjectID = az ad sp show --id http://$githubActionsSPNName --query objectId --output tsv
+    Confirm-LastExitCode
+    $armParameters['githubActionsObjectId'] = $githubActionsSPNObjectID
+
+    Write-Log "Finished Creating GitHub Actions Service Principal $githubActionsSPNName"
+
+    # # TODO: this could be made into a function
+    # Create REST API Service Principal
     Write-Log "Creating REST API Service Principal $restAPISPNName"
 
-    $restAPISPNPassword = az ad sp create-for-rbac -n http://$restAPISPNName --query password --output tsv
+    $restAPISPNPassword = az ad sp create-for-rbac -n http://$restAPISPNName --role Contributor --query password --output tsv
     Confirm-LastExitCode
     $armParameters['restAPISPNPassword'] = $restAPISPNPassword
 
@@ -73,59 +91,7 @@ function Deploy-AzureIdentity {
     Confirm-LastExitCode
     $armParameters['restAPIObjectId'] = $restAPISPNObjectID
 
-    Set-AzureKeyVaultSecret $keyVaultName 'restAPIUserName' (ConvertTo-SecureString $restAPISPNAppID -AsPlainText -Force)
-    Set-AzureKeyVaultSecret $keyVaultName 'restAPIPassword' (ConvertTo-SecureString $restAPISPNPassword -AsPlainText -Force)
-    Set-AzureKeyVaultSecret $keyVaultName 'restAPIObjectId' (ConvertTo-SecureString $restAPISPNObjectID -AsPlainText -Force)
-
-    Write-Log "Finished Creating REST API Service Principal $restAPISPNName"    
-    
-    # TODO: this could be made into a function
-    Write-Log "Creating GitHub Actions Service Principal $ghaSPNName"
-
-    $ghaSPNPassword = az ad sp create-for-rbac -n http://$ghaSPNName --query password --output tsv
-    Confirm-LastExitCode
-    $armParameters['ghaSPNPassword'] = $ghaSPNPassword
-
-    Write-Log "Pausing for 10 seconds to allow for propagation."
-    Start-Sleep -Seconds 10
-
-    $ghaSPNAppID = az ad sp show --id http://$ghaSPNName --query appId --output tsv
-    Confirm-LastExitCode
-    $armParameters['ghaSPNAppID'] = $ghaSPNAppID
-
-    $ghaSPNObjectID = az ad sp show --id http://$ghaSPNName --query objectId --output tsv
-    Confirm-LastExitCode
-    $armParameters['ghaObjectId'] = $ghaSPNObjectID
-
-    Set-AzureKeyVaultSecret $keyVaultName 'ghaUserName' (ConvertTo-SecureString $ghaSPNAppID -AsPlainText -Force)
-    Set-AzureKeyVaultSecret $keyVaultName 'ghaPassword' (ConvertTo-SecureString $ghaSPNPassword -AsPlainText -Force)
-    Set-AzureKeyVaultSecret $keyVaultName 'ghaObjectId' (ConvertTo-SecureString $ghaSPNObjectID -AsPlainText -Force)
-
-    Write-Log "Finished Creating GitHub Actions Service Principal $ghaSPNName"
+    Write-Log "Finished Creating REST API Service Principal $restAPISPNName"
         
-    # TODO: this could be made into a function
-    Write-Log "Creating Container Registry Service Principal $crSPNName"
-
-    $crSPNPassword = az ad sp create-for-rbac -n http://$crSPNName --skip-assignment true --role acrpull --query password --output tsv
-    Confirm-LastExitCode
-    $armParameters['crSPNPassword'] = $crSPNPassword
-
-    Write-Log "Pausing for 10 seconds to allow for propagation."
-    Start-Sleep -Seconds 10
-
-    $crSPNAppID = az ad sp show --id http://$crSPNName --query appId --output tsv
-    Confirm-LastExitCode
-    $armParameters['crSPNAppID'] = $crSPNAppID
-
-    $crSPNObjectID = az ad sp show --id http://$crSPNName --query objectId --output tsv
-    Confirm-LastExitCode
-    $armParameters['containerRegistryObjectId'] = $crSPNObjectID
-
-    Set-AzureKeyVaultSecret $keyVaultName 'containerRegistryUserName' (ConvertTo-SecureString $crSPNAppID -AsPlainText -Force)
-    Set-AzureKeyVaultSecret $keyVaultName 'containerRegistryPassword' (ConvertTo-SecureString $crSPNPassword -AsPlainText -Force)
-    Set-AzureKeyVaultSecret $keyVaultName 'containerRegistryObjectId' (ConvertTo-SecureString $crSPNObjectID -AsPlainText -Force)
-
-    Write-Log "Finished Creating Container Registry Service Principal $crSPNName"
-
     Write-Status "Finished Creating Service Principals"
 }

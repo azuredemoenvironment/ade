@@ -2,59 +2,22 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "natGatewayPublicIPAddressName": {
-            "value": "@@natGatewayPublicIPAddressName@@"
-        },
-        "natGatewayPublicIPPrefixName": {
-            "value": "@@natGatewayPublicIPPrefixName@@"
-        },
-        "natGatewayName": {
-            "value": "@@natGatewayName@@"
-        },
-        "azureBastionSubnetNetworkSecurityGroupName": {
-            "value": "@@azureBastionSubnetNetworkSecurityGroupName@@"
-        },
-        "managementSubnetNetworkSecurityGroupName": {
-            "value": "@@managementSubnetNetworkSecurityGroupName@@"
-        },
-        "directoryServicesSubnetNetworkSecurityGroupName": {
-            "value": "@@directoryServicesSubnetNetworkSecurityGroupName@@"
-        },
-        "developerSubnetNetworkSecurityGroupName": {
-            "value": "@@developerSubnetNetworkSecurityGroupName@@"
-        },
-        "nTierWebSubnetNetworkSecurityGroupName": {
-            "value": "@@nTierWebSubnetNetworkSecurityGroupName@@"
-        },
-        "nTierDBSubnetNetworkSecurityGroupName": {
-            "value": "@@nTierDBSubnetNetworkSecurityGroupName@@"
-        },
-        "vmssSubnetNetworkSecurityGroupName": {
-            "value": "@@vmssSubnetNetworkSecurityGroupName@@"
-        },
-        "clientServicesSubnetNetworkSecurityGroupName": {
-            "value": "@@clientServicesSubnetNetworkSecurityGroupName@@"
-        },
-        "internetRouteTableName": {
-            "value": "@@internetRouteTableName@@"
-        },
-        "virtualNetwork01Name": {
-            "value": "@@virtualNetwork01Name@@"
-        },
-        "virtualNetwork02Name": {
-            "value": "@@virtualNetwork02Name@@"
-        },
-        "virtualNetwork03Name": {
-            "value": "@@virtualNetwork03Name@@"
+        "aliasRegion": {
+            "value": "@@aliasRegion@@"
         },
         "sourceAddressPrefix": {
             "value": "@@sourceAddressPrefix@@"
         },
-        "logAnalyticsWorkspaceResourceGroupName": {
-            "value": "@@logAnalyticsWorkspaceResourceGroupName@@"
+        "localNetworkGatewayAddressPrefix": {
+            "value": "@@localNetworkGatewayAddressPrefix@@"
         },
-        "logAnalyticsWorkspaceName": {
-            "value": "@@logAnalyticsWorkspaceName@@"
+        "connectionSharedKey": {
+            "reference": {
+                "keyVault": {
+                    "id": "@@keyVaultResourceID@@"
+                },
+                "secretName": "resourcePassword"
+            }
         }
     }
 }

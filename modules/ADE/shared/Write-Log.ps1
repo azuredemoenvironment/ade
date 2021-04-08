@@ -1,5 +1,5 @@
 function Write-Log {
     param([string] $message)
 
-    Write-Host $message -ForegroundColor DarkGray | Out-Null
+    Write-Host $message -ForegroundColor Gray | Out-Null
 }
