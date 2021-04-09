@@ -1,6 +1,6 @@
 // parameters
 param location string = resourceGroup().location
-param aliasRegion string = 'skywalker'
+param aliasRegion string
 
 // variables
 var appServicePlanName = 'plan-ade-${aliasRegion}-001'

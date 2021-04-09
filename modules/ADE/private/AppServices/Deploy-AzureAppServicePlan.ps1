@@ -1,4 +1,4 @@
-function Deploy-AzureAppServicePlanToPrimaryRegion {
+function Deploy-AzureAppServicePlan {
     param(
         [object] $armParameters
     )

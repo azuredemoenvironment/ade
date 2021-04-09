@@ -9,8 +9,7 @@ var environmentName = 'production'
 var functionName = 'networking'
 var costCenterName = 'it'
 
-// existing resources
-// log analytics
+// existing resource - log analytics
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {

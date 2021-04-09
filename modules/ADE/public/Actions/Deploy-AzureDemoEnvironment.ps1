@@ -55,16 +55,13 @@ function Deploy-AzureDemoEnvironment {
     # Deploy-AzureSQL-ADEApp $armParameters
         # Dedicated Resource Group
 
-    # Containers and Computer Infrastructure
+    # Containers and Compute Infrastructure
     ###################################
     Deploy-AzureContainerRegistry $armParameters
-        # Dedicated Resource Group
-        # Include deployment of images to registry
     # Deploy-AzureContainerInstances $armParameters
         # Dedicated Resource Group
         # Load Testing
-    # Deploy-AzureAppServicePlan $armParameters
-        # Dedicated Resource Group
+    Deploy-AzureAppServicePlan $armParameters
 
     # ADE App Virtual Machines
     ###################################
@@ -78,7 +75,7 @@ function Deploy-AzureDemoEnvironment {
     # Deploy-InspectorGadgetAppService $armParameters
 
     # Parallel
-    # Deploy-AzureAppService-ADEApp $armParameters
+    Deploy-AdeAzureAppServices $armParameters
         # Dedicated Resource Group
         # adefrontend (public)
         # adeapigateway (public)
@@ -109,9 +106,6 @@ function Deploy-AzureDemoEnvironment {
         # Existing Resource Group
     # Deploy-AzureDns $armParameters
         # Existing Resource Group
-
-    # Deploy-AzureTrafficManager $armParameters
-    # Deploy-AzureCognitiveServices $armParameters
 
     $stopwatch.Stop()
     $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)

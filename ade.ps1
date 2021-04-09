@@ -153,13 +153,6 @@ try {
     if ($remove) {
         Remove-AzureDemoEnvironment $armParameters $includeKeyVault
     }
-
-    Write-Status "The following parameters have been set:"
-
-    $armParameters.GetEnumerator() | Sort-Object -Property Name | ForEach-Object {
-        # TODO: skip anything that is a secure value
-        Write-Log "$($_.Key): $($_.Value)"
-    }
 }
 catch {
     $ErrorMessage = $_.Exception.Message

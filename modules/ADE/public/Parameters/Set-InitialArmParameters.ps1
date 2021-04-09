@@ -145,6 +145,7 @@ function Set-InitialArmParameters {
         'wordPressHostName'                                 = "wordpress.$rootDomainName"
 
         # Resource Group Names
+        'adeAppAppServicesResourceGroupName'                = "$primaryRegionResourceGroupNamePrefix-adeappservices"
         'aksNodeResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-aks-node"
         'aksResourceGroupName'                              = "$primaryRegionResourceGroupNamePrefix-aks"
         'applicationGatewayResourceGroupName'               = "$primaryRegionResourceGroupNamePrefix-applicationgateway"
