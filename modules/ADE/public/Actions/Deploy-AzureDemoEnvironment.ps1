@@ -16,15 +16,6 @@ function Deploy-AzureDemoEnvironment {
         Write-Host "There are a few small prerequisites required before creating the resources for the"
         Write-Host "environment. Please ensure the following are done *before* continuing the creation process:"
         Write-Host ""
-        Write-Host "* Azure CLI Configuration:"
-        Write-Host "** You are logged into the az CLI (run az login from a terminal)"
-        Write-Host "** You have selected a subscription to deploy to (run az account set --subscription SUBSCRIPTION_NAME from a terminal)"
-        Write-Host "** You have the latest version of the az CLI"
-        Write-Host "** You have added the application insights az Extensions (az extension add -n application-insights)"
-        Write-Host "* Azure PowerShell Cmdlet Configuration:"
-        Write-Host "** You are logged into the cmdlets (run Connect-AzAccount from a PowerShell session)"
-        Write-Host "** You have selected a subscription to deploy to (run Set-AzContext -Subscription 'Subscription Name' from a PowerShell session)"
-        Write-Host "* You have docker and its CLI tools installed locally"
         Write-Host "* You have access to the relevant Azure Subscription"
         Write-Host "* You have a wildcard PFX certificate stored at $wildcardCertificatePath"
         Write-Host "* You have a custom domain configured in Azure DNS"
@@ -37,10 +28,12 @@ function Deploy-AzureDemoEnvironment {
         }
     }
 
-    Write-ScriptSection "Starting Deployments"
+    $stopwatch = [system.diagnostics.stopwatch]::StartNew()
 
-    # ORDER MATTERS!!
-    
+    Write-ScriptSection "Starting Azure Demo Environment Deployments"
+
+    # Core Services
+    ###################################
     Deploy-AzureMonitor $armParameters
     Deploy-AzurePolicy $armParameters    
     Deploy-AzureIdentity $armParameters
@@ -49,29 +42,38 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureNsgFlowLogs $armParameters
     # Deploy-StorageFirewallRules $armParameters    
 
+    # Virtual Machines
+    ###################################
     # Deploy-AzureVirtualMachineJumpbox $armParameters
 
     # Deploy-AzureVirtualMachineNTier $armParameters
     # Deploy-AzureVirtualMachineScaleSets $armParameters
     # Deploy-AzureVirtualMachineWindows10Client $armParameters
+   
+    # Data Services
+    ###################################
+    # Deploy-AzureSQL-ADEApp $armParameters
+        # Dedicated Resource Group
 
-    
-
+    # Containers and Computer Infrastructure
+    ###################################
     Deploy-AzureContainerRegistry $armParameters
         # Dedicated Resource Group
         # Include deployment of images to registry
     # Deploy-AzureContainerInstances $armParameters
         # Dedicated Resource Group
         # Load Testing
-    # Deploy-AzureSQL-ADEApp $armParameters
-        # Dedicated Resource Group
     # Deploy-AzureAppServicePlan $armParameters
         # Dedicated Resource Group
 
+    # ADE App Virtual Machines
+    ###################################
     # Parallel
     # Deploy-AzureVirtualMachine-ADEApp $armParameters
         # Dedicated Resource Group
         
+    # ADE App App Services
+    ###################################
     # Parallel
     # Deploy-InspectorGadgetAppService $armParameters
 
@@ -84,17 +86,25 @@ function Deploy-AzureDemoEnvironment {
         # adedataingestorservice
         # adedatareporterservice
 
+    # ADE App Kubernetes
+    ###################################
     # Parallel
     # Deploy-AzureKubernetesService-ADEApp $armParameters
         # Dedicated Resource Group
 
-    #Serial
+    # Frontend Load Balancers
+    ###################################
     # Deploy-AzureApplicationGateway $armParameters
         # Dedicated Resource Group
     # Deploy-AzureFrontDoor $armParameters
         # Dedicated Resource Group
     
+    # Service Cleanup
+    ###################################
     # Deploy-AzureAppServicePlanScaleDown $armParameters 
+
+    # Additional Core Services
+    ###################################
     # Deploy-AzureAlerts $armParameters
         # Existing Resource Group
     # Deploy-AzureDns $armParameters
@@ -103,5 +113,8 @@ function Deploy-AzureDemoEnvironment {
     # Deploy-AzureTrafficManager $armParameters
     # Deploy-AzureCognitiveServices $armParameters
 
-    Write-ScriptSection "Finished Azure Development Environment Deployments"
+    $stopwatch.Stop()
+    $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)
+
+    Write-ScriptSection "Finished Azure Demo Environment Deployments in $elapsedSeconds seconds"
 }

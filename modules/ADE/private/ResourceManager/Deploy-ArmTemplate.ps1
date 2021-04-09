@@ -9,6 +9,8 @@ function Deploy-ArmTemplate {
         [switch] $bicep = $false
     )
 
+    $stopwatch = [system.diagnostics.stopwatch]::StartNew()
+
     $overwriteParameterFiles = [System.Convert]::ToBoolean($armParameters.overwriteParameterFiles)
     $folderName = $stepName.replace(' ', '_').replace(':', '').toLowerInvariant()
     $fileName = $folderName
@@ -39,36 +41,31 @@ function Deploy-ArmTemplate {
 
     $commandToExecute = "az deployment $resourceLevel create -n $deploymentName --template-file '$templateFile' --parameters '$parametersFile'"
 
-    if($noWait) {
+    if ($noWait) {
         $commandToExecute += " --no-wait"
     }
 
+    $resourceType = ""
     if ($resourceLevel -eq 'sub') {
-        Write-Status "Deploying $stepName to Subscription"
-
+        $resourceType = "Subscription"
         $commandToExecute += " -l $region"
-    
-        Write-Log "Executing Command: $commandToExecute"
-        $commandResults = Invoke-Expression -Command $commandToExecute | ConvertFrom-Json
-        Write-Host $commandResults
-
-        Confirm-LastExitCode
-
-        Write-Status "Finished $stepName to Subscription"
     }
     else {
-        Write-Status "Deploying $stepName to Resource Group $resourceGroupName"
-
+        $resourceType = "Resource Group $resourceGroupName";
         $commandToExecute += " -g $resourceGroupName"
-
         New-ResourceGroup $resourceGroupName $region
-    
-        Write-Log "Executing Command: $commandToExecute"
-        $commandResults = Invoke-Expression -Command $commandToExecute | ConvertFrom-Json
-        Write-Host $commandResults
-
-        Confirm-LastExitCode
-
-        Write-Status "Finished Deploying $stepName to Resource Group $resourceGroupName"
     }
+
+    Write-Status "Deploying $stepName to $resourceType"
+
+    Write-Log "Executing Command: $commandToExecute"
+    $commandResults = Invoke-Expression -Command $commandToExecute
+    Write-Log "Command Results:\n$commandResults"
+
+    Confirm-LastExitCode
+
+    $stopwatch.Stop()
+    $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)
+
+    Write-Status "Finished $stepName Deployment to $resourceType in $elapsedSeconds seconds"
 }

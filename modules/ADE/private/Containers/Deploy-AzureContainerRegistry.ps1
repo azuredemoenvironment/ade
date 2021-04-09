@@ -5,21 +5,13 @@ function Deploy-AzureContainerRegistry {
 
     Deploy-ArmTemplate 'Azure Container Registry' $armParameters -resourceGroupName $armParameters.containerRegistryResourceGroupName -bicep
 
+    $stopwatch = [system.diagnostics.stopwatch]::StartNew()
     $containerRegistryName = $armParameters.acrName
     $containerRegistryLoginServer = $armParameters.containerRegistryLoginServer
 
-    # Deploy Container Images
-    function TagAndPush {
-        param([string]$imageName)
+    Write-ScriptSection "Tagging and Pushing Docker Images to $containerRegistryLoginServer"
 
-        $containerImageName = "ade-$imageName"
-
-        Write-Log "Tagging and Pushing $containerImageName"
-
-        docker tag "$containerImageName" "$containerRegistryLoginServer/$($containerImageName):latest" && docker push "$containerRegistryLoginServer/$($containerImageName):latest"
-        Confirm-LastExitCode
-    }
-    
+    # Deploy Container Images   
     az acr login -n $containerRegistryName
     Confirm-LastExitCode
 
@@ -38,5 +30,17 @@ function Deploy-AzureContainerRegistry {
         'loadtesting-redis'
     )
     
-    $imagesToPush | ForEach-Object { TagAndPush $_ }
+    $imagesToPush | ForEach-Object { 
+        $containerImageName = "ade-$_"
+
+        Write-Log "Tagging and Pushing $containerImageName"
+
+        docker tag "$containerImageName" "$containerRegistryLoginServer/$($containerImageName):latest" && docker push "$containerRegistryLoginServer/$($containerImageName):latest"
+        Confirm-LastExitCode
+    }
+
+    $stopwatch.Stop()
+    $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)
+
+    Write-Status "Finished Tagging and Pushing Docker Images to $containerRegistryLoginServer in $elapsedSeconds seconds"
 }
