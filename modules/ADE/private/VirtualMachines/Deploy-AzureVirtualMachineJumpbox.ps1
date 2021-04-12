@@ -8,5 +8,5 @@ function Deploy-AzureVirtualMachineJumpbox {
         return;
     }
 
-    Deploy-ArmTemplate 'Azure Virtual Machine Jumpbox' $armParameters -resourceGroupName $armParameters.jumpboxResourceGroupName
+    Deploy-ArmTemplate 'Azure Virtual Machine Jumpbox' $armParameters -resourceGroupName $armParameters.jumpboxResourceGroupName -bicep
 }

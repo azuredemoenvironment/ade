@@ -47,7 +47,7 @@ function Set-InitialArmParameters {
         'aciStorageAccountName'                             = "sa-$aliasRegion-aciwp".replace('-', '')
         'acrName'                                           = $acrName
         'activityLogDiagnosticsName'                        = 'subscriptionactivitylog'
-        'adminUsername'                                     = $resourceUserName
+        'adminUserName'                                     = $resourceUserName
         'aksClusterDNSName'                                 = "aks-$aliasRegion-01-dns"
         'aksClusterName'                                    = "aks-$aliasRegion-01"
         'applicationGatewayManagedIdentityName'             = "id-ade-$aliasRegion-agw"
@@ -56,7 +56,9 @@ function Set-InitialArmParameters {
         'appServicePlanName'                                = "plan-ade-$aliasRegion-001"
         'azureActiveDirectoryTenantID'                      = $currentAccount.tenantId
         'azureActiveDirectoryUserID'                        = $adSignedInUser.objectId
+        # Required for Deploy-AzureNsgFlowLogs.ps1
         'azureBastionSubnetNSGName'                         = "nsg-ade-$aliasRegion-azurebastion"
+        # Required for Deploy-AzureNsgFlowLogs.ps1
         'clientServicesSubnetNSGName'                       = "nsg-ade-$aliasRegion-clientservices"
         'computerVisionAccountName'                         = "computervision"        
         'containerGroupMySQLImage'                          = "$acrName.azurecr.io/mysql:latest"
@@ -93,8 +95,11 @@ function Set-InitialArmParameters {
         'keyVaultName'                                      = "kv-ade-$aliasRegion-001"
         'localNetworkGatewayAddressPrefix'                  = $localNetworkRange
         'logAnalyticsWorkspaceName'                         = "log-ade-$aliasRegion-001"
+        # Required for Deploy-AzureNsgFlowLogs.ps1
         'managementSubnetNSGName'                           = "nsg-ade-$aliasRegion-management"
+        # Required for Deploy-AzureNsgFlowLogs.ps1
         'nsgFlowLogsStorageAccountName'                     = "sa-ade-$aliasRegion-nsgflow".replace('-', '')     
+        # Required for Deploy-AzureNsgFlowLogs.ps1
         'nTierAppSubnetNSGName'                             = "nsg-ade-$aliasRegion-ntierapp"
         'nTierDB01NICName'                                  = "nic-$aliasRegion-ntierdb01"
         'nTierDB01OSDiskName'                               = "disk-$aliasRegion-ntierdb01-os"
@@ -102,6 +107,7 @@ function Set-InitialArmParameters {
         'nTierDB02OSDiskName'                               = "disk-$aliasRegion-ntierdb02-os"
         'nTierDBAvailabilitySetName'                        = "avset-$aliasRegion-ntierdb"
         'nTierDBLoadBalancerName'                           = "lb-$aliasRegion-ntierdb"
+        # Required for Deploy-AzureNsgFlowLogs.ps1
         'nTierDBSubnetNSGName'                              = "nsg-ade-$aliasRegion-ntierdb"
         'nTierHostName'                                     = "ntier.$rootDomainName"
         'nTierWeb01NICName'                                 = "nic-$aliasRegion-ntierweb01"
@@ -109,35 +115,25 @@ function Set-InitialArmParameters {
         'nTierWeb02NICName'                                 = "nic-$aliasRegion-ntierweb02"
         'nTierWeb02OSDiskName'                              = "disk-$aliasRegion-ntierweb02-os"
         'nTierWebAvailabilitySetName'                       = "avset-$aliasRegion-ntierweb"
-        'nTierWebSubnetNSGName'                             = "nsg-ade-$aliasRegion-ntierweb"
-        'peering01'                                         = "vnet-$aliasRegion-01-to-vnet-$aliasRegion-02"
-        'peering02'                                         = "vnet-$aliasRegion-02-to-vnet-$aliasRegion-01"
-        'peering03'                                         = "vnet-$aliasRegion-01-to-vnet-$aliasRegion-03"
-        'peering04'                                         = "vnet-$aliasRegion-03-to-vnet-$aliasRegion-01"        
-        'primaryRegionHelloWorldEndpointName'               = "helloworld-$defaultPrimaryRegionShortName".replace('-', '')
-        'primaryRegionHelloWorldWebAppName'                 = "as-$aliasRegion-helloworld".replace('-', '')
-        'primaryRegionHelloWorldWebAppStorageAccountName'   = "sa-$aliasRegion-bkphello".replace('-', '')
+        # Required for Deploy-AzureNsgFlowLogs.ps1
+        'nTierWebSubnetNSGName'                             = "nsg-ade-$aliasRegion-ntierweb"   
         'restAPISPNName'                                    = "spn-ade-$aliasRegion-restapi"        
-        'secondaryRegionHelloWorldEndpointName'             = "helloworld-$defaultSecondaryRegionShortName".replace('-', '')
-        'secondaryRegionHelloWorldWebAppName'               = "as-$aliasSecondaryRegion-helloworld".replace('-', '')
-        'secondaryRegionHelloWorldWebAppStorageAccountName' = "sa-$aliasSecondaryRegion-bkphello".replace('-', '')
         'sourceAddressPrefix'                               = $sourceAddressPrefix        
-        'sqlToDoFQDN'                                       = "as-$aliasRegion-sqltodo.azurewebsites.net".replace('-', '')
-        'sqlToDoHostName'                                   = "sqltodo.$rootDomainName"
-        'sqlToDoSqlAdminUserName'                           = $resourceUserName
-        'sqlToDoSqlDatabaseName'                            = "sqldb-$aliasRegion-todo".replace('-', '')
-        'sqlToDoSqlServerName'                              = "sql-$aliasRegion-todo".replace('-', '')
-        'sqlToDoWebAppBackupStorageAccountName'             = "sa-$aliasRegion-bkpsqltodo".replace('-', '')
-        'sqlToDoWebAppName'                                 = "as-$aliasRegion-sqltodo".replace('-', '')
         'sslCertificateName'                                = $rootDomainName
         'texAnalyticsAccountName'                           = "textanalytics"
         'trafficManagerProfileDNSName'                      = "tmp-$aliasRegion-helloworld".replace('-', '')
-        'trafficManagerProfileName'                         = "tmp-$aliasRegion-helloworld"        
+        'trafficManagerProfileName'                         = "tmp-$aliasRegion-helloworld"
+        # Required for Deploy-StorageFirewallRules.ps1
+        'virtualNetwork001Name'                             = "vnet-ade-$aliasRegion-001"
+        # Required for Deploy-StorageFirewallRules.ps1
+        'virtualNetwork002Name'                             = "vnet-ade-$aliasRegion-002"     
+        # Required for Deploy-StorageFirewallRules.ps1
         'vmDiagnosticsStorageAccountName'                   = "sa-ade-$aliasRegion-vmdiags".replace('-', '')
         'vmssLoadBalancerName'                              = "lb-$aliasRegion-vmss01"
         'vmssLoadBalancerPublicIPAddressName'               = "pip-$aliasRegion-lb-vmss01"
         'vmssName'                                          = "vmss01"
         'vmssNICName'                                       = "nic-$aliasRegion-vmss01"
+        # Required for Deploy-AzureNsgFlowLogs.ps1
         'vmssSubnetNSGName'                                 = "nsg-ade-$aliasRegion-vmss"
         'w10clientName'                                     = "vm-w10client01"
         'w10clientNICName'                                  = "nic-$aliasRegion-w10client01"
