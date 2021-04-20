@@ -5,6 +5,18 @@
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
+        "jumpboxResourceGroupName": {
+            "value": "@@jumpboxResourceGroupName@@"
+        },
+        "nTierResourceGroupName": {
+            "value": "@@nTierResourceGroupName@@"
+        },
+        "vmssResourceGroupName": {
+            "value": "@@vmssResourceGroupName@@"
+        },
+        "w10clientResourceGroupName": {
+            "value": "@@w10clientResourceGroupName@@"
+        },
         "adminUserName": {
             "value": "@@adminUsername@@"
         },

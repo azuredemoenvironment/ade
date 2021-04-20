@@ -23,11 +23,10 @@ function Deploy-AzureNsgFlowLogs {
     $logAnalyticsWorkspaceID = az monitor log-analytics workspace show -g $monitorResourceGroupName --workspace-name $logAnalyticsWorkspaceName --query id --output tsv
     
     $nsgFlowLogEntries = @(
-        @{ NsgName = $armParameters.azureBastionSubnetNSGName; FlowLogName = 'azureBastion' }
+        @{ NsgName = $armParameters.azureBastionSubnetNSGName; FlowLogName = 'bastion' }
         @{ NsgName = $armParameters.managementSubnetNSGName; FlowLogName = 'management' }
         @{ NsgName = $armParameters.nTierWebSubnetNSGName; FlowLogName = 'nTierWeb' }
         @{ NsgName = $armParameters.nTierAppSubnetNSGName; FlowLogName = 'nTierApp' }
-        @{ NsgName = $armParameters.nTierDBSubnetNSGName; FlowLogName = 'nTierDB' }
         @{ NsgName = $armParameters.vmssSubnetNSGName; FlowLogName = 'vmss' }
         @{ NsgName = $armParameters.clientServicesSubnetNSGName; FlowLogName = 'clientServices' }
     )

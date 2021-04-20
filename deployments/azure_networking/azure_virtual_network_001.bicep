@@ -6,8 +6,8 @@ param virtualNetwork001Name string
 param virtualnetwork001Prefix string
 param azureFirewallSubnetName string
 param azureFirewallSubnetPrefix string
-param applicationgatewaySubnetName string
-param applicationgatewaySubnetPrefix string
+param applicationGatewaySubnetName string
+param applicationGatewaySubnetPrefix string
 param azureBastionSubnetName string
 param azureBastionSubnetPrefix string
 param managementSubnetName string
@@ -16,7 +16,6 @@ param gatewaySubnetName string
 param gatewaySubnetPrefix string
 param azureBastionSubnetNSGId string
 param managementSubnetNSGId string
-param natGatewayId string
 
 // variables
 var environmentName = 'production'
@@ -53,9 +52,9 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         }
       }
       {
-        name: applicationgatewaySubnetName
+        name: applicationGatewaySubnetName
         properties: {
-          addressPrefix: applicationgatewaySubnetPrefix
+          addressPrefix: applicationGatewaySubnetPrefix
           serviceEndpoints: [
             {
               service: 'Microsoft.Web'
@@ -76,17 +75,9 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         name: managementSubnetName
         properties: {
           addressPrefix: managementSubnetPrefix
-          natGateway: {
-            id: natGatewayId
-          }
           networkSecurityGroup: {
             id: managementSubnetNSGId
           }
-          serviceEndpoints: [
-            {
-              service: 'Microsoft.Storage'
-            }
-          ]
         }
       }
       {

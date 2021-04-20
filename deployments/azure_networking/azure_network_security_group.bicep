@@ -7,7 +7,6 @@ param azureBastionSubnetNSGName string
 param managementSubnetNSGName string
 param nTierWebSubnetNSGName string
 param nTierAppSubnetNSGName string
-param nTierDBSubnetNSGName string
 param vmssSubnetNSGName string
 param clientServicesSubnetNSGName string
 
@@ -266,48 +265,6 @@ resource nTierAppSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@201
   }
 }
 
-// resource - network security group - ntier db subnet
-resource nTierDBSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
-  name: nTierDBSubnetNSGName
-  location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    securityRules: []
-  }
-}
-
-// resource - network security group - ntier db subnet - diagnostic settings
-resource nTierDBSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierDBSubnetNSG.name}-diagnostics'
-  scope: nTierDBSubnetNSG
-  properties: {
-    workspaceId: logAnalyticsWorkspace.id
-    logAnalyticsDestinationType: 'Dedicated'
-    logs: [
-      {
-        category: 'NetworkSecurityGroupEvent'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'NetworkSecurityGroupRuleCounter'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-  }
-}
-
 // resource - network security group - vmss subnet
 resource vmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: vmssSubnetNSGName
@@ -412,6 +369,5 @@ output azureBastionSubnetNSGId string = azureBastionSubnetNSG.id
 output managementSubnetNSGId string = managementSubnetNSG.id
 output nTierWebSubnetNSGId string = nTierWebSubnetNSG.id
 output nTierAppSubnetNSGId string = nTierAppSubnetNSG.id
-output nTierDBSubnetNSGId string = nTierDBSubnetNSG.id
 output vmssSubnetNSGId string = vmssSubnetNSG.id
-output clientServicesSubnetNSGId string = managementSubnetNSG.id
+output clientServicesSubnetNSGId string = clientServicesSubnetNSG.id
