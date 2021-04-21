@@ -95,12 +95,6 @@ function Set-InitialArmParameters {
         'nTierWebSubnetNSGName'                        = "nsg-ade-$aliasRegion-ntierweb"
         'vmssSubnetNSGName'                            = "nsg-ade-$aliasRegion-vmss"
 
-        # Required for Deploy-StorageFirewallRules.ps1
-        'virtualNetwork001Name'                        = "vnet-ade-$aliasRegion-001"
-        'virtualNetwork002Name'                        = "vnet-ade-$aliasRegion-002"     
-        'vmDiagnosticsStorageAccountName'              = "sa-ade-$aliasRegion-vmdiags".replace('-', '')
-
-
         # Resource Group Names
         'aksNodeResourceGroupName'                     = "$primaryRegionResourceGroupNamePrefix-aks-node"
         'aksResourceGroupName'                         = "$primaryRegionResourceGroupNamePrefix-aks"
