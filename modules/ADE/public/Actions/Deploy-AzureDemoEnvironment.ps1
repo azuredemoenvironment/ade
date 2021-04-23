@@ -39,16 +39,11 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureIdentity $armParameters
     Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
     Deploy-AzureNetworking $armParameters    
-    Deploy-AzureNsgFlowLogs $armParameters
-    # Deploy-StorageFirewallRules $armParameters    
+    Deploy-AzureNsgFlowLogs $armParameters    
 
     # Virtual Machines
     ###################################
-    # Deploy-AzureVirtualMachineJumpbox $armParameters
-
-    # Deploy-AzureVirtualMachineNTier $armParameters
-    # Deploy-AzureVirtualMachineScaleSets $armParameters
-    # Deploy-AzureVirtualMachineWindows10Client $armParameters
+    Deploy-AzureVirtualMachines $armParameters
    
     # Data Services
     ###################################
@@ -62,7 +57,10 @@ function Deploy-AzureDemoEnvironment {
         # Dedicated Resource Group
         # Load Testing
     Deploy-AzureAppServicePlan $armParameters
-
+    # Deploy-AzureContainerInstances $armParameters
+    # Dedicated Resource Group
+    # Load Testing
+    
     # ADE App Virtual Machines
     ###################################
     # Parallel
@@ -76,7 +74,7 @@ function Deploy-AzureDemoEnvironment {
 
     # Parallel
     Deploy-AdeAzureAppServices $armParameters
-        # Dedicated Resource Group
+        # Dedicated Resource GroupÎ
         # adefrontend (public)
         # adeapigateway (public)
         # adeuserservice
