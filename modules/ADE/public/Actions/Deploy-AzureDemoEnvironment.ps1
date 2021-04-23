@@ -35,38 +35,26 @@ function Deploy-AzureDemoEnvironment {
     # Core Services
     ###################################
     Deploy-AzureMonitor $armParameters
-    Deploy-AzurePolicy $armParameters    
+    Deploy-AzurePolicy $armParameters
     Deploy-AzureIdentity $armParameters
     Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
-    Deploy-AzureNetworking $armParameters    
-    Deploy-AzureNsgFlowLogs $armParameters    
+    Deploy-AzureNetworking $armParameters
+    Deploy-AzureNsgFlowLogs $armParameters
 
-    # Virtual Machines
-    ###################################
-    Deploy-AzureVirtualMachines $armParameters
-   
     # Data Services
     ###################################
     # Deploy-AzureSQL-ADEApp $armParameters
-        # Dedicated Resource Group
+    # Dedicated Resource Group
 
-    # Containers and Compute Infrastructure
+    # Compute Infrastructure
     ###################################
+    Deploy-AzureVirtualMachines $armParameters
     Deploy-AzureContainerRegistry $armParameters
-    # Deploy-AzureContainerInstances $armParameters
-        # Dedicated Resource Group
-        # Load Testing
-    Deploy-AzureAppServicePlan $armParameters
     # Deploy-AzureContainerInstances $armParameters
     # Dedicated Resource Group
     # Load Testing
-    
-    # ADE App Virtual Machines
-    ###################################
-    # Parallel
-    # Deploy-AzureVirtualMachine-ADEApp $armParameters
-        # Dedicated Resource Group
-        
+    Deploy-AzureAppServicePlan $armParameters
+
     # ADE App App Services
     ###################################
     # Parallel
@@ -74,25 +62,25 @@ function Deploy-AzureDemoEnvironment {
 
     # Parallel
     Deploy-AdeAzureAppServices $armParameters
-        # Dedicated Resource GroupÎ
-        # adefrontend (public)
-        # adeapigateway (public)
-        # adeuserservice
-        # adedataingestorservice
-        # adedatareporterservice
+    # Dedicated Resource Group
+    # adefrontend (public)
+    # adeapigateway (public)
+    # adeuserservice
+    # adedataingestorservice
+    # adedatareporterservice
 
     # ADE App Kubernetes
     ###################################
     # Parallel
     # Deploy-AzureKubernetesService-ADEApp $armParameters
-        # Dedicated Resource Group
+    # Dedicated Resource Group
 
     # Frontend Load Balancers
     ###################################
     # Deploy-AzureApplicationGateway $armParameters
-        # Dedicated Resource Group
+    # Dedicated Resource Group
     # Deploy-AzureFrontDoor $armParameters
-        # Dedicated Resource Group
+    # Dedicated Resource Group
     
     # Service Cleanup
     ###################################
@@ -101,9 +89,9 @@ function Deploy-AzureDemoEnvironment {
     # Additional Core Services
     ###################################
     # Deploy-AzureAlerts $armParameters
-        # Existing Resource Group
+    # Existing Resource Group
     # Deploy-AzureDns $armParameters
-        # Existing Resource Group
+    # Existing Resource Group
 
     $stopwatch.Stop()
     $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)

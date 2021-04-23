@@ -11,6 +11,7 @@ function Remove-AzureResourceGroups {
         $armParameters.applicationGatewayResourceGroupName
         $armParameters.trafficManagerResourceGroupName
         $armParameters.inspectorGadgetResourceGroupName
+        $armParameters.adeAppAppServicesResourceGroupName
         $armParameters.appServicePlanResourceGroupName
         $armParameters.aksResourceGroupName
         $armParameters.wordpressResourceGroupName
