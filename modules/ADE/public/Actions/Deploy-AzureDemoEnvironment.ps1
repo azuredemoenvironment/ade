@@ -43,7 +43,7 @@ function Deploy-AzureDemoEnvironment {
 
     # Data Services
     ###################################
-    # Deploy-AzureSQL-ADEApp $armParameters
+    Deploy-AdeDatabase $armParameters
     # Dedicated Resource Group
 
     # Compute Infrastructure
