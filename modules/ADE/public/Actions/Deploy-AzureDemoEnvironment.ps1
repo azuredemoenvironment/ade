@@ -47,58 +47,50 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
     Deploy-AzureNetworking $armParameters    
     Deploy-AzureNsgFlowLogs $armParameters    
-    # Deploy-StorageFirewallRules $armParameters    
-
-    # Deploy-AzureVirtualMachineJumpbox $armParameters
-
-    # Deploy-AzureVirtualMachineNTier $armParameters
-    # Deploy-AzureVirtualMachineScaleSets $armParameters
-    # Deploy-AzureVirtualMachineWindows10Client $armParameters
-
-    
+    Deploy-AzureVirtualMachines $armParameters
 
     # Deploy-AzureContainerRegistry $armParameters
-        # Dedicated Resource Group
-        # Include deployment of images to registry
+    # Dedicated Resource Group
+    # Include deployment of images to registry
     # Deploy-AzureContainerInstances $armParameters
-        # Dedicated Resource Group
-        # Load Testing
+    # Dedicated Resource Group
+    # Load Testing
     # Deploy-AzureSQL-ADEApp $armParameters
-        # Dedicated Resource Group
+    # Dedicated Resource Group
     # Deploy-AzureAppServicePlan $armParameters
-        # Dedicated Resource Group
+    # Dedicated Resource Group
 
     # Parallel
     # Deploy-AzureVirtualMachine-ADEApp $armParameters
-        # Dedicated Resource Group
+    # Dedicated Resource Group
         
     # Parallel
     # Deploy-InspectorGadgetAppService $armParameters
 
     # Parallel
     # Deploy-AzureAppService-ADEApp $armParameters
-        # Dedicated Resource Group
-        # adefrontend (public)
-        # adeapigateway (public)
-        # adeuserservice
-        # adedataingestorservice
-        # adedatareporterservice
+    # Dedicated Resource Group
+    # adefrontend (public)
+    # adeapigateway (public)
+    # adeuserservice
+    # adedataingestorservice
+    # adedatareporterservice
 
     # Parallel
     # Deploy-AzureKubernetesService-ADEApp $armParameters
-        # Dedicated Resource Group
+    # Dedicated Resource Group
 
     #Serial
     # Deploy-AzureApplicationGateway $armParameters
-        # Dedicated Resource Group
+    # Dedicated Resource Group
     # Deploy-AzureFrontDoor $armParameters
-        # Dedicated Resource Group
+    # Dedicated Resource Group
     
     # Deploy-AzureAppServicePlanScaleDown $armParameters 
     # Deploy-AzureAlerts $armParameters
-        # Existing Resource Group
+    # Existing Resource Group
     # Deploy-AzureDns $armParameters
-        # Existing Resource Group
+    # Existing Resource Group
 
     # Deploy-AzureTrafficManager $armParameters
     # Deploy-AzureCognitiveServices $armParameters

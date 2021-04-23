@@ -8,8 +8,6 @@ param nTierWebSubnetName string
 param nTierWebSubnetPrefix string
 param nTierAppSubnetName string
 param nTierAppSubnetPrefix string
-param nTierDBSubnetName string
-param nTierDBSubnetPrefix string
 param vmssSubnetName string
 param vmssSubnetPrefix string
 param clientServicesSubnetName string
@@ -22,9 +20,9 @@ param aksSubnetName string
 param aksSubnetPrefix string
 param nTierWebSubnetNSGId string
 param nTierAppSubnetNSGId string
-param nTierDBSubnetNSGId string
 param vmssSubnetNSGId string
 param clientServicesSubnetNSGId string
+param natGatewayId string
 param internetRouteTableId string
 
 // variables
@@ -62,37 +60,21 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
           networkSecurityGroup: {
             id: nTierWebSubnetNSGId
           }
-          serviceEndpoints: [
-            {
-              service: 'Microsoft.Storage'
-            }
-          ]
         }
       }
       {
         name: nTierAppSubnetName
         properties: {
           addressPrefix: nTierAppSubnetPrefix
+          natGateway: {
+            id: natGatewayId
+          }
           networkSecurityGroup: {
             id: nTierAppSubnetNSGId
           }
           serviceEndpoints: [
             {
-              service: 'Microsoft.Storage'
-            }
-          ]
-        }
-      }
-      {
-        name: nTierDBSubnetName
-        properties: {
-          addressPrefix: nTierDBSubnetPrefix
-          networkSecurityGroup: {
-            id: nTierDBSubnetNSGId
-          }
-          serviceEndpoints: [
-            {
-              service: 'Microsoft.Storage'
+              service: 'Microsoft.Sql'
             }
           ]
         }
@@ -104,11 +86,6 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
           networkSecurityGroup: {
             id: vmssSubnetNSGId
           }
-          serviceEndpoints: [
-            {
-              service: 'Microsoft.Storage'
-            }
-          ]
         }
       }
       {
@@ -121,11 +98,6 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
           routeTable: {
             id: internetRouteTableId
           }
-          serviceEndpoints: [
-            {
-              service: 'Microsoft.Storage'
-            }
-          ]
         }
       }
       {

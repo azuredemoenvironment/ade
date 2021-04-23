@@ -10,7 +10,6 @@ var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 var applicationInsightsName = 'appinsights-ade-${aliasRegion}-001'
 
 // variables - storage account diagnostics
-var vmDiagnosticsStorageAccountName = replace('saade${aliasRegion}vmdiags', '-', '')
 var nsgFlowLogsStorageAccountName = replace('saade${aliasRegion}nsgflow', '-', '')
 
 // module - log analytics
@@ -37,8 +36,6 @@ module storageAccountDiagnosticsModule './azure_storage_account_diagnostics.bice
   name: 'storageAccountDiagnosticsDeployment'
   params: {
     location: location
-    sourceAddressPrefix: sourceAddressPrefix
-    vmDiagnosticsStorageAccountName: vmDiagnosticsStorageAccountName
     nsgFlowLogsStorageAccountName: nsgFlowLogsStorageAccountName
   }
 }

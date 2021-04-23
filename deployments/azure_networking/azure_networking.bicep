@@ -16,11 +16,10 @@ var natGatewayPublicIPPrefixName = 'pipp-ade-${aliasRegion}-ngw001'
 var natGatewayName = 'ngw-ade-${aliasRegion}-001'
 
 // variables - network security group
-var azureBastionSubnetNSGName = 'nsg-ade-${aliasRegion}-azurebastion'
+var azureBastionSubnetNSGName = 'nsg-ade-${aliasRegion}-bastion'
 var managementSubnetNSGName = 'nsg-ade-${aliasRegion}-management'
 var nTierWebSubnetNSGName = 'nsg-ade-${aliasRegion}-ntierweb'
 var nTierAppSubnetNSGName = 'nsg-ade-${aliasRegion}-ntierapp'
-var nTierDBSubnetNSGName = 'nsg-ade-${aliasRegion}-ntierdb'
 var vmssSubnetNSGName = 'nsg-ade-${aliasRegion}-vmss'
 var clientServicesSubnetNSGName = 'nsg-ade-${aliasRegion}-clientservices'
 
@@ -35,11 +34,11 @@ var virtualNetwork001Name = 'vnet-ade-${aliasRegion}-001'
 var virtualnetwork001Prefix = '10.101.0.0/16'
 var azureFirewallSubnetName = 'AzureFirewallSubnet'
 var azureFirewallSubnetPrefix = '10.101.1.0/24'
-var applicationgatewaySubnetName = 'ApplicationGatewaySubnet'
-var applicationgatewaySubnetPrefix = '10.101.11.0/24'
+var applicationGatewaySubnetName = 'snet-agw'
+var applicationGatewaySubnetPrefix = '10.101.11.0/24'
 var azureBastionSubnetName = 'AzureBastionSubnet'
 var azureBastionSubnetPrefix = '10.101.21.0/24'
-var managementSubnetName = 'management'
+var managementSubnetName = 'snet-management'
 var managementSubnetPrefix = '10.101.31.0/24'
 var gatewaySubnetName = 'GatewaySubnet'
 var gatewaySubnetPrefix = '10.101.255.0/24'
@@ -47,21 +46,19 @@ var gatewaySubnetPrefix = '10.101.255.0/24'
 // variables - virtual network 002
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
 var virtualnetwork002Prefix = '10.102.0.0/16'
-var nTierWebSubnetName = 'nTierWeb'
+var nTierWebSubnetName = 'snet-nTierWeb'
 var nTierWebSubnetPrefix = '10.102.1.0/24'
-var nTierAppSubnetName = 'nTierApp'
+var nTierAppSubnetName = 'snet-nTierApp'
 var nTierAppSubnetPrefix = '10.102.2.0/24'
-var nTierDBSubnetName = 'nTierDB'
-var nTierDBSubnetPrefix = '10.102.3.0/24'
-var vmssSubnetName = 'vmss'
+var vmssSubnetName = 'snet-vmss'
 var vmssSubnetPrefix = '10.102.11.0/24'
-var clientServicesSubnetName = 'clientServices'
+var clientServicesSubnetName = 'snet-clientServices'
 var clientServicesSubnetPrefix = '10.102.21.0/24'
-var vnetIntegrationSubnetName = 'vnetIntegration'
+var vnetIntegrationSubnetName = 'snet-vnetIntegration'
 var vnetIntegrationSubnetPrefix = '10.102.101.0/24'
-var privateEndpointSubnetName = 'privateEndpoint'
+var privateEndpointSubnetName = 'snet-privateEndpoint'
 var privateEndpointSubnetPrefix = '10.102.102.0/24'
-var aksSubnetName = 'aks'
+var aksSubnetName = 'snet-aks'
 var aksSubnetPrefix = '10.102.201.0/24'
 
 // variables - azure firewall
@@ -104,7 +101,6 @@ module networkSecurityGroupsModule './azure_network_security_group.bicep' = {
     managementSubnetNSGName: managementSubnetNSGName
     nTierWebSubnetNSGName: nTierWebSubnetNSGName
     nTierAppSubnetNSGName: nTierAppSubnetNSGName
-    nTierDBSubnetNSGName: nTierDBSubnetNSGName
     vmssSubnetNSGName: vmssSubnetNSGName
     clientServicesSubnetNSGName: clientServicesSubnetNSGName
   }
@@ -130,8 +126,8 @@ module virtualNetwork001Module './azure_virtual_network_001.bicep' = {
     virtualnetwork001Prefix: virtualnetwork001Prefix
     azureFirewallSubnetName: azureFirewallSubnetName
     azureFirewallSubnetPrefix: azureFirewallSubnetPrefix
-    applicationgatewaySubnetName: applicationgatewaySubnetName
-    applicationgatewaySubnetPrefix: applicationgatewaySubnetPrefix
+    applicationGatewaySubnetName: applicationGatewaySubnetName
+    applicationGatewaySubnetPrefix: applicationGatewaySubnetPrefix
     azureBastionSubnetName: azureBastionSubnetName
     azureBastionSubnetPrefix: azureBastionSubnetPrefix
     managementSubnetName: managementSubnetName
@@ -140,7 +136,6 @@ module virtualNetwork001Module './azure_virtual_network_001.bicep' = {
     gatewaySubnetPrefix: gatewaySubnetPrefix
     azureBastionSubnetNSGId: networkSecurityGroupsModule.outputs.azureBastionSubnetNSGId
     managementSubnetNSGId: networkSecurityGroupsModule.outputs.managementSubnetNSGId
-    natGatewayId: natGatewayModule.outputs.natGatewayId
   }
 }
 
@@ -157,8 +152,6 @@ module virtualNetwork002Module './azure_virtual_network_002.bicep' = {
     nTierWebSubnetPrefix: nTierWebSubnetPrefix
     nTierAppSubnetName: nTierAppSubnetName
     nTierAppSubnetPrefix: nTierAppSubnetPrefix
-    nTierDBSubnetName: nTierDBSubnetName
-    nTierDBSubnetPrefix: nTierDBSubnetPrefix
     vmssSubnetName: vmssSubnetName
     vmssSubnetPrefix: vmssSubnetPrefix
     clientServicesSubnetName: clientServicesSubnetName
@@ -171,9 +164,9 @@ module virtualNetwork002Module './azure_virtual_network_002.bicep' = {
     aksSubnetPrefix: aksSubnetPrefix
     nTierWebSubnetNSGId: networkSecurityGroupsModule.outputs.nTierWebSubnetNSGId
     nTierAppSubnetNSGId: networkSecurityGroupsModule.outputs.nTierAppSubnetNSGId
-    nTierDBSubnetNSGId: networkSecurityGroupsModule.outputs.nTierDBSubnetNSGId
     vmssSubnetNSGId: networkSecurityGroupsModule.outputs.vmssSubnetNSGId
     clientServicesSubnetNSGId: networkSecurityGroupsModule.outputs.clientServicesSubnetNSGId
+    natGatewayId: natGatewayModule.outputs.natGatewayId
     internetRouteTableId: routeTableModule.outputs.internetRouteTableId
   }
 }
