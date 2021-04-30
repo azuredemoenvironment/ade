@@ -9,16 +9,13 @@ function Deploy-AzureContainerRegistry {
     $containerRegistryName = $armParameters.acrName
     $containerRegistryLoginServer = $armParameters.containerRegistryLoginServer
 
-    Write-ScriptSection "Tagging and Pushing Docker Images to $containerRegistryLoginServer"
+    Write-ScriptSection "Pushing Docker Images to $containerRegistryLoginServer"
 
     # Deploy Container Images   
     az acr login -n $containerRegistryName
     Confirm-LastExitCode
 
-    docker tag azure-demo-environment "$containerRegistryLoginServer/azure-demo-environment:latest" && docker push "$containerRegistryLoginServer/azure-demo-environment:latest"
-    Confirm-LastExitCode
-
-    $imagesToPush = @(
+    $imagesToPullAndPush = @(
         'apigateway'
         'frontend'
         'dataingestorservice'
@@ -30,12 +27,21 @@ function Deploy-AzureContainerRegistry {
         'loadtesting-redis'
     )
     
-    $imagesToPush | ForEach-Object { 
+    $imagesToPullAndPush | ForEach-Object { 
         $containerImageName = "ade-$_"
+        $dockerhubImageName = "azuredemoenvironment/$($containerImageName):latest"
+        $acrImageName = "$containerRegistryLoginServer/$($containerImageName):latest"
 
-        Write-Log "Tagging and Pushing $containerImageName"
+        Write-Log "Pulling $dockerhubImageName from Docker Hub"
+        docker pull $dockerhubImageName
+        Confirm-LastExitCode
 
-        docker tag "$containerImageName" "$containerRegistryLoginServer/$($containerImageName):latest" && docker push "$containerRegistryLoginServer/$($containerImageName):latest"
+        Write-Log "Tagging $dockerhubImageName as $acrImageName"
+        docker tag $dockerhubImageName $acrImageName
+        Confirm-LastExitCode
+
+        Write-Log "Pushing $acrImageName to ACR"
+        docker push $acrImageName
         Confirm-LastExitCode
     }
 
