@@ -4,7 +4,7 @@ services:
   # This is the primary Azure Demo Environment Image, and will be used as the main
   # interactive runtime
   ade:
-    image: azure-demo-environment
+    image: ade
     container_name: ade
     build:
       context: .
