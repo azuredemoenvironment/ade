@@ -26,7 +26,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
   name: logAnalyticsWorkspaceName
   scope: resourceGroup(monitorResourceGroupName)
 }
-// virtual network
+// virtual network - virtual network 001
 resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
   name: virtualNetwork001Name
   scope: resourceGroup(networkingResourceGroupName)

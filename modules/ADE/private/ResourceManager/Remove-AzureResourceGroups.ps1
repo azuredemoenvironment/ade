@@ -19,7 +19,8 @@ function Remove-AzureResourceGroups {
         $armParameters.vmssResourceGroupName
         $armParameters.ntierResourceGroupName
         $armParameters.w10clientResourceGroupName
-        $armParameters.jumpboxResourceGroupName        
+        $armParameters.jumpboxResourceGroupName
+        $armParameters.adeAppSqlResourceGroupName   
         $armParameters.networkingResourceGroupName
         $armParameters.managedIdentityResourceGroupName
     )

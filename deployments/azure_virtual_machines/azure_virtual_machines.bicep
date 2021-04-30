@@ -13,40 +13,17 @@ param adminPassword string
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 
-// virtual network 001
+// variables - virtual network - virtual network 001
 var networkingResourceGroupName = 'rg-ade-${aliasRegion}-networking'
 var virtualNetwork001Name = 'vnet-ade-${aliasRegion}-001'
 var managementSubnetName = 'snet-management'
-resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
-  name: virtualNetwork001Name
-  scope: resourceGroup(networkingResourceGroupName)
-  resource managementSubnet 'subnets@2020-07-01' existing = {
-    name: managementSubnetName
-  }
-}
 
-// virtual network 002
+// variables - virtual network - virtual network 002
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
 var nTierWebSubnetName = 'snet-nTierWeb'
 var nTierAppSubnetName = 'snet-nTierApp'
 var vmssSubnetName = 'snet-vmss'
 var clientServicesSubnetName = 'snet-clientServices'
-resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
-  name: virtualNetwork002Name
-  scope: resourceGroup(networkingResourceGroupName)
-  resource nTierWebSubnet 'subnets@2020-07-01' existing = {
-    name: nTierWebSubnetName
-  }
-  resource nTierAppSubnet 'subnets@2020-07-01' existing = {
-    name: nTierAppSubnetName
-  }
-  resource vmssSubnet 'subnets@2020-07-01' existing = {
-    name: vmssSubnetName
-  }
-  resource clientServicesSubnet 'subnets@2020-07-01' existing = {
-    name: clientServicesSubnetName
-  }
-}
 
 // variables - jumpbox
 var jumpboxPublicIpAddressName = 'pip-ade-${aliasRegion}-jumpbox01'

@@ -43,16 +43,14 @@ function Deploy-AzureDemoEnvironment {
 
     # Data Services
     ###################################
-    Deploy-AdeDatabase $armParameters
-    # Dedicated Resource Group
+    Deploy-AzureDatabases $armParameters
 
     # Compute Infrastructure
     ###################################
     Deploy-AzureVirtualMachines $armParameters
     Deploy-AzureContainerRegistry $armParameters
     # Deploy-AzureContainerInstances $armParameters
-    # Dedicated Resource Group
-    # Load Testing
+        # Dedicated Resource Group
     Deploy-AzureAppServicePlan $armParameters
 
     # ADE App App Services
@@ -61,7 +59,7 @@ function Deploy-AzureDemoEnvironment {
     # Deploy-InspectorGadgetAppService $armParameters
 
     # Parallel
-    Deploy-AdeAzureAppServices $armParameters
+    # Deploy-AdeAzureAppServices $armParameters
     # Dedicated Resource Group
     # adefrontend (public)
     # adeapigateway (public)

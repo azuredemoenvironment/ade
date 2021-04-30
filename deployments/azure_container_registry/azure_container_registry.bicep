@@ -6,10 +6,14 @@ param acrServicePrincipalClientId string
 // variables
 var azureContainerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
 var environmentName = 'production'
-var functionName = 'networking'
+var functionName = 'containerRegistry'
 var costCenterName = 'it'
 
-// existing resource - log analytics
+// variables - role assignment definition for acr pull - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#acrpull
+var roleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
+
+// existing resource
+// log analytics
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
@@ -34,7 +38,7 @@ resource azureContainerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-
   }
 }
 
-// resource - azure container registry diagnostics
+// resource - azure container registry - diagnostics
 resource azureContainerRegistryDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
   name: '${azureContainerRegistry.name}-diagnostics'
   scope: azureContainerRegistry
@@ -72,14 +76,13 @@ resource azureContainerRegistryDiagnostics 'microsoft.insights/diagnosticSetting
   }
 }
 
-// TODO: enable this for ACI
-// ACR Pull Role GUID
-// var roleDefinitionId = '7f951dda-4ed3-4680-a7ca-43fe172d538d'
-// resource azureContainerRegistryRoleAssignments 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-//   name: guid(acrServicePrincipalClientId, roleDefinitionId, resourceGroup().name)
-//   scope: azureContainerRegistry
-//   properties: {
-//     roleDefinitionId: roleDefinitionId
-//     principalId: acrServicePrincipalClientId
-//   }
-// }
+// resource - role asignment - acr pull
+resource azureContainerRegistryRoleAssignments 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  scope: azureContainerRegistry
+  name: guid(resourceGroup().id, roleDefinitionId, acrServicePrincipalClientId)
+  properties: {
+    roleDefinitionId: roleDefinitionId
+    principalId: acrServicePrincipalClientId
+    principalType: 'ServicePrincipal'
+  }
+}
