@@ -44,15 +44,15 @@ var functionName = 'nTier'
 var costCenterName = 'it'
 
 // existing resources
-// log analytics
+// resource - log analytics workspace
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
   scope: resourceGroup(monitorResourceGroupName)
+  name: logAnalyticsWorkspaceName
 }
-// virtual network - virtual network 002
+// resource - virtual network - virtual network 002
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
-  name: virtualNetwork002Name
   scope: resourceGroup(networkingResourceGroupName)
+  name: virtualNetwork002Name
   resource nTierWebSubnet 'subnets@2020-07-01' existing = {
     name: nTierWebSubnetName
   }
@@ -168,10 +168,10 @@ resource nTierAppLoadBalancer 'Microsoft.Network/loadBalancers@2020-11-01' = {
   }
 }
 
-// resource - load balancer - ntierapp - diagnostic settings
+// resource - load balancer - diagnostic settings - ntierapp
 resource nTierAppLoadBalancerDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierAppLoadBalancer.name}-diagnostics'
   scope: nTierAppLoadBalancer
+  name: '${nTierAppLoadBalancer.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -231,10 +231,10 @@ resource nTierWeb01NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - ntierweb01 - diagnostic settings
+// resource - network interface - diagnostic settings - ntierweb01
 resource nTierWeb01NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierWeb01NIC.name}-diagnostics'
   scope: nTierWeb01NIC
+  name: '${nTierWeb01NIC.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -276,10 +276,10 @@ resource nTierWeb02NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - ntierWeb02 - diagnostic settings
+// resource - network interface - diagnostic settings - ntierWeb02
 resource nTierWeb02NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierWeb02NIC.name}-diagnostics'
   scope: nTierWeb02NIC
+  name: '${nTierWeb02NIC.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -321,10 +321,10 @@ resource nTierWeb03NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - ntierWeb03 - diagnostic settings
+// resource - network interface - diagnostic settings - ntierWeb03
 resource nTierWeb03NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierWeb03NIC.name}-diagnostics'
   scope: nTierWeb03NIC
+  name: '${nTierWeb03NIC.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -374,10 +374,10 @@ resource nTierApp01NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - ntierapp01 - diagnostic settings
+// resource - network interface - diagnostic settings - ntierapp01
 resource nTierApp01NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierApp01NIC.name}-diagnostics'
   scope: nTierApp01NIC
+  name: '${nTierApp01NIC.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -427,10 +427,10 @@ resource nTierApp02NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - ntierapp02 - diagnostic settings
+// resource - network interface - diagnostic settings - ntierapp02
 resource nTierApp02NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierApp02NIC.name}-diagnostics'
   scope: nTierApp02NIC
+  name: '${nTierApp02NIC.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -480,10 +480,10 @@ resource nTierApp03NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - ntierapp03 - diagnostic settings
+// resource - network interface - diagnostic settings - ntierapp03
 resource nTierApp03NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierApp03NIC.name}-diagnostics'
   scope: nTierApp03NIC
+  name: '${nTierApp03NIC.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'

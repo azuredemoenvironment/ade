@@ -18,12 +18,12 @@ var functionName = 'clientServices'
 var costCenterName = 'it'
 
 // existing resources
-// log analytics
+// resource - log analytics workspace
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
   name: logAnalyticsWorkspaceName
   scope: resourceGroup(monitorResourceGroupName)
 }
-// virtual network - virtual network 002
+// resource - virtual network - virtual network 002
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
   name: virtualNetwork002Name
   scope: resourceGroup(networkingResourceGroupName)
@@ -57,7 +57,7 @@ resource w10ClientNIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - jumpbox - diagnostic settings
+// resource - network interface - diagnostic settings - jumpbox
 resource w10ClientNICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
   name: '${w10ClientNIC.name}-diagnostics'
   scope: w10ClientNIC

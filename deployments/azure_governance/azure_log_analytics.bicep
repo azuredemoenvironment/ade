@@ -36,36 +36,6 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
   }
 }
 
-// resource - log analytics workspace - diagnostic settings
-resource logAnalyticsWorkspaceDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${logAnalyticsWorkspace.name}-diagnostics'
-  scope: logAnalyticsWorkspace
-  properties: {
-    workspaceId: logAnalyticsWorkspace.id
-    logAnalyticsDestinationType: 'Dedicated'
-    logs: [
-      {
-        category: 'Audit'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-  }
-}
-
 // resource - log analytics workspace - solution - container insights
 resource solutionsContainerInsights 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
   name: '${containerInsights.name}'
@@ -117,6 +87,36 @@ resource solutionsVMInsights 'Microsoft.OperationsManagement/solutions@2015-11-0
     publisher: 'Microsoft'
     product: 'OMSGallery/${vmInsights.galleryName}'
     promotionCode: ''
+  }
+}
+
+// resource - log analytics workspace - diagnostic settings
+resource logAnalyticsWorkspaceDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+  scope: logAnalyticsWorkspace
+  name: '${logAnalyticsWorkspace.name}-diagnostics'
+  properties: {
+    workspaceId: logAnalyticsWorkspace.id
+    logAnalyticsDestinationType: 'Dedicated'
+    logs: [
+      {
+        category: 'Audit'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
+    ]
+    metrics: [
+      {
+        category: 'AllMetrics'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
+    ]
   }
 }
 

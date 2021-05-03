@@ -21,15 +21,15 @@ var functionName = 'jumpbox'
 var costCenterName = 'it'
 
 // existing resources
-// log analytics
+// resource - log analytics workspace
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
   scope: resourceGroup(monitorResourceGroupName)
+  name: logAnalyticsWorkspaceName
 }
-// virtual network - virtual network 001
+// resource - virtual network - virtual network 001
 resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
-  name: virtualNetwork001Name
   scope: resourceGroup(networkingResourceGroupName)
+  name: virtualNetwork001Name
   resource managementSubnet 'subnets@2020-07-01' existing = {
     name: managementSubnetName
   }
@@ -52,10 +52,10 @@ resource jumpboxPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01'
   }
 }
 
-// resource - public ip address - jumpbox - diagnostic settings
+// resource - public ip address - diagnostic settings - jumpbox
 resource jumpboxPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${jumpboxPublicIpAddress.name}-diagnostics'
   scope: jumpboxPublicIpAddress
+  name: '${jumpboxPublicIpAddress.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -126,10 +126,10 @@ resource jumpboxNIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - jumpbox - diagnostic settings
+// resource - network interface - diagnostic settings - jumpbox
 resource jumpboxNICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${jumpboxNIC.name}-diagnostics'
   scope: jumpboxNIC
+  name: '${jumpboxNIC.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'

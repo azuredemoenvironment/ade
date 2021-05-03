@@ -1,9 +1,8 @@
 // parameters
-param location string = resourceGroup().location
-param aliasRegion string
+param defaultPrimaryRegion string
+param appServicePlanName string
 
 // variables
-var appServicePlanName = 'plan-ade-${aliasRegion}-001'
 var environmentName = 'production'
 var functionName = 'appServicePlan'
 var costCenterName = 'it'
@@ -11,7 +10,7 @@ var costCenterName = 'it'
 // resource - app service plan
 resource appServicePlan 'Microsoft.Web/serverfarms@2020-10-01' = {
   name: appServicePlanName
-  location: location
+  location: defaultPrimaryRegion
   tags: {
     environment: environmentName
     function: functionName
@@ -29,7 +28,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2020-10-01' = {
 // resource - app service plan - autoscale setting
 resource autoscaleSetting 'Microsoft.insights/autoscalesettings@2015-04-01' = {
   name: '${appServicePlan.name}-autoscale'
-  location: location
+  location: defaultPrimaryRegion
   tags: {
     environment: environmentName
     function: functionName
@@ -91,3 +90,5 @@ resource autoscaleSetting 'Microsoft.insights/autoscalesettings@2015-04-01' = {
     ]
   }
 }
+
+output appServicePlanId string = appServicePlan.id

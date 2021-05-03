@@ -47,10 +47,10 @@ function Set-InitialArmParameters {
         'aciStorageAccountName'                        = "sa-$aliasRegion-aciwp".replace('-', '')
         'acrName'                                      = $acrName
         'activityLogDiagnosticsName'                   = 'subscriptionactivitylog'
+        'adeInitiativeDefinition'                      = "policy-ade-$aliasRegion-adeinitiative"
         'adminUserName'                                = $resourceUserName
         'aksClusterDNSName'                            = "aks-$aliasRegion-01-dns"
         'aksClusterName'                               = "aks-$aliasRegion-01"
-        'applicationGatewayManagedIdentityName'        = "id-ade-$aliasRegion-agw"
         'applicationGatewayName'                       = "appgw-$aliasRegion-01"
         'applicationGatewayPublicIPAddressName'        = "pip-$aliasRegion-appgw01"
         'appServicePlanName'                           = "plan-ade-$aliasRegion-001"
@@ -60,24 +60,16 @@ function Set-InitialArmParameters {
         'containerGroupMySQLImage'                     = "$acrName.azurecr.io/mysql:latest"
         'containerGroupShareImage'                     = "$acrName.azurecr.io/azure-cli:latest"
         'containerGroupWordPressImage'                 = "$acrName.azurecr.io/wordpress:latest"
-        'containerRegistryLoginServer'                 = "$acrName.azurecr.io"
-        'containerRegistryManagedIdentityName'         = "id-ade-$aliasRegion-acr"
-        'containerRegistrySPNName'                     = "spn-ade-$aliasRegion-acr"          
-        'githubActionsSPNName'                         = "spn-ade-$aliasRegion-gha"              
+        'containerRegistryLoginServer'                 = "$acrName.azurecr.io"    
         "inspectorGadgetAppServicePrivateEndpointName" = "pe-$aliasRegion-inspectorgadgetappservice"
-        "inspectorGadgetAzureSQLPrivateEndpointName"   = "pe-$aliasRegion-inspectorgadgetazuresql"
         'inspectorGadgetFQDN'                          = "as-$aliasRegion-inspectorgadget.azurewebsites.net".Replace('-', '')
         'inspectorGadgetHostName'                      = "inspectorgadget.$rootDomainName".replace('-', '')
-        "inspectorGadgetSqlAdminUserName"              = $resourceUserName
-        "inspectorGadgetSqlDatabaseName"               = "sqldb-$aliasRegion-inspectorgadget".replace('-', '')
-        "inspectorGadgetSqlServerName"                 = "sql-$aliasRegion-inspectorgadget".replace('-', '')
         "inspectorGadgetWafPolicyName"                 = "wafp-$aliasRegion-inspectorgadget"
         "inspectorGadgetWebAppName"                    = "as-$aliasRegion-inspectorgadget".replace('-', '')
         'keyVaultName'                                 = "kv-ade-$aliasRegion-001"
         'localNetworkGatewayAddressPrefix'             = $localNetworkRange
         'logAnalyticsWorkspaceName'                    = "log-ade-$aliasRegion-001"        
         'nTierHostName'                                = "ntier.$rootDomainName"               
-        'restAPISPNName'                               = "spn-ade-$aliasRegion-restapi"        
         'sourceAddressPrefix'                          = $sourceAddressPrefix        
         'sslCertificateName'                           = $rootDomainName
         'texAnalyticsAccountName'                      = "textanalytics"
@@ -85,6 +77,13 @@ function Set-InitialArmParameters {
         'trafficManagerProfileName'                    = "tmp-$aliasRegion-helloworld"      
         'wordPressHostName'                            = "wordpress.$rootDomainName"
 
+        # Required for Deploy-AzureGovernance.ps1
+        'applicationGatewayManagedIdentityName'        = "id-ade-$aliasRegion-agw"
+        'containerRegistryManagedIdentityName'         = "id-ade-$aliasRegion-acr"
+        'containerRegistrySPNName'                     = "spn-ade-$aliasRegion-acr"          
+        'githubActionsSPNName'                         = "spn-ade-$aliasRegion-gha"
+        'restAPISPNName'                               = "spn-ade-$aliasRegion-restapi"
+        
         # Required for Deploy-AzureNsgFlowLogs.ps1
         'azureBastionSubnetNSGName'                    = "nsg-ade-$aliasRegion-bastion"
         'clientServicesSubnetNSGName'                  = "nsg-ade-$aliasRegion-clientservices"
@@ -109,7 +108,7 @@ function Set-InitialArmParameters {
         'inspectorGadgetResourceGroupName'             = "$primaryRegionResourceGroupNamePrefix-inspectorgadget"
         'jumpboxResourceGroupName'                     = "$primaryRegionResourceGroupNamePrefix-jumpbox"
         'keyVaultResourceGroupName'                    = "$primaryRegionResourceGroupNamePrefix-keyvault"
-        'managedIdentityResourceGroupName'             = "$primaryRegionResourceGroupNamePrefix-identity"
+        'identityResourceGroupName'                    = "$primaryRegionResourceGroupNamePrefix-identity"
         'monitorResourceGroupName'                     = "$primaryRegionResourceGroupNamePrefix-monitor"
         'networkingResourceGroupName'                  = "$primaryRegionResourceGroupNamePrefix-networking"
         'nTierResourceGroupName'                       = "$primaryRegionResourceGroupNamePrefix-ntier"

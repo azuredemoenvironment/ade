@@ -8,14 +8,11 @@
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
-        "monitorResourceGroupName": {
-            "value": "@@monitorResourceGroupName@@"
+        "appServicePlanResourceGroupName": {
+            "value": "@@appServicePlanResourceGroupName@@"
         },
-        "networkingResourceGroupName": {
-            "value": "@@networkingResourceGroupName@@"
-        },
-        "adeAppSqlResourceGroupName": {
-            "value": "@@adeAppSqlResourceGroupName@@"
+        "adeAppAppServicesResourceGroupName": {
+            "value": "@@adeAppAppServicesResourceGroupName@@"
         },
         "inspectorGadgetResourceGroupName": {
             "value": "@@inspectorGadgetResourceGroupName@@"

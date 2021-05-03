@@ -14,13 +14,14 @@ var functionName = 'networking'
 var costCenterName = 'it'
 
 // existing resources
-// log analytics
+// resource - log analytics workspace
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
   scope: resourceGroup(monitorResourceGroupName)
+  name: logAnalyticsWorkspaceName
 }
-// virtual network
+// resource - virtual network - virtual network 001
 resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-06-01' existing = {
+  scope: resourceGroup(networkingResourceGroupName)
   name: virtualNetwork001Name
 }
 
@@ -41,10 +42,10 @@ resource azureBastionPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-0
   }
 }
 
-// resource - public ip address - azure bastion - diagnostic settings
+// resource - public ip address - diagnostic settings - azure bastion
 resource azureBastionPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${azureBastionPublicIpAddress.name}-diagnostics'
   scope: azureBastionPublicIpAddress
+  name: '${azureBastionPublicIpAddress.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -115,8 +116,8 @@ resource azureBastion 'Microsoft.Network/bastionHosts@2020-07-01' = {
 
 // resource - azure bastion - diagnostic settings
 resource azureBastionDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${azureBastion.name}-diagnostics'
   scope: azureBastion
+  name: '${azureBastion.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'

@@ -60,7 +60,7 @@ function Deploy-ArmTemplate {
 
     Write-Log "Executing Command: $commandToExecute"
     $commandResults = Invoke-Expression -Command $commandToExecute
-    Write-Log "Command Results:\n$commandResults"
+    # Write-Log "Command Results:\n$commandResults"
 
     Confirm-LastExitCode
 

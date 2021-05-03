@@ -27,15 +27,15 @@ var functionName = 'vmss'
 var costCenterName = 'it'
 
 // existing resources
-// log analytics
+// resource - log analytics workspace
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
   scope: resourceGroup(monitorResourceGroupName)
+  name: logAnalyticsWorkspaceName
 }
-// virtual network - virtual network 002
+// resource - virtual network - virtual network 002
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
-  name: virtualNetwork002Name
   scope: resourceGroup(networkingResourceGroupName)
+  name: virtualNetwork002Name
   resource vmssSubnet 'subnets@2020-07-01' existing = {
     name: vmssSubnetName
   }
@@ -58,10 +58,10 @@ resource vmssLoadBalancerPublicIpAddress 'Microsoft.Network/publicIPAddresses@20
   }
 }
 
-// resource - public ip address - load balancer - vmss - diagnostic settings
+// resource - public ip address - diagnostic settings - load balancer - vmss
 resource vmssLoadBalancerPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${vmssLoadBalancerPublicIpAddress.name}-diagnostics'
   scope: vmssLoadBalancerPublicIpAddress
+  name: '${vmssLoadBalancerPublicIpAddress.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -161,10 +161,10 @@ resource vmssLoadBalancer 'Microsoft.Network/loadBalancers@2020-11-01' = {
   }
 }
 
-// resource - load balancer - vmss - diagnostic settings
+// resource - load balancer - diagnostic settings - vmss
 resource vmssLoadBalancerDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${vmssLoadBalancer.name}-diagnostics'
   scope: vmssLoadBalancer
+  name: '${vmssLoadBalancer.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'

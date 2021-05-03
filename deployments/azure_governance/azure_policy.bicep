@@ -2,22 +2,11 @@
 targetScope = 'subscription'
 
 // parameters
-param aliasRegion string
 param defaultPrimaryRegion string
 param listOfAllowedLocations array
 param listOfAllowedSKUs array
-
-// variables
-var initiativeDefinitionName = 'ADE Policy Initiative Definition'
-
-// existing resources
-// log analytics
-var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
-var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
-  scope: resourceGroup(monitorResourceGroupName)
-}
+param logAnalyticsWorkspaceId string
+param initiativeDefinitionName string
 
 // resource - policy initiative definition
 resource initiativeDefinition 'Microsoft.Authorization/policySetDefinitions@2019-09-01' = {
@@ -111,7 +100,7 @@ resource azureMonitorVMsPolicyAssignment 'Microsoft.Authorization/policyAssignme
     policyDefinitionId: '/providers/Microsoft.Authorization/policySetDefinitions/55f3eceb-5573-4f18-9695-226972c6d74a'
     parameters: {
       logAnalytics_1: {
-        value: logAnalyticsWorkspace.id
+        value: logAnalyticsWorkspaceId
       }
     }
   }
@@ -130,7 +119,7 @@ resource azureMonitorVMSSPolicyAssignment 'Microsoft.Authorization/policyAssignm
     policyDefinitionId: '/providers/Microsoft.Authorization/policySetDefinitions/75714362-cae7-409e-9b99-a8e5075b7fad'
     parameters: {
       logAnalytics_1: {
-        value: logAnalyticsWorkspace.id
+        value: logAnalyticsWorkspaceId
       }
     }
   }

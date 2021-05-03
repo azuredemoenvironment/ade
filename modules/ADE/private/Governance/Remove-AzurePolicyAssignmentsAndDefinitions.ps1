@@ -6,13 +6,13 @@ function Remove-AzurePolicyAssignmentsAndDefinitions {
     Write-ScriptSection "Removing Azure Policy Assignments and Definitions"
 
     # TODO: should these be in the main arm parameters?
-    $adeInitiativeAssignment = 'Azure Demo Environment Initiative'
+    $adeInitiativeDefinition = $armParameters.adeInitiativeDefinition
     $azureMonitorforVMsInitiativeAssignment = 'Enable Azure Monitor for VMs'
     $azureMonitorforVMSSInitiativeAssignment = 'Enable Azure Monitor for Virtual Machine Scale Sets'
-    $adeInitiativeDefinition = 'Azure Demo Environment Initiative'
+    $adeInitiativeDefinition = $armParameters.adeInitiativeDefinition
 
-    Write-Log "Removing Policy Assignment: $adeInitiativeAssignment"
-    az policy assignment delete -n "$adeInitiativeAssignment"
+    Write-Log "Removing Policy Assignment: $adeInitiativeDefinition"
+    az policy assignment delete -n "$adeInitiativeDefinition"
     Confirm-LastExitCode
     
     Write-Log "Removing Policy Assignment: $azureMonitorforVMsInitiativeAssignment"

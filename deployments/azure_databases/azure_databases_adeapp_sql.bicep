@@ -8,8 +8,8 @@ param networkingResourceGroupName string
 param virtualNetwork002Name string
 param privateEndpointSubnetName string
 param adeAppSqlServerName string
-param adeAppSqlServerDatabaseName string
-param adeAppSqlServerDatabasePrivateEndpointName string
+param adeAppSqlDatabaseName string
+param adeAppSqlServerPrivateEndpointName string
 param azureSQLPrivateDnsZoneName string
 
 // variables
@@ -18,23 +18,23 @@ var functionName = 'sql'
 var costCenterName = 'it'
 
 // existing resources
-// log analytics
+// resource - log analytics workspace
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
   scope: resourceGroup(monitorResourceGroupName)
+  name: logAnalyticsWorkspaceName
 }
-// virtual network - virtual network 002
+// resource - virtual network - virtual network 002
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
-  name: virtualNetwork002Name
   scope: resourceGroup(networkingResourceGroupName)
+  name: virtualNetwork002Name
   resource privateEndpointSubnet 'subnets@2020-07-01' existing = {
     name: privateEndpointSubnetName
   }
 }
 // private dns zone - azure sql
 resource azureSQLPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
-  name: azureSQLPrivateDnsZoneName
   scope: resourceGroup(networkingResourceGroupName)
+  name: azureSQLPrivateDnsZoneName
 }
 
 // resource - sql server - adeAppSqlServer
@@ -60,10 +60,10 @@ resource adeAppSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
   }
 }
 
-// resource - sql database - adeAppSqlServerDatabase
-resource adeAppSqlServerDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' = {
+// resource - sql database - adeAppSqlDatabase
+resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' = {
   parent: adeAppSqlServer
-  name: adeAppSqlServerDatabaseName
+  name: adeAppSqlDatabaseName
   location: defaultPrimaryRegion
   tags: {
     environment: environmentName
@@ -85,10 +85,10 @@ resource adeAppSqlServerDatabase 'Microsoft.Sql/servers/databases@2020-11-01-pre
   }
 }
 
-// resource - sql database - adeAppSqlServerDatabase - diagnostic settings
-resource adeAppSqlServerDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${adeAppSqlServerDatabase.name}-diagnostics'
-  scope: adeAppSqlServerDatabase
+// resource - sql database - diagnostic settings - adeAppSqlServerDatabase
+resource adeAppSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+  scope: adeAppSqlDatabase
+  name: '${adeAppSqlDatabase.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -195,9 +195,9 @@ resource adeAppSqlServerDatabaseDiagnostics 'microsoft.insights/diagnosticSettin
   }
 }
 
-// resource - private endpoint - sql server - adeAppSqlServer
-resource adeAppSqlServerDatabasePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = {
-  name: adeAppSqlServerDatabasePrivateEndpointName
+// resource - private endpoint - adeAppSqlServer
+resource adeAppSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = {
+  name: adeAppSqlServerPrivateEndpointName
   location: defaultPrimaryRegion
   properties: {
     subnet: {
@@ -205,7 +205,7 @@ resource adeAppSqlServerDatabasePrivateEndpoint 'Microsoft.Network/privateEndpoi
     }
     privateLinkServiceConnections: [
       {
-        name: adeAppSqlServerDatabasePrivateEndpointName
+        name: adeAppSqlServerPrivateEndpointName
         properties: {
           privateLinkServiceId: adeAppSqlServer.id
           groupIds: [
@@ -217,11 +217,11 @@ resource adeAppSqlServerDatabasePrivateEndpoint 'Microsoft.Network/privateEndpoi
   }
 }
 
-// resource - prviate endpoint dns group - sql server - adeAppSqlServer
+// resource - prviate endpoint dns group - private endpoint - sql server - adeAppSqlServer
 resource azureSQLprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
-  name: '${adeAppSqlServerDatabasePrivateEndpoint.name}/dnsgroupname'
+  name: '${adeAppSqlServerPrivateEndpoint.name}/dnsgroupname'
   dependsOn: [
-    adeAppSqlServerDatabasePrivateEndpoint
+    adeAppSqlServerPrivateEndpoint
   ]
   properties: {
     privateDnsZoneConfigs: [

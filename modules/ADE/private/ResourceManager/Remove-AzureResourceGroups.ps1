@@ -22,7 +22,7 @@ function Remove-AzureResourceGroups {
         $armParameters.jumpboxResourceGroupName
         $armParameters.adeAppSqlResourceGroupName   
         $armParameters.networkingResourceGroupName
-        $armParameters.managedIdentityResourceGroupName
+        $armParameters.identityResourceGroupName
     )
 
     $resourceGroupsToRemove | ForEach-Object {

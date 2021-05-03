@@ -19,13 +19,14 @@ var functionName = 'networking'
 var costCenterName = 'it'
 
 // existing resources
-// log analytics
+// resource - log analytics workspace
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
   scope: resourceGroup(monitorResourceGroupName)
+  name: logAnalyticsWorkspaceName
 }
-// virtual network
+// resource - virtual network - virtual network 001
 resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-06-01' existing = {
+  scope: resourceGroup(networkingResourceGroupName)
   name: virtualNetwork001Name
 }
 
@@ -43,10 +44,10 @@ resource vpnGatewayPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-
   }
 }
 
-// resource - public ip address - vpn gateway - diagnostic settings
+// resource - public ip address - diagnostic settings - vpn gateway
 resource azureFirewallPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${vpnGatewayPublicIpAddress.name}-diagnostics'
   scope: vpnGatewayPublicIpAddress
+  name: '${vpnGatewayPublicIpAddress.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
