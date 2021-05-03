@@ -61,3 +61,7 @@ Connect-AzAccount -AccountId $accountId -AccessToken $accessToken
 Write-Header "Setting Az PowerShell Subscription to $subscriptionName"
 
 Get-AzSubscription -SubscriptionName $subscriptionName | Set-AzContext
+
+Write-Header 'Logging in to Docker'
+
+docker login

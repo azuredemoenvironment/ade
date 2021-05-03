@@ -40,18 +40,6 @@ The only software prerequisite is a local installation of
 [Docker](https://docs.docker.com/get-docker/). Prior to the deployment of ADE,
 ensure that Docker is **running**.
 
-Once Docker is installed, open a terminal and navigate to the ADE directory. Run
-the following commands to build all of the required ADE Docker images:
-
-```sh
-copy .env.sample .env
-
-# For macOS/*nix, run this instead:
-# cp .env.sample .env
-
-docker-compose build
-```
-
 ### DNS
 
 - The Azure Demo Environment utilizes Azure DNS for publicly accessible A and
@@ -137,11 +125,10 @@ docker-compose build
 ### Deploying the Azure Demo Environment
 
 The Azure Demo Environment is designed to run within a Docker container. To
-start ADE, open a terminal and navigate to the ADE directory. Then, run the
-following command:
+start ADE, open a terminal and run the following command:
 
 ```sh
-docker-compose run --rm ade
+docker run -it --rm --name ade azuredemoenvironment/ade
 ```
 
 You now have the ADE Shell Environment! The Azure Demo Environment is deployed
