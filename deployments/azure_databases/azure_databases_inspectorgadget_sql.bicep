@@ -8,8 +8,8 @@ param networkingResourceGroupName string
 param virtualNetwork002Name string
 param privateEndpointSubnetName string
 param inspectorGadgetSqlServerName string
-param inspectorGadgetSqlServerDatabaseName string
-param inspectorGadgetSqlServerDatabasePrivateEndpointName string
+param inspectorGadgetSqlDatabaseName string
+param inspectorGadgetSqlServerPrivateEndpointName string
 param azureSQLPrivateDnsZoneName string
 
 // variables
@@ -18,23 +18,23 @@ var functionName = 'sql'
 var costCenterName = 'it'
 
 // existing resources
-// log analytics
+// resource - log analytics workspace
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
   scope: resourceGroup(monitorResourceGroupName)
+  name: logAnalyticsWorkspaceName
 }
-// virtual network - virtual network 002
+// resource - virtual network - virtual network 002
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
-  name: virtualNetwork002Name
   scope: resourceGroup(networkingResourceGroupName)
+  name: virtualNetwork002Name
   resource privateEndpointSubnet 'subnets@2020-07-01' existing = {
     name: privateEndpointSubnetName
   }
 }
-// private dns zone - azure sql
+// resource - private dns zone - azure sql
 resource azureSQLPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
-  name: azureSQLPrivateDnsZoneName
   scope: resourceGroup(networkingResourceGroupName)
+  name: azureSQLPrivateDnsZoneName
 }
 
 // resource - sql server - inspectorGadgetSqlServer
@@ -60,10 +60,10 @@ resource inspectorGadgetSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
   }
 }
 
-// resource - sql database - inspectorGadgetSqlServerDatabase
-resource inspectorGadgetSqlServerDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' = {
+// resource - sql database - inspectorGadgetSqlDatabase
+resource inspectorGadgetSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' = {
   parent: inspectorGadgetSqlServer
-  name: inspectorGadgetSqlServerDatabaseName
+  name: inspectorGadgetSqlDatabaseName
   location: defaultPrimaryRegion
   tags: {
     environment: environmentName
@@ -85,10 +85,10 @@ resource inspectorGadgetSqlServerDatabase 'Microsoft.Sql/servers/databases@2020-
   }
 }
 
-// resource - sql database - inspectorGadgetSqlServerDatabase - diagnostic settings
-resource inspectorGadgetSqlServerDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${inspectorGadgetSqlServerDatabase.name}-diagnostics'
-  scope: inspectorGadgetSqlServerDatabase
+// resource - sql database - diagnostic settings - inspectorGadgetSqlDatabase
+resource inspectorGadgetSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+  scope: inspectorGadgetSqlDatabase
+  name: '${inspectorGadgetSqlDatabase.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -196,8 +196,8 @@ resource inspectorGadgetSqlServerDatabaseDiagnostics 'microsoft.insights/diagnos
 }
 
 // resource - private endpoint - sql server - inspectorGadgetSqlServer
-resource inspectorGadgetSqlServerDatabasePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = {
-  name: inspectorGadgetSqlServerDatabasePrivateEndpointName
+resource inspectorGadgetSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = {
+  name: inspectorGadgetSqlServerPrivateEndpointName
   location: defaultPrimaryRegion
   properties: {
     subnet: {
@@ -205,7 +205,7 @@ resource inspectorGadgetSqlServerDatabasePrivateEndpoint 'Microsoft.Network/priv
     }
     privateLinkServiceConnections: [
       {
-        name: inspectorGadgetSqlServerDatabasePrivateEndpointName
+        name: inspectorGadgetSqlServerPrivateEndpointName
         properties: {
           privateLinkServiceId: inspectorGadgetSqlServer.id
           groupIds: [
@@ -217,11 +217,11 @@ resource inspectorGadgetSqlServerDatabasePrivateEndpoint 'Microsoft.Network/priv
   }
 }
 
-// resource - prviate endpoint dns group - sql server - inspectorGadgetSqlServer
+// resource - prviate endpoint dns group - private endpoint - sql server - inspectorGadgetSqlServer
 resource azureSQLprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
-  name: '${inspectorGadgetSqlServerDatabasePrivateEndpoint.name}/dnsgroupname'
+  name: '${inspectorGadgetSqlServerPrivateEndpoint.name}/dnsgroupname'
   dependsOn: [
-    inspectorGadgetSqlServerDatabasePrivateEndpoint
+    inspectorGadgetSqlServerPrivateEndpoint
   ]
   properties: {
     privateDnsZoneConfigs: [

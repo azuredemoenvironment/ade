@@ -23,13 +23,13 @@ var functionName = 'networking'
 var costCenterName = 'it'
 
 // existing resources
-// log analytics
+// resource - log analytics workspace
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
   scope: resourceGroup(monitorResourceGroupName)
+  name: logAnalyticsWorkspaceName
 }
 
-// resource - virtual network 001
+// resource - virtual network - virtual network 001
 resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
   name: virtualNetwork001Name
   location: location
@@ -90,10 +90,10 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
   }
 }
 
-// resource - virtual network 001 - diagnostic settings
+// resource - virtual network - diagnostic settings - virtual network 001
 resource virtualNetwork001Diagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${virtualNetwork001.name}-diagnostics'
   scope: virtualNetwork001
+  name: '${virtualNetwork001.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'

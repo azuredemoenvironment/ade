@@ -1,6 +1,11 @@
+// target scope
+targetScope = 'subscription'
+
 // parameters
-param location string = resourceGroup().location
+param defaultPrimaryRegion string
 param aliasRegion string
+param monitorResourceGroupName string
+param networkingResourceGroupName string
 param jumpboxResourceGroupName string
 param nTierResourceGroupName string
 param vmssResourceGroupName string
@@ -9,15 +14,11 @@ param adminUserName string
 param adminPassword string
 
 // existing resources
-// variables - log analytics
-var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
+// variables - log analytics workspace
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
-
 // variables - virtual network - virtual network 001
-var networkingResourceGroupName = 'rg-ade-${aliasRegion}-networking'
 var virtualNetwork001Name = 'vnet-ade-${aliasRegion}-001'
 var managementSubnetName = 'snet-management'
-
 // variables - virtual network - virtual network 002
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
 var nTierWebSubnetName = 'snet-nTierWeb'
@@ -25,14 +26,36 @@ var nTierAppSubnetName = 'snet-nTierApp'
 var vmssSubnetName = 'snet-vmss'
 var clientServicesSubnetName = 'snet-clientServices'
 
-// variables - jumpbox
+// module - jumpbox
+// variables
 var jumpboxPublicIpAddressName = 'pip-ade-${aliasRegion}-jumpbox01'
 var jumpboxNICName = 'nic-ade-${aliasRegion}-jumpbox01'
 var jumpboxPrivateIpAddress = '10.101.31.4'
 var jumpboxName = 'vm-jumpbox01'
 var jumpboxOSDiskName = 'osdisk-ade-${aliasRegion}-jumpbox01'
+// module deployment
+module jumpBoxModule './azure_virtual_machines_jumpbox.bicep' = {
+  scope: resourceGroup(jumpboxResourceGroupName)
+  name: 'jumpBoxDeployment'
+  params: {
+    location: defaultPrimaryRegion
+    adminUserName: adminUserName
+    adminPassword: adminPassword
+    monitorResourceGroupName: monitorResourceGroupName
+    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
+    networkingResourceGroupName: networkingResourceGroupName
+    virtualNetwork001Name: virtualNetwork001Name
+    managementSubnetName: managementSubnetName
+    jumpboxPublicIpAddressName: jumpboxPublicIpAddressName
+    jumpboxNICName: jumpboxNICName
+    jumpboxPrivateIpAddress: jumpboxPrivateIpAddress
+    jumpboxName: jumpboxName
+    jumpboxOSDiskName: jumpboxOSDiskName
+  }
+}
 
-// variables - nTier
+// module - ntier
+// variables
 var proximityPlacementGroupAz1Name = 'ppg-ade-${aliasRegion}-ntier-az1'
 var proximityPlacementGroupAz2Name = 'ppg-ade-${aliasRegion}-ntier-az2'
 var proximityPlacementGroupAz3Name = 'ppg-ade-${aliasRegion}-ntier-az3'
@@ -62,46 +85,12 @@ var nTierApp02Name = 'vm-ntierapp02'
 var nTierApp02OSDiskName = 'disk-ade-${aliasRegion}-ntierapp02-os'
 var nTierApp03Name = 'vm-ntierapp03'
 var nTierApp03OSDiskName = 'disk-ade-${aliasRegion}-ntierapp03-os'
-
-// variables - vmss
-var vmssLoadBalancerPublicIpAddressName = 'pip-ade-${aliasRegion}-vmss01'
-var vmssLoadBalancerName = 'lbe-ade-${aliasRegion}-vmss01'
-var vmssName = 'vmss01'
-var vmssNICName = 'nic-ade-${aliasRegion}-vmss01'
-
-// variables - windows 10 client
-var w10ClientNICName = 'nic-ade-${aliasRegion}-w10client'
-var w10ClientPrivateIpAddress = '10.102.21.4'
-var w10ClientName = 'vm-w10client'
-var w10ClientOSDiskName = 'disk-ade-${aliasRegion}-w10client-os'
-
-// module - jumpbox
-module jumpBoxModule './azure_virtual_machines_jumpbox.bicep' = {
-  name: 'jumpBoxDeployment'
-  scope: resourceGroup(jumpboxResourceGroupName)
-  params: {
-    location: location
-    adminUserName: adminUserName
-    adminPassword: adminPassword
-    monitorResourceGroupName: monitorResourceGroupName
-    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
-    networkingResourceGroupName: networkingResourceGroupName
-    virtualNetwork001Name: virtualNetwork001Name
-    managementSubnetName: managementSubnetName
-    jumpboxPublicIpAddressName: jumpboxPublicIpAddressName
-    jumpboxNICName: jumpboxNICName
-    jumpboxPrivateIpAddress: jumpboxPrivateIpAddress
-    jumpboxName: jumpboxName
-    jumpboxOSDiskName: jumpboxOSDiskName
-  }
-}
-
-// module - ntier
+// module deployment
 module nTierModule './azure_virtual_machines_ntier.bicep' = {
-  name: 'nTierDeployment'
   scope: resourceGroup(nTierResourceGroupName)
+  name: 'nTierDeployment'
   params: {
-    location: location
+    location: defaultPrimaryRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
     monitorResourceGroupName: monitorResourceGroupName
@@ -143,11 +132,17 @@ module nTierModule './azure_virtual_machines_ntier.bicep' = {
 }
 
 // module - vmss
+// variables
+var vmssLoadBalancerPublicIpAddressName = 'pip-ade-${aliasRegion}-vmss01'
+var vmssLoadBalancerName = 'lbe-ade-${aliasRegion}-vmss01'
+var vmssName = 'vmss01'
+var vmssNICName = 'nic-ade-${aliasRegion}-vmss01'
+// module deployment
 module vmssModule 'azure_virtual_machines_vmss.bicep' = {
-  name: 'vmssDeployment'
   scope: resourceGroup(vmssResourceGroupName)
+  name: 'vmssDeployment'
   params: {
-    location: location
+    location: defaultPrimaryRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
     monitorResourceGroupName: monitorResourceGroupName
@@ -163,11 +158,17 @@ module vmssModule 'azure_virtual_machines_vmss.bicep' = {
 }
 
 // module - windows 10 client
+// variables
+var w10ClientNICName = 'nic-ade-${aliasRegion}-w10client'
+var w10ClientPrivateIpAddress = '10.102.21.4'
+var w10ClientName = 'vm-w10client'
+var w10ClientOSDiskName = 'disk-ade-${aliasRegion}-w10client-os'
+// module deployment
 module w10ClientModule './azure_virtual_machines_w10client.bicep' = {
-  name: 'w10ClientDeployment'
   scope: resourceGroup(w10clientResourceGroupName)
+  name: 'w10ClientDeployment'
   params: {
-    location: location
+    location: defaultPrimaryRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
     monitorResourceGroupName: monitorResourceGroupName

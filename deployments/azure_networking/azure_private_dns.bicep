@@ -14,11 +14,11 @@ var functionName = 'networking'
 var costCenterName = 'it'
 
 // existing resources
-// virtual network 001
+// resource - virtual network - virtual network 001
 resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-06-01' existing = {
   name: virtualNetwork001Name
 }
-// virtual network 002
+// resource - virtual network - virtual network 002
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-06-01' existing = {
   name: virtualNetwork002Name
 }

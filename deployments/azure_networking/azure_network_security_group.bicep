@@ -16,10 +16,10 @@ var functionName = 'networking'
 var costCenterName = 'it'
 
 // existing resources
-// log analytics
+// resource - log analytics workspace
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
   scope: resourceGroup(monitorResourceGroupName)
+  name: logAnalyticsWorkspaceName
 }
 
 // resource - network security group - azure bastion subnet
@@ -96,10 +96,10 @@ resource azureBastionSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-
   }
 }
 
-// resource - network security group - azure bastion subnet - diagnostic settings
+// resource - network security group - diagnostic settings - azure bastion subnet 
 resource azureBastionSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${azureBastionSubnetNSG.name}-diagnostics'
   scope: azureBastionSubnetNSG
+  name: '${azureBastionSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -153,10 +153,10 @@ resource managementSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01
   }
 }
 
-// resource - network security group - management subnet - diagnostic settings
+// resource - network security group - diagnostic settings - azure bastion subnet
 resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${managementSubnetNSG.name}-diagnostics'
   scope: managementSubnetNSG
+  name: '${managementSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -195,10 +195,10 @@ resource nTierWebSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' 
   }
 }
 
-// resource - network security group - ntier web subnet - diagnostic settings
+// resource - network security group - diagnostic settings - ntier web subnet
 resource nTierWebSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierWebSubnetNSG.name}-diagnostics'
   scope: nTierWebSubnetNSG
+  name: '${nTierWebSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -237,10 +237,10 @@ resource nTierAppSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' 
   }
 }
 
-// resource - network security group - ntier app subnet - diagnostic settings
+// resource - network security group - diagnostic settings - ntier app subnet
 resource nTierAppSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierAppSubnetNSG.name}-diagnostics'
   scope: nTierAppSubnetNSG
+  name: '${nTierAppSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -294,10 +294,10 @@ resource vmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   }
 }
 
-// resource - network security group - vmss subnet - diagnostic settings
+// resource - network security group - diagnostic settings - vmss subnet
 resource vmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${vmssSubnetNSG.name}-diagnostics'
   scope: vmssSubnetNSG
+  name: '${vmssSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'
@@ -336,10 +336,10 @@ resource clientServicesSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-0
   }
 }
 
-// resource - network security group - client services subnet - diagnostic settings
+// resource - network security group - diagnostic settings - client services subnet
 resource clientServicesSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${clientServicesSubnetNSG.name}-diagnostics'
   scope: clientServicesSubnetNSG
+  name: '${clientServicesSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
     logAnalyticsDestinationType: 'Dedicated'

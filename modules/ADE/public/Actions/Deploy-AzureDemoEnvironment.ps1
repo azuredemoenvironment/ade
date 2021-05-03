@@ -34,12 +34,10 @@ function Deploy-AzureDemoEnvironment {
 
     # Core Services
     ###################################
-    Deploy-AzureMonitor $armParameters
-    Deploy-AzurePolicy $armParameters
-    Deploy-AzureIdentity $armParameters
+    Deploy-AzureResourceGroups $armParameters
+    Deploy-AzureGovernance $armParameters
     Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
     Deploy-AzureNetworking $armParameters
-    Deploy-AzureNsgFlowLogs $armParameters
 
     # Data Services
     ###################################
@@ -51,12 +49,10 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureContainerRegistry $armParameters
     # Deploy-AzureContainerInstances $armParameters
         # Dedicated Resource Group
-    Deploy-AzureAppServicePlan $armParameters
 
     # ADE App App Services
     ###################################
-    # Parallel
-    # Deploy-InspectorGadgetAppService $armParameters
+    Deploy-AzureAppServices $armParameters
 
     # Parallel
     # Deploy-AdeAzureAppServices $armParameters
