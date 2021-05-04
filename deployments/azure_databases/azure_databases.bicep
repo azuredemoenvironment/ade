@@ -12,13 +12,31 @@ param adminUserName string
 param adminPassword string
 
 // existing resources
-// variables - log analytics workspace
+// variables
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
-// variables - virtual network - virtual network 002
+// resource - log analytics workspace
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: logAnalyticsWorkspaceName
+}
+// variables
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
 var privateEndpointSubnetName = 'snet-privateEndpoint'
-// variables - private dns zone - azure sql
+// resource - virtual network - virtual network 002
+resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
+  scope: resourceGroup(networkingResourceGroupName)
+  name: virtualNetwork002Name
+  resource privateEndpointSubnet 'subnets@2020-07-01' existing = {
+    name: privateEndpointSubnetName
+  }
+}
+// variables
 var azureSQLPrivateDnsZoneName = 'privatelink.database.windows.net'
+// resource - private dns zone - azure sql
+resource azureSQLPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
+  scope: resourceGroup(networkingResourceGroupName)
+  name: azureSQLPrivateDnsZoneName
+}
 
 // module - adeAppSql
 // variables
@@ -33,15 +51,12 @@ module adeAppSqlModule './azure_databases_adeapp_sql.bicep' = {
     defaultPrimaryRegion: defaultPrimaryRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
-    monitorResourceGroupName: monitorResourceGroupName
-    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
-    networkingResourceGroupName: networkingResourceGroupName
-    virtualNetwork002Name: virtualNetwork002Name
-    privateEndpointSubnetName: privateEndpointSubnetName
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    privateEndpointSubnetId: virtualNetwork002::privateEndpointSubnet.id
+    azureSQLPrivateDnsZoneId: azureSQLPrivateDnsZone.id
     adeAppSqlServerName: adeAppSqlServerName
     adeAppSqlDatabaseName: adeAppSqlDatabaseName
     adeAppSqlServerPrivateEndpointName: adeAppSqlServerPrivateEndpointName
-    azureSQLPrivateDnsZoneName: azureSQLPrivateDnsZoneName
   }
 }
 
@@ -58,14 +73,11 @@ module inspectorGadgetSqlModule './azure_databases_inspectorgadget_sql.bicep' = 
     defaultPrimaryRegion: defaultPrimaryRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
-    monitorResourceGroupName: monitorResourceGroupName
-    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
-    networkingResourceGroupName: networkingResourceGroupName
-    virtualNetwork002Name: virtualNetwork002Name
-    privateEndpointSubnetName: privateEndpointSubnetName
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    privateEndpointSubnetId: virtualNetwork002::privateEndpointSubnet.id
+    azureSQLPrivateDnsZoneId: azureSQLPrivateDnsZone.id
     inspectorGadgetSqlServerName: inspectorGadgetSqlServerName
     inspectorGadgetSqlDatabaseName: inspectorGadgetSqlDatabaseName
     inspectorGadgetSqlServerPrivateEndpointName: adeAppSqlServerPrivateEndpointName
-    azureSQLPrivateDnsZoneName: azureSQLPrivateDnsZoneName
   }
 }

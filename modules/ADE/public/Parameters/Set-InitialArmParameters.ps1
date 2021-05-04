@@ -95,7 +95,7 @@ function Set-InitialArmParameters {
         'vmssSubnetNSGName'                            = "nsg-ade-$aliasRegion-vmss"
 
         # Resource Group Names
-        'adeAppAppServicesResourceGroupName'           = "$primaryRegionResourceGroupNamePrefix-adeappservices"
+        'adeAppAppServicesResourceGroupName'           = "$primaryRegionResourceGroupNamePrefix-adeappappservices"
         'adeAppSqlResourceGroupName'                   = "$primaryRegionResourceGroupNamePrefix-adeappsql"
         'aksNodeResourceGroupName'                     = "$primaryRegionResourceGroupNamePrefix-aks-node"
         'aksResourceGroupName'                         = "$primaryRegionResourceGroupNamePrefix-aks"

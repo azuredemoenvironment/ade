@@ -2,40 +2,17 @@
 param defaultPrimaryRegion string
 param adminUserName string
 param adminPassword string
-param monitorResourceGroupName string
-param logAnalyticsWorkspaceName string
-param networkingResourceGroupName string
-param virtualNetwork002Name string
-param privateEndpointSubnetName string
+param logAnalyticsWorkspaceId string
+param privateEndpointSubnetId string
+param azureSQLPrivateDnsZoneId string
 param inspectorGadgetSqlServerName string
 param inspectorGadgetSqlDatabaseName string
 param inspectorGadgetSqlServerPrivateEndpointName string
-param azureSQLPrivateDnsZoneName string
 
 // variables
 var environmentName = 'production'
 var functionName = 'sql'
 var costCenterName = 'it'
-
-// existing resources
-// resource - log analytics workspace
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  scope: resourceGroup(monitorResourceGroupName)
-  name: logAnalyticsWorkspaceName
-}
-// resource - virtual network - virtual network 002
-resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
-  scope: resourceGroup(networkingResourceGroupName)
-  name: virtualNetwork002Name
-  resource privateEndpointSubnet 'subnets@2020-07-01' existing = {
-    name: privateEndpointSubnetName
-  }
-}
-// resource - private dns zone - azure sql
-resource azureSQLPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
-  scope: resourceGroup(networkingResourceGroupName)
-  name: azureSQLPrivateDnsZoneName
-}
 
 // resource - sql server - inspectorGadgetSqlServer
 resource inspectorGadgetSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
@@ -90,7 +67,7 @@ resource inspectorGadgetSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSet
   scope: inspectorGadgetSqlDatabase
   name: '${inspectorGadgetSqlDatabase.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -201,7 +178,7 @@ resource inspectorGadgetSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpo
   location: defaultPrimaryRegion
   properties: {
     subnet: {
-      id: virtualNetwork002::privateEndpointSubnet.id
+      id: privateEndpointSubnetId
     }
     privateLinkServiceConnections: [
       {
@@ -228,7 +205,7 @@ resource azureSQLprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints
       {
         name: 'config1'
         properties: {
-          privateDnsZoneId: azureSQLPrivateDnsZone.id
+          privateDnsZoneId: azureSQLPrivateDnsZoneId
         }
       }
     ]

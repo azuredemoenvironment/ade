@@ -2,11 +2,10 @@
 param location string
 param adminUserName string
 param adminPassword string
-param monitorResourceGroupName string
-param logAnalyticsWorkspaceName string
-param networkingResourceGroupName string
-param virtualNetwork001Name string
-param managementSubnetName string
+param logAnalyticsWorkspaceId string
+param logAnalyticsWorkspaceCustomerId string
+param logAnalyticsWorkspaceKey string
+param managementSubnetId string
 param jumpboxPublicIpAddressName string
 param jumpboxNICName string
 param jumpboxPrivateIpAddress string
@@ -19,21 +18,6 @@ var scriptName = 'jumpboxvm.ps1'
 var environmentName = 'production'
 var functionName = 'jumpbox'
 var costCenterName = 'it'
-
-// existing resources
-// resource - log analytics workspace
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  scope: resourceGroup(monitorResourceGroupName)
-  name: logAnalyticsWorkspaceName
-}
-// resource - virtual network - virtual network 001
-resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
-  scope: resourceGroup(networkingResourceGroupName)
-  name: virtualNetwork001Name
-  resource managementSubnet 'subnets@2020-07-01' existing = {
-    name: managementSubnetName
-  }
-}
 
 // resource - public ip address - jumpbox
 resource jumpboxPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
@@ -57,7 +41,7 @@ resource jumpboxPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSetting
   scope: jumpboxPublicIpAddress
   name: '${jumpboxPublicIpAddress.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -118,7 +102,7 @@ resource jumpboxNIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
             id: jumpboxPublicIpAddress.id
           }
           subnet: {
-            id: virtualNetwork001::managementSubnet.id
+            id: managementSubnetId
           }
         }
       }
@@ -131,7 +115,7 @@ resource jumpboxNICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01
   scope: jumpboxNIC
   name: '${jumpboxNIC.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     metrics: [
       {
@@ -238,10 +222,10 @@ resource jumpboxMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/exte
     typeHandlerVersion: '1.0'
     autoUpgradeMinorVersion: true
     settings: {
-      workspaceId: logAnalyticsWorkspace.properties.customerId
+      workspaceId: logAnalyticsWorkspaceCustomerId
     }
     protectedSettings: {
-      workspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+      workspaceKey: logAnalyticsWorkspaceKey
     }
   }
 }

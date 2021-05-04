@@ -91,4 +91,5 @@ resource autoscaleSetting 'Microsoft.insights/autoscalesettings@2015-04-01' = {
   }
 }
 
+//outputs
 output appServicePlanId string = appServicePlan.id

@@ -1,7 +1,6 @@
 // parameters
 param location string
-param monitorResourceGroupName string
-param logAnalyticsWorkspaceName string
+param logAnalyticsWorkspaceId string
 param virtualNetwork001Name string
 param virtualnetwork001Prefix string
 param azureFirewallSubnetName string
@@ -21,13 +20,6 @@ param managementSubnetNSGId string
 var environmentName = 'production'
 var functionName = 'networking'
 var costCenterName = 'it'
-
-// existing resources
-// resource - log analytics workspace
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  scope: resourceGroup(monitorResourceGroupName)
-  name: logAnalyticsWorkspaceName
-}
 
 // resource - virtual network - virtual network 001
 resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
@@ -95,7 +87,7 @@ resource virtualNetwork001Diagnostics 'microsoft.insights/diagnosticSettings@201
   scope: virtualNetwork001
   name: '${virtualNetwork001.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {

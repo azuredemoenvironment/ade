@@ -11,6 +11,9 @@
         "identityResourceGroupName": {
             "value": "@@identityResourceGroupName@@"
         },
+        "keyVaultResourceGroupName": {
+            "value": "@@keyVaultResourceGroupName@@"
+        },
         "networkingResourceGroupName": {
             "value": "@@networkingResourceGroupName@@"
         },
@@ -31,6 +34,15 @@
         },
         "w10clientResourceGroupName": {
             "value": "@@w10clientResourceGroupName@@"
+        },
+        "containerRegistryResourceGroupName": {
+            "value": "@@containerRegistryResourceGroupName@@"
+        },
+        "appServicePlanResourceGroupName": {
+            "value": "@@appServicePlanResourceGroupName@@"
+        },
+        "adeAppAppServicesResourceGroupName": {
+            "value": "@@adeAppAppServicesResourceGroupName@@"
         }
     }
 }
