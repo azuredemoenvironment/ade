@@ -1,9 +1,6 @@
 // parameters
 param location string
-param monitorResourceGroupName string
-param logAnalyticsWorkspaceName string
-param networkingResourceGroupName string
-param virtualNetwork001Name string
+param logAnalyticsWorkspaceId string
 param azureBastionPublicIpAddressName string
 param azureBastionName string
 param azureBastionSubnetId string
@@ -12,18 +9,6 @@ param azureBastionSubnetId string
 var environmentName = 'production'
 var functionName = 'networking'
 var costCenterName = 'it'
-
-// existing resources
-// resource - log analytics workspace
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  scope: resourceGroup(monitorResourceGroupName)
-  name: logAnalyticsWorkspaceName
-}
-// resource - virtual network - virtual network 001
-resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-06-01' existing = {
-  scope: resourceGroup(networkingResourceGroupName)
-  name: virtualNetwork001Name
-}
 
 // resource - public ip address - azure bastion
 resource azureBastionPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
@@ -47,7 +32,7 @@ resource azureBastionPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSe
   scope: azureBastionPublicIpAddress
   name: '${azureBastionPublicIpAddress.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -119,7 +104,7 @@ resource azureBastionDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-
   scope: azureBastion
   name: '${azureBastion.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {

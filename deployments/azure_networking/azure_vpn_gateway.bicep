@@ -3,10 +3,7 @@ param location string
 param sourceAddressPrefix string
 param localNetworkGatewayAddressPrefix string
 param connectionSharedKey string
-param monitorResourceGroupName string
-param logAnalyticsWorkspaceName string
-param networkingResourceGroupName string
-param virtualNetwork001Name string
+param logAnalyticsWorkspaceId string
 param vpnGatewayPublicIpAddressName string
 param localNetworkGatewayName string
 param vpnGatewayName string
@@ -17,18 +14,6 @@ param gatewaySubnetId string
 var environmentName = 'production'
 var functionName = 'networking'
 var costCenterName = 'it'
-
-// existing resources
-// resource - log analytics workspace
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  scope: resourceGroup(monitorResourceGroupName)
-  name: logAnalyticsWorkspaceName
-}
-// resource - virtual network - virtual network 001
-resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-06-01' existing = {
-  scope: resourceGroup(networkingResourceGroupName)
-  name: virtualNetwork001Name
-}
 
 // resource - public ip address - vpn gateway
 resource vpnGatewayPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
@@ -49,7 +34,7 @@ resource azureFirewallPublicIpAddressDiagnostics 'microsoft.insights/diagnosticS
   scope: vpnGatewayPublicIpAddress
   name: '${vpnGatewayPublicIpAddress.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -146,7 +131,7 @@ resource vpnGateway 'Microsoft.Network/virtualNetworkGateways@2020-08-01' = {
 resource vpnGatewayDiagnostics 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
   name: '${vpnGateway.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {

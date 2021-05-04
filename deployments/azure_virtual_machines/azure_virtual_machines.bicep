@@ -14,17 +14,47 @@ param adminUserName string
 param adminPassword string
 
 // existing resources
-// variables - log analytics workspace
+// variables
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
-// variables - virtual network - virtual network 001
+// resource - log analytics workspace
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: logAnalyticsWorkspaceName
+}
+// variables
 var virtualNetwork001Name = 'vnet-ade-${aliasRegion}-001'
 var managementSubnetName = 'snet-management'
-// variables - virtual network - virtual network 002
+// resource - virtual network - virtual network 001
+resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
+  scope: resourceGroup(networkingResourceGroupName)
+  name: virtualNetwork001Name
+  resource managementSubnet 'subnets@2020-07-01' existing = {
+    name: managementSubnetName
+  }
+}
+// variables
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
 var nTierWebSubnetName = 'snet-nTierWeb'
 var nTierAppSubnetName = 'snet-nTierApp'
 var vmssSubnetName = 'snet-vmss'
 var clientServicesSubnetName = 'snet-clientServices'
+// resource - virtual network - virtual network 002
+resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
+  scope: resourceGroup(networkingResourceGroupName)
+  name: virtualNetwork002Name
+  resource nTierWebSubnet 'subnets@2020-07-01' existing = {
+    name: nTierWebSubnetName
+  }
+  resource nTierAppSubnet 'subnets@2020-07-01' existing = {
+    name: nTierAppSubnetName
+  }
+  resource vmssSubnet 'subnets@2020-07-01' existing = {
+    name: vmssSubnetName
+  }
+  resource clientServicesSubnet 'subnets@2020-07-01' existing = {
+    name: clientServicesSubnetName
+  }
+}
 
 // module - jumpbox
 // variables
@@ -41,11 +71,10 @@ module jumpBoxModule './azure_virtual_machines_jumpbox.bicep' = {
     location: defaultPrimaryRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
-    monitorResourceGroupName: monitorResourceGroupName
-    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
-    networkingResourceGroupName: networkingResourceGroupName
-    virtualNetwork001Name: virtualNetwork001Name
-    managementSubnetName: managementSubnetName
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
+    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+    managementSubnetId: virtualNetwork001::managementSubnet.id
     jumpboxPublicIpAddressName: jumpboxPublicIpAddressName
     jumpboxNICName: jumpboxNICName
     jumpboxPrivateIpAddress: jumpboxPrivateIpAddress
@@ -93,12 +122,11 @@ module nTierModule './azure_virtual_machines_ntier.bicep' = {
     location: defaultPrimaryRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
-    monitorResourceGroupName: monitorResourceGroupName
-    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
-    networkingResourceGroupName: networkingResourceGroupName
-    virtualNetwork002Name: virtualNetwork002Name
-    nTierWebSubnetName: nTierWebSubnetName
-    nTierAppSubnetName: nTierAppSubnetName
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
+    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+    nTierWebSubnetId: virtualNetwork002::nTierWebSubnet.id
+    nTierAppSubnetId: virtualNetwork002::nTierAppSubnet.id
     proximityPlacementGroupAz1Name: proximityPlacementGroupAz1Name
     proximityPlacementGroupAz2Name: proximityPlacementGroupAz2Name
     proximityPlacementGroupAz3Name: proximityPlacementGroupAz3Name
@@ -145,11 +173,10 @@ module vmssModule 'azure_virtual_machines_vmss.bicep' = {
     location: defaultPrimaryRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
-    monitorResourceGroupName: monitorResourceGroupName
-    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
-    networkingResourceGroupName: networkingResourceGroupName
-    virtualNetwork002Name: virtualNetwork002Name
-    vmssSubnetName: vmssSubnetName
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
+    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+    vmssSubnetId: virtualNetwork002::vmssSubnet.id
     vmssLoadBalancerPublicIpAddressName: vmssLoadBalancerPublicIpAddressName
     vmssLoadBalancerName: vmssLoadBalancerName
     vmssName: vmssName
@@ -171,11 +198,10 @@ module w10ClientModule './azure_virtual_machines_w10client.bicep' = {
     location: defaultPrimaryRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
-    monitorResourceGroupName: monitorResourceGroupName
-    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
-    networkingResourceGroupName: networkingResourceGroupName
-    virtualNetwork002Name: virtualNetwork002Name
-    clientServicesSubnetName: clientServicesSubnetName
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
+    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+    clientServicesSubnetId: virtualNetwork002::clientServicesSubnet.id
     w10ClientNICName: w10ClientNICName
     w10ClientPrivateIpAddress: w10ClientPrivateIpAddress
     w10ClientName: w10ClientName

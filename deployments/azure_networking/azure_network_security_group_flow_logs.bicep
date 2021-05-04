@@ -1,7 +1,7 @@
 // parameters
 param location string
-param monitorResourceGroupName string
-param nsgFlowLogsStorageAccountName string
+param nsgFlowLogsStorageAccountId string
+param logAnalyticsWorkspaceId string
 param azureBastionSubnetNSGId string
 param managementSubnetNSGId string
 param nTierWebSubnetNSGId string
@@ -9,21 +9,21 @@ param nTierAppSubnetNSGId string
 param vmssSubnetNSGId string
 param clientServicesSubnetNSGId string
 
-// exising resources
-// resource - storage account - nsg flow logs
-resource nsgFlowLogsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01' existing = {
-  scope: resourceGroup(monitorResourceGroupName)
-  name: nsgFlowLogsStorageAccountName
-}
-
 // resource - nsg flow log - azure bastion subnet nsg
 resource azureBastionSubnetNSGFlowLog 'Microsoft.Network/networkWatchers/flowLogs@2020-11-01' = {
   name: 'NetworkWatcher_${location}/bastion'
   location: location
   properties: {
     targetResourceId: azureBastionSubnetNSGId
-    storageId: nsgFlowLogsStorageAccount.id
+    storageId: nsgFlowLogsStorageAccountId
     enabled: true
+    flowAnalyticsConfiguration: {
+      networkWatcherFlowAnalyticsConfiguration: {
+        enabled: true
+        workspaceId: logAnalyticsWorkspaceId
+        trafficAnalyticsInterval: 30
+      }
+    }
     retentionPolicy: {
       days: 7
       enabled: true
@@ -41,8 +41,15 @@ resource managementSubnetNSGFlowLog 'Microsoft.Network/networkWatchers/flowLogs@
   location: location
   properties: {
     targetResourceId: managementSubnetNSGId
-    storageId: nsgFlowLogsStorageAccount.id
+    storageId: nsgFlowLogsStorageAccountId
     enabled: true
+    flowAnalyticsConfiguration: {
+      networkWatcherFlowAnalyticsConfiguration: {
+        enabled: true
+        workspaceId: logAnalyticsWorkspaceId
+        trafficAnalyticsInterval: 30
+      }
+    }
     retentionPolicy: {
       days: 7
       enabled: true
@@ -60,8 +67,15 @@ resource nTierWebSubnetNSGFlowLog 'Microsoft.Network/networkWatchers/flowLogs@20
   location: location
   properties: {
     targetResourceId: nTierWebSubnetNSGId
-    storageId: nsgFlowLogsStorageAccount.id
+    storageId: nsgFlowLogsStorageAccountId
     enabled: true
+    flowAnalyticsConfiguration: {
+      networkWatcherFlowAnalyticsConfiguration: {
+        enabled: true
+        workspaceId: logAnalyticsWorkspaceId
+        trafficAnalyticsInterval: 30
+      }
+    }
     retentionPolicy: {
       days: 7
       enabled: true
@@ -79,8 +93,15 @@ resource nTierAppSubnetNSGFlowLog 'Microsoft.Network/networkWatchers/flowLogs@20
   location: location
   properties: {
     targetResourceId: nTierAppSubnetNSGId
-    storageId: nsgFlowLogsStorageAccount.id
+    storageId: nsgFlowLogsStorageAccountId
     enabled: true
+    flowAnalyticsConfiguration: {
+      networkWatcherFlowAnalyticsConfiguration: {
+        enabled: true
+        workspaceId: logAnalyticsWorkspaceId
+        trafficAnalyticsInterval: 30
+      }
+    }
     retentionPolicy: {
       days: 7
       enabled: true
@@ -98,8 +119,15 @@ resource vmssSubnetNSGFlowLog 'Microsoft.Network/networkWatchers/flowLogs@2020-1
   location: location
   properties: {
     targetResourceId: vmssSubnetNSGId
-    storageId: nsgFlowLogsStorageAccount.id
+    storageId: nsgFlowLogsStorageAccountId
     enabled: true
+    flowAnalyticsConfiguration: {
+      networkWatcherFlowAnalyticsConfiguration: {
+        enabled: true
+        workspaceId: logAnalyticsWorkspaceId
+        trafficAnalyticsInterval: 30
+      }
+    }
     retentionPolicy: {
       days: 7
       enabled: true
@@ -117,8 +145,15 @@ resource clientServicesSubnetNSGFlowLog 'Microsoft.Network/networkWatchers/flowL
   location: location
   properties: {
     targetResourceId: clientServicesSubnetNSGId
-    storageId: nsgFlowLogsStorageAccount.id
+    storageId: nsgFlowLogsStorageAccountId
     enabled: true
+    flowAnalyticsConfiguration: {
+      networkWatcherFlowAnalyticsConfiguration: {
+        enabled: true
+        workspaceId: logAnalyticsWorkspaceId
+        trafficAnalyticsInterval: 30
+      }
+    }
     retentionPolicy: {
       days: 7
       enabled: true

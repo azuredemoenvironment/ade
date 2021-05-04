@@ -50,18 +50,15 @@ function Deploy-AzureDemoEnvironment {
     # Deploy-AzureContainerInstances $armParameters
         # Dedicated Resource Group
 
-    # ADE App App Services
+    # App Services
     ###################################
     Deploy-AzureAppServices $armParameters
-
-    # Parallel
-    # Deploy-AdeAzureAppServices $armParameters
-    # Dedicated Resource Group
     # adefrontend (public)
     # adeapigateway (public)
     # adeuserservice
     # adedataingestorservice
     # adedatareporterservice
+    # inspectorgadget
 
     # ADE App Kubernetes
     ###################################

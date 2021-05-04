@@ -1,8 +1,7 @@
 // parameters
 param location string
-param monitorResourceGroupName string
-param logAnalyticsWorkspaceName string
 param sourceAddressPrefix string
+param logAnalyticsWorkspaceId string
 param azureBastionSubnetNSGName string
 param managementSubnetNSGName string
 param nTierWebSubnetNSGName string
@@ -14,13 +13,6 @@ param clientServicesSubnetNSGName string
 var environmentName = 'production'
 var functionName = 'networking'
 var costCenterName = 'it'
-
-// existing resources
-// resource - log analytics workspace
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  scope: resourceGroup(monitorResourceGroupName)
-  name: logAnalyticsWorkspaceName
-}
 
 // resource - network security group - azure bastion subnet
 resource azureBastionSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
@@ -101,7 +93,7 @@ resource azureBastionSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings
   scope: azureBastionSubnetNSG
   name: '${azureBastionSubnetNSG.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -158,7 +150,7 @@ resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2
   scope: managementSubnetNSG
   name: '${managementSubnetNSG.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -200,7 +192,7 @@ resource nTierWebSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@201
   scope: nTierWebSubnetNSG
   name: '${nTierWebSubnetNSG.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -242,7 +234,7 @@ resource nTierAppSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@201
   scope: nTierAppSubnetNSG
   name: '${nTierAppSubnetNSG.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -299,7 +291,7 @@ resource vmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05
   scope: vmssSubnetNSG
   name: '${vmssSubnetNSG.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -341,7 +333,7 @@ resource clientServicesSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettin
   scope: clientServicesSubnetNSG
   name: '${clientServicesSubnetNSG.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {

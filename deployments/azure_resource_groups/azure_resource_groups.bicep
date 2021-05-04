@@ -5,6 +5,7 @@ targetScope = 'subscription'
 param defaultPrimaryRegion string
 param monitorResourceGroupName string
 param identityResourceGroupName string
+param keyVaultResourceGroupName string
 param networkingResourceGroupName string
 param adeAppSqlResourceGroupName string
 param inspectorGadgetResourceGroupName string
@@ -12,6 +13,9 @@ param jumpboxResourceGroupName string
 param nTierResourceGroupName string
 param vmssResourceGroupName string
 param w10clientResourceGroupName string
+param containerRegistryResourceGroupName string
+param appServicePlanResourceGroupName string
+param adeAppAppServicesResourceGroupName string
 
 // resource group - monitor
 resource monitorResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
@@ -22,6 +26,12 @@ resource monitorResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = 
 // resource group - identity
 resource identityResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
   name: identityResourceGroupName
+  location: defaultPrimaryRegion
+}
+
+// resource group - key vault
+resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+  name: keyVaultResourceGroupName
   location: defaultPrimaryRegion
 }
 
@@ -64,5 +74,23 @@ resource vmssResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
 // resource group - w10client
 resource w10clientResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
   name: w10clientResourceGroupName
+  location: defaultPrimaryRegion
+}
+
+// resource group - azure container registry
+resource containerRegistryResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+  name: containerRegistryResourceGroupName
+  location: defaultPrimaryRegion
+}
+
+// resource group - app service plan
+resource appServicePlanResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+  name: appServicePlanResourceGroupName
+  location: defaultPrimaryRegion
+}
+
+// resource group - adeAppApp
+resource adeAppAppServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+  name: adeAppAppServicesResourceGroupName
   location: defaultPrimaryRegion
 }

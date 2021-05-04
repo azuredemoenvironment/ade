@@ -1,30 +1,21 @@
 // parameters
-param location string = resourceGroup().location
-param aliasRegion string
+param defaultPrimaryRegion string
+param logAnalyticsWorkspaceId string
+param azureContainerRegistryName string
 param acrServicePrincipalClientId string
+param roleDefinitionId string
 
 // variables
-var azureContainerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
 var environmentName = 'production'
 var functionName = 'containerRegistry'
 var costCenterName = 'it'
 
 // variables - role assignment definition for acr pull - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#acrpull
-var roleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
-
-// existing resource
-// log analytics
-var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
-var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
-  scope: resourceGroup(monitorResourceGroupName)
-}
 
 // resource - azure container registry
 resource azureContainerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-01' = {
   name: azureContainerRegistryName
-  location: location
+  location: defaultPrimaryRegion
   tags: {
     environment: environmentName
     function: functionName
@@ -43,7 +34,7 @@ resource azureContainerRegistryDiagnostics 'microsoft.insights/diagnosticSetting
   name: '${azureContainerRegistry.name}-diagnostics'
   scope: azureContainerRegistry
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
