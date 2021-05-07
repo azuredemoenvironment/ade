@@ -1,8 +1,8 @@
 namespace ADE.DataContracts
 {
-    public class ConnectionConfiguration
+    public class AdeConfiguration
     {
-        public const string APPSETTINGS_ROOT_KEY = "Connections";
+        public const string APPSETTINGS_ROOT_KEY = "ADE";
 
         public string ApiGatewayUri { get; set; }
 

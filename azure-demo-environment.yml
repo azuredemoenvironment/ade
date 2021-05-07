@@ -15,13 +15,13 @@ spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-      - name: ade-apigateway
-        image: acradebrmareus.azurecr.io/ade-apigateway:latest
-        env:
-        - name: ALLOW_EMPTY_PASSWORD
-          value: "yes"
-        ports:
-        - containerPort: 80
+        - name: ade-apigateway
+          image: acradebrmareus.azurecr.io/ade-apigateway:latest
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          ports:
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
@@ -29,7 +29,7 @@ metadata:
   name: ade-apigateway
 spec:
   ports:
-  - port: 80
+    - port: 80
   selector:
     app: ade-apigateway
 ---
@@ -50,13 +50,13 @@ spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-      - name: ade-dataingestorservice
-        image: acradebrmareus.azurecr.io/ade-dataingestorservice:latest
-        env:
-        - name: ALLOW_EMPTY_PASSWORD
-          value: "yes"
-        ports:
-        - containerPort: 80
+        - name: ade-dataingestorservice
+          image: acradebrmareus.azurecr.io/ade-dataingestorservice:latest
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          ports:
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
@@ -64,7 +64,7 @@ metadata:
   name: ade-dataingestorservice
 spec:
   ports:
-  - port: 80
+    - port: 80
   selector:
     app: ade-dataingestorservice
 ---
@@ -85,13 +85,13 @@ spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-      - name: ade-datareporterservice
-        image: acradebrmareus.azurecr.io/ade-datareporterservice:latest
-        env:
-        - name: ALLOW_EMPTY_PASSWORD
-          value: "yes"
-        ports:
-        - containerPort: 80
+        - name: ade-datareporterservice
+          image: acradebrmareus.azurecr.io/ade-datareporterservice:latest
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          ports:
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
@@ -99,7 +99,7 @@ metadata:
   name: ade-datareporterservice
 spec:
   ports:
-  - port: 80
+    - port: 80
   selector:
     app: ade-datareporterservice
 ---
@@ -120,13 +120,13 @@ spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-      - name: ade-frontend
-        image: acradebrmareus.azurecr.io/ade-frontend:latest
-        env:
-        - name: ALLOW_EMPTY_PASSWORD
-          value: "yes"
-        ports:
-        - containerPort: 80
+        - name: ade-frontend
+          image: acradebrmareus.azurecr.io/ade-frontend:latest
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          ports:
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
@@ -135,7 +135,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 80
+    - port: 80
   selector:
     app: ade-frontend
 ---
@@ -156,13 +156,13 @@ spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-      - name: ade-loadtesting-gatling
-        image: acradebrmareus.azurecr.io/ade-loadtesting-gatling:latest
-        env:
-        - name: ALLOW_EMPTY_PASSWORD
-          value: "yes"
-        ports:
-        - containerPort: 80
+        - name: ade-loadtesting-gatling
+          image: acradebrmareus.azurecr.io/ade-loadtesting-gatling:latest
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          ports:
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
@@ -170,7 +170,7 @@ metadata:
   name: ade-loadtesting-gatling
 spec:
   ports:
-  - port: 80
+    - port: 80
   selector:
     app: ade-loadtesting-gatling
 ---
@@ -191,13 +191,13 @@ spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-      - name: ade-loadtesting-grafana
-        image: acradebrmareus.azurecr.io/ade-loadtesting-grafana:latest
-        env:
-        - name: ALLOW_EMPTY_PASSWORD
-          value: "yes"
-        ports:
-        - containerPort: 3000
+        - name: ade-loadtesting-grafana
+          image: acradebrmareus.azurecr.io/ade-loadtesting-grafana:latest
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          ports:
+            - containerPort: 3000
 ---
 apiVersion: v1
 kind: Service
@@ -205,7 +205,7 @@ metadata:
   name: ade-loadtesting-grafana
 spec:
   ports:
-  - port: 3000
+    - port: 3000
   selector:
     app: ade-loadtesting-grafana
 ---
@@ -226,18 +226,18 @@ spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-      - name: ade-loadtesting-influxdb
-        image: acradebrmareus.azurecr.io/ade-loadtesting-influxdb:latest
-        env:
-        - name: ALLOW_EMPTY_PASSWORD
-          value: "yes"
-        ports:
-        - containerPort: 8083
-          name: influxdb-8083
-        - containerPort: 8086
-          name: influxdb-8086
-        - containerPort: 2003
-          name: influxdb-2003
+        - name: ade-loadtesting-influxdb
+          image: acradebrmareus.azurecr.io/ade-loadtesting-influxdb:latest
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          ports:
+            - containerPort: 8083
+              name: influxdb-8083
+            - containerPort: 8086
+              name: influxdb-8086
+            - containerPort: 2003
+              name: influxdb-2003
 ---
 apiVersion: v1
 kind: Service
@@ -245,12 +245,12 @@ metadata:
   name: ade-loadtesting-influxdb
 spec:
   ports:
-  - port: 8083
-    name: nginx-8083
-  - port: 8086
-    name: nginx-8086
-  - port: 2003
-    name: nginx-2003
+    - port: 8083
+      name: nginx-8083
+    - port: 8086
+      name: nginx-8086
+    - port: 2003
+      name: nginx-2003
   selector:
     app: ade-loadtesting-influxdb
 ---
@@ -271,13 +271,13 @@ spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-      - name: ade-loadtesting-redis
-        image: acradebrmareus.azurecr.io/ade-loadtesting-redis:latest
-        env:
-        - name: ALLOW_EMPTY_PASSWORD
-          value: "yes"
-        ports:
-        - containerPort: 6379
+        - name: ade-loadtesting-redis
+          image: acradebrmareus.azurecr.io/ade-loadtesting-redis:latest
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          ports:
+            - containerPort: 6379
 ---
 apiVersion: v1
 kind: Service
@@ -285,7 +285,7 @@ metadata:
   name: ade-loadtesting-redis
 spec:
   ports:
-  - port: 6379
+    - port: 6379
   selector:
     app: ade-loadtesting-redis
 ---
@@ -306,13 +306,13 @@ spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-      - name: ade-userservice
-        image: acradebrmareus.azurecr.io/ade-userservice:latest
-        env:
-        - name: ALLOW_EMPTY_PASSWORD
-          value: "yes"
-        ports:
-        - containerPort: 80
+        - name: ade-userservice
+          image: acradebrmareus.azurecr.io/ade-userservice:latest
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          ports:
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
@@ -320,7 +320,7 @@ metadata:
   name: ade-userservice
 spec:
   ports:
-  - port: 80
+    - port: 80
   selector:
     app: ade-userservice
 ---
@@ -339,14 +339,14 @@ spec:
         app: nginx
     spec:
       containers:
-      - name: nginx
-        image: nginx:latest
-        env:
-        - name: ALLOW_EMPTY_PASSWORD
-          value: "yes"
-        ports:
-        - containerPort: 8080
-          name: nginx-8080
+        - name: nginx
+          image: nginx:latest
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          ports:
+            - containerPort: 8080
+              name: nginx-8080
 ---
 apiVersion: v1
 kind: Service
@@ -354,6 +354,6 @@ metadata:
   name: nginx
 spec:
   ports:
-  - port: 8080
+    - port: 8080
   selector:
     app: nginx

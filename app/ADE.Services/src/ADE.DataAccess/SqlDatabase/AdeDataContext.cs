@@ -7,9 +7,9 @@ namespace ADE.DataAccess.SqlDatabase
     {
         private readonly string _connectionString;
 
-        public AdeDataContext(ConnectionConfiguration connectionConfiguration)
+        public AdeDataContext(AdeConfiguration adeConfiguration)
         {
-            _connectionString = connectionConfiguration.SqlServerConnectionString;
+            _connectionString = adeConfiguration.SqlServerConnectionString;
         }
 
         public DbSet<UserDataPoint> UserDataPoints { get; set; }
