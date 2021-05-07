@@ -1,43 +1,41 @@
 // parameters
 param location string
 param logAnalyticsWorkspaceId string
+param sslCertificateName string
+param sslCertificateData string
+param sslCertificateDataPassword string
 param applicationGatewaySubnetId string
 param applicationGatewayPublicIpAddressName string
 param inspectorGadgetWafPolicyName string
 param applicationGatewayName string
+param adeAppFrontEndAppServiceFqdn string
+param adeAppFrontEndAppServiceHostName string
+param adeAppApiGatewayAppServiceFqdn string
+param adeAppApiGatewayAppServiceHostName string
+param applicationGatewayManagedIdentity string
 
 // variables
-var sslCertificateName = ''
-var sslCertificateData = ''
-var sslCertificateDataPassword = ''
-
 var applicationGatewayFrontendIPConfigurationName = 'applicationGatewayFrontendIPConfiguration'
 var applicationGatewayFrontendPortHttp = 'port_80'
 var applicationGatewayFrontendPortHttps = 'port_443'
 
 var adeAppFrontEndAppServiceBackendPoolName = 'backendPool-ade-frontend'
-var adeAppFrontEndAppServiceFqdn = ''
-var adeAppFrontEndAppServiceProbeName = ''
-var adeAppFrontEndAppServiceHttpSettingName = ''
-var adeAppFrontEndAppServiceHttpListenerName = ''
-var adeAppFrontEndAppServiceHttpsListenerName = ''
-var adeAppFrontEndAppServiceHostName = ''
-var adeAppFrontEndAppServiceRedirectionConfigName = ''
-var adeAppFrontEndAppServiceRuleName = ''
-var adeAppFrontEndAppServiceRedirectionRuleName = ''
+var adeAppFrontEndAppServiceProbeName = 'probe-ade-frontend'
+var adeAppFrontEndAppServiceHttpSettingName = 'httpsetting-ade-frontend'
+var adeAppFrontEndAppServiceHttpListenerName = 'listener-http-ade-frontend'
+var adeAppFrontEndAppServiceHttpsListenerName = 'listener-https-ade-frontend'
+var adeAppFrontEndAppServiceRedirectionConfigName = 'redirectionconfig-ade-frontend'
+var adeAppFrontEndAppServiceRuleName = 'routingrule-ade-frontend'
+var adeAppFrontEndAppServiceRedirectionRuleName = 'routingrule-redirection--ade-frontend'
 
 var adeAppApiGatewayAppServiceBackendPoolName = 'backendPool-ade-apigateway'
-var adeAppApiGatewayAppServiceFqdn = ''
-var adeAppApiGatewayAppServiceProbeName = ''
-var adeAppApiGatewayAppServiceHttpSettingName = ''
-var adeAppApiGatewayAppServiceHttpListenerName = ''
-var adeAppApiGatewayAppServiceHttpsListenerName = ''
-var adeAppApiGatewayAppServiceHostName = ''
-var adeAppApiGatewayAppServiceRedirectionConfigName = ''
-var adeAppApiGatewayAppServiceRuleName = ''
-var adeAppApiGatewayAppServiceRedirectionRuleName = ''
-
-var applicationGatewayUserAssignedManagedIdentity = ''
+var adeAppApiGatewayAppServiceProbeName = 'probe-ade-apigateway'
+var adeAppApiGatewayAppServiceHttpSettingName = 'httpsetting-ade-apigateway'
+var adeAppApiGatewayAppServiceHttpListenerName = 'listener-http-ade-apigateway'
+var adeAppApiGatewayAppServiceHttpsListenerName = 'listener-https-ade-apigateway'
+var adeAppApiGatewayAppServiceRedirectionConfigName = 'redirectionconfig-ade-apigateway'
+var adeAppApiGatewayAppServiceRuleName = 'routingrule-ade-apigateway'
+var adeAppApiGatewayAppServiceRedirectionRuleName = 'routingrule-redirection--ade-apigateway'
 
 // variables
 var environmentName = 'production'
@@ -200,7 +198,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
         name: applicationGatewayFrontendIPConfigurationName
         properties: {
           publicIPAddress: {
-            id: applicationGatewayPublicIpAddress.properties.ipAddress
+            id: applicationGatewayPublicIpAddress.id
           }
         }
       }
@@ -386,7 +384,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
             id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, adeAppFrontEndAppServiceHttpsListenerName)
           }
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/backendAddressPools/httpListeners', applicationGatewayName, adeAppFrontEndAppServiceBackendPoolName)
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, adeAppFrontEndAppServiceBackendPoolName)
           }
           backendHttpSettings: {
             id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, adeAppFrontEndAppServiceHttpSettingName)
@@ -405,6 +403,33 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
           }
         }
       }
+      {
+        name: adeAppApiGatewayAppServiceRuleName
+        properties: {
+          ruleType: 'Basic'
+          httpListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, adeAppApiGatewayAppServiceHttpsListenerName)
+          }
+          backendAddressPool: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, adeAppApiGatewayAppServiceBackendPoolName)
+          }
+          backendHttpSettings: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, adeAppApiGatewayAppServiceHttpSettingName)
+          }
+        }
+      }
+      {
+        name: adeAppApiGatewayAppServiceRedirectionRuleName
+        properties: {
+          ruleType: 'Basic'
+          httpListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, adeAppApiGatewayAppServiceHttpListenerName)
+          }
+          redirectConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/redirectConfigurations', applicationGatewayName, adeAppApiGatewayAppServiceRedirectionConfigName)
+          }
+        }
+      }
     ]
     webApplicationFirewallConfiguration: {
       enabled: true
@@ -416,7 +441,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '${applicationGatewayUserAssignedManagedIdentity}': {}
+      '${applicationGatewayManagedIdentity}': {}
     }
   }
 }

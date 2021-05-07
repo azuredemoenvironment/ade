@@ -34,25 +34,25 @@ function Deploy-AzureDemoEnvironment {
 
     # Core Services
     ###################################
-    Deploy-AzureResourceGroups $armParameters
-    Deploy-AzureGovernance $armParameters
-    Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
-    Deploy-AzureNetworking $armParameters
+    # Deploy-AzureResourceGroups $armParameters
+    # Deploy-AzureGovernance $armParameters
+    # Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
+    # Deploy-AzureNetworking $armParameters
 
     # Data Services
     ###################################
-    Deploy-AzureDatabases $armParameters
+    # Deploy-AzureDatabases $armParameters
 
     # Compute Infrastructure
     ###################################
-    Deploy-AzureVirtualMachines $armParameters
-    Deploy-AzureContainers $armParameters
+    # Deploy-AzureVirtualMachines $armParameters
+    # Deploy-AzureContainers $armParameters
     # Deploy-AzureContainerInstances $armParameters
     # Dedicated Resource Group
 
     # App Services
     ###################################
-    Deploy-AzureAppServices $armParameters
+    # Deploy-AzureAppServices $armParameters
 
     # ADE App Kubernetes
     ###################################
@@ -62,8 +62,7 @@ function Deploy-AzureDemoEnvironment {
 
     # Frontend Load Balancers
     ###################################
-    # Deploy-AzureApplicationGateway $armParameters
-    # Dedicated Resource Group
+    # Deploy-AzureFrontendLoadBalancers $armParameters
     # Deploy-AzureFrontDoor $armParameters
     # Dedicated Resource Group
     
@@ -75,7 +74,7 @@ function Deploy-AzureDemoEnvironment {
     ###################################
     # Deploy-AzureAlerts $armParameters
     # Existing Resource Group
-    # Deploy-AzureDns $armParameters
+    Deploy-AzureDns $armParameters
     # Existing Resource Group
 
     $stopwatch.Stop()

@@ -16,38 +16,34 @@ function Deploy-AzureDns {
     Deploy-AzureDnsZone $dnsResourceGroup $rootDomainName
     Write-Log "Finished Configuring $rootDomainName Zone"
 
-    Write-Log 'Configuring Virtual Machine DNS Entries'
-    $virtualMachines = @(
-        'jumpbox',
-        'developer',
-        'lb-vmss'
-    )
+    # Write-Log 'Configuring Virtual Machine DNS Entries'
+    # $virtualMachines = @(
+    #     'jumpbox',
+    #     'lb-vmss'
+    # )
 
-    $virtualMachines | ForEach-Object {
-        Write-Log "Configuring $_"
+    # $virtualMachines | ForEach-Object {
+    #     Write-Log "Configuring $_"
 
-        $resourceGroup = "rg-$aliasRegion-$_".replace('lb-', '')
-        $ipAddressName = "pip-$aliasRegion-$($_)01"
-        $ipAddressValue = az network public-ip show -g $resourceGroup -n $ipAddressName --query ipAddress
-        Confirm-LastExitCode
+    #     $resourceGroup = "rg-ade-$aliasRegion-$_".replace('lbe-', '')
+    #     $ipAddressName = "pip-ade-$aliasRegion-$($_)01"
+    #     $ipAddressValue = az network public-ip show -g $resourceGroup -n $ipAddressName --query ipAddress
+    #     Confirm-LastExitCode
 
-        $recordSet = $_.replace('lb-', '')
+    #     $recordSet = $_.replace('lb-', '')
 
-        Deploy-AzureDnsARecord $dnsResourceGroup $rootDomainName $recordSet $ipAddressValue
+    #     Deploy-AzureDnsARecord $dnsResourceGroup $rootDomainName $recordSet $ipAddressValue
 
-        Write-Log "Finished Configuring $_"
-    }
+    #     Write-Log "Finished Configuring $_"
+    # }
 
     Write-Log 'Configuring Application Gateway DNS Entries'
     $apps = @(
-        'imageresizer'
-        'wordpress'
-        'sqltodo'
-        'ntier'
-        'inspectorgadget'
+        'adefrontend'
+        'adeapigateway'
     )
 
-    $applicationGatewayResourceGroup = $armParameters.applicationGatewayResourceGroupName
+    $applicationGatewayResourceGroup = $armParameters.networkingResourceGroupName
     $applicationGatewayIpAddressName = $armParameters.applicationGatewayPublicIPAddressName
     $applicationGatewayIpAddressValue = az network public-ip show -g $applicationGatewayResourceGroup -n $applicationGatewayIpAddressName --query ipAddress
     Confirm-LastExitCode
@@ -62,13 +58,13 @@ function Deploy-AzureDns {
         Write-Log "Finished Configuring $_"
     }
 
-    Write-Log 'Configuring Traffic Manager (Hello World) DNS Entries'
-    $trafficManagerResourceGroup = $armParameters.trafficManagerResourceGroupName
-    $trafficManagerProfileName = $armParameters.trafficManagerProfileName
-    $trafficManagerProfileId = az network traffic-manager profile show -g $trafficManagerResourceGroup -n $trafficManagerProfileName --query id
-    $trafficManagerRecordSet = 'helloworld'
+    # Write-Log 'Configuring Traffic Manager (Hello World) DNS Entries'
+    # $trafficManagerResourceGroup = $armParameters.trafficManagerResourceGroupName
+    # $trafficManagerProfileName = $armParameters.trafficManagerProfileName
+    # $trafficManagerProfileId = az network traffic-manager profile show -g $trafficManagerResourceGroup -n $trafficManagerProfileName --query id
+    # $trafficManagerRecordSet = 'helloworld'
         
-    Deploy-AzureDnsCnameRecord $dnsResourceGroup $rootDomainName $trafficManagerRecordSet $trafficManagerProfileId
+    # Deploy-AzureDnsCnameRecord $dnsResourceGroup $rootDomainName $trafficManagerRecordSet $trafficManagerProfileId
 
     Write-Status "Finished Azure DNS Deployment"
 }

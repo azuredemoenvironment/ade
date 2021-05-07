@@ -50,17 +50,11 @@ function Set-InitialArmParameters {
         'adeInitiativeDefinition'                      = "policy-ade-$aliasRegion-adeinitiative"
         'adminUserName'                                = $resourceUserName
         'aksClusterDNSName'                            = "aks-$aliasRegion-01-dns"
-        'aksClusterName'                               = "aks-$aliasRegion-01"
-        'applicationGatewayName'                       = "appgw-$aliasRegion-01"
-        'applicationGatewayPublicIPAddressName'        = "pip-$aliasRegion-appgw01"
+        'aksClusterName'                               = "aks-$aliasRegion-01"        
         'azureActiveDirectoryTenantID'                 = $currentAccount.tenantId
         'azureActiveDirectoryUserID'                   = $adSignedInUser.objectId
         'computerVisionAccountName'                    = "computervision"        
         'containerRegistryLoginServer'                 = "$acrName.azurecr.io"    
-        'inspectorGadgetFQDN'                          = "as-$aliasRegion-inspectorgadget.azurewebsites.net".Replace('-', '')
-        'inspectorGadgetHostName'                      = "inspectorgadget.$rootDomainName".replace('-', '')
-        "inspectorGadgetWafPolicyName"                 = "wafp-$aliasRegion-inspectorgadget"
-        "inspectorGadgetWebAppName"                    = "as-$aliasRegion-inspectorgadget".replace('-', '')
         'keyVaultName'                                 = "kv-ade-$aliasRegion-001"
         'localNetworkGatewayAddressPrefix'             = $localNetworkRange
         'logAnalyticsWorkspaceName'                    = "log-ade-$aliasRegion-001"        
@@ -76,6 +70,9 @@ function Set-InitialArmParameters {
         'containerRegistrySPNName'                     = "spn-ade-$aliasRegion-acr"          
         'githubActionsSPNName'                         = "spn-ade-$aliasRegion-gha"
         'restAPISPNName'                               = "spn-ade-$aliasRegion-restapi"
+
+        # Required for Deploy-AzureDns.ps1
+        'applicationGatewayPublicIPAddressName'        = "pip-ade-$aliasRegion-appgw001"
         
         # Resource Group Names
         'adeAppAppServicesResourceGroupName'           = "$primaryRegionResourceGroupNamePrefix-adeappweb"
