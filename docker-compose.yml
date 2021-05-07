@@ -143,6 +143,31 @@ services:
       - ADE__POSTGRESQLCONNECTIONSTRING
       - ADE__SQLSERVERCONNECTIONSTRING
       - ADE__USERSERVICEURI
+  ade_eventingestorservice:
+    image: ade-eventingestorservice
+    container_name: ade_eventingestorservice
+    build:
+      context: ./app/ADE.Services/src/
+      dockerfile: ./ADE.EventIngestorService/Dockerfile
+      args:
+        - BuildConfiguration
+    expose:
+      - "80"
+    environment:
+      - ASPNETCORE_URLS
+      - ASPNETCORE_ENVIRONMENT=Development
+      - LOGGING__LOGLEVEL__DEFAULT
+      - LOGGING__CONSOLE__LOGLEVEL__DEFAULT
+      - APPINSIGHTS_INSTRUMENTATIONKEY
+      - ADE__APIGATEWAYURI
+      - ADE__BLOBSTORAGECONNECTIONSTRING
+      - ADE__COSMOSDBCONNECTIONSTRING
+      - ADE__DATAINGESTORSERVICEURI
+      - ADE__DATAREPORTERSERVICEURI
+      - ADE__MARIADBCONNECTIONSTRING
+      - ADE__POSTGRESQLCONNECTIONSTRING
+      - ADE__SQLSERVERCONNECTIONSTRING
+      - ADE__USERSERVICEURI
   # Load Testing
   ########################################################
   # These images run load tests against the ADE app

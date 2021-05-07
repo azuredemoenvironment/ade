@@ -14,15 +14,17 @@ namespace ADE.DataContracts
 
         public string DataReporterServiceUri { get; set; }
 
+        public string EventHubConnectionString { get; set; }
+
+        public string EventHubNameSpace { get; set; }
+
+        public string EventIngestorServiceUri { get; set; }
+
         public string MariaDbConnectionString { get; set; }
 
         public string PostgreSqlConnectionString { get; set; }
 
         public string SqlServerConnectionString { get; set; }
-
-        public string EventHubConnectionString { get; set; }
-
-        public string EventHubNameSpace { get; set; }
 
         public string UserServiceUri { get; set; }
     }
