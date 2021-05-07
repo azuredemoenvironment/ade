@@ -15,15 +15,15 @@ namespace ADE.EventIngestorService.Controllers
     {
 
         private readonly ILogger<EventIngestorController> _logger;
-        private readonly ConnectionConfiguration _connectionConfiguration;
+        private readonly AdeConfiguration _adeConfiguration;
         private readonly TelemetryClient _telemetry;
 
 
-        public EventIngestorController(TelemetryClient telemetry, ILogger<EventIngestorController> logger, ConnectionConfiguration connectionConfiguration)
+        public EventIngestorController(TelemetryClient telemetry, ILogger<EventIngestorController> logger, AdeConfiguration adeConfiguration)
         {
             _telemetry = telemetry;
             _logger = logger;
-            _connectionConfiguration = connectionConfiguration;
+            _adeConfiguration = adeConfiguration;
         }
         private static EventData CreateEventData(FacilityEvent data)
         {
@@ -44,7 +44,7 @@ namespace ADE.EventIngestorService.Controllers
             //add code to send to event hub
 
             // Create a producer client that you can use to send events to an event hub
-            await using (var producerClient = new EventHubProducerClient(_connectionConfiguration.EventHubConnectionString, _connectionConfiguration.EventHubNameSpace))
+            await using (var producerClient = new EventHubProducerClient(_adeConfiguration.EventHubConnectionString, _adeConfiguration.EventHubNameSpace))
             {
                 // Create a batch of events 
                 using EventDataBatch eventBatch = await producerClient.CreateBatchAsync();

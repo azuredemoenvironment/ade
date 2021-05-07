@@ -5,12 +5,10 @@ function Remove-AzureNsgFlowLogs {
 
     $location = $armParameters.defaultPrimaryRegion
     $nsgFlowLogEntries = @(
-        'azureBastion'
+        'bastion'
         'management'
-        'directoryServices'
-        'developer'
-        'ntierWeb'
-        'ntierDB'
+        'nTierWeb'
+        'nTierApp'
         'vmss'
         'clientServices'
     )

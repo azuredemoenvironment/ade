@@ -4,4 +4,9 @@
 *.personal.*
 data/**
 .metals
+<<<<<<< HEAD
 /.vs
+=======
+.env
+test/ADE.LoadTests/gatling/results
+>>>>>>> origin/dev
