@@ -20,8 +20,8 @@ resource azureBastionSubnetNSGFlowLog 'Microsoft.Network/networkWatchers/flowLog
     flowAnalyticsConfiguration: {
       networkWatcherFlowAnalyticsConfiguration: {
         enabled: true
-        workspaceId: logAnalyticsWorkspaceId
-        trafficAnalyticsInterval: 30
+        workspaceResourceId: logAnalyticsWorkspaceId
+        trafficAnalyticsInterval: 10
       }
     }
     retentionPolicy: {
@@ -46,8 +46,8 @@ resource managementSubnetNSGFlowLog 'Microsoft.Network/networkWatchers/flowLogs@
     flowAnalyticsConfiguration: {
       networkWatcherFlowAnalyticsConfiguration: {
         enabled: true
-        workspaceId: logAnalyticsWorkspaceId
-        trafficAnalyticsInterval: 30
+        workspaceResourceId: logAnalyticsWorkspaceId
+        trafficAnalyticsInterval: 10
       }
     }
     retentionPolicy: {
@@ -72,8 +72,8 @@ resource nTierWebSubnetNSGFlowLog 'Microsoft.Network/networkWatchers/flowLogs@20
     flowAnalyticsConfiguration: {
       networkWatcherFlowAnalyticsConfiguration: {
         enabled: true
-        workspaceId: logAnalyticsWorkspaceId
-        trafficAnalyticsInterval: 30
+        workspaceResourceId: logAnalyticsWorkspaceId
+        trafficAnalyticsInterval: 10
       }
     }
     retentionPolicy: {
@@ -98,8 +98,8 @@ resource nTierAppSubnetNSGFlowLog 'Microsoft.Network/networkWatchers/flowLogs@20
     flowAnalyticsConfiguration: {
       networkWatcherFlowAnalyticsConfiguration: {
         enabled: true
-        workspaceId: logAnalyticsWorkspaceId
-        trafficAnalyticsInterval: 30
+        workspaceResourceId: logAnalyticsWorkspaceId
+        trafficAnalyticsInterval: 10
       }
     }
     retentionPolicy: {
@@ -124,8 +124,8 @@ resource vmssSubnetNSGFlowLog 'Microsoft.Network/networkWatchers/flowLogs@2020-1
     flowAnalyticsConfiguration: {
       networkWatcherFlowAnalyticsConfiguration: {
         enabled: true
-        workspaceId: logAnalyticsWorkspaceId
-        trafficAnalyticsInterval: 30
+        workspaceResourceId: logAnalyticsWorkspaceId
+        trafficAnalyticsInterval: 10
       }
     }
     retentionPolicy: {
@@ -150,8 +150,8 @@ resource clientServicesSubnetNSGFlowLog 'Microsoft.Network/networkWatchers/flowL
     flowAnalyticsConfiguration: {
       networkWatcherFlowAnalyticsConfiguration: {
         enabled: true
-        workspaceId: logAnalyticsWorkspaceId
-        trafficAnalyticsInterval: 30
+        workspaceResourceId: logAnalyticsWorkspaceId
+        trafficAnalyticsInterval: 10
       }
     }
     retentionPolicy: {

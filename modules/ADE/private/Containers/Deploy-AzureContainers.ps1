@@ -1,9 +1,9 @@
-function Deploy-AzureContainerRegistry {
+function Deploy-AzureContainers {
     param(
         [object] $armParameters
     )
 
-    Deploy-ArmTemplate 'Azure Container Registry' $armParameters -resourceGroupName $armParameters.containerRegistryResourceGroupName -bicep
+    Deploy-ArmTemplate 'Azure Containers' $armParameters -resourceLevel 'sub' -bicep
 
     $stopwatch = [system.diagnostics.stopwatch]::StartNew()
     $containerRegistryName = $armParameters.acrName

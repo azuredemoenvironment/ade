@@ -7,7 +7,6 @@ function Remove-AzureResourceGroups {
 
     # ORDER MATTERS!!!
     $resourceGroupsToRemove = @(
-        $armParameters.cognitiveServicesResourceGroupName
         $armParameters.applicationGatewayResourceGroupName
         $armParameters.trafficManagerResourceGroupName
         $armParameters.inspectorGadgetResourceGroupName

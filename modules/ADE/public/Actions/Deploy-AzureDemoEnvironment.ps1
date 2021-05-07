@@ -46,19 +46,13 @@ function Deploy-AzureDemoEnvironment {
     # Compute Infrastructure
     ###################################
     Deploy-AzureVirtualMachines $armParameters
-    Deploy-AzureContainerRegistry $armParameters
+    Deploy-AzureContainers $armParameters
     # Deploy-AzureContainerInstances $armParameters
-        # Dedicated Resource Group
+    # Dedicated Resource Group
 
     # App Services
     ###################################
     Deploy-AzureAppServices $armParameters
-    # adefrontend (public)
-    # adeapigateway (public)
-    # adeuserservice
-    # adedataingestorservice
-    # adedatareporterservice
-    # inspectorgadget
 
     # ADE App Kubernetes
     ###################################

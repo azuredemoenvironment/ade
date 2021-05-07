@@ -10,8 +10,6 @@ var environmentName = 'production'
 var functionName = 'containerRegistry'
 var costCenterName = 'it'
 
-// variables - role assignment definition for acr pull - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#acrpull
-
 // resource - azure container registry
 resource azureContainerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-01' = {
   name: azureContainerRegistryName

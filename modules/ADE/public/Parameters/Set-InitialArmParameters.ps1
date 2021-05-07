@@ -53,15 +53,10 @@ function Set-InitialArmParameters {
         'aksClusterName'                               = "aks-$aliasRegion-01"
         'applicationGatewayName'                       = "appgw-$aliasRegion-01"
         'applicationGatewayPublicIPAddressName'        = "pip-$aliasRegion-appgw01"
-        'appServicePlanName'                           = "plan-ade-$aliasRegion-001"
         'azureActiveDirectoryTenantID'                 = $currentAccount.tenantId
         'azureActiveDirectoryUserID'                   = $adSignedInUser.objectId
         'computerVisionAccountName'                    = "computervision"        
-        'containerGroupMySQLImage'                     = "$acrName.azurecr.io/mysql:latest"
-        'containerGroupShareImage'                     = "$acrName.azurecr.io/azure-cli:latest"
-        'containerGroupWordPressImage'                 = "$acrName.azurecr.io/wordpress:latest"
         'containerRegistryLoginServer'                 = "$acrName.azurecr.io"    
-        "inspectorGadgetAppServicePrivateEndpointName" = "pe-$aliasRegion-inspectorgadgetappservice"
         'inspectorGadgetFQDN'                          = "as-$aliasRegion-inspectorgadget.azurewebsites.net".Replace('-', '')
         'inspectorGadgetHostName'                      = "inspectorgadget.$rootDomainName".replace('-', '')
         "inspectorGadgetWafPolicyName"                 = "wafp-$aliasRegion-inspectorgadget"
@@ -72,10 +67,8 @@ function Set-InitialArmParameters {
         'nTierHostName'                                = "ntier.$rootDomainName"               
         'sourceAddressPrefix'                          = $sourceAddressPrefix        
         'sslCertificateName'                           = $rootDomainName
-        'texAnalyticsAccountName'                      = "textanalytics"
         'trafficManagerProfileDNSName'                 = "tmp-$aliasRegion-helloworld".replace('-', '')
         'trafficManagerProfileName'                    = "tmp-$aliasRegion-helloworld"      
-        'wordPressHostName'                            = "wordpress.$rootDomainName"
 
         # Required for Deploy-AzureGovernance.ps1
         'applicationGatewayManagedIdentityName'        = "id-ade-$aliasRegion-agw"
@@ -84,19 +77,9 @@ function Set-InitialArmParameters {
         'githubActionsSPNName'                         = "spn-ade-$aliasRegion-gha"
         'restAPISPNName'                               = "spn-ade-$aliasRegion-restapi"
         
-        # Required for Deploy-AzureNsgFlowLogs.ps1
-        'azureBastionSubnetNSGName'                    = "nsg-ade-$aliasRegion-bastion"
-        'clientServicesSubnetNSGName'                  = "nsg-ade-$aliasRegion-clientservices"
-        'managementSubnetNSGName'                      = "nsg-ade-$aliasRegion-management"
-        'nsgFlowLogsStorageAccountName'                = "sa-ade-$aliasRegion-nsgflow".replace('-', '')     
-        'nTierAppSubnetNSGName'                        = "nsg-ade-$aliasRegion-ntierapp"
-        'nTierDBSubnetNSGName'                         = "nsg-ade-$aliasRegion-ntierdb"
-        'nTierWebSubnetNSGName'                        = "nsg-ade-$aliasRegion-ntierweb"
-        'vmssSubnetNSGName'                            = "nsg-ade-$aliasRegion-vmss"
-
         # Resource Group Names
-        'adeAppAppServicesResourceGroupName'           = "$primaryRegionResourceGroupNamePrefix-adeappappservices"
-        'adeAppSqlResourceGroupName'                   = "$primaryRegionResourceGroupNamePrefix-adeappsql"
+        'adeAppAppServicesResourceGroupName'           = "$primaryRegionResourceGroupNamePrefix-adeappweb"
+        'adeAppSqlResourceGroupName'                   = "$primaryRegionResourceGroupNamePrefix-adeappdb"
         'aksNodeResourceGroupName'                     = "$primaryRegionResourceGroupNamePrefix-aks-node"
         'aksResourceGroupName'                         = "$primaryRegionResourceGroupNamePrefix-aks"
         'applicationGatewayResourceGroupName'          = "$primaryRegionResourceGroupNamePrefix-applicationgateway"

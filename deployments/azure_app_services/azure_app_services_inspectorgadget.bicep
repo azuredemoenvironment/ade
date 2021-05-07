@@ -3,13 +3,11 @@ param defaultPrimaryRegion string
 param adminUserName string
 param adminPassword string
 param logAnalyticsWorkspaceId string
-param applicationInsightsInstrumentationKey string
+param vnetIntegrationSubnetId string
 param inspectorGadgetSqlServerName string
 param inspectorGadgetSqlServerFQDN string
 param inspectorGadgetSqlDatabaseName string
 param inspectorGadgetAppServiceName string
-param webAppRepoURL string
-param vnetIntegrationSubnetId string
 param appServicePlanId string
 
 // variables
@@ -26,35 +24,14 @@ resource inspectorGadgetAppService 'Microsoft.Web/sites@2020-12-01' = {
     function: functionName
     costCenter: costCenterName
   }
+  kind: 'app,linux,container'
   properties: {
     serverFarmId: appServicePlanId
     httpsOnly: false
+
     siteConfig: {
+      linuxFxVersion: 'DOCKER|jelledruyts/inspectorgadget:latest'
       appSettings: [
-        {
-          name: 'PROJECT'
-          value: 'WebApp'
-        }
-        {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: applicationInsightsInstrumentationKey
-        }
-        {
-          name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
-          value: '~2'
-        }
-        {
-          name: 'XDT_MicrosoftApplicationInsights_Mode'
-          value: 'recommended'
-        }
-        {
-          name: 'InstrumentationEngine_EXTENSION_VERSION'
-          value: '~1'
-        }
-        {
-          name: 'XDT_MicrosoftApplicationInsights_BaseExtensions'
-          value: '~1'
-        }
         {
           name: 'DefaultSqlConnectionSqlConnectionString'
           value: 'Data Source=tcp:${inspectorGadgetSqlServerFQDN},1433;Initial Catalog=${inspectorGadgetSqlDatabaseName};User Id=${adminUserName}@${inspectorGadgetSqlServerFQDN};Password=${adminPassword};'
@@ -81,17 +58,7 @@ resource inspectorGadgetAppServiceNetworking 'Microsoft.Web/sites/config@2020-12
   }
 }
 
-// resource - web app - source controls - inspectorGadgetAppService
-resource inspectorGadgetAppServiceSourceControls 'Microsoft.Web/sites/sourcecontrols@2018-02-01' = {
-  name: '${inspectorGadgetAppService.name}/web'
-  properties: {
-    repoUrl: webAppRepoURL
-    branch: 'master'
-    isManualIntegration: true
-  }
-}
-
-// resource - web app - inspectorGadgetAppService - diagnostics settings
+// resource - web app - diagnostics settings - inspectorGadgetAppService
 resource inspectorGadgetAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
   scope: inspectorGadgetAppService
   name: '${inspectorGadgetAppService.name}-diagnostics'

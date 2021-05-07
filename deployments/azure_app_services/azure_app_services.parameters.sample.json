@@ -14,8 +14,14 @@
         "adeAppAppServicesResourceGroupName": {
             "value": "@@adeAppAppServicesResourceGroupName@@"
         },
+        "adeAppSqlResourceGroupName": {
+            "value": "@@adeAppSqlResourceGroupName@@"
+        },
         "inspectorGadgetResourceGroupName": {
             "value": "@@inspectorGadgetResourceGroupName@@"
+        },
+        "containerRegistryResourceGroupName": {
+            "value": "@@containerRegistryResourceGroupName@@"
         },
         "adminUserName": {
             "value": "@@adminUsername@@"
