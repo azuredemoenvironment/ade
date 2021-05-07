@@ -6,12 +6,13 @@ function Set-AzureVirtualMachinesToDeallocated {
     Write-ScriptSection "Setting Azure Virtual Machines to Deallocated (for Cost Savings)"
 
     $virtualMachines = @(
-        @{ Name = $armParameters.developerName; ResourceGroup = $armParameters.developerResourceGroupName },
         @{ Name = $armParameters.jumpboxName; ResourceGroup = $armParameters.jumpboxResourceGroupName },
-        @{ Name = 'vm-ntierdb01'; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = 'vm-ntierdb02'; ResourceGroup = $armParameters.ntierResourceGroupName },
         @{ Name = 'vm-ntierweb01'; ResourceGroup = $armParameters.ntierResourceGroupName },
         @{ Name = 'vm-ntierweb02'; ResourceGroup = $armParameters.ntierResourceGroupName },
+        @{ Name = 'vm-ntierweb03'; ResourceGroup = $armParameters.ntierResourceGroupName },
+        @{ Name = 'vm-ntierapp01'; ResourceGroup = $armParameters.ntierResourceGroupName },
+        @{ Name = 'vm-ntierapp02'; ResourceGroup = $armParameters.ntierResourceGroupName },
+        @{ Name = 'vm-ntierapp03'; ResourceGroup = $armParameters.ntierResourceGroupName },
         @{ Name = $armParameters.w10clientName; ResourceGroup = $armParameters.w10clientResourceGroupName }
     )
     

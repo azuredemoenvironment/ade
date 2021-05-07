@@ -7,6 +7,10 @@ function Write-Header {
     Write-Host "" | Out-Null
 }
 
+function Login {
+    Invoke-Expression "& `"/opt/ade/login.ps1`""
+}
+
 function Deploy {
     Invoke-Expression "& `"/opt/ade/ade.ps1`" -deploy $args"
 }

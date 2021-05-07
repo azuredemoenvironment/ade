@@ -1,15 +1,12 @@
 // parameters
 param location string
-param monitorResourceGroupName string
-param logAnalyticsWorkspaceName string
+param logAnalyticsWorkspaceId string
 param virtualNetwork002Name string
 param virtualnetwork002Prefix string
 param nTierWebSubnetName string
 param nTierWebSubnetPrefix string
 param nTierAppSubnetName string
 param nTierAppSubnetPrefix string
-param nTierDBSubnetName string
-param nTierDBSubnetPrefix string
 param vmssSubnetName string
 param vmssSubnetPrefix string
 param clientServicesSubnetName string
@@ -22,9 +19,9 @@ param aksSubnetName string
 param aksSubnetPrefix string
 param nTierWebSubnetNSGId string
 param nTierAppSubnetNSGId string
-param nTierDBSubnetNSGId string
 param vmssSubnetNSGId string
 param clientServicesSubnetNSGId string
+param natGatewayId string
 param internetRouteTableId string
 
 // variables
@@ -32,14 +29,7 @@ var environmentName = 'production'
 var functionName = 'networking'
 var costCenterName = 'it'
 
-// existing resources
-// log analytics
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
-  scope: resourceGroup(monitorResourceGroupName)
-}
-
-// resource - virtual network 002
+// resource - virtual network - virtual network 002
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
   name: virtualNetwork002Name
   location: location
@@ -62,37 +52,21 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
           networkSecurityGroup: {
             id: nTierWebSubnetNSGId
           }
-          serviceEndpoints: [
-            {
-              service: 'Microsoft.Storage'
-            }
-          ]
         }
       }
       {
         name: nTierAppSubnetName
         properties: {
           addressPrefix: nTierAppSubnetPrefix
+          natGateway: {
+            id: natGatewayId
+          }
           networkSecurityGroup: {
             id: nTierAppSubnetNSGId
           }
           serviceEndpoints: [
             {
-              service: 'Microsoft.Storage'
-            }
-          ]
-        }
-      }
-      {
-        name: nTierDBSubnetName
-        properties: {
-          addressPrefix: nTierDBSubnetPrefix
-          networkSecurityGroup: {
-            id: nTierDBSubnetNSGId
-          }
-          serviceEndpoints: [
-            {
-              service: 'Microsoft.Storage'
+              service: 'Microsoft.Sql'
             }
           ]
         }
@@ -104,11 +78,6 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
           networkSecurityGroup: {
             id: vmssSubnetNSGId
           }
-          serviceEndpoints: [
-            {
-              service: 'Microsoft.Storage'
-            }
-          ]
         }
       }
       {
@@ -121,11 +90,6 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
           routeTable: {
             id: internetRouteTableId
           }
-          serviceEndpoints: [
-            {
-              service: 'Microsoft.Storage'
-            }
-          ]
         }
       }
       {
@@ -164,12 +128,12 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
   }
 }
 
-// resource - virtual network 002 - diagnostic settings
+// resource - virtual network 002 - diagnostic settings - virtual network 002
 resource virtualNetwork002Diagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
   name: '${virtualNetwork002.name}-diagnostics'
   scope: virtualNetwork002
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
