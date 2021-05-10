@@ -46,23 +46,19 @@ function Set-InitialArmParameters {
         # Generated Parameters
         'aciStorageAccountName'                        = "sa-$aliasRegion-aciwp".replace('-', '')
         'acrName'                                      = $acrName
-        'activityLogDiagnosticsName'                   = 'subscriptionactivitylog'
         'adeInitiativeDefinition'                      = "policy-ade-$aliasRegion-adeinitiative"
         'adminUserName'                                = $resourceUserName
         'aksClusterDNSName'                            = "aks-$aliasRegion-01-dns"
         'aksClusterName'                               = "aks-$aliasRegion-01"        
         'azureActiveDirectoryTenantID'                 = $currentAccount.tenantId
-        'azureActiveDirectoryUserID'                   = $adSignedInUser.objectId
-        'computerVisionAccountName'                    = "computervision"        
+        'azureActiveDirectoryUserID'                   = $adSignedInUser.objectId   
         'containerRegistryLoginServer'                 = "$acrName.azurecr.io"    
         'keyVaultName'                                 = "kv-ade-$aliasRegion-001"
         'localNetworkGatewayAddressPrefix'             = $localNetworkRange
         'logAnalyticsWorkspaceName'                    = "log-ade-$aliasRegion-001"        
         'nTierHostName'                                = "ntier.$rootDomainName"               
         'sourceAddressPrefix'                          = $sourceAddressPrefix        
-        'sslCertificateName'                           = $rootDomainName
-        'trafficManagerProfileDNSName'                 = "tmp-$aliasRegion-helloworld".replace('-', '')
-        'trafficManagerProfileName'                    = "tmp-$aliasRegion-helloworld"      
+        'sslCertificateName'                           = $rootDomainName    
 
         # Required for Deploy-AzureGovernance.ps1
         'applicationGatewayManagedIdentityName'        = "id-ade-$aliasRegion-agw"

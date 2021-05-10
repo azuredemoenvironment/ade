@@ -18,8 +18,7 @@ function Deploy-AzureDns {
 
     # Write-Log 'Configuring Virtual Machine DNS Entries'
     # $virtualMachines = @(
-    #     'jumpbox',
-    #     'lb-vmss'
+    #     'jumpbox'
     # )
 
     # $virtualMachines | ForEach-Object {
@@ -39,8 +38,10 @@ function Deploy-AzureDns {
 
     Write-Log 'Configuring Application Gateway DNS Entries'
     $apps = @(
-        'adefrontend'
-        'adeapigateway'
+        'adefrontend',
+        'adeapigateway',
+        'inspectorgadget',
+        'ntier'
     )
 
     $applicationGatewayResourceGroup = $armParameters.networkingResourceGroupName

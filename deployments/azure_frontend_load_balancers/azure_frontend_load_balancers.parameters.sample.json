@@ -20,6 +20,9 @@
         "identityResourceGroupName": {
             "value": "@@identityResourceGroupName@@"
         },
+        "nTierResourceGroupName": {
+            "value": "@@nTierResourceGroupName@@"
+        },
         "sslCertificateName":{
             "value": "@@sslCertificateName@@"
         },
