@@ -60,8 +60,8 @@ var adeAppFrontEndAppServiceFqdn = replace('app-ade-${aliasRegion}-ade-frontend.
 var adeAppApiGatewayAppServiceHostName = replace('ade-frontend.${rootDomainName}', '-', '')
 var adeAppApiGatewayAppServiceFqdn = replace('app-ade-${aliasRegion}-ade-apigateway.azurewebsites.net', '-', '')
 var adeAppFrontEndAppServiceHostName = replace('ade-apigateway.${rootDomainName}', '-', '')
-var inspectorGadgetAppServiceFqdn = replace('app-ade-${aliasRegion}-inspectorGadget.azurewebsites.net', '-', '')
-var inspectorGadgetAppServiceHostName = 'inspectorGadget.${rootDomainName}'
+var inspectorGadgetAppServiceFqdn = replace('app-ade-${aliasRegion}-inspectorgadget.azurewebsites.net', '-', '')
+var inspectorGadgetAppServiceHostName = 'inspectorgadget.${rootDomainName}'
 var nTierHostName = 'ntier.${rootDomainName}'
 // module deployment
 module applicationGatewayModule 'azure_application_gateway.bicep' = {
