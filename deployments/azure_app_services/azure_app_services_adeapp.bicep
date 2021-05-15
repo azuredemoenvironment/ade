@@ -19,6 +19,7 @@ param adeAppApiGatewayAppServiceName string
 param adeAppUserServiceAppServiceName string
 param adeAppDataIngestorServiceAppServiceName string
 param adeAppDataReporterServiceAppServiceName string
+param adeAppApiGatewayAppServiceHostName string
 param adeAppFrontEndAppServiceImageName string
 param adeAppApiGatewayAppServiceImageName string
 param adeAppUserServiceAppServiceImageName string
@@ -91,7 +92,7 @@ resource adeAppFrontEndAppService 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'ADE__APIGATEWAYURI'
-          value: 'http://${adeAppApiGatewayAppServiceName}.azurewebsites.net'
+          value: 'https://${adeAppApiGatewayAppServiceHostName}'
         }
         {
           name: 'WEBSITE_VNET_ROUTE_ALL'
@@ -247,6 +248,10 @@ resource adeAppApiGatewayAppService 'Microsoft.Web/sites@2020-12-01' = {
         {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
           value: 'false'
+        }
+        {
+          name: 'ASPNETCORE_ENVIRONMENT'
+          value: 'Development'
         }
         {
           name: 'ADE__USERSERVICEURI'

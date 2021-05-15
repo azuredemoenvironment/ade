@@ -24,6 +24,7 @@ resource inspectorGadgetSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
     costCenter: costCenterName
   }
   properties: {
+    publicNetworkAccess: 'Disabled'
     administratorLogin: adminUserName
     administratorLoginPassword: adminPassword
     version: '12.0'

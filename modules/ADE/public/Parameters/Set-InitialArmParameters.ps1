@@ -46,6 +46,7 @@ function Set-InitialArmParameters {
         # Generated Parameters
         'aciStorageAccountName'                        = "sa-$aliasRegion-aciwp".replace('-', '')
         'acrName'                                      = $acrName
+        'activityLogDiagnosticsName'                   = "subscriptionActivityLog"
         'adeInitiativeDefinition'                      = "policy-ade-$aliasRegion-adeinitiative"
         'adminUserName'                                = $resourceUserName
         'aksClusterDNSName'                            = "aks-$aliasRegion-01-dns"

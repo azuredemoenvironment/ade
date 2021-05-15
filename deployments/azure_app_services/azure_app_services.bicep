@@ -4,6 +4,7 @@ targetScope = 'subscription'
 // parameters
 param defaultPrimaryRegion string
 param aliasRegion string
+param rootDomainName string
 param appServicePlanResourceGroupName string
 param adeAppAppServicesResourceGroupName string
 param adeAppSqlResourceGroupName string
@@ -133,11 +134,12 @@ module inspectorGadgetAppServiceModule 'azure_app_services_inspectorgadget.bicep
 
 // module - adeApp
 // variables
-var adeAppFrontEndAppServiceName = replace('app-ade-${aliasRegion}-ade-frontend', '-', '') // public
-var adeAppApiGatewayAppServiceName = replace('app-ade-${aliasRegion}-ade-apigateway', '-', '') // public
+var adeAppFrontEndAppServiceName = replace('app-ade-${aliasRegion}-ade-frontend', '-', '')
+var adeAppApiGatewayAppServiceName = replace('app-ade-${aliasRegion}-ade-apigateway', '-', '')
 var adeAppUserServiceAppServiceName = replace('app-ade-${aliasRegion}-ade-userservice', '-', '')
 var adeAppDataIngestorServiceAppServiceName = replace('app-ade-${aliasRegion}-ade-dataingestorservice', '-', '')
 var adeAppDataReporterServiceAppServiceName = replace('app-ade-${aliasRegion}-ade-datareporterservice', '-', '')
+var adeAppApiGatewayAppServiceHostName = 'ade-apigateway.${rootDomainName}'
 var adeAppFrontEndAppServiceImageName = 'ade-frontend:latest'
 var adeAppApiGatewayAppServiceImageName = 'ade-apigateway:latest'
 var adeAppUserServiceAppServiceImageName = 'ade-userservice:latest'
@@ -171,6 +173,7 @@ module adeAppAppServiceModule 'azure_app_services_adeapp.bicep' = {
     adeAppUserServiceAppServiceName: adeAppUserServiceAppServiceName
     adeAppDataIngestorServiceAppServiceName: adeAppDataIngestorServiceAppServiceName
     adeAppDataReporterServiceAppServiceName: adeAppDataReporterServiceAppServiceName
+    adeAppApiGatewayAppServiceHostName: adeAppApiGatewayAppServiceHostName
     adeAppFrontEndAppServiceImageName: adeAppFrontEndAppServiceImageName
     adeAppApiGatewayAppServiceImageName: adeAppApiGatewayAppServiceImageName
     adeAppUserServiceAppServiceImageName: adeAppUserServiceAppServiceImageName
