@@ -1,9 +1,6 @@
 // parameters
 param location string
-param monitorResourceGroupName string
-param logAnalyticsWorkspaceName string
-param networkingResourceGroupName string
-param virtualNetwork001Name string
+param logAnalyticsWorkspaceId string
 param azureFirewallPublicIpAddressName string
 param azureFirewallName string
 param azureFirewallSubnetId string
@@ -12,17 +9,6 @@ param azureFirewallSubnetId string
 var environmentName = 'production'
 var functionName = 'networking'
 var costCenterName = 'it'
-
-// existing resources
-// log analytics
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
-  scope: resourceGroup(monitorResourceGroupName)
-}
-// virtual network
-resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-06-01' existing = {
-  name: virtualNetwork001Name
-}
 
 // resource - public ip address - azure firewall
 resource azureFirewallPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
@@ -41,12 +27,12 @@ resource azureFirewallPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-// resource - public ip address - azure firewall - diagnostic settings
+// resource - public ip address - diagnostic settings - azure firewall
 resource azureFirewallPublicIpAddressDiagnostics 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${azureFirewallPublicIpAddress.name}-diagnostics'
   scope: azureFirewallPublicIpAddress
+  name: '${azureFirewallPublicIpAddress.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -163,10 +149,10 @@ resource azureFirewall 'Microsoft.Network/azureFirewalls@2020-07-01' = {
 
 // resource - azure firewall - diagnostic settings
 resource azureFirewallDiagnostics 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${azureFirewall.name}-diagnostics'
   scope: azureFirewall
+  name: '${azureFirewall.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {

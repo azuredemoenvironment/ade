@@ -2,12 +2,11 @@
 param location string
 param adminUserName string
 param adminPassword string
-param monitorResourceGroupName string
-param logAnalyticsWorkspaceName string
-param networkingResourceGroupName string
-param virtualNetwork002Name string
-param nTierWebSubnetName string
-param nTierAppSubnetName string
+param logAnalyticsWorkspaceId string
+param logAnalyticsWorkspaceCustomerId string
+param logAnalyticsWorkspaceKey string
+param nTierWebSubnetId string
+param nTierAppSubnetId string
 param proximityPlacementGroupAz1Name string
 param proximityPlacementGroupAz2Name string
 param proximityPlacementGroupAz3Name string
@@ -42,24 +41,6 @@ param nTierApp03OSDiskName string
 var environmentName = 'production'
 var functionName = 'nTier'
 var costCenterName = 'it'
-
-// existing resources
-// log analytics
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
-  scope: resourceGroup(monitorResourceGroupName)
-}
-// virtual network
-resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
-  name: virtualNetwork002Name
-  scope: resourceGroup(networkingResourceGroupName)
-  resource nTierWebSubnet 'subnets@2020-07-01' existing = {
-    name: nTierWebSubnetName
-  }
-  resource nTierAppSubnet 'subnets@2020-07-01' existing = {
-    name: nTierAppSubnetName
-  }
-}
 
 // resource - proximity placement group - availability zone 1
 resource proximityPlacementGroupAz1 'Microsoft.Compute/proximityPlacementGroups@2020-12-01' = {
@@ -121,7 +102,7 @@ resource nTierAppLoadBalancer 'Microsoft.Network/loadBalancers@2020-11-01' = {
         name: 'fip-nTierApp'
         properties: {
           subnet: {
-            id: virtualNetwork002::nTierAppSubnet.id
+            id: nTierAppSubnetId
           }
           privateIPAddress: nTierAppLoadBalancerPrivateIpAddress
           privateIPAllocationMethod: 'Static'
@@ -168,12 +149,12 @@ resource nTierAppLoadBalancer 'Microsoft.Network/loadBalancers@2020-11-01' = {
   }
 }
 
-// resource - load balancer - ntierapp - diagnostic settings
+// resource - load balancer - diagnostic settings - ntierapp
 resource nTierAppLoadBalancerDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierAppLoadBalancer.name}-diagnostics'
   scope: nTierAppLoadBalancer
+  name: '${nTierAppLoadBalancer.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -223,7 +204,7 @@ resource nTierWeb01NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
           privateIPAddress: nTierWeb01PrivateIpAddress
           privateIPAllocationMethod: 'Static'
           subnet: {
-            id: virtualNetwork002::nTierWebSubnet.id
+            id: nTierWebSubnetId
           }
         }
       }
@@ -231,12 +212,12 @@ resource nTierWeb01NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - ntierweb01 - diagnostic settings
+// resource - network interface - diagnostic settings - ntierweb01
 resource nTierWeb01NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierWeb01NIC.name}-diagnostics'
   scope: nTierWeb01NIC
+  name: '${nTierWeb01NIC.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     metrics: [
       {
@@ -268,7 +249,7 @@ resource nTierWeb02NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
           privateIPAddress: nTierWeb02PrivateIpAddress
           privateIPAllocationMethod: 'Static'
           subnet: {
-            id: virtualNetwork002::nTierWebSubnet.id
+            id: nTierWebSubnetId
           }
         }
       }
@@ -276,12 +257,12 @@ resource nTierWeb02NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - ntierWeb02 - diagnostic settings
+// resource - network interface - diagnostic settings - ntierWeb02
 resource nTierWeb02NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierWeb02NIC.name}-diagnostics'
   scope: nTierWeb02NIC
+  name: '${nTierWeb02NIC.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     metrics: [
       {
@@ -313,7 +294,7 @@ resource nTierWeb03NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
           privateIPAddress: nTierWeb03PrivateIpAddress
           privateIPAllocationMethod: 'Static'
           subnet: {
-            id: virtualNetwork002::nTierWebSubnet.id
+            id: nTierWebSubnetId
           }
         }
       }
@@ -321,12 +302,12 @@ resource nTierWeb03NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - ntierWeb03 - diagnostic settings
+// resource - network interface - diagnostic settings - ntierWeb03
 resource nTierWeb03NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierWeb03NIC.name}-diagnostics'
   scope: nTierWeb03NIC
+  name: '${nTierWeb03NIC.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     metrics: [
       {
@@ -361,7 +342,7 @@ resource nTierApp01NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
           privateIPAddress: nTierApp01PrivateIpAddress
           privateIPAllocationMethod: 'Static'
           subnet: {
-            id: virtualNetwork002::nTierAppSubnet.id
+            id: nTierAppSubnetId
           }
           loadBalancerBackendAddressPools: [
             {
@@ -374,12 +355,12 @@ resource nTierApp01NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - ntierapp01 - diagnostic settings
+// resource - network interface - diagnostic settings - ntierapp01
 resource nTierApp01NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierApp01NIC.name}-diagnostics'
   scope: nTierApp01NIC
+  name: '${nTierApp01NIC.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     metrics: [
       {
@@ -414,7 +395,7 @@ resource nTierApp02NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
           privateIPAddress: nTierApp02PrivateIpAddress
           privateIPAllocationMethod: 'Static'
           subnet: {
-            id: virtualNetwork002::nTierAppSubnet.id
+            id: nTierAppSubnetId
           }
           loadBalancerBackendAddressPools: [
             {
@@ -427,12 +408,12 @@ resource nTierApp02NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - ntierapp02 - diagnostic settings
+// resource - network interface - diagnostic settings - ntierapp02
 resource nTierApp02NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierApp02NIC.name}-diagnostics'
   scope: nTierApp02NIC
+  name: '${nTierApp02NIC.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     metrics: [
       {
@@ -467,7 +448,7 @@ resource nTierApp03NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
           privateIPAddress: nTierApp03PrivateIpAddress
           privateIPAllocationMethod: 'Static'
           subnet: {
-            id: virtualNetwork002::nTierAppSubnet.id
+            id: nTierAppSubnetId
           }
           loadBalancerBackendAddressPools: [
             {
@@ -480,12 +461,12 @@ resource nTierApp03NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - ntierapp03 - diagnostic settings
+// resource - network interface - diagnostic settings - ntierapp03
 resource nTierApp03NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${nTierApp03NIC.name}-diagnostics'
   scope: nTierApp03NIC
+  name: '${nTierApp03NIC.name}-diagnostics'
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     metrics: [
       {
@@ -577,10 +558,10 @@ resource nTierWeb01MicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/e
     typeHandlerVersion: '1.4'
     autoUpgradeMinorVersion: true
     settings: {
-      workspaceId: logAnalyticsWorkspace.properties.customerId
+      workspaceId: logAnalyticsWorkspaceCustomerId
     }
     protectedSettings: {
-      workspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+      workspaceKey: logAnalyticsWorkspaceKey
     }
   }
 }
@@ -662,10 +643,10 @@ resource nTierWeb02MicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/e
     typeHandlerVersion: '1.4'
     autoUpgradeMinorVersion: true
     settings: {
-      workspaceId: logAnalyticsWorkspace.properties.customerId
+      workspaceId: logAnalyticsWorkspaceCustomerId
     }
     protectedSettings: {
-      workspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+      workspaceKey: logAnalyticsWorkspaceKey
     }
   }
 }
@@ -747,10 +728,10 @@ resource nTierWeb03MicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/e
     typeHandlerVersion: '1.4'
     autoUpgradeMinorVersion: true
     settings: {
-      workspaceId: logAnalyticsWorkspace.properties.customerId
+      workspaceId: logAnalyticsWorkspaceCustomerId
     }
     protectedSettings: {
-      workspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+      workspaceKey: logAnalyticsWorkspaceKey
     }
   }
 }
@@ -832,10 +813,10 @@ resource nTierApp01MicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/e
     typeHandlerVersion: '1.4'
     autoUpgradeMinorVersion: true
     settings: {
-      workspaceId: logAnalyticsWorkspace.properties.customerId
+      workspaceId: logAnalyticsWorkspaceCustomerId
     }
     protectedSettings: {
-      workspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+      workspaceKey: logAnalyticsWorkspaceKey
     }
   }
 }
@@ -917,10 +898,10 @@ resource nTierApp02MicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/e
     typeHandlerVersion: '1.4'
     autoUpgradeMinorVersion: true
     settings: {
-      workspaceId: logAnalyticsWorkspace.properties.customerId
+      workspaceId: logAnalyticsWorkspaceCustomerId
     }
     protectedSettings: {
-      workspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+      workspaceKey: logAnalyticsWorkspaceKey
     }
   }
 }
@@ -1002,10 +983,10 @@ resource nTierApp03MicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/e
     typeHandlerVersion: '1.4'
     autoUpgradeMinorVersion: true
     settings: {
-      workspaceId: logAnalyticsWorkspace.properties.customerId
+      workspaceId: logAnalyticsWorkspaceCustomerId
     }
     protectedSettings: {
-      workspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+      workspaceKey: logAnalyticsWorkspaceKey
     }
   }
 }

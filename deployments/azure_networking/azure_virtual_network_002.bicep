@@ -1,7 +1,6 @@
 // parameters
 param location string
-param monitorResourceGroupName string
-param logAnalyticsWorkspaceName string
+param logAnalyticsWorkspaceId string
 param virtualNetwork002Name string
 param virtualnetwork002Prefix string
 param nTierWebSubnetName string
@@ -30,14 +29,7 @@ var environmentName = 'production'
 var functionName = 'networking'
 var costCenterName = 'it'
 
-// existing resources
-// log analytics
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
-  scope: resourceGroup(monitorResourceGroupName)
-}
-
-// resource - virtual network 002
+// resource - virtual network - virtual network 002
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
   name: virtualNetwork002Name
   location: location
@@ -136,12 +128,12 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
   }
 }
 
-// resource - virtual network 002 - diagnostic settings
+// resource - virtual network 002 - diagnostic settings - virtual network 002
 resource virtualNetwork002Diagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
   name: '${virtualNetwork002.name}-diagnostics'
   scope: virtualNetwork002
   properties: {
-    workspaceId: logAnalyticsWorkspace.id
+    workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {

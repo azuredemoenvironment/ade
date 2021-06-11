@@ -9,10 +9,10 @@ namespace ADE.ServiceBase
     {
         public static IServiceCollection AddAdeConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionConfiguration = new ConnectionConfiguration();
-            configuration.GetSection(ConnectionConfiguration.APPSETTINGS_ROOT_KEY).Bind(connectionConfiguration);
+            var adeConfiguration = new AdeConfiguration();
+            configuration.GetSection(AdeConfiguration.APPSETTINGS_ROOT_KEY).Bind(adeConfiguration);
 
-            services.AddSingleton(connectionConfiguration);
+            services.AddSingleton(adeConfiguration);
             return services;
         }
 

@@ -13,16 +13,6 @@ var environmentName = 'production'
 var functionName = 'networking'
 var costCenterName = 'it'
 
-// existing resources
-// virtual network 001
-resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-06-01' existing = {
-  name: virtualNetwork001Name
-}
-// virtual network 002
-resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-06-01' existing = {
-  name: virtualNetwork002Name
-}
-
 // resource - private dns zone - privatelink.azurewebsites.net
 resource appServicePrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: appServicePrivateDnsZoneName
@@ -47,7 +37,7 @@ resource azureSQLPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' =
 
 // resource virtual network link - privatelink.azurewebsites.net to virtual network 001
 resource vnetLink01 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  name: '${appServicePrivateDnsZone.name}/${virtualNetwork001.name}-link'
+  name: '${appServicePrivateDnsZone.name}/${virtualNetwork001Name}-link'
   location: 'global'
   properties: {
     registrationEnabled: false
@@ -59,7 +49,7 @@ resource vnetLink01 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-
 
 // resource virtual network link - privatelink.azurewebsites.net to virtual network 002
 resource vnetLink02 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  name: '${appServicePrivateDnsZone.name}/${virtualNetwork002.name}-link'
+  name: '${appServicePrivateDnsZone.name}/${virtualNetwork002Name}-link'
   location: 'global'
   properties: {
     registrationEnabled: false
@@ -71,7 +61,7 @@ resource vnetLink02 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-
 
 // resource virtual network link - privatelink.database.windows.net to virtual network 001
 resource vnetLink11 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  name: '${azureSQLPrivateDnsZone.name}/${virtualNetwork001.name}-link'
+  name: '${azureSQLPrivateDnsZone.name}/${virtualNetwork001Name}-link'
   location: 'global'
   properties: {
     registrationEnabled: false
@@ -83,7 +73,7 @@ resource vnetLink11 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-
 
 // resource virtual network link - privatelink.database.windows.net to virtual network 002
 resource vnetLink12 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  name: '${azureSQLPrivateDnsZone.name}/${virtualNetwork002.name}-link'
+  name: '${azureSQLPrivateDnsZone.name}/${virtualNetwork002Name}-link'
   location: 'global'
   properties: {
     registrationEnabled: false

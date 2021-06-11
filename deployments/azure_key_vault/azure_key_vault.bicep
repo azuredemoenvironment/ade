@@ -15,19 +15,19 @@ param restAPISPNPassword string
 param restAPISPNAppID string
 param restAPIObjectId string
 
-//variables
+// variables
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var environmentName = 'production'
 var functionName = 'key vault'
 var costCenterName = 'it'
 
 // existing resources
-// log analytics
+// log analytics workspace
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  name: logAnalyticsWorkspaceName
   scope: resourceGroup(monitorResourceGroupName)
+  name: logAnalyticsWorkspaceName
 }
 
 // resource - key vault
@@ -97,37 +97,6 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' = {
           certificates: [
             'get'
           ]
-        }
-      }
-    ]
-  }
-}
-output keyVaultResourceID string = keyVault.id
-
-// resource - key vault - diagnostic settings
-resource keyVaultDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: '${keyVault.name}-diagnostics'
-  scope: keyVault
-  properties: {
-    workspaceId: logAnalyticsWorkspace.id
-    logAnalyticsDestinationType: 'Dedicated'
-    logs: [
-      {
-        category: 'AuditEvent'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
         }
       }
     ]
@@ -205,3 +174,36 @@ resource restAPIObjectIdSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = 
     value: restAPIObjectId
   }
 }
+
+// resource - key vault - diagnostic settings
+resource keyVaultDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+  scope: keyVault
+  name: '${keyVault.name}-diagnostics'
+  properties: {
+    workspaceId: logAnalyticsWorkspace.id
+    logAnalyticsDestinationType: 'Dedicated'
+    logs: [
+      {
+        category: 'AuditEvent'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
+    ]
+    metrics: [
+      {
+        category: 'AllMetrics'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
+    ]
+  }
+}
+
+// outputs
+output keyVaultResourceID string = keyVault.id

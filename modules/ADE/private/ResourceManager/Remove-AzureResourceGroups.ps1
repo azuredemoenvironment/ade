@@ -7,10 +7,10 @@ function Remove-AzureResourceGroups {
 
     # ORDER MATTERS!!!
     $resourceGroupsToRemove = @(
-        $armParameters.cognitiveServicesResourceGroupName
         $armParameters.applicationGatewayResourceGroupName
         $armParameters.trafficManagerResourceGroupName
         $armParameters.inspectorGadgetResourceGroupName
+        $armParameters.adeAppAppServicesResourceGroupName
         $armParameters.appServicePlanResourceGroupName
         $armParameters.aksResourceGroupName
         $armParameters.wordpressResourceGroupName
@@ -18,9 +18,10 @@ function Remove-AzureResourceGroups {
         $armParameters.vmssResourceGroupName
         $armParameters.ntierResourceGroupName
         $armParameters.w10clientResourceGroupName
-        $armParameters.jumpboxResourceGroupName        
+        $armParameters.jumpboxResourceGroupName
+        $armParameters.adeAppSqlResourceGroupName   
         $armParameters.networkingResourceGroupName
-        $armParameters.managedIdentityResourceGroupName
+        $armParameters.identityResourceGroupName
     )
 
     $resourceGroupsToRemove | ForEach-Object {

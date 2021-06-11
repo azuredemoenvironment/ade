@@ -10,20 +10,20 @@ namespace ADE.ApiGateway.Controllers
     [ApiController, Route("[controller]")]
     public class DataPointsController : ControllerBase
     {
-        private readonly ConnectionConfiguration _connectionConfiguration;
+        private readonly AdeConfiguration _adeConfiguration;
 
         private readonly ILogger<DataPointsController> _logger;
 
-        public DataPointsController(ConnectionConfiguration connectionConfiguration, ILogger<DataPointsController> logger)
+        public DataPointsController(AdeConfiguration adeConfiguration, ILogger<DataPointsController> logger)
         {
-            _connectionConfiguration = connectionConfiguration;
+            _adeConfiguration = adeConfiguration;
             _logger = logger;
         }
 
         [HttpGet]
         public async Task<IEnumerable<UserDataPoint>> GetAllAsync()
         {
-            var client = new RestClient(_connectionConfiguration.DataReporterServiceUri);
+            var client = new RestClient(_adeConfiguration.DataReporterServiceUri);
 
             var request = new RestRequest("reports", DataFormat.Json);
 
@@ -35,7 +35,7 @@ namespace ADE.ApiGateway.Controllers
         [HttpPost]
         public async Task<UserDataPoint> PostAsync([FromBody] UserDataPoint data)
         {
-            var client = new RestClient(_connectionConfiguration.DataIngestorServiceUri);
+            var client = new RestClient(_adeConfiguration.DataIngestorServiceUri);
 
             var request = new RestRequest("dataingestion", DataFormat.Json);
             request.AddJsonBody(data);
