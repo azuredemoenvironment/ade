@@ -72,10 +72,8 @@ function Deploy-AzureDemoEnvironment {
 
     # Additional Core Services
     ###################################
-    # Deploy-AzureAlerts $armParameters
-    # Existing Resource Group
+    Deploy-AzureAlerts $armParameters
     Deploy-AzureDns $armParameters
-    # Existing Resource Group
 
     $stopwatch.Stop()
     $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)

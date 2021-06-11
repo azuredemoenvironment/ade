@@ -68,6 +68,9 @@ function Set-InitialArmParameters {
         'githubActionsSPNName'                         = "spn-ade-$aliasRegion-gha"
         'restAPISPNName'                               = "spn-ade-$aliasRegion-restapi"
 
+        # Required for Deploy-AzureAppServicePlanScaleDown.ps1
+        'appServicePlanName'                           = "plan-ade-$aliasRegion-001"
+
         # Required for Deploy-AzureDns.ps1
         'applicationGatewayPublicIPAddressName'        = "pip-ade-$aliasRegion-appgw001"
         

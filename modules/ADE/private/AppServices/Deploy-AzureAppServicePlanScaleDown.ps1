@@ -1,4 +1,4 @@
-function Deploy-AzureAppServicePlanToPrimaryRegionScaleDown {
+function Deploy-AzureAppServicePlanScaleDown {
     param(
         [object] $armParameters
     )

@@ -9,7 +9,6 @@ param privateEndpointSubnetId string
 param azureContainerRegistryName string
 param azureContainerRegistryURL string
 param azureContainerRegistryCredentials string
-param adeAppSqlServerName string
 param adeAppSqlServerFQDN string
 param adeAppSqlDatabaseName string
 param azureAppServicePrivateDnsZoneId string

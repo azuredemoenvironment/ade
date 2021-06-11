@@ -6,6 +6,7 @@ param defaultPrimaryRegion string
 param aliasRegion string
 param rootDomainName string
 param appServicePlanResourceGroupName string
+param appServicePlanName string
 param adeAppAppServicesResourceGroupName string
 param adeAppSqlResourceGroupName string
 param inspectorGadgetResourceGroupName string
@@ -98,8 +99,6 @@ resource azureAppServicePrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-0
 }
 
 // module - app service plan
-// variables
-var appServicePlanName = 'plan-ade-${aliasRegion}-001'
 // module deployment
 module appServicePlanModule 'azure_app_service_plan.bicep' = {
   scope: resourceGroup(appServicePlanResourceGroupName)
@@ -113,7 +112,7 @@ module appServicePlanModule 'azure_app_service_plan.bicep' = {
 // module - inspectorGadgetAppService
 // variables
 var inspectorGadgetAppServiceName = replace('app-ade-${aliasRegion}-inspectorgadget', '-', '')
-var webAppRepoURL = 'https://github.com/jelledruyts/InspectorGadget/'
+var inspectorGadgetDockerImage = 'DOCKER|jelledruyts/inspectorgadget:latest'
 // // module deployment
 module inspectorGadgetAppServiceModule 'azure_app_services_inspectorgadget.bicep' = {
   scope: resourceGroup(inspectorGadgetResourceGroupName)
@@ -125,9 +124,9 @@ module inspectorGadgetAppServiceModule 'azure_app_services_inspectorgadget.bicep
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     vnetIntegrationSubnetId: virtualNetwork002::vnetIntegrationSubnet.id
     inspectorGadgetSqlServerFQDN: inspectorGadgetSqlServer.properties.fullyQualifiedDomainName
-    inspectorGadgetSqlServerName: inspectorGadgetSqlServerName
     inspectorGadgetSqlDatabaseName: inspectorGadgetSqlDatabase.name
     inspectorGadgetAppServiceName: inspectorGadgetAppServiceName
+    inspectorGadgetDockerImage: inspectorGadgetDockerImage
     appServicePlanId: appServicePlanModule.outputs.appServicePlanId
   }
 }
@@ -164,7 +163,6 @@ module adeAppAppServiceModule 'azure_app_services_adeapp.bicep' = {
     azureContainerRegistryURL: azureContainerRegistry.properties.loginServer
     azureContainerRegistryCredentials: first(listCredentials(azureContainerRegistry.id, azureContainerRegistry.apiVersion).passwords).value
     adeAppSqlServerFQDN: adeAppSqlServer.properties.fullyQualifiedDomainName
-    adeAppSqlServerName: adeAppSqlServerName
     adeAppSqlDatabaseName: adeAppSqlDatabase.name
     azureAppServicePrivateDnsZoneId: azureAppServicePrivateDnsZone.id
     appServicePlanId: appServicePlanModule.outputs.appServicePlanId

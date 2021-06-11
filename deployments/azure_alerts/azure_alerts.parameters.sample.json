@@ -6,7 +6,7 @@
             "value": "@@defaultPrimaryRegion@@"
         },
         "aliasRegion": {
-            "value": "@@aliasRegion"
+            "value": "@@aliasRegion@@"
         },
         "contactEmailAddress": {
             "value": "@@contactEmailAddress@@"
