@@ -45,8 +45,8 @@ function Deploy-AzureDemoEnvironment {
 
     # Compute Infrastructure
     ###################################
-    Deploy-AzureVirtualMachines $armParameters
     Deploy-AzureContainers $armParameters
+    Deploy-AzureVirtualMachines $armParameters
     # Deploy-AzureContainerInstances $armParameters
     # Dedicated Resource Group
 
