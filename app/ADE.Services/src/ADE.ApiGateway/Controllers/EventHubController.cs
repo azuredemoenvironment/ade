@@ -6,7 +6,7 @@ using RestSharp;
 
 namespace ADE.ApiGateway.Controllers
 {
-    [Route("api/[controller]"), ApiController]
+    [Route("[controller]"), ApiController]
     public class EventHubController : ControllerBase
     {
         private readonly AdeConfiguration _adeConfiguration;

@@ -42,22 +42,29 @@ namespace ADE.EventIngestorService.Controllers
             //_telemetry.TrackEvent("Event Ingest", facilityEvent.ToDictionary());
 
             //add code to send to event hub
-
-            // Create a producer client that you can use to send events to an event hub
-            await using (var producerClient = new EventHubProducerClient(_adeConfiguration.EventHubConnectionString, _adeConfiguration.EventHubNameSpace))
+            try
             {
-                // Create a batch of events 
-                using EventDataBatch eventBatch = await producerClient.CreateBatchAsync();
+                // Create a producer client that you can use to send events to an event hub
+                await using (var producerClient = new EventHubProducerClient(_adeConfiguration.EventHubConnectionString, _adeConfiguration.EventHubNameSpace))
+                {
+                    // Create a batch of events 
+                    using EventDataBatch eventBatch = await producerClient.CreateBatchAsync();
 
-                // Add events to the batch. An event is a represented by a collection of bytes and metadata. 
-                eventBatch.TryAdd(CreateEventData(facilityEvent));
-            
+                    // Add events to the batch. An event is a represented by a collection of bytes and metadata. 
+                    eventBatch.TryAdd(CreateEventData(facilityEvent));
 
-                // Use the producer client to send the batch of events to the event hub
-                await producerClient.SendAsync(eventBatch);
-                Console.WriteLine("A batch of 3 events has been published.");
 
-                return facilityEvent;
+                    // Use the producer client to send the batch of events to the event hub
+                    await producerClient.SendAsync(eventBatch);
+                    Console.WriteLine("A batch of 3 events has been published.");
+
+                    return facilityEvent;
+                }
+            }
+            catch(Exception ex) {
+                Console.WriteLine(ex.Message);
+                return null;
+               
             }
         }
     }
