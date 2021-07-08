@@ -8,8 +8,14 @@
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
+        "rootDomainName": {
+            "value": "@@rootDomainName@@"
+        },
         "appServicePlanResourceGroupName": {
             "value": "@@appServicePlanResourceGroupName@@"
+        },
+        "appServicePlanName": {
+            "value": "@@appServicePlanName@@"
         },
         "adeAppAppServicesResourceGroupName": {
             "value": "@@adeAppAppServicesResourceGroupName@@"

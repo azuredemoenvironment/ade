@@ -17,13 +17,10 @@ function Remove-AzureDnsEntries {
 
     Write-Log "Removing A Records"
     $aRecords = @(
+        'adefrontend'
+        'adeapigateway'
         'inspectorgadget'
         'ntier'
-        'sqltodo'
-        'wordpress'
-        'imageresizer'
-        'vmss'
-        'developer'
         'jumpbox'
     )
 
@@ -33,16 +30,16 @@ function Remove-AzureDnsEntries {
         Confirm-LastExitCode
     }
 
-    Write-Log "Removing CNAME Records"
-    $cnameRecords = @(
-        'helloworld'   
-    )
+    # Write-Log "Removing CNAME Records"
+    # $cnameRecords = @(
+    #     'helloworld'   
+    # )
 
-    $cnameRecords | ForEach-Object {
-        Write-Log "Removing CNAME Record: $_"
-        az network dns record-set cname delete -g $dnsResourceGroup -z $zoneName -n $_ -y
-        Confirm-LastExitCode
-    }
+    # $cnameRecords | ForEach-Object {
+    #     Write-Log "Removing CNAME Record: $_"
+    #     az network dns record-set cname delete -g $dnsResourceGroup -z $zoneName -n $_ -y
+    #     Confirm-LastExitCode
+    # }
 
     # TODO: we leave the zone since we didn't create it, in the future it would be nice to automate this portion as well
     # Write-Log "Removing $rootDomainName Zone"

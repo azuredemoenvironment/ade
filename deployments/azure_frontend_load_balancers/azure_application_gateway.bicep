@@ -1,6 +1,7 @@
 // parameters
 param location string
 param logAnalyticsWorkspaceId string
+<<<<<<< HEAD
 param applicationGatewaySubnetId string
 param applicationGatewayPublicIpAddressName string
 param inspectorGadgetWafPolicyName string
@@ -11,11 +12,31 @@ var sslCertificateName = ''
 var sslCertificateData = ''
 var sslCertificateDataPassword = ''
 
+=======
+param sslCertificateName string
+param sslCertificateData string
+param sslCertificateDataPassword string
+param applicationGatewaySubnetId string
+param applicationGatewayPublicIpAddressName string
+param inspectorGadgetAppServiceWafPolicyName string
+param applicationGatewayName string
+param adeAppFrontEndAppServiceFqdn string
+param adeAppFrontEndAppServiceHostName string
+param adeAppApiGatewayAppServiceFqdn string
+param adeAppApiGatewayAppServiceHostName string
+param inspectorGadgetAppServiceFqdn string
+param inspectorGadgetAppServiceHostName string
+param nTierHostName string
+param applicationGatewayManagedIdentity string
+
+// variables
+>>>>>>> origin/dev
 var applicationGatewayFrontendIPConfigurationName = 'applicationGatewayFrontendIPConfiguration'
 var applicationGatewayFrontendPortHttp = 'port_80'
 var applicationGatewayFrontendPortHttps = 'port_443'
 
 var adeAppFrontEndAppServiceBackendPoolName = 'backendPool-ade-frontend'
+<<<<<<< HEAD
 var adeAppFrontEndAppServiceFqdn = ''
 var adeAppFrontEndAppServiceProbeName = ''
 var adeAppFrontEndAppServiceHttpSettingName = ''
@@ -38,6 +59,44 @@ var adeAppApiGatewayAppServiceRuleName = ''
 var adeAppApiGatewayAppServiceRedirectionRuleName = ''
 
 var applicationGatewayUserAssignedManagedIdentity = ''
+=======
+var adeAppFrontEndAppServiceProbeName = 'probe-ade-frontend'
+var adeAppFrontEndAppServiceHttpSettingName = 'httpsetting-ade-frontend'
+var adeAppFrontEndAppServiceHttpListenerName = 'listener-http-ade-frontend'
+var adeAppFrontEndAppServiceHttpsListenerName = 'listener-https-ade-frontend'
+var adeAppFrontEndAppServiceRedirectionConfigName = 'redirectionconfig-ade-frontend'
+var adeAppFrontEndAppServiceRuleName = 'routingrule-ade-frontend'
+var adeAppFrontEndAppServiceRedirectionRuleName = 'routingrule-redirection--ade-frontend'
+
+var adeAppApiGatewayAppServiceBackendPoolName = 'backendPool-ade-apigateway'
+var adeAppApiGatewayAppServiceProbeName = 'probe-ade-apigateway'
+var adeAppApiGatewayAppServiceHttpSettingName = 'httpsetting-ade-apigateway'
+var adeAppApiGatewayAppServiceHttpListenerName = 'listener-http-ade-apigateway'
+var adeAppApiGatewayAppServiceHttpsListenerName = 'listener-https-ade-apigateway'
+var adeAppApiGatewayAppServiceRedirectionConfigName = 'redirectionconfig-ade-apigateway'
+var adeAppApiGatewayAppServiceRuleName = 'routingrule-ade-apigateway'
+var adeAppApiGatewayAppServiceRedirectionRuleName = 'routingrule-redirection--ade-apigateway'
+
+var inspectorGadgetAppServiceWafPolicyRuleName = 'inspectorgadget'
+var inspectorGadgetAppServiceBackendPoolName = 'backendPool-inspectorgadget'
+var inspectorGadgetAppServiceProbeName = 'probe-inspectorgadget'
+var inspectorGadgetAppServiceHttpSettingName = 'httpsetting-inspectorgadget'
+var inspectorGadgetAppServiceHttpListenerName = 'listener-http-inspectorgadget'
+var inspectorGadgetAppServiceHttpsListenerName = 'listener-https-inspectorgadget'
+var inspectorGadgetAppServiceRedirectionConfigName = 'redirectionconfig-inspectorgadget'
+var inspectorGadgetAppServiceRuleName = 'routingrule-inspectorgadget'
+var inspectorGadgetAppServiceRedirectionRuleName = 'routingrule-redirection--inspectorgadget'
+
+var nTierWafPolicyRuleName = 'ntier'
+var nTierBackendPoolName = 'backendPool-ntier'
+var nTierProbeName = 'probe-ntier'
+var nTierHttpSettingName = 'httpsetting-ntier'
+var nTierHttpListenerName = 'listener-http-ntier'
+var nTierHttpsListenerName = 'listener-https-ntier'
+var nTierRedirectionConfigName = 'redirectionconfig-ntier'
+var nTierRuleName = 'routingrule-ntier'
+var nTierRedirectionRuleName = 'routingrule-redirection--ntier'
+>>>>>>> origin/dev
 
 // variables
 var environmentName = 'production'
@@ -109,7 +168,11 @@ resource applicationGatewayPublicIpAddressDiagnostics 'Microsoft.insights/diagno
 
 // resource - waf policy - inspector gadget
 resource inspectorGadgetWafPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies@2020-11-01' = {
+<<<<<<< HEAD
   name: inspectorGadgetWafPolicyName
+=======
+  name: inspectorGadgetAppServiceWafPolicyName
+>>>>>>> origin/dev
   location: location
   tags: {
     environment: environmentName
@@ -119,7 +182,11 @@ resource inspectorGadgetWafPolicy 'Microsoft.Network/ApplicationGatewayWebApplic
   properties: {
     customRules: [
       {
+<<<<<<< HEAD
         name: 'inspectorgadget'
+=======
+        name: inspectorGadgetAppServiceWafPolicyRuleName
+>>>>>>> origin/dev
         priority: 1
         ruleType: 'MatchRule'
         action: 'Allow'
@@ -200,7 +267,11 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
         name: applicationGatewayFrontendIPConfigurationName
         properties: {
           publicIPAddress: {
+<<<<<<< HEAD
             id: applicationGatewayPublicIpAddress.properties.ipAddress
+=======
+            id: applicationGatewayPublicIpAddress.id
+>>>>>>> origin/dev
           }
         }
       }
@@ -240,6 +311,23 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
           ]
         }
       }
+<<<<<<< HEAD
+=======
+      {
+        name: inspectorGadgetAppServiceBackendPoolName
+        properties: {
+          backendAddresses: [
+            {
+              fqdn: inspectorGadgetAppServiceFqdn
+            }
+          ]
+        }
+      }
+      {
+        name: nTierBackendPoolName
+        properties: {}
+      }
+>>>>>>> origin/dev
     ]
     probes: [
       {
@@ -264,6 +352,31 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
           pickHostNameFromBackendHttpSettings: true
         }
       }
+<<<<<<< HEAD
+=======
+      {
+        name: inspectorGadgetAppServiceProbeName
+        properties: {
+          interval: 30
+          path: '/'
+          protocol: 'Http'
+          timeout: 30
+          unhealthyThreshold: 3
+          pickHostNameFromBackendHttpSettings: true
+        }
+      }
+      {
+        name: nTierProbeName
+        properties: {
+          interval: 30
+          path: '/'
+          protocol: 'Http'
+          timeout: 30
+          unhealthyThreshold: 3
+          pickHostNameFromBackendHttpSettings: true
+        }
+      }
+>>>>>>> origin/dev
     ]
     backendHttpSettingsCollection: [
       {
@@ -292,6 +405,35 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
           }
         }
       }
+<<<<<<< HEAD
+=======
+      {
+        name: inspectorGadgetAppServiceHttpSettingName
+        properties: {
+          port: 80
+          protocol: 'Http'
+          cookieBasedAffinity: 'Disabled'
+          requestTimeout: 30
+          pickHostNameFromBackendAddress: true
+          probe: {
+            id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, inspectorGadgetAppServiceProbeName)
+          }
+        }
+      }
+      {
+        name: nTierHttpSettingName
+        properties: {
+          port: 80
+          protocol: 'Http'
+          cookieBasedAffinity: 'Disabled'
+          requestTimeout: 30
+          pickHostNameFromBackendAddress: true
+          probe: {
+            id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, nTierProbeName)
+          }
+        }
+      }
+>>>>>>> origin/dev
     ]
     httpListeners: [
       {
@@ -356,6 +498,77 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
           requireServerNameIndication: false
         }
       }
+<<<<<<< HEAD
+=======
+      {
+        name: inspectorGadgetAppServiceHttpListenerName
+        properties: {
+          firewallPolicy: {
+            id: inspectorGadgetWafPolicy.id
+          }
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, applicationGatewayFrontendIPConfigurationName)
+          }
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, applicationGatewayFrontendPortHttp)
+          }
+          protocol: 'Http'
+          hostName: inspectorGadgetAppServiceHostName
+          requireServerNameIndication: false
+        }
+      }
+      {
+        name: inspectorGadgetAppServiceHttpsListenerName
+        properties: {
+          firewallPolicy: {
+            id: inspectorGadgetWafPolicy.id
+          }
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, applicationGatewayFrontendIPConfigurationName)
+          }
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, applicationGatewayFrontendPortHttps)
+          }
+          protocol: 'Https'
+          sslCertificate: {
+            id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, sslCertificateName)
+          }
+          hostName: inspectorGadgetAppServiceHostName
+          requireServerNameIndication: false
+        }
+      }
+      {
+        name: nTierHttpListenerName
+        properties: {
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, applicationGatewayFrontendIPConfigurationName)
+          }
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, applicationGatewayFrontendPortHttp)
+          }
+          protocol: 'Http'
+          hostName: nTierHostName
+          requireServerNameIndication: false
+        }
+      }
+      {
+        name: nTierHttpsListenerName
+        properties: {
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, applicationGatewayFrontendIPConfigurationName)
+          }
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, applicationGatewayFrontendPortHttps)
+          }
+          protocol: 'Https'
+          sslCertificate: {
+            id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, sslCertificateName)
+          }
+          hostName: nTierHostName
+          requireServerNameIndication: false
+        }
+      }
+>>>>>>> origin/dev
     ]
     redirectConfigurations: [
       {
@@ -376,6 +589,27 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
           }
         }
       }
+<<<<<<< HEAD
+=======
+      {
+        name: inspectorGadgetAppServiceRedirectionConfigName
+        properties: {
+          redirectType: 'Permanent'
+          targetListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, inspectorGadgetAppServiceHttpsListenerName)
+          }
+        }
+      }
+      {
+        name: nTierRedirectionConfigName
+        properties: {
+          redirectType: 'Permanent'
+          targetListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, nTierHttpsListenerName)
+          }
+        }
+      }
+>>>>>>> origin/dev
     ]
     requestRoutingRules: [
       {
@@ -386,7 +620,11 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
             id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, adeAppFrontEndAppServiceHttpsListenerName)
           }
           backendAddressPool: {
+<<<<<<< HEAD
             id: resourceId('Microsoft.Network/backendAddressPools/httpListeners', applicationGatewayName, adeAppFrontEndAppServiceBackendPoolName)
+=======
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, adeAppFrontEndAppServiceBackendPoolName)
+>>>>>>> origin/dev
           }
           backendHttpSettings: {
             id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, adeAppFrontEndAppServiceHttpSettingName)
@@ -405,6 +643,90 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
           }
         }
       }
+<<<<<<< HEAD
+=======
+      {
+        name: adeAppApiGatewayAppServiceRuleName
+        properties: {
+          ruleType: 'Basic'
+          httpListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, adeAppApiGatewayAppServiceHttpsListenerName)
+          }
+          backendAddressPool: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, adeAppApiGatewayAppServiceBackendPoolName)
+          }
+          backendHttpSettings: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, adeAppApiGatewayAppServiceHttpSettingName)
+          }
+        }
+      }
+      {
+        name: adeAppApiGatewayAppServiceRedirectionRuleName
+        properties: {
+          ruleType: 'Basic'
+          httpListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, adeAppApiGatewayAppServiceHttpListenerName)
+          }
+          redirectConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/redirectConfigurations', applicationGatewayName, adeAppApiGatewayAppServiceRedirectionConfigName)
+          }
+        }
+      }
+      {
+        name: inspectorGadgetAppServiceRuleName
+        properties: {
+          ruleType: 'Basic'
+          httpListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, inspectorGadgetAppServiceHttpsListenerName)
+          }
+          backendAddressPool: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, inspectorGadgetAppServiceBackendPoolName)
+          }
+          backendHttpSettings: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, inspectorGadgetAppServiceHttpSettingName)
+          }
+        }
+      }
+      {
+        name: inspectorGadgetAppServiceRedirectionRuleName
+        properties: {
+          ruleType: 'Basic'
+          httpListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, inspectorGadgetAppServiceHttpListenerName)
+          }
+          redirectConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/redirectConfigurations', applicationGatewayName, inspectorGadgetAppServiceRedirectionConfigName)
+          }
+        }
+      }
+      {
+        name: nTierRuleName
+        properties: {
+          ruleType: 'Basic'
+          httpListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, nTierHttpsListenerName)
+          }
+          backendAddressPool: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, nTierBackendPoolName)
+          }
+          backendHttpSettings: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, nTierHttpSettingName)
+          }
+        }
+      }
+      {
+        name: nTierRedirectionRuleName
+        properties: {
+          ruleType: 'Basic'
+          httpListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, nTierHttpListenerName)
+          }
+          redirectConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/redirectConfigurations', applicationGatewayName, nTierRedirectionConfigName)
+          }
+        }
+      }
+>>>>>>> origin/dev
     ]
     webApplicationFirewallConfiguration: {
       enabled: true
@@ -416,7 +738,11 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
+<<<<<<< HEAD
       '${applicationGatewayUserAssignedManagedIdentity}': {}
+=======
+      '${applicationGatewayManagedIdentity}': {}
+>>>>>>> origin/dev
     }
   }
 }
@@ -466,3 +792,9 @@ resource applicationGatewayDiagnostics 'Microsoft.insights/diagnosticSettings@20
     ]
   }
 }
+<<<<<<< HEAD
+=======
+
+// outputs
+output nTierBackendPoolId string = resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, nTierBackendPoolName)
+>>>>>>> origin/dev

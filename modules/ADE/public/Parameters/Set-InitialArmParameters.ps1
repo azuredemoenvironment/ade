@@ -46,6 +46,7 @@ function Set-InitialArmParameters {
         # Generated Parameters
         'aciStorageAccountName'                        = "sa-$aliasRegion-aciwp".replace('-', '')
         'acrName'                                      = $acrName
+<<<<<<< HEAD
         'activityLogDiagnosticsName'                   = 'subscriptionactivitylog'
         'adeInitiativeDefinition'                      = "policy-ade-$aliasRegion-adeinitiative"
         'adminUserName'                                = $resourceUserName
@@ -61,11 +62,22 @@ function Set-InitialArmParameters {
         'inspectorGadgetHostName'                      = "inspectorgadget.$rootDomainName".replace('-', '')
         "inspectorGadgetWafPolicyName"                 = "wafp-$aliasRegion-inspectorgadget"
         "inspectorGadgetWebAppName"                    = "as-$aliasRegion-inspectorgadget".replace('-', '')
+=======
+        'activityLogDiagnosticsName'                   = "subscriptionActivityLog"
+        'adeInitiativeDefinition'                      = "policy-ade-$aliasRegion-adeinitiative"
+        'adminUserName'                                = $resourceUserName
+        'aksClusterDNSName'                            = "aks-$aliasRegion-01-dns"
+        'aksClusterName'                               = "aks-$aliasRegion-01"        
+        'azureActiveDirectoryTenantID'                 = $currentAccount.tenantId
+        'azureActiveDirectoryUserID'                   = $adSignedInUser.objectId   
+        'containerRegistryLoginServer'                 = "$acrName.azurecr.io"    
+>>>>>>> origin/dev
         'keyVaultName'                                 = "kv-ade-$aliasRegion-001"
         'localNetworkGatewayAddressPrefix'             = $localNetworkRange
         'logAnalyticsWorkspaceName'                    = "log-ade-$aliasRegion-001"        
         'nTierHostName'                                = "ntier.$rootDomainName"               
         'sourceAddressPrefix'                          = $sourceAddressPrefix        
+<<<<<<< HEAD
         'sslCertificateName'                           = $rootDomainName
         'trafficManagerProfileDNSName'                 = "tmp-$aliasRegion-helloworld".replace('-', '')
         'trafficManagerProfileName'                    = "tmp-$aliasRegion-helloworld"      
@@ -76,6 +88,22 @@ function Set-InitialArmParameters {
         'containerRegistrySPNName'                     = "spn-ade-$aliasRegion-acr"          
         'githubActionsSPNName'                         = "spn-ade-$aliasRegion-gha"
         'restAPISPNName'                               = "spn-ade-$aliasRegion-restapi"
+=======
+        'sslCertificateName'                           = $rootDomainName    
+
+        # Required for Deploy-AzureGovernance.ps1
+        'applicationGatewayManagedIdentityName'        = "id-ade-$aliasRegion-agw"
+        'containerRegistryManagedIdentityName'         = "id-ade-$aliasRegion-acr"
+        'containerRegistrySPNName'                     = "spn-ade-$aliasRegion-acr"          
+        'githubActionsSPNName'                         = "spn-ade-$aliasRegion-gha"
+        'restAPISPNName'                               = "spn-ade-$aliasRegion-restapi"
+
+        # Required for Deploy-AzureAppServicePlanScaleDown.ps1
+        'appServicePlanName'                           = "plan-ade-$aliasRegion-001"
+
+        # Required for Deploy-AzureDns.ps1
+        'applicationGatewayPublicIPAddressName'        = "pip-ade-$aliasRegion-appgw001"
+>>>>>>> origin/dev
         
         # Resource Group Names
         'adeAppAppServicesResourceGroupName'           = "$primaryRegionResourceGroupNamePrefix-adeappweb"

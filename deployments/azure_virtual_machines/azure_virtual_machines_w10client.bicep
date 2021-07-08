@@ -3,8 +3,11 @@ param location string
 param adminUserName string
 param adminPassword string
 param logAnalyticsWorkspaceId string
+<<<<<<< HEAD
 param logAnalyticsWorkspaceCustomerId string
 param logAnalyticsWorkspaceKey string
+=======
+>>>>>>> origin/dev
 param clientServicesSubnetId string
 param w10ClientNICName string
 param w10ClientPrivateIpAddress string
@@ -79,7 +82,7 @@ resource w10Client 'Microsoft.Compute/virtualMachines@2020-12-01' = {
       imageReference: {
         publisher: 'MicrosoftWindowsDesktop'
         offer: 'Windows-10'
-        sku: 'rs5-pro'
+        sku: '21h1-pro'
         version: 'latest'
       }
       osDisk: {
