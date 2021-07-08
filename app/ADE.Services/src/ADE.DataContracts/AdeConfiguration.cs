@@ -16,7 +16,7 @@ namespace ADE.DataContracts
 
         public string EventHubConnectionString { get; set; }
 
-        public string EventHubNameSpace { get; set; }
+        public string EventHubName { get; set; }
 
         public string EventIngestorServiceUri { get; set; }
 
