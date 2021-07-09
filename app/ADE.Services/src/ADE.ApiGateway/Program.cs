@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace ADE.ApiGateway
 {
@@ -9,7 +10,15 @@ namespace ADE.ApiGateway
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.ConfigureAppConfiguration(config =>
+                    {
+                        var settings = config.Build();
+                        var connection = settings.GetConnectionString("AppConfig");
+                        if(!string.IsNullOrWhiteSpace(connection))
+                        {
+                            config.AddAzureAppConfiguration(connection, true);
+                        }
+                    }).UseStartup<Startup>();
                 });
 
         public static void Main(string[] args)

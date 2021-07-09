@@ -1,5 +1,6 @@
 using ADE.ServiceBase;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 namespace ADE.DataIngestorService
@@ -10,7 +11,15 @@ namespace ADE.DataIngestorService
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.ConfigureAppConfiguration(config =>
+                    {
+                        var settings = config.Build();
+                        var connection = settings.GetConnectionString("AppConfig");
+                        if(!string.IsNullOrWhiteSpace(connection))
+                        {
+                            config.AddAzureAppConfiguration(connection, true);
+                        }
+                    }).UseStartup<Startup>();
                 });
 
         public static void Main(string[] args) =>
