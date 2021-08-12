@@ -37,6 +37,7 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureResourceGroups $armParameters
     Deploy-AzureGovernance $armParameters
     Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
+    Deploy-AppConfig $armParameters
     Deploy-AzureNetworking $armParameters
 
     # Data Services
