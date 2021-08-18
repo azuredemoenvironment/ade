@@ -18,4 +18,8 @@
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
   </ItemGroup>
+
+  <Target Name="CreateLocalSettings" BeforeTargets="BeforeBuild">
+    <Copy SourceFiles="host.json" DestinationFiles="local.settings.json" Condition="!Exists('local.settings.json')" />
+  </Target>
 </Project>

@@ -16,4 +16,8 @@
     <ProjectReference Include="..\ADE.DataContracts\ADE.DataContracts.csproj" />
   </ItemGroup>
 
+  <Target Name="CreateLocalAppSettings" BeforeTargets="BeforeBuild">
+    <Copy SourceFiles="appsettings.json" DestinationFiles="appsettings.Development.json" Condition="!Exists('appsettings.Development.json')" />
+  </Target>
+
 </Project>

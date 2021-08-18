@@ -1,12 +1,9 @@
+.env
+.metals
 *.certificate.ps1
 *.key.azcli
 *.parameters.json
 *.personal.*
-data/**
-.metals
-<<<<<<< HEAD
 /.vs
-=======
-.env
+data/**
 test/ADE.LoadTests/gatling/results
->>>>>>> origin/dev

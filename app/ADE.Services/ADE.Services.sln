@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADE.ServiceBase", "src\ADE.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADE.EventIngestorService", "src\ADE.EventIngestorService\ADE.EventIngestorService.csproj", "{FA177C92-1E85-4555-B948-6B48797652DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADE.EventDispatcher", "ADE.EventDispatcher\ADE.EventDispatcher.csproj", "{42FE432F-B1E6-4A87-8A46-1BC360F1DDC5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADE.EventDispatcher", "src\ADE.EventDispatcher\ADE.EventDispatcher.csproj", "{42FE432F-B1E6-4A87-8A46-1BC360F1DDC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
