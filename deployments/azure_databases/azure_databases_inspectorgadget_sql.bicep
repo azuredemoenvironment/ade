@@ -24,11 +24,24 @@ resource inspectorGadgetSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
     costCenter: costCenterName
   }
   properties: {
+<<<<<<< HEAD
+=======
     publicNetworkAccess: 'Disabled'
+>>>>>>> origin/dev
     administratorLogin: adminUserName
     administratorLoginPassword: adminPassword
     version: '12.0'
   }
+<<<<<<< HEAD
+  resource sqlServerFirewallRules 'firewallRules' = {
+    name: 'AllowWindowsAzureIps'
+    properties: {
+      startIpAddress: '0.0.0.0'
+      endIpAddress: '0.0.0.0'
+    }
+  }
+=======
+>>>>>>> origin/dev
 }
 
 // resource - sql database - inspectorGadgetSqlDatabase
