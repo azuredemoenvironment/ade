@@ -63,18 +63,34 @@ function Deploy-AzureDemoEnvironment {
 
     # Frontend Load Balancers
     ###################################
+<<<<<<< HEAD
+    # Deploy-AzureApplicationGateway $armParameters
+    # Dedicated Resource Group
+=======
     Deploy-AzureFrontendLoadBalancers $armParameters
+>>>>>>> origin/dev
     # Deploy-AzureFrontDoor $armParameters
     # Dedicated Resource Group
     
     # Service Cleanup
     ###################################
+<<<<<<< HEAD
+    # Deploy-AzureAppServicePlanScaleDown $armParameters 
+
+    # Additional Core Services
+    ###################################
+    # Deploy-AzureAlerts $armParameters
+    # Existing Resource Group
+    # Deploy-AzureDns $armParameters
+    # Existing Resource Group
+=======
     Deploy-AzureAppServicePlanScaleDown $armParameters 
 
     # Additional Core Services
     ###################################
     Deploy-AzureAlerts $armParameters
     Deploy-AzureDns $armParameters
+>>>>>>> origin/dev
 
     $stopwatch.Stop()
     $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)

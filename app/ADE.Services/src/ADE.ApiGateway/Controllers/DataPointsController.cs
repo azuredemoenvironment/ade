@@ -40,7 +40,26 @@ namespace ADE.ApiGateway.Controllers
             var request = new RestRequest("dataingestion", DataFormat.Json);
             request.AddJsonBody(data);
 
-            return await client.PostAsync<UserDataPoint>(request);
+            var returnedData = await client.PostAsync<UserDataPoint>(request);
+
+            var eventRestClient = new RestClient(_adeConfiguration.EventIngestorServiceUri);
+
+            var eventRequest = new RestRequest("eventingestor", DataFormat.Json);
+
+            var facilityEvent = new DataEvent
+            {
+                EventDate = returnedData.CreatedAt,
+                Topic = returnedData.StringValue,
+                TenantId = returnedData.DataSource,
+                InUse = true,
+                UserId = returnedData.UserId.ToString()
+            };
+
+            eventRequest.AddJsonBody(facilityEvent);
+
+            await eventRestClient.PostAsync<DataEvent>(eventRequest);
+
+            return returnedData;
         }
     }
 }
