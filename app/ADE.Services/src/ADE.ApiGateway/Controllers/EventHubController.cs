@@ -20,14 +20,14 @@ namespace ADE.ApiGateway.Controllers
         }
 
         [HttpPost]
-        public async Task<FacilityEvent> PostAsync([FromBody] FacilityEvent data)
+        public async Task<DataEvent> PostAsync([FromBody] DataEvent data)
         {
             var client = new RestClient(_adeConfiguration.EventIngestorServiceUri);
 
             var request = new RestRequest("eventingestor", DataFormat.Json);
             request.AddJsonBody(data);
 
-            return await client.PostAsync<FacilityEvent>(request);
+            return await client.PostAsync<DataEvent>(request);
         }
     }
 }

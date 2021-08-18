@@ -25,7 +25,7 @@ namespace ADE.EventIngestorService.Controllers
             _logger = logger;
             _adeConfiguration = adeConfiguration;
         }
-        private static EventData CreateEventData(FacilityEvent data)
+        private static EventData CreateEventData(DataEvent data)
         {
             var dataAsJson = Newtonsoft.Json.JsonConvert.SerializeObject(data);
             var eventData = new EventData(Encoding.UTF8.GetBytes(dataAsJson));
@@ -33,11 +33,11 @@ namespace ADE.EventIngestorService.Controllers
         }
 
         [HttpPost]
-        public async Task<FacilityEvent> PostAsync([FromBody] FacilityEvent facilityEvent)
+        public async Task<DataEvent> PostAsync([FromBody] DataEvent dataEvent)
         {
             // TODO: Sanitize, append user info
-            facilityEvent.Id = Guid.NewGuid();
-            facilityEvent.CreatedAt = DateTime.UtcNow;
+            dataEvent.Id = Guid.NewGuid();
+            dataEvent.CreatedAt = DateTime.UtcNow;
             //TODO: create some common things for the contracts to keep things DRY
             //_telemetry.TrackEvent("Event Ingest", facilityEvent.ToDictionary());
 
@@ -51,14 +51,14 @@ namespace ADE.EventIngestorService.Controllers
                     using EventDataBatch eventBatch = await producerClient.CreateBatchAsync();
 
                     // Add events to the batch. An event is a represented by a collection of bytes and metadata. 
-                    eventBatch.TryAdd(CreateEventData(facilityEvent));
+                    eventBatch.TryAdd(CreateEventData(dataEvent));
 
 
                     // Use the producer client to send the batch of events to the event hub
                     await producerClient.SendAsync(eventBatch);
                     Console.WriteLine("A batch of 3 events has been published.");
 
-                    return facilityEvent;
+                    return dataEvent;
                 }
             }
             catch(Exception ex) {
