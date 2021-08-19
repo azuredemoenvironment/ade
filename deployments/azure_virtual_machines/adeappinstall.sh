@@ -14,7 +14,8 @@ APPCONFIG_CONNECTIONSTRING="$3"
 ADE_PACKAGE="$4"
 
 # These are for consistency
-STARTUP_SCRIPT_PATH="/etc/systemd/system/ade.service"
+STARTUP_SCRIPT_PATH="/etc/systemd/system/ade.sh"
+STARTUP_SERVICE_PATH="/etc/systemd/system/ade.service"
 
 ##########################################
 # Pre-reqs
@@ -46,13 +47,24 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 # Create Startup Script
 ##########################################
 
-echo "Creating Startup Script"
+echo "Creating Startup Service and Script"
+
+sudo tee $STARTUP_SERVICE_PATH << EOF > /dev/null
+[Unit]
+Description=ADE
+
+[Service]
+ExecStart=$STARTUP_SCRIPT_PATH
+
+[Install]
+WantedBy=multi-user.target
+EOF
 
 sudo rm -f $STARTUP_SCRIPT_PATH
 sudo touch $STARTUP_SCRIPT_PATH
 sudo chmod 766 $STARTUP_SCRIPT_PATH
 
-sudo tee -a $STARTUP_SCRIPT_PATH << EOF
+sudo tee -a $STARTUP_SCRIPT_PATH << EOF > /dev/null
 echo "Logging Into ACR"
 
 sudo docker login $ACR_SERVER.azurecr.io --username $ACR_SERVER --password "$ACR_PASSWORD"
@@ -60,7 +72,7 @@ EOF
 
 if [ "$ADE_PACKAGE" = "frontend" ]
 then
-    sudo tee -a $STARTUP_SCRIPT_PATH << EOF
+    sudo tee -a $STARTUP_SCRIPT_PATH << EOF > /dev/null
 echo "Starting Frontend ADE Service"
 
 sudo docker run -d --restart unless-stopped -p 80:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" acradebrmareus001.azurecr.io/ade-frontend:latest
@@ -69,7 +81,7 @@ fi
 
 if [ "$ADE_PACKAGE" = "backend" ]
 then
-    sudo tee -a $STARTUP_SCRIPT_PATH << EOF
+    sudo tee -a $STARTUP_SCRIPT_PATH << EOF > /dev/null
 echo "Starting Backend ADE Services"
 
 # external api gateway
