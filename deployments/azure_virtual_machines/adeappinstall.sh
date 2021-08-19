@@ -8,10 +8,10 @@ set -e
 ##########################################
 
 # These are from parameters passed in
-$ACR_SERVER=$1
-$ACR_PASSWORD=$2
-$APPCONFIG_CONNECTIONSTRING=$3
-$ADE_PACKAGE=$4
+$ACR_SERVER="$1"
+$ACR_PASSWORD="$2"
+$APPCONFIG_CONNECTIONSTRING="$3"
+$ADE_PACKAGE="$4"
 
 # These are for consistency
 $STARTUP_SCRIPT_PATH="/etc/systemd/system/ade.service"
