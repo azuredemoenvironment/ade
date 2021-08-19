@@ -8,14 +8,13 @@ set -e
 ##########################################
 
 # These are from parameters passed in
-$ACR_SERVER="$1"
-$ACR_PASSWORD="$2"
-$APPCONFIG_CONNECTIONSTRING="$3"
-$ADE_PACKAGE="$4"
+ACR_SERVER="$1"
+ACR_PASSWORD="$2"
+APPCONFIG_CONNECTIONSTRING="$3"
+ADE_PACKAGE="$4"
 
 # These are for consistency
-$STARTUP_SCRIPT_PATH="/etc/systemd/system/ade.service"
-
+STARTUP_SCRIPT_PATH="/etc/systemd/system/ade.service"
 
 ##########################################
 # Pre-reqs
@@ -51,7 +50,6 @@ echo "Creating Startup Script"
 
 sudo touch $STARTUP_SCRIPT_PATH
 sudo chmod 766 $STARTUP_SCRIPT_PATH
-
 
 sudo tee -a $STARTUP_SCRIPT_PATH << EOF
 echo "Logging Into ACR"
