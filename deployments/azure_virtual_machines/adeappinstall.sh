@@ -57,15 +57,17 @@ echo "Logging Into ACR"
 sudo docker login $ACR_SERVER.azurecr.io --username $ACR_SERVER --password "$ACR_PASSWORD"
 EOF
 
-if($ADE_PACKAGE == "frontend") {
+if $ADE_PACKAGE = "frontend"
+then
     sudo tee -a $STARTUP_SCRIPT_PATH << EOF
 echo "Starting Frontend ADE Service"
 
 sudo docker run -d --restart unless-stopped -p 80:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" acradebrmareus001.azurecr.io/ade-frontend:latest
 EOF
-}
+fi
 
-if($ADE_PACKAGE == "backend") {
+if $ADE_PACKAGE = "backend")
+then
     sudo tee -a $STARTUP_SCRIPT_PATH << EOF
 echo "Starting Backend ADE Services"
 
@@ -78,7 +80,7 @@ sudo docker run -d --restart unless-stopped -p 5001:80 $ACR_SERVER.azurecr.io/ad
 sudo docker run -d --restart unless-stopped -p 5002:80 $ACR_SERVER.azurecr.io/ade-userservice:latest
 sudo docker run -d --restart unless-stopped -p 5003:80 $ACR_SERVER.azurecr.io/ade-eventingestorservice:latest
 EOF
-}
+fi
 
 echo "Enabling ADE Docker Services on Startup"
 sudo systemctl enable ade
