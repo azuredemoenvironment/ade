@@ -48,6 +48,7 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
 echo "Creating Startup Script"
 
+sudo rm -f $STARTUP_SCRIPT_PATH
 sudo touch $STARTUP_SCRIPT_PATH
 sudo chmod 766 $STARTUP_SCRIPT_PATH
 
