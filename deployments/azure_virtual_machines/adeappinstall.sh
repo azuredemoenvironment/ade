@@ -57,7 +57,7 @@ echo "Logging Into ACR"
 sudo docker login $ACR_SERVER.azurecr.io --username $ACR_SERVER --password "$ACR_PASSWORD"
 EOF
 
-if "$ADE_PACKAGE" = "frontend"
+if [ "$ADE_PACKAGE" = "frontend" ]
 then
     sudo tee -a $STARTUP_SCRIPT_PATH << EOF
 echo "Starting Frontend ADE Service"
@@ -66,7 +66,7 @@ sudo docker run -d --restart unless-stopped -p 80:80 -e CONNECTIONSTRINGS__APPCO
 EOF
 fi
 
-if "$ADE_PACKAGE" = "backend"
+if [ "$ADE_PACKAGE" = "backend" ]
 then
     sudo tee -a $STARTUP_SCRIPT_PATH << EOF
 echo "Starting Backend ADE Services"
