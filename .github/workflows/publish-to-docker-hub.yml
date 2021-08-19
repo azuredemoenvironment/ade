@@ -23,34 +23,34 @@ jobs:
         run: docker-compose build
 
       - name: Push ade-apigateway Docker Image to Docker Hub
-        run: docker tag "ade-apigateway" "azuredemoenvironment/ade-apigateway:${{ github.run_id }}-${{ github.run_numbe r}}" && docker push "azuredemoenvironment/ade-apigateway:${{ github.run_id }}-${{ github.run_number }}"
+        run: docker tag "ade-apigateway" "azuredemoenvironment/ade-apigateway:${{ github.run_id }}-${{ github.run_number }}" && docker push "azuredemoenvironment/ade-apigateway:${{ github.run_id }}-${{ github.run_number }}"
 
       - name: Push ade-dataingestorservice Docker Image to Docker Hub
-        run: docker tag "ade-dataingestorservice" "azuredemoenvironment/ade-dataingestorservice:${{ github.run_id }}-${{ github.run_numbe r}}" && docker push "azuredemoenvironment/ade-dataingestorservice:${{ github.run_id }}-${{ github.run_number }}"
+        run: docker tag "ade-dataingestorservice" "azuredemoenvironment/ade-dataingestorservice:${{ github.run_id }}-${{ github.run_number }}" && docker push "azuredemoenvironment/ade-dataingestorservice:${{ github.run_id }}-${{ github.run_number }}"
 
       - name: Push ade-datareporterservice Docker Image to Docker Hub
-        run: docker tag "ade-datareporterservice" "azuredemoenvironment/ade-datareporterservice:${{ github.run_id }}-${{ github.run_numbe r}}" && docker push "azuredemoenvironment/ade-datareporterservice:${{ github.run_id }}-${{ github.run_number }}"
+        run: docker tag "ade-datareporterservice" "azuredemoenvironment/ade-datareporterservice:${{ github.run_id }}-${{ github.run_number }}" && docker push "azuredemoenvironment/ade-datareporterservice:${{ github.run_id }}-${{ github.run_number }}"
 
       - name: Push ade-eventingestorservice Docker Image to Docker Hub
-        run: docker tag "ade-eventingestorservice" "azuredemoenvironment/ade-eventingestorservice:${{ github.run_id }}-${{ github.run_numbe r}}" && docker push "azuredemoenvironment/ade-eventingestorservice:${{ github.run_id }}-${{ github.run_number }}"
+        run: docker tag "ade-eventingestorservice" "azuredemoenvironment/ade-eventingestorservice:${{ github.run_id }}-${{ github.run_number }}" && docker push "azuredemoenvironment/ade-eventingestorservice:${{ github.run_id }}-${{ github.run_number }}"
 
       - name: Push ade-frontend Docker Image to Docker Hub
-        run: docker tag "ade-frontend" "azuredemoenvironment/ade-frontend:${{ github.run_id }}-${{ github.run_numbe r}}" && docker push "azuredemoenvironment/ade-frontend:${{ github.run_id }}-${{ github.run_number }}"
+        run: docker tag "ade-frontend" "azuredemoenvironment/ade-frontend:${{ github.run_id }}-${{ github.run_number }}" && docker push "azuredemoenvironment/ade-frontend:${{ github.run_id }}-${{ github.run_number }}"
 
       - name: Push ade-loadtesting-gatling Docker Image to Docker Hub
-        run: docker tag "ade-loadtesting-gatling" "azuredemoenvironment/ade-loadtesting-gatling:${{ github.run_id }}-${{ github.run_numbe r}}" && docker push "azuredemoenvironment/ade-loadtesting-gatling:${{ github.run_id }}-${{ github.run_number }}"
+        run: docker tag "ade-loadtesting-gatling" "azuredemoenvironment/ade-loadtesting-gatling:${{ github.run_id }}-${{ github.run_number }}" && docker push "azuredemoenvironment/ade-loadtesting-gatling:${{ github.run_id }}-${{ github.run_number }}"
 
       - name: Push ade-loadtesting-grafana Docker Image to Docker Hub
-        run: docker tag "ade-loadtesting-grafana" "azuredemoenvironment/ade-loadtesting-grafana:${{ github.run_id }}-${{ github.run_numbe r}}" && docker push "azuredemoenvironment/ade-loadtesting-grafana:${{ github.run_id }}-${{ github.run_number }}"
+        run: docker tag "ade-loadtesting-grafana" "azuredemoenvironment/ade-loadtesting-grafana:${{ github.run_id }}-${{ github.run_number }}" && docker push "azuredemoenvironment/ade-loadtesting-grafana:${{ github.run_id }}-${{ github.run_number }}"
 
       - name: Push ade-loadtesting-influxdb Docker Image to Docker Hub
-        run: docker tag "ade-loadtesting-influxdb" "azuredemoenvironment/ade-loadtesting-influxdb:${{ github.run_id }}-${{ github.run_numbe r}}" && docker push "azuredemoenvironment/ade-loadtesting-influxdb:${{ github.run_id }}-${{ github.run_number }}"
+        run: docker tag "ade-loadtesting-influxdb" "azuredemoenvironment/ade-loadtesting-influxdb:${{ github.run_id }}-${{ github.run_number }}" && docker push "azuredemoenvironment/ade-loadtesting-influxdb:${{ github.run_id }}-${{ github.run_number }}"
 
       - name: Push ade-loadtesting-redis Docker Image to Docker Hub
-        run: docker tag "ade-loadtesting-redis" "azuredemoenvironment/ade-loadtesting-redis:${{ github.run_id }}-${{ github.run_numbe r}}" && docker push "azuredemoenvironment/ade-loadtesting-redis:${{ github.run_id }}-${{ github.run_number }}"
+        run: docker tag "ade-loadtesting-redis" "azuredemoenvironment/ade-loadtesting-redis:${{ github.run_id }}-${{ github.run_number }}" && docker push "azuredemoenvironment/ade-loadtesting-redis:${{ github.run_id }}-${{ github.run_number }}"
 
       - name: Push ade-userservice Docker Image to Docker Hub
-        run: docker tag "ade-userservice" "azuredemoenvironment/ade-userservice:${{ github.run_id }}-${{ github.run_numbe r}}" && docker push "azuredemoenvironment/ade-userservice:${{ github.run_id }}-${{ github.run_number }}"
+        run: docker tag "ade-userservice" "azuredemoenvironment/ade-userservice:${{ github.run_id }}-${{ github.run_number }}" && docker push "azuredemoenvironment/ade-userservice:${{ github.run_id }}-${{ github.run_number }}"
 
       - name: Push ade Docker Image to Docker Hub
-        run: docker tag "ade" "azuredemoenvironment/ade:${{ github.run_id }}-${{ github.run_numbe r}}" && docker push "azuredemoenvironment/ade:${{ github.run_id }}-${{ github.run_number }}"
+        run: docker tag "ade" "azuredemoenvironment/ade:${{ github.run_id }}-${{ github.run_number }}" && docker push "azuredemoenvironment/ade:${{ github.run_id }}-${{ github.run_number }}"

@@ -4,13 +4,9 @@ targetScope = 'subscription'
 // parameters
 param defaultPrimaryRegion string
 param aliasRegion string
-<<<<<<< HEAD
-param appServicePlanResourceGroupName string
-=======
 param rootDomainName string
 param appServicePlanResourceGroupName string
 param appServicePlanName string
->>>>>>> origin/dev
 param adeAppAppServicesResourceGroupName string
 param adeAppSqlResourceGroupName string
 param inspectorGadgetResourceGroupName string
@@ -103,11 +99,6 @@ resource azureAppServicePrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-0
 }
 
 // module - app service plan
-<<<<<<< HEAD
-// variables
-var appServicePlanName = 'plan-ade-${aliasRegion}-001'
-=======
->>>>>>> origin/dev
 // module deployment
 module appServicePlanModule 'azure_app_service_plan.bicep' = {
   scope: resourceGroup(appServicePlanResourceGroupName)
@@ -121,11 +112,7 @@ module appServicePlanModule 'azure_app_service_plan.bicep' = {
 // module - inspectorGadgetAppService
 // variables
 var inspectorGadgetAppServiceName = replace('app-ade-${aliasRegion}-inspectorgadget', '-', '')
-<<<<<<< HEAD
-var webAppRepoURL = 'https://github.com/jelledruyts/InspectorGadget/'
-=======
 var inspectorGadgetDockerImage = 'DOCKER|jelledruyts/inspectorgadget:latest'
->>>>>>> origin/dev
 // // module deployment
 module inspectorGadgetAppServiceModule 'azure_app_services_inspectorgadget.bicep' = {
   scope: resourceGroup(inspectorGadgetResourceGroupName)
@@ -137,35 +124,21 @@ module inspectorGadgetAppServiceModule 'azure_app_services_inspectorgadget.bicep
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     vnetIntegrationSubnetId: virtualNetwork002::vnetIntegrationSubnet.id
     inspectorGadgetSqlServerFQDN: inspectorGadgetSqlServer.properties.fullyQualifiedDomainName
-<<<<<<< HEAD
-    inspectorGadgetSqlServerName: inspectorGadgetSqlServerName
-    inspectorGadgetSqlDatabaseName: inspectorGadgetSqlDatabase.name
-    inspectorGadgetAppServiceName: inspectorGadgetAppServiceName
-=======
     inspectorGadgetSqlDatabaseName: inspectorGadgetSqlDatabase.name
     inspectorGadgetAppServiceName: inspectorGadgetAppServiceName
     inspectorGadgetDockerImage: inspectorGadgetDockerImage
->>>>>>> origin/dev
     appServicePlanId: appServicePlanModule.outputs.appServicePlanId
   }
 }
 
 // module - adeApp
 // variables
-<<<<<<< HEAD
-var adeAppFrontEndAppServiceName = replace('app-ade-${aliasRegion}-ade-frontend', '-', '') // public
-var adeAppApiGatewayAppServiceName = replace('app-ade-${aliasRegion}-ade-apigateway', '-', '') // public
-var adeAppUserServiceAppServiceName = replace('app-ade-${aliasRegion}-ade-userservice', '-', '')
-var adeAppDataIngestorServiceAppServiceName = replace('app-ade-${aliasRegion}-ade-dataingestorservice', '-', '')
-var adeAppDataReporterServiceAppServiceName = replace('app-ade-${aliasRegion}-ade-datareporterservice', '-', '')
-=======
 var adeAppFrontEndAppServiceName = replace('app-ade-${aliasRegion}-ade-frontend', '-', '')
 var adeAppApiGatewayAppServiceName = replace('app-ade-${aliasRegion}-ade-apigateway', '-', '')
 var adeAppUserServiceAppServiceName = replace('app-ade-${aliasRegion}-ade-userservice', '-', '')
 var adeAppDataIngestorServiceAppServiceName = replace('app-ade-${aliasRegion}-ade-dataingestorservice', '-', '')
 var adeAppDataReporterServiceAppServiceName = replace('app-ade-${aliasRegion}-ade-datareporterservice', '-', '')
 var adeAppApiGatewayAppServiceHostName = 'ade-apigateway.${rootDomainName}'
->>>>>>> origin/dev
 var adeAppFrontEndAppServiceImageName = 'ade-frontend:latest'
 var adeAppApiGatewayAppServiceImageName = 'ade-apigateway:latest'
 var adeAppUserServiceAppServiceImageName = 'ade-userservice:latest'
@@ -190,10 +163,6 @@ module adeAppAppServiceModule 'azure_app_services_adeapp.bicep' = {
     azureContainerRegistryURL: azureContainerRegistry.properties.loginServer
     azureContainerRegistryCredentials: first(listCredentials(azureContainerRegistry.id, azureContainerRegistry.apiVersion).passwords).value
     adeAppSqlServerFQDN: adeAppSqlServer.properties.fullyQualifiedDomainName
-<<<<<<< HEAD
-    adeAppSqlServerName: adeAppSqlServerName
-=======
->>>>>>> origin/dev
     adeAppSqlDatabaseName: adeAppSqlDatabase.name
     azureAppServicePrivateDnsZoneId: azureAppServicePrivateDnsZone.id
     appServicePlanId: appServicePlanModule.outputs.appServicePlanId
@@ -202,10 +171,7 @@ module adeAppAppServiceModule 'azure_app_services_adeapp.bicep' = {
     adeAppUserServiceAppServiceName: adeAppUserServiceAppServiceName
     adeAppDataIngestorServiceAppServiceName: adeAppDataIngestorServiceAppServiceName
     adeAppDataReporterServiceAppServiceName: adeAppDataReporterServiceAppServiceName
-<<<<<<< HEAD
-=======
     adeAppApiGatewayAppServiceHostName: adeAppApiGatewayAppServiceHostName
->>>>>>> origin/dev
     adeAppFrontEndAppServiceImageName: adeAppFrontEndAppServiceImageName
     adeAppApiGatewayAppServiceImageName: adeAppApiGatewayAppServiceImageName
     adeAppUserServiceAppServiceImageName: adeAppUserServiceAppServiceImageName

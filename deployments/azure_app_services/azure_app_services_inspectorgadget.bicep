@@ -4,17 +4,10 @@ param adminUserName string
 param adminPassword string
 param logAnalyticsWorkspaceId string
 param vnetIntegrationSubnetId string
-<<<<<<< HEAD
-param inspectorGadgetSqlServerName string
-param inspectorGadgetSqlServerFQDN string
-param inspectorGadgetSqlDatabaseName string
-param inspectorGadgetAppServiceName string
-=======
 param inspectorGadgetSqlServerFQDN string
 param inspectorGadgetSqlDatabaseName string
 param inspectorGadgetAppServiceName string
 param inspectorGadgetDockerImage string
->>>>>>> origin/dev
 param appServicePlanId string
 
 // variables
@@ -37,11 +30,7 @@ resource inspectorGadgetAppService 'Microsoft.Web/sites@2020-12-01' = {
     httpsOnly: false
 
     siteConfig: {
-<<<<<<< HEAD
-      linuxFxVersion: 'DOCKER|jelledruyts/inspectorgadget:latest'
-=======
       linuxFxVersion: inspectorGadgetDockerImage
->>>>>>> origin/dev
       appSettings: [
         {
           name: 'DefaultSqlConnectionSqlConnectionString'

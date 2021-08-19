@@ -3,10 +3,23 @@
 set -x
 set -e
 
+##########################################
+# Setup variables
+##########################################
+
+# These are from parameters passed in
 $ACR_SERVER=$1
 $ACR_PASSWORD=$2
-$ADE_PACKAGE=$3
-$ADE_BACKEND_URI=$4
+$APPCONFIG_CONNECTIONSTRING=$3
+$ADE_PACKAGE=$4
+
+# These are for consistency
+$STARTUP_SCRIPT_PATH="/etc/systemd/system/ade.service"
+
+
+##########################################
+# Pre-reqs
+##########################################
 
 echo "Installing Prerequisites"
 
@@ -30,26 +43,54 @@ echo \
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
-echo "Logging into ACR"
+##########################################
+# Create Startup Script
+##########################################
 
-sudo docker login $ACR_LOGIN.azurecr.io --username acradebrmareus001 --password "fH5=cbXIu47TPlW1izjiNP3nkGTNuDOk"
+echo "Creating Startup Script"
 
-echo "Starting Container from ACR Image"
+sudo touch $STARTUP_SCRIPT_PATH
+sudo chmod 766 $STARTUP_SCRIPT_PATH
+
+
+sudo tee -a $STARTUP_SCRIPT_PATH << EOF
+echo "Logging Into ACR"
+
+sudo docker login $ACR_SERVER.azurecr.io --username $ACR_SERVER --password "$ACR_PASSWORD"
+EOF
 
 if($ADE_PACKAGE == "frontend") {
-    # TODO: fix the backend uri
-    sudo docker run -d --restart unless-stopped -p 80:80 -e BACKEND_URI=$ADE_BACKEND_URI acradebrmareus001.azurecr.io/ade-frontend:latest
+    sudo tee -a $STARTUP_SCRIPT_PATH << EOF
+echo "Starting Frontend ADE Service"
+
+sudo docker run -d --restart unless-stopped -p 80:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" acradebrmareus001.azurecr.io/ade-frontend:latest
+EOF
 }
 
 if($ADE_PACKAGE == "backend") {
-    # external api gateway
-    sudo docker run -d --restart unless-stopped -p 80:80 acradebrmareus001.azurecr.io/ade-apigateway:latest
+    sudo tee -a $STARTUP_SCRIPT_PATH << EOF
+echo "Starting Backend ADE Services"
 
-    # local docker network services
-    sudo docker run -d --restart unless-stopped acradebrmareus001.azurecr.io/ade-dataingestorservice:latest
-    sudo docker run -d --restart unless-stopped acradebrmareus001.azurecr.io/ade-datareporterservice:latest
-    sudo docker run -d --restart unless-stopped acradebrmareus001.azurecr.io/ade-userservice:latest
+# external api gateway
+sudo docker run -d --restart unless-stopped -p 80:80 $ACR_SERVER.azurecr.io/ade-apigateway:latest
+
+# local docker network services
+sudo docker run -d --restart unless-stopped -p 5000:80 $ACR_SERVER.azurecr.io/ade-dataingestorservice:latest
+sudo docker run -d --restart unless-stopped -p 5001:80 $ACR_SERVER.azurecr.io/ade-datareporterservice:latest
+sudo docker run -d --restart unless-stopped -p 5002:80 $ACR_SERVER.azurecr.io/ade-userservice:latest
+sudo docker run -d --restart unless-stopped -p 5003:80 $ACR_SERVER.azurecr.io/ade-eventingestorservice:latest
+EOF
 }
 
+echo "Enabling ADE Docker Services on Startup"
+sudo systemctl enable ade
+
+##########################################
+# Launch Script
+##########################################
+
+echo "Starting ADE Docker Services"
+
+sudo systemctl start ade
 
 echo "Done!"
