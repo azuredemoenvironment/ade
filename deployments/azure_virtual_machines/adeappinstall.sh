@@ -42,6 +42,7 @@ $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev
 
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+sudo apt autoremove -y
 
 ##########################################
 # Create Startup Script
@@ -75,7 +76,7 @@ then
     sudo tee -a $STARTUP_SCRIPT_PATH << EOF > /dev/null
 echo "Starting Frontend ADE Service"
 
-sudo docker run -d --restart unless-stopped -p 80:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-frontend:latest
+sudo docker run --name "ade-frontend" -d --restart unless-stopped -p 80:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-frontend:latest
 EOF
 fi
 
@@ -85,7 +86,7 @@ then
 echo "Starting Backend ADE Services"
 
 # external api gateway - note, we override the connection info to our local docker instances
-sudo docker run -d --restart unless-stopped -p 80:80 \
+sudo docker run --name "ade-apigateway" -d --restart unless-stopped -p 80:80 \
     -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" \
     -e ADE__DATAINGESTORSERVICEURI="http://localhost:5000" \
     -e ADE__DATAREPORTERSERVICEURI="http://localhost:5001" \
@@ -94,10 +95,10 @@ sudo docker run -d --restart unless-stopped -p 80:80 \
     $ACR_SERVER.azurecr.io/ade-apigateway:latest
 
 # local docker network services
-sudo docker run -d --restart unless-stopped -p 5000:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-dataingestorservice:latest
-sudo docker run -d --restart unless-stopped -p 5001:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-datareporterservice:latest
-sudo docker run -d --restart unless-stopped -p 5002:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-userservice:latest
-sudo docker run -d --restart unless-stopped -p 5003:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-eventingestorservice:latest
+sudo docker run --name "ade-dataingestorservice" -d --restart unless-stopped -p 5000:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-dataingestorservice:latest
+sudo docker run --name "ade-datareporterservice" -d --restart unless-stopped -p 5001:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-datareporterservice:latest
+sudo docker run --name "ade-userservice" -d --restart unless-stopped -p 5002:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-userservice:latest
+sudo docker run --name "ade-eventingestorservice" -d --restart unless-stopped -p 5003:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-eventingestorservice:latest
 EOF
 fi
 
