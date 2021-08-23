@@ -86,12 +86,12 @@ then
 echo "Starting Backend ADE Services"
 
 # external api gateway - note, we override the connection info to our local docker instances
-sudo docker run --name "ade-apigateway" -d --restart unless-stopped -p 80:80 \
-    -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" \
-    -e ADE__DATAINGESTORSERVICEURI="http://localhost:5000" \
-    -e ADE__DATAREPORTERSERVICEURI="http://localhost:5001" \
-    -e ADE__EVENTINGESTORSERVICEURI="http://localhost:5002" \
-    -e ADE__USERSERVICEURI="http://localhost:5003" \
+sudo docker run --name "ade-apigateway" -d --restart unless-stopped -p 80:80 \\
+    -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" \\
+    -e ADE__DATAINGESTORSERVICEURI="http://localhost:5000" \\
+    -e ADE__DATAREPORTERSERVICEURI="http://localhost:5001" \\
+    -e ADE__EVENTINGESTORSERVICEURI="http://localhost:5002" \\
+    -e ADE__USERSERVICEURI="http://localhost:5003" \\
     $ACR_SERVER.azurecr.io/ade-apigateway:latest
 
 # local docker network services
