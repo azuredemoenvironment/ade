@@ -12,30 +12,30 @@ param proximityPlacementGroupAz2Name string
 param proximityPlacementGroupAz3Name string
 param nTierAppLoadBalancerName string
 param nTierAppLoadBalancerPrivateIpAddress string
-param nTierWeb01NICName string
-param nTierWeb01PrivateIpAddress string
-param nTierWeb02NICName string
-param nTierWeb02PrivateIpAddress string
-param nTierWeb03NICName string
-param nTierWeb03PrivateIpAddress string
+param nTierApp01Name string
 param nTierApp01NICName string
+param nTierApp01OSDiskName string
 param nTierApp01PrivateIpAddress string
+param nTierApp02Name string
 param nTierApp02NICName string
+param nTierApp02OSDiskName string
 param nTierApp02PrivateIpAddress string
+param nTierApp03Name string
 param nTierApp03NICName string
+param nTierApp03OSDiskName string
 param nTierApp03PrivateIpAddress string
 param nTierWeb01Name string
+param nTierWeb01NICName string
 param nTierWeb01OSDiskName string
+param nTierWeb01PrivateIpAddress string
 param nTierWeb02Name string
+param nTierWeb02NICName string
 param nTierWeb02OSDiskName string
+param nTierWeb02PrivateIpAddress string
 param nTierWeb03Name string
+param nTierWeb03NICName string
 param nTierWeb03OSDiskName string
-param nTierApp01Name string
-param nTierApp01OSDiskName string
-param nTierApp02Name string
-param nTierApp02OSDiskName string
-param nTierApp03Name string
-param nTierApp03OSDiskName string
+param nTierWeb03PrivateIpAddress string
 
 // variables
 var environmentName = 'production'
@@ -187,806 +187,89 @@ resource nTierAppLoadBalancerDiagnostics 'microsoft.insights/diagnosticSettings@
   }
 }
 
-// resource - network interface - ntierweb01
-resource nTierWeb01NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
-  name: nTierWeb01NICName
-  location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
+var ntierVirtualMachines = [
+  {
+    name: nTierApp01Name
+    nicName: nTierApp01NICName
+    osDiskName: nTierApp01OSDiskName
+    privateIpAddress: nTierApp01PrivateIpAddress
+    subnetId: nTierAppSubnetId
+    zone: '1'
+    proximityPlacementGroupId: proximityPlacementGroupAz1.id
+    adeModule: 'backend'
   }
-  properties: {
-    ipConfigurations: [
-      {
-        name: 'ipconfig1'
-        properties: {
-          privateIPAddress: nTierWeb01PrivateIpAddress
-          privateIPAllocationMethod: 'Static'
-          subnet: {
-            id: nTierWebSubnetId
-          }
-        }
-      }
-    ]
+  {
+    name: nTierApp02Name
+    nicName: nTierApp02NICName
+    osDiskName: nTierApp02OSDiskName
+    privateIpAddress: nTierApp02PrivateIpAddress
+    subnetId: nTierAppSubnetId
+    zone: '2'
+    proximityPlacementGroupId: proximityPlacementGroupAz2.id
+    adeModule: 'backend'
   }
-}
-
-// resource - network interface - diagnostic settings - ntierweb01
-resource nTierWeb01NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: nTierWeb01NIC
-  name: '${nTierWeb01NIC.name}-diagnostics'
-  properties: {
-    workspaceId: logAnalyticsWorkspaceId
-    logAnalyticsDestinationType: 'Dedicated'
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
+  {
+    name: nTierApp03Name
+    nicName: nTierApp03NICName
+    osDiskName: nTierApp03OSDiskName
+    privateIpAddress: nTierApp03PrivateIpAddress
+    subnetId: nTierAppSubnetId
+    zone: '3'
+    proximityPlacementGroupId: proximityPlacementGroupAz3.id
+    adeModule: 'backend'
   }
-}
-
-// resource - network interface - ntierweb02
-resource nTierWeb02NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
-  name: nTierWeb02NICName
-  location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
+  {
+    name: nTierWeb01Name
+    nicName: nTierWeb01NICName
+    osDiskName: nTierWeb01OSDiskName
+    privateIpAddress: nTierWeb01PrivateIpAddress
+    subnetId: nTierWebSubnetId
+    zone: '1'
+    proximityPlacementGroupId: proximityPlacementGroupAz1.id
+    adeModule: 'backend'
   }
-  properties: {
-    ipConfigurations: [
-      {
-        name: 'ipconfig1'
-        properties: {
-          privateIPAddress: nTierWeb02PrivateIpAddress
-          privateIPAllocationMethod: 'Static'
-          subnet: {
-            id: nTierWebSubnetId
-          }
-        }
-      }
-    ]
+  {
+    name: nTierWeb02Name
+    nicName: nTierWeb02NICName
+    osDiskName: nTierWeb02OSDiskName
+    privateIpAddress: nTierWeb02PrivateIpAddress
+    subnetId: nTierWebSubnetId
+    zone: '2'
+    proximityPlacementGroupId: proximityPlacementGroupAz2.id
+    adeModule: 'backend'
   }
-}
-
-// resource - network interface - diagnostic settings - ntierWeb02
-resource nTierWeb02NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: nTierWeb02NIC
-  name: '${nTierWeb02NIC.name}-diagnostics'
-  properties: {
-    workspaceId: logAnalyticsWorkspaceId
-    logAnalyticsDestinationType: 'Dedicated'
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
+  {
+    name: nTierWeb03Name
+    nicName: nTierWeb03NICName
+    osDiskName: nTierWeb03OSDiskName
+    privateIpAddress: nTierWeb03PrivateIpAddress
+    subnetId: nTierWebSubnetId
+    zone: '3'
+    proximityPlacementGroupId: proximityPlacementGroupAz3.id
+    adeModule: 'backend'
   }
-}
-
-// resource - network interface - ntierweb03
-resource nTierWeb03NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
-  name: nTierWeb03NICName
-  location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    ipConfigurations: [
-      {
-        name: 'ipconfig1'
-        properties: {
-          privateIPAddress: nTierWeb03PrivateIpAddress
-          privateIPAllocationMethod: 'Static'
-          subnet: {
-            id: nTierWebSubnetId
-          }
-        }
-      }
-    ]
-  }
-}
-
-// resource - network interface - diagnostic settings - ntierWeb03
-resource nTierWeb03NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: nTierWeb03NIC
-  name: '${nTierWeb03NIC.name}-diagnostics'
-  properties: {
-    workspaceId: logAnalyticsWorkspaceId
-    logAnalyticsDestinationType: 'Dedicated'
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-  }
-}
-
-// resource - network interface - ntierapp01
-resource nTierApp01NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
-  name: nTierApp01NICName
-  location: location
-  dependsOn: [
-    nTierAppLoadBalancer
-  ]
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    ipConfigurations: [
-      {
-        name: 'ipconfig1'
-        properties: {
-          privateIPAddress: nTierApp01PrivateIpAddress
-          privateIPAllocationMethod: 'Static'
-          subnet: {
-            id: nTierAppSubnetId
-          }
-          loadBalancerBackendAddressPools: [
-            {
-              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', nTierAppLoadBalancerName, 'bep-nTierApp')
-            }
-          ]
-        }
-      }
-    ]
-  }
-}
-
-// resource - network interface - diagnostic settings - ntierapp01
-resource nTierApp01NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: nTierApp01NIC
-  name: '${nTierApp01NIC.name}-diagnostics'
-  properties: {
-    workspaceId: logAnalyticsWorkspaceId
-    logAnalyticsDestinationType: 'Dedicated'
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-  }
-}
-
-// resource - network interface - ntierapp02
-resource nTierApp02NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
-  name: nTierApp02NICName
-  location: location
-  dependsOn: [
-    nTierAppLoadBalancer
-  ]
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    ipConfigurations: [
-      {
-        name: 'ipconfig1'
-        properties: {
-          privateIPAddress: nTierApp02PrivateIpAddress
-          privateIPAllocationMethod: 'Static'
-          subnet: {
-            id: nTierAppSubnetId
-          }
-          loadBalancerBackendAddressPools: [
-            {
-              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', nTierAppLoadBalancerName, 'bep-nTierApp')
-            }
-          ]
-        }
-      }
-    ]
-  }
-}
-
-// resource - network interface - diagnostic settings - ntierapp02
-resource nTierApp02NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: nTierApp02NIC
-  name: '${nTierApp02NIC.name}-diagnostics'
-  properties: {
-    workspaceId: logAnalyticsWorkspaceId
-    logAnalyticsDestinationType: 'Dedicated'
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-  }
-}
-
-// resource - network interface - ntierapp03
-resource nTierApp03NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
-  name: nTierApp03NICName
-  location: location
-  dependsOn: [
-    nTierAppLoadBalancer
-  ]
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    ipConfigurations: [
-      {
-        name: 'ipconfig1'
-        properties: {
-          privateIPAddress: nTierApp03PrivateIpAddress
-          privateIPAllocationMethod: 'Static'
-          subnet: {
-            id: nTierAppSubnetId
-          }
-          loadBalancerBackendAddressPools: [
-            {
-              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', nTierAppLoadBalancerName, 'bep-nTierApp')
-            }
-          ]
-        }
-      }
-    ]
-  }
-}
-
-// resource - network interface - diagnostic settings - ntierapp03
-resource nTierApp03NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: nTierApp03NIC
-  name: '${nTierApp03NIC.name}-diagnostics'
-  properties: {
-    workspaceId: logAnalyticsWorkspaceId
-    logAnalyticsDestinationType: 'Dedicated'
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-  }
-}
-
-// resource - virtual machine - ntierweb01
-resource nTierWeb01 'Microsoft.Compute/virtualMachines@2020-12-01' = {
-  name: nTierWeb01Name
-  location: location
-  zones: [
-    '1'
-  ]
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    proximityPlacementGroup: {
-      id: proximityPlacementGroupAz1.id
-    }
-    hardwareProfile: {
-      vmSize: 'Standard_B1s'
-    }
-    storageProfile: {
-      imageReference: {
-        publisher: 'Canonical'
-        offer: 'UbuntuServer'
-        sku: '18.04-LTS'
-        version: 'latest'
-      }
-      osDisk: {
-        osType: 'Linux'
-        name: nTierWeb01OSDiskName
-        createOption: 'FromImage'
-        managedDisk: {
-          storageAccountType: 'Standard_LRS'
-        }
-      }
-    }
-    osProfile: {
-      computerName: nTierWeb01Name
-      adminUsername: adminUserName
-      adminPassword: adminPassword
-    }
-    networkProfile: {
-      networkInterfaces: [
-        {
-          id: nTierWeb01NIC.id
-        }
-      ]
-    }
-    diagnosticsProfile: {
-      bootDiagnostics: {
-        enabled: true
-      }
+]
+module AzureVirtualMachinesNTierVm 'azure_virtual_machines_ntier_vm.bicep' = [for nTierVirtualMachine in ntierVirtualMachines: {
+  name: 'nTierVirtualMachineDeployments-${nTierVirtualMachine.name}'
+  params: {
+    location: location
+    logAnalyticsWorkspaceId: logAnalyticsWorkspaceId
+    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspaceCustomerId
+    logAnalyticsWorkspaceKey: logAnalyticsWorkspaceKey
+    adminUserName: adminUserName
+    adminPassword: adminPassword
+    name: nTierVirtualMachine.name
+    nicName: nTierVirtualMachine.nicName
+    osDiskName: nTierVirtualMachine.osDiskName
+    privateIpAddress: nTierVirtualMachine.privateIpAddress
+    subnetId: nTierVirtualMachine.subnetId
+    proximityPlacementGroupId: nTierVirtualMachine.proximityPlacementGroupId
+    zone: nTierVirtualMachine.zone
+    adeModule: nTierVirtualMachine.adeModule
+    tags: {
+      environment: environmentName
+      function: functionName
+      costCenter: costCenterName
     }
   }
-}
-
-// resource - dependency agent linux - ntierweb01
-resource nTierWeb01DependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${nTierWeb01.name}/DependencyAgentLinux'
-  location: location
-  properties: {
-    publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
-    type: 'DependencyAgentLinux'
-    typeHandlerVersion: '9.5'
-    autoUpgradeMinorVersion: true
-  }
-}
-
-// resource - microsoft monitoring agent - ntierweb01
-resource nTierWeb01MicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${nTierWeb01.name}/OMSExtension'
-  location: location
-  properties: {
-    publisher: 'Microsoft.EnterpriseCloud.Monitoring'
-    type: 'OmsAgentForLinux'
-    typeHandlerVersion: '1.4'
-    autoUpgradeMinorVersion: true
-    settings: {
-      workspaceId: logAnalyticsWorkspaceCustomerId
-    }
-    protectedSettings: {
-      workspaceKey: logAnalyticsWorkspaceKey
-    }
-  }
-}
-
-// resource - virtual machine - ntierweb02
-resource nTierWeb02 'Microsoft.Compute/virtualMachines@2020-12-01' = {
-  name: nTierWeb02Name
-  location: location
-  zones: [
-    '2'
-  ]
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    proximityPlacementGroup: {
-      id: proximityPlacementGroupAz2.id
-    }
-    hardwareProfile: {
-      vmSize: 'Standard_B1s'
-    }
-    storageProfile: {
-      imageReference: {
-        publisher: 'Canonical'
-        offer: 'UbuntuServer'
-        sku: '18.04-LTS'
-        version: 'latest'
-      }
-      osDisk: {
-        osType: 'Linux'
-        name: nTierWeb02OSDiskName
-        createOption: 'FromImage'
-        managedDisk: {
-          storageAccountType: 'Standard_LRS'
-        }
-      }
-    }
-    osProfile: {
-      computerName: nTierWeb02Name
-      adminUsername: adminUserName
-      adminPassword: adminPassword
-    }
-    networkProfile: {
-      networkInterfaces: [
-        {
-          id: nTierWeb02NIC.id
-        }
-      ]
-    }
-    diagnosticsProfile: {
-      bootDiagnostics: {
-        enabled: true
-      }
-    }
-  }
-}
-
-// resource - dependency agent linux - ntierweb02
-resource nTierWeb02DependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${nTierWeb02.name}/DependencyAgentLinux'
-  location: location
-  properties: {
-    publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
-    type: 'DependencyAgentLinux'
-    typeHandlerVersion: '9.5'
-    autoUpgradeMinorVersion: true
-  }
-}
-
-// resource - microsoft monitoring agent - ntierweb02
-resource nTierWeb02MicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${nTierWeb02.name}/OMSExtension'
-  location: location
-  properties: {
-    publisher: 'Microsoft.EnterpriseCloud.Monitoring'
-    type: 'OmsAgentForLinux'
-    typeHandlerVersion: '1.4'
-    autoUpgradeMinorVersion: true
-    settings: {
-      workspaceId: logAnalyticsWorkspaceCustomerId
-    }
-    protectedSettings: {
-      workspaceKey: logAnalyticsWorkspaceKey
-    }
-  }
-}
-
-// resource - virtual machine - ntierweb03
-resource nTierWeb03 'Microsoft.Compute/virtualMachines@2020-12-01' = {
-  name: nTierWeb03Name
-  location: location
-  zones: [
-    '3'
-  ]
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    proximityPlacementGroup: {
-      id: proximityPlacementGroupAz3.id
-    }
-    hardwareProfile: {
-      vmSize: 'Standard_B1s'
-    }
-    storageProfile: {
-      imageReference: {
-        publisher: 'Canonical'
-        offer: 'UbuntuServer'
-        sku: '18.04-LTS'
-        version: 'latest'
-      }
-      osDisk: {
-        osType: 'Linux'
-        name: nTierWeb03OSDiskName
-        createOption: 'FromImage'
-        managedDisk: {
-          storageAccountType: 'Standard_LRS'
-        }
-      }
-    }
-    osProfile: {
-      computerName: nTierWeb03Name
-      adminUsername: adminUserName
-      adminPassword: adminPassword
-    }
-    networkProfile: {
-      networkInterfaces: [
-        {
-          id: nTierWeb03NIC.id
-        }
-      ]
-    }
-    diagnosticsProfile: {
-      bootDiagnostics: {
-        enabled: true
-      }
-    }
-  }
-}
-
-// resource - dependency agent linux - ntierweb03
-resource nTierWeb03DependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${nTierWeb03.name}/DependencyAgentLinux'
-  location: location
-  properties: {
-    publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
-    type: 'DependencyAgentLinux'
-    typeHandlerVersion: '9.5'
-    autoUpgradeMinorVersion: true
-  }
-}
-
-// resource - microsoft monitoring agent - ntierweb03
-resource nTierWeb03MicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${nTierWeb03.name}/OMSExtension'
-  location: location
-  properties: {
-    publisher: 'Microsoft.EnterpriseCloud.Monitoring'
-    type: 'OmsAgentForLinux'
-    typeHandlerVersion: '1.4'
-    autoUpgradeMinorVersion: true
-    settings: {
-      workspaceId: logAnalyticsWorkspaceCustomerId
-    }
-    protectedSettings: {
-      workspaceKey: logAnalyticsWorkspaceKey
-    }
-  }
-}
-
-// resource - virtual machine - ntierapp01
-resource nTierApp01 'Microsoft.Compute/virtualMachines@2020-12-01' = {
-  name: nTierApp01Name
-  location: location
-  zones: [
-    '1'
-  ]
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    proximityPlacementGroup: {
-      id: proximityPlacementGroupAz1.id
-    }
-    hardwareProfile: {
-      vmSize: 'Standard_B1s'
-    }
-    storageProfile: {
-      imageReference: {
-        publisher: 'Canonical'
-        offer: 'UbuntuServer'
-        sku: '18.04-LTS'
-        version: 'latest'
-      }
-      osDisk: {
-        osType: 'Linux'
-        name: nTierApp01OSDiskName
-        createOption: 'FromImage'
-        managedDisk: {
-          storageAccountType: 'Standard_LRS'
-        }
-      }
-    }
-    osProfile: {
-      computerName: nTierApp01Name
-      adminUsername: adminUserName
-      adminPassword: adminPassword
-    }
-    networkProfile: {
-      networkInterfaces: [
-        {
-          id: nTierApp01NIC.id
-        }
-      ]
-    }
-    diagnosticsProfile: {
-      bootDiagnostics: {
-        enabled: true
-      }
-    }
-  }
-}
-
-// resource - dependency agent linux - ntierapp01
-resource nTierApp01DependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${nTierApp01.name}/DependencyAgentLinux'
-  location: location
-  properties: {
-    publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
-    type: 'DependencyAgentLinux'
-    typeHandlerVersion: '9.5'
-    autoUpgradeMinorVersion: true
-  }
-}
-
-// resource - microsoft monitoring agent - ntierapp01
-resource nTierApp01MicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${nTierApp01.name}/OMSExtension'
-  location: location
-  properties: {
-    publisher: 'Microsoft.EnterpriseCloud.Monitoring'
-    type: 'OmsAgentForLinux'
-    typeHandlerVersion: '1.4'
-    autoUpgradeMinorVersion: true
-    settings: {
-      workspaceId: logAnalyticsWorkspaceCustomerId
-    }
-    protectedSettings: {
-      workspaceKey: logAnalyticsWorkspaceKey
-    }
-  }
-}
-
-// resource - virtual machine - ntierapp02
-resource nTierApp02 'Microsoft.Compute/virtualMachines@2020-12-01' = {
-  name: nTierApp02Name
-  location: location
-  zones: [
-    '2'
-  ]
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    proximityPlacementGroup: {
-      id: proximityPlacementGroupAz2.id
-    }
-    hardwareProfile: {
-      vmSize: 'Standard_B1s'
-    }
-    storageProfile: {
-      imageReference: {
-        publisher: 'Canonical'
-        offer: 'UbuntuServer'
-        sku: '18.04-LTS'
-        version: 'latest'
-      }
-      osDisk: {
-        osType: 'Linux'
-        name: nTierApp02OSDiskName
-        createOption: 'FromImage'
-        managedDisk: {
-          storageAccountType: 'Standard_LRS'
-        }
-      }
-    }
-    osProfile: {
-      computerName: nTierApp02Name
-      adminUsername: adminUserName
-      adminPassword: adminPassword
-    }
-    networkProfile: {
-      networkInterfaces: [
-        {
-          id: nTierApp02NIC.id
-        }
-      ]
-    }
-    diagnosticsProfile: {
-      bootDiagnostics: {
-        enabled: true
-      }
-    }
-  }
-}
-
-// resource - dependency agent linux - ntierapp02
-resource nTierApp02DependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${nTierApp02.name}/DependencyAgentLinux'
-  location: location
-  properties: {
-    publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
-    type: 'DependencyAgentLinux'
-    typeHandlerVersion: '9.5'
-    autoUpgradeMinorVersion: true
-  }
-}
-
-// resource - microsoft monitoring agent - ntierapp02
-resource nTierApp02MicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${nTierApp02.name}/OMSExtension'
-  location: location
-  properties: {
-    publisher: 'Microsoft.EnterpriseCloud.Monitoring'
-    type: 'OmsAgentForLinux'
-    typeHandlerVersion: '1.4'
-    autoUpgradeMinorVersion: true
-    settings: {
-      workspaceId: logAnalyticsWorkspaceCustomerId
-    }
-    protectedSettings: {
-      workspaceKey: logAnalyticsWorkspaceKey
-    }
-  }
-}
-
-// resource - virtual machine - ntierapp03
-resource nTierApp03 'Microsoft.Compute/virtualMachines@2020-12-01' = {
-  name: nTierApp03Name
-  location: location
-  zones: [
-    '3'
-  ]
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    proximityPlacementGroup: {
-      id: proximityPlacementGroupAz3.id
-    }
-    hardwareProfile: {
-      vmSize: 'Standard_B1s'
-    }
-    storageProfile: {
-      imageReference: {
-        publisher: 'Canonical'
-        offer: 'UbuntuServer'
-        sku: '18.04-LTS'
-        version: 'latest'
-      }
-      osDisk: {
-        osType: 'Linux'
-        name: nTierApp03OSDiskName
-        createOption: 'FromImage'
-        managedDisk: {
-          storageAccountType: 'Standard_LRS'
-        }
-      }
-    }
-    osProfile: {
-      computerName: nTierApp03Name
-      adminUsername: adminUserName
-      adminPassword: adminPassword
-    }
-    networkProfile: {
-      networkInterfaces: [
-        {
-          id: nTierApp03NIC.id
-        }
-      ]
-    }
-    diagnosticsProfile: {
-      bootDiagnostics: {
-        enabled: true
-      }
-    }
-  }
-}
-
-// resource - dependency agent linux - ntierapp03
-resource nTierApp03DependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${nTierApp03.name}/DependencyAgentLinux'
-  location: location
-  properties: {
-    publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
-    type: 'DependencyAgentLinux'
-    typeHandlerVersion: '9.5'
-    autoUpgradeMinorVersion: true
-  }
-}
-
-// resource - microsoft monitoring agent - ntierapp03
-resource nTierApp03MicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${nTierApp03.name}/OMSExtension'
-  location: location
-  properties: {
-    publisher: 'Microsoft.EnterpriseCloud.Monitoring'
-    type: 'OmsAgentForLinux'
-    typeHandlerVersion: '1.4'
-    autoUpgradeMinorVersion: true
-    settings: {
-      workspaceId: logAnalyticsWorkspaceCustomerId
-    }
-    protectedSettings: {
-      workspaceKey: logAnalyticsWorkspaceKey
-    }
-  }
-}
+}]

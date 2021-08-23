@@ -17,14 +17,15 @@ function Deploy-AzureContainers {
 
     $imagesToPullAndPush = @(
         'apigateway'
-        'frontend'
         'dataingestorservice'
-        'userservice'
         'datareporterservice'
-        'loadtesting-grafana'
+        'eventingestorservice'
+        'frontend'
         'loadtesting-gatling'
+        'loadtesting-grafana'
         'loadtesting-influxdb'
         'loadtesting-redis'
+        'userservice'
     )
     
     $imagesToPullAndPush | ForEach-Object { 

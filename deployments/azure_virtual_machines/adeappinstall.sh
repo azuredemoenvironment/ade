@@ -55,7 +55,7 @@ sudo tee $STARTUP_SERVICE_PATH << EOF > /dev/null
 Description=ADE
 
 [Service]
-ExecStart=$STARTUP_SCRIPT_PATH
+ExecStart=/bin/bash $STARTUP_SCRIPT_PATH
 
 [Install]
 WantedBy=multi-user.target
