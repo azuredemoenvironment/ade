@@ -42,11 +42,6 @@ services:
     expose:
       - "80"
     environment:
-      - ASPNETCORE_URLS
-      - ASPNETCORE_ENVIRONMENT=Development
-      - LOGGING__LOGLEVEL__DEFAULT
-      - LOGGING__CONSOLE__LOGLEVEL__DEFAULT
-      - APPINSIGHTS_INSTRUMENTATIONKEY
       - ADE__APIGATEWAYURI
       - ADE__BLOBSTORAGECONNECTIONSTRING
       - ADE__COSMOSDBCONNECTIONSTRING
@@ -56,6 +51,12 @@ services:
       - ADE__POSTGRESQLCONNECTIONSTRING
       - ADE__SQLSERVERCONNECTIONSTRING
       - ADE__USERSERVICEURI
+      - CONNECTIONSTRINGS__APPCONFIG
+      - APPINSIGHTS_INSTRUMENTATIONKEY
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS
+      - LOGGING__CONSOLE__LOGLEVEL__DEFAULT
+      - LOGGING__LOGLEVEL__DEFAULT
   ade_frontend:
     image: ade-frontend
     container_name: frontend
@@ -64,10 +65,10 @@ services:
       dockerfile: ./Dockerfile
       args:
         - BuildConfiguration
-        - ADE__APIGATEWAYURI
-        - APPINSIGHTS_CONNECTIONSTRING
     expose:
       - "80"
+    environment:
+      - CONNECTIONSTRINGS__APPCONFIG
   ade_dataingestorservice:
     image: ade-dataingestorservice
     container_name: ade_dataingestorservice
@@ -79,11 +80,6 @@ services:
     expose:
       - "80"
     environment:
-      - ASPNETCORE_URLS
-      - ASPNETCORE_ENVIRONMENT=Development
-      - LOGGING__LOGLEVEL__DEFAULT
-      - LOGGING__CONSOLE__LOGLEVEL__DEFAULT
-      - APPINSIGHTS_INSTRUMENTATIONKEY
       - ADE__APIGATEWAYURI
       - ADE__BLOBSTORAGECONNECTIONSTRING
       - ADE__COSMOSDBCONNECTIONSTRING
@@ -93,6 +89,12 @@ services:
       - ADE__POSTGRESQLCONNECTIONSTRING
       - ADE__SQLSERVERCONNECTIONSTRING
       - ADE__USERSERVICEURI
+      - APPINSIGHTS_INSTRUMENTATIONKEY
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS
+      - CONNECTIONSTRINGS__APPCONFIG
+      - LOGGING__CONSOLE__LOGLEVEL__DEFAULT
+      - LOGGING__LOGLEVEL__DEFAULT
   ade_userservice:
     image: ade-userservice
     container_name: ade_userservice
@@ -104,11 +106,6 @@ services:
     expose:
       - "80"
     environment:
-      - ASPNETCORE_URLS
-      - ASPNETCORE_ENVIRONMENT=Development
-      - LOGGING__LOGLEVEL__DEFAULT
-      - LOGGING__CONSOLE__LOGLEVEL__DEFAULT
-      - APPINSIGHTS_INSTRUMENTATIONKEY
       - ADE__APIGATEWAYURI
       - ADE__BLOBSTORAGECONNECTIONSTRING
       - ADE__COSMOSDBCONNECTIONSTRING
@@ -118,6 +115,12 @@ services:
       - ADE__POSTGRESQLCONNECTIONSTRING
       - ADE__SQLSERVERCONNECTIONSTRING
       - ADE__USERSERVICEURI
+      - APPINSIGHTS_INSTRUMENTATIONKEY
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS
+      - CONNECTIONSTRINGS__APPCONFIG
+      - LOGGING__CONSOLE__LOGLEVEL__DEFAULT
+      - LOGGING__LOGLEVEL__DEFAULT
   ade_datareporterservice:
     image: ade-datareporterservice
     container_name: ade_datareporterservice
@@ -129,11 +132,6 @@ services:
     expose:
       - "80"
     environment:
-      - ASPNETCORE_URLS
-      - ASPNETCORE_ENVIRONMENT=Development
-      - LOGGING__LOGLEVEL__DEFAULT
-      - LOGGING__CONSOLE__LOGLEVEL__DEFAULT
-      - APPINSIGHTS_INSTRUMENTATIONKEY
       - ADE__APIGATEWAYURI
       - ADE__BLOBSTORAGECONNECTIONSTRING
       - ADE__COSMOSDBCONNECTIONSTRING
@@ -143,6 +141,12 @@ services:
       - ADE__POSTGRESQLCONNECTIONSTRING
       - ADE__SQLSERVERCONNECTIONSTRING
       - ADE__USERSERVICEURI
+      - APPINSIGHTS_INSTRUMENTATIONKEY
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS
+      - CONNECTIONSTRINGS__APPCONFIG
+      - LOGGING__CONSOLE__LOGLEVEL__DEFAULT
+      - LOGGING__LOGLEVEL__DEFAULT
   ade_eventingestorservice:
     image: ade-eventingestorservice
     container_name: ade_eventingestorservice
@@ -154,11 +158,6 @@ services:
     expose:
       - "80"
     environment:
-      - ASPNETCORE_URLS
-      - ASPNETCORE_ENVIRONMENT=Development
-      - LOGGING__LOGLEVEL__DEFAULT
-      - LOGGING__CONSOLE__LOGLEVEL__DEFAULT
-      - APPINSIGHTS_INSTRUMENTATIONKEY
       - ADE__APIGATEWAYURI
       - ADE__BLOBSTORAGECONNECTIONSTRING
       - ADE__COSMOSDBCONNECTIONSTRING
@@ -168,6 +167,12 @@ services:
       - ADE__POSTGRESQLCONNECTIONSTRING
       - ADE__SQLSERVERCONNECTIONSTRING
       - ADE__USERSERVICEURI
+      - APPINSIGHTS_INSTRUMENTATIONKEY
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS
+      - CONNECTIONSTRINGS__APPCONFIG
+      - LOGGING__CONSOLE__LOGLEVEL__DEFAULT
+      - LOGGING__LOGLEVEL__DEFAULT
   # Load Testing
   ########################################################
   # These images run load tests against the ADE app
@@ -181,7 +186,13 @@ services:
     depends_on:
       - ade_loadtesting_grafana
     environment:
-      - JAVA_OPTS=-Dgatling.data.graphite.host=${GRAPHITE_HOST} -Dgatling.data.graphite.port=${GRAPHITE_PORT} -DwebFrontEndDomain=${WEB_FRONTEND_DOMAIN} -DwebBackEndDomain=${WEB_BACKEND_DOMAIN} -DredisHost=${REDIS_HOST} -DredisPort=${REDIS_PORT} -DusersPerSecond=${USERS_PER_SECOND} -DmaxUsersPerSecond=${MAX_USERS_PER_SECOND} -DoverMinutes=${OVER_MINUTES} -Djsse.enableSNIExtension=false
+      - JAVA_OPTS=-Dgatling.data.graphite.host=${GRAPHITE_HOST}
+        -Dgatling.data.graphite.port=${GRAPHITE_PORT}
+        -DwebFrontEndDomain=${WEB_FRONTEND_DOMAIN}
+        -DwebBackEndDomain=${WEB_BACKEND_DOMAIN} -DredisHost=${REDIS_HOST}
+        -DredisPort=${REDIS_PORT} -DusersPerSecond=${USERS_PER_SECOND}
+        -DmaxUsersPerSecond=${MAX_USERS_PER_SECOND}
+        -DoverMinutes=${OVER_MINUTES} -Djsse.enableSNIExtension=false
     volumes:
       - ./test/ADE.LoadTests/gatling/conf:/opt/gatling/conf:cached
       - ./test/ADE.LoadTests/gatling/results:/opt/gatling/results

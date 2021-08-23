@@ -26,19 +26,19 @@ echo "Installing Prerequisites"
 sudo apt-get update
 
 sudo apt-get install -y \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release
+apt-transport-https \
+ca-certificates \
+curl \
+gnupg \
+lsb-release
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --batch --yes --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
 echo "Installing Docker Engine"
 
 echo \
-  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+"deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+$(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io
@@ -75,7 +75,7 @@ then
     sudo tee -a $STARTUP_SCRIPT_PATH << EOF > /dev/null
 echo "Starting Frontend ADE Service"
 
-sudo docker run -d --restart unless-stopped -p 80:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" acradebrmareus001.azurecr.io/ade-frontend:latest
+sudo docker run -d --restart unless-stopped -p 80:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-frontend:latest
 EOF
 fi
 
@@ -84,14 +84,20 @@ then
     sudo tee -a $STARTUP_SCRIPT_PATH << EOF > /dev/null
 echo "Starting Backend ADE Services"
 
-# external api gateway
-sudo docker run -d --restart unless-stopped -p 80:80 $ACR_SERVER.azurecr.io/ade-apigateway:latest
+# external api gateway - note, we override the connection info to our local docker instances
+sudo docker run -d --restart unless-stopped -p 80:80 \
+    -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" \
+    -e ADE__DATAINGESTORSERVICEURI="http://localhost:5000" \
+    -e ADE__DATAREPORTERSERVICEURI="http://localhost:5001" \
+    -e ADE__EVENTINGESTORSERVICEURI="http://localhost:5002" \
+    -e ADE__USERSERVICEURI="http://localhost:5003" \
+    $ACR_SERVER.azurecr.io/ade-apigateway:latest
 
 # local docker network services
-sudo docker run -d --restart unless-stopped -p 5000:80 $ACR_SERVER.azurecr.io/ade-dataingestorservice:latest
-sudo docker run -d --restart unless-stopped -p 5001:80 $ACR_SERVER.azurecr.io/ade-datareporterservice:latest
-sudo docker run -d --restart unless-stopped -p 5002:80 $ACR_SERVER.azurecr.io/ade-userservice:latest
-sudo docker run -d --restart unless-stopped -p 5003:80 $ACR_SERVER.azurecr.io/ade-eventingestorservice:latest
+sudo docker run -d --restart unless-stopped -p 5000:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-dataingestorservice:latest
+sudo docker run -d --restart unless-stopped -p 5001:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-datareporterservice:latest
+sudo docker run -d --restart unless-stopped -p 5002:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-userservice:latest
+sudo docker run -d --restart unless-stopped -p 5003:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-eventingestorservice:latest
 EOF
 fi
 

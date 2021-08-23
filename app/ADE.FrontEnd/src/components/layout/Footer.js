@@ -34,6 +34,12 @@ const Footer = () => (
 					<h5 className='text-uppercase mb-3'>Disclaimer</h5>
 					<p>Insert disclaimer.</p>
 					<p>Version: {process.env.buildId}</p>
+					<p>
+						API Endpoint:{' '}
+						<a href={window._env_.ADE__APIGATEWAYURI}>
+							{window._env_.ADE__APIGATEWAYURI}
+						</a>
+					</p>
 				</Col>
 			</Row>
 		</Container>
