@@ -106,11 +106,9 @@ echo "Enabling ADE Docker Services on Startup"
 sudo systemctl enable ade
 
 ##########################################
-# Launch Script
+# Reboot
 ##########################################
 
-echo "Starting ADE Docker Services"
+echo "Rebooting VM for changes to complete"
 
-sudo systemctl start ade
-
-echo "Done!"
+sudo reboot
