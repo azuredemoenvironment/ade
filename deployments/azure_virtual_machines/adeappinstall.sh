@@ -12,6 +12,7 @@ ACR_SERVER="$1"
 ACR_PASSWORD="$2"
 APPCONFIG_CONNECTIONSTRING="$3"
 ADE_PACKAGE="$4"
+ADE_BACKEND_IPADDRESS="$5"
 
 # These are for consistency
 STARTUP_SCRIPT_PATH="/etc/systemd/system/ade.sh"
@@ -77,6 +78,15 @@ then
 echo "Starting Frontend ADE Service"
 
 sudo docker run --name "ade-frontend" -d --restart unless-stopped -p 80:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-frontend:latest
+
+# external api gateway - note, we override the connection info to our local docker instances
+sudo docker run --name "ade-apigateway" -d --restart unless-stopped -p 8080:80 \\
+    -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" \\
+    -e ADE__DATAINGESTORSERVICEURI="http://$ADE_BACKEND_IPADDRESS:5000" \\
+    -e ADE__DATAREPORTERSERVICEURI="http://$ADE_BACKEND_IPADDRESS:5001" \\
+    -e ADE__EVENTINGESTORSERVICEURI="http://$ADE_BACKEND_IPADDRESS:5002" \\
+    -e ADE__USERSERVICEURI="http://$ADE_BACKEND_IPADDRESS:5003" \\
+    $ACR_SERVER.azurecr.io/ade-apigateway:latest
 EOF
 fi
 
@@ -84,15 +94,6 @@ if [ "$ADE_PACKAGE" = "backend" ]
 then
     sudo tee -a $STARTUP_SCRIPT_PATH << EOF > /dev/null
 echo "Starting Backend ADE Services"
-
-# external api gateway - note, we override the connection info to our local docker instances
-sudo docker run --name "ade-apigateway" -d --restart unless-stopped -p 80:80 \\
-    -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" \\
-    -e ADE__DATAINGESTORSERVICEURI="http://localhost:5000" \\
-    -e ADE__DATAREPORTERSERVICEURI="http://localhost:5001" \\
-    -e ADE__EVENTINGESTORSERVICEURI="http://localhost:5002" \\
-    -e ADE__USERSERVICEURI="http://localhost:5003" \\
-    $ACR_SERVER.azurecr.io/ade-apigateway:latest
 
 # local docker network services
 sudo docker run --name "ade-dataingestorservice" -d --restart unless-stopped -p 5000:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-dataingestorservice:latest

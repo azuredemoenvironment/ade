@@ -252,20 +252,21 @@ var ntierVirtualMachines = [
 module AzureVirtualMachinesNTierVm 'azure_virtual_machines_ntier_vm.bicep' = [for nTierVirtualMachine in ntierVirtualMachines: {
   name: 'nTierVirtualMachineDeployments-${nTierVirtualMachine.name}'
   params: {
-    location: location
-    logAnalyticsWorkspaceId: logAnalyticsWorkspaceId
-    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspaceCustomerId
-    logAnalyticsWorkspaceKey: logAnalyticsWorkspaceKey
-    adminUserName: adminUserName
+    adeModule: nTierVirtualMachine.adeModule
     adminPassword: adminPassword
+    adminUserName: adminUserName
+    location: location
+    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspaceCustomerId
+    logAnalyticsWorkspaceId: logAnalyticsWorkspaceId
+    logAnalyticsWorkspaceKey: logAnalyticsWorkspaceKey
     name: nTierVirtualMachine.name
     nicName: nTierVirtualMachine.nicName
+    nTierAppLoadBalancerPrivateIpAddress: nTierAppLoadBalancerPrivateIpAddress
     osDiskName: nTierVirtualMachine.osDiskName
     privateIpAddress: nTierVirtualMachine.privateIpAddress
-    subnetId: nTierVirtualMachine.subnetId
     proximityPlacementGroupId: nTierVirtualMachine.proximityPlacementGroupId
+    subnetId: nTierVirtualMachine.subnetId
     zone: nTierVirtualMachine.zone
-    adeModule: nTierVirtualMachine.adeModule
     tags: {
       environment: environmentName
       function: functionName

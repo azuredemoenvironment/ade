@@ -3,6 +3,7 @@ param location string
 param logAnalyticsWorkspaceId string
 param logAnalyticsWorkspaceCustomerId string
 param logAnalyticsWorkspaceKey string
+param nTierAppLoadBalancerPrivateIpAddress string
 param adminUserName string
 param adminPassword string
 param name string
@@ -166,7 +167,7 @@ resource nTierVirtualMachineCustomScriptExtension 'Microsoft.Compute/virtualMach
       fileUris: [
         scriptLocation
       ]
-      commandToExecute: './${scriptName} "${acrServerName}" "${acrPassword}" "${appConfigConnectionString}" "${adeModule}"'
+      commandToExecute: './${scriptName} "${acrServerName}" "${acrPassword}" "${appConfigConnectionString}" "${adeModule}" "${nTierAppLoadBalancerPrivateIpAddress}"'
     }
   }
 }
