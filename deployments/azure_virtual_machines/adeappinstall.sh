@@ -83,6 +83,11 @@ EOF
 if [ "$ADE_PACKAGE" = "frontend" ]
 then
     sudo tee -a $STARTUP_SCRIPT_PATH << EOF > /dev/null
+echo "Pulling Latest ADE Images"
+
+sudo docker pull $ACR_SERVER.azurecr.io/ade-frontend:latest
+sudo docker pull $ACR_SERVER.azurecr.io/ade-apigateway:latest
+
 echo "Starting Frontend ADE Service"
 
 sudo docker run --name "ade-frontend" -d --restart unless-stopped -p 80:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-frontend:latest
@@ -101,6 +106,13 @@ fi
 if [ "$ADE_PACKAGE" = "backend" ]
 then
     sudo tee -a $STARTUP_SCRIPT_PATH << EOF > /dev/null
+echo "Pulling Latest ADE Images"
+
+sudo docker pull $ACR_SERVER.azurecr.io/ade-dataingestorservice:latest
+sudo docker pull $ACR_SERVER.azurecr.io/ade-datareporterservice:latest
+sudo docker pull $ACR_SERVER.azurecr.io/ade-userservice:latest
+sudo docker pull $ACR_SERVER.azurecr.io/ade-eventingestorservice:latest
+
 echo "Starting Backend ADE Services"
 
 # local docker network services
