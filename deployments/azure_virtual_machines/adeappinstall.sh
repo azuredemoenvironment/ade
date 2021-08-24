@@ -111,4 +111,4 @@ sudo systemctl enable ade
 
 echo "Rebooting VM in 1 minute for changes to complete"
 
-sudo shutdown -r -P +1
+sudo shutdown -r +1 "Server will restart in 1 minute."
