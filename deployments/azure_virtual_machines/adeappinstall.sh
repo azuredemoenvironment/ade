@@ -73,7 +73,7 @@ sudo docker login $ACR_SERVER.azurecr.io --username $ACR_SERVER --password "$ACR
 
 echo "Stopping Any Existing Docker Containers"
 
-sudo docker kill $(sudo docker ps -q)
+sudo docker kill \$(sudo docker ps -q)
 
 echo "Pruning Any Existing Docker Containers"
 sudo docker container prune -f
