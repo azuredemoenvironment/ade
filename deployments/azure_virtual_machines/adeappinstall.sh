@@ -109,6 +109,6 @@ sudo systemctl enable ade
 # Reboot
 ##########################################
 
-echo "Rebooting VM for changes to complete"
+echo "Rebooting VM in 1 minute for changes to complete"
 
-sudo reboot
+sudo shutdown -r -P +1
