@@ -226,7 +226,7 @@ var ntierVirtualMachines = [
     subnetId: nTierWebSubnetId
     zone: '1'
     proximityPlacementGroupId: proximityPlacementGroupAz1.id
-    adeModule: 'backend'
+    adeModule: 'frontend'
   }
   {
     name: nTierWeb02Name
@@ -236,7 +236,7 @@ var ntierVirtualMachines = [
     subnetId: nTierWebSubnetId
     zone: '2'
     proximityPlacementGroupId: proximityPlacementGroupAz2.id
-    adeModule: 'backend'
+    adeModule: 'frontend'
   }
   {
     name: nTierWeb03Name
@@ -246,7 +246,7 @@ var ntierVirtualMachines = [
     subnetId: nTierWebSubnetId
     zone: '3'
     proximityPlacementGroupId: proximityPlacementGroupAz3.id
-    adeModule: 'backend'
+    adeModule: 'frontend'
   }
 ]
 module AzureVirtualMachinesNTierVm 'azure_virtual_machines_ntier_vm.bicep' = [for nTierVirtualMachine in ntierVirtualMachines: {
