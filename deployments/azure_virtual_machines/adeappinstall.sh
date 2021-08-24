@@ -85,10 +85,10 @@ then
     sudo tee -a $STARTUP_SCRIPT_PATH << EOF > /dev/null
 echo "Starting Frontend ADE Service"
 
-sudo docker run --name "ade-frontend" -d --restart unless-stopped -p 8080:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-frontend:latest
+sudo docker run --name "ade-frontend" -d --restart unless-stopped -p 80:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" $ACR_SERVER.azurecr.io/ade-frontend:latest
 
 # external api gateway - note, we override the connection info to our local docker instances
-sudo docker run --name "ade-apigateway" -d --restart unless-stopped -p 8888:80 \\
+sudo docker run --name "ade-apigateway" -d --restart unless-stopped -p 8080:80 \\
     -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" \\
     -e ADE__DATAINGESTORSERVICEURI="http://$ADE_BACKEND_IPADDRESS:5000" \\
     -e ADE__DATAREPORTERSERVICEURI="http://$ADE_BACKEND_IPADDRESS:5001" \\
