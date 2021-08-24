@@ -63,7 +63,7 @@ function Deploy-AzureDemoEnvironment {
 
     # Frontend Load Balancers
     ###################################
-    # Deploy-AzureFrontendLoadBalancers $armParameters
+    Deploy-AzureFrontendLoadBalancers $armParameters
     # Deploy-AzureFrontDoor $armParameters
     # Dedicated Resource Group
     

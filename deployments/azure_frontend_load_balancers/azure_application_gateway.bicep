@@ -14,7 +14,8 @@ param adeAppApiGatewayAppServiceFqdn string
 param adeAppApiGatewayAppServiceHostName string
 param inspectorGadgetAppServiceFqdn string
 param inspectorGadgetAppServiceHostName string
-param nTierHostName string
+param adeFrontendVmHostName string
+param adeApiGatewayVmHostName string
 param applicationGatewayManagedIdentity string
 
 // variables
@@ -29,7 +30,7 @@ var adeAppFrontEndAppServiceHttpListenerName = 'listener-http-ade-frontend'
 var adeAppFrontEndAppServiceHttpsListenerName = 'listener-https-ade-frontend'
 var adeAppFrontEndAppServiceRedirectionConfigName = 'redirectionconfig-ade-frontend'
 var adeAppFrontEndAppServiceRuleName = 'routingrule-ade-frontend'
-var adeAppFrontEndAppServiceRedirectionRuleName = 'routingrule-redirection--ade-frontend'
+var adeAppFrontEndAppServiceRedirectionRuleName = 'routingrule-redirection-ade-frontend'
 
 var adeAppApiGatewayAppServiceBackendPoolName = 'backendPool-ade-apigateway'
 var adeAppApiGatewayAppServiceProbeName = 'probe-ade-apigateway'
@@ -38,7 +39,7 @@ var adeAppApiGatewayAppServiceHttpListenerName = 'listener-http-ade-apigateway'
 var adeAppApiGatewayAppServiceHttpsListenerName = 'listener-https-ade-apigateway'
 var adeAppApiGatewayAppServiceRedirectionConfigName = 'redirectionconfig-ade-apigateway'
 var adeAppApiGatewayAppServiceRuleName = 'routingrule-ade-apigateway'
-var adeAppApiGatewayAppServiceRedirectionRuleName = 'routingrule-redirection--ade-apigateway'
+var adeAppApiGatewayAppServiceRedirectionRuleName = 'routingrule-redirection-ade-apigateway'
 
 var inspectorGadgetAppServiceWafPolicyRuleName = 'inspectorgadget'
 var inspectorGadgetAppServiceBackendPoolName = 'backendPool-inspectorgadget'
@@ -48,17 +49,25 @@ var inspectorGadgetAppServiceHttpListenerName = 'listener-http-inspectorgadget'
 var inspectorGadgetAppServiceHttpsListenerName = 'listener-https-inspectorgadget'
 var inspectorGadgetAppServiceRedirectionConfigName = 'redirectionconfig-inspectorgadget'
 var inspectorGadgetAppServiceRuleName = 'routingrule-inspectorgadget'
-var inspectorGadgetAppServiceRedirectionRuleName = 'routingrule-redirection--inspectorgadget'
+var inspectorGadgetAppServiceRedirectionRuleName = 'routingrule-redirection-inspectorgadget'
 
 var nTierWafPolicyRuleName = 'ntier'
 var nTierBackendPoolName = 'backendPool-ntier'
-var nTierProbeName = 'probe-ntier'
-var nTierHttpSettingName = 'httpsetting-ntier'
-var nTierHttpListenerName = 'listener-http-ntier'
-var nTierHttpsListenerName = 'listener-https-ntier'
-var nTierRedirectionConfigName = 'redirectionconfig-ntier'
-var nTierRuleName = 'routingrule-ntier'
-var nTierRedirectionRuleName = 'routingrule-redirection--ntier'
+var adeFrontendVmProbeName = 'probe-ade-frontend-vm'
+var adeFrontendVmHttpSettingName = 'httpsetting-ade-frontend-vm'
+var adeFrontendVmHttpListenerName = 'listener-http-ade-frontend-vm'
+var adeFrontendVmHttpsListenerName = 'listener-https-ade-frontend-vm'
+var adeFrontendVmRedirectionConfigName = 'redirectionconfig-ade-frontend-vm'
+var adeFrontendVmRuleName = 'routingrule-ade-frontend-vm'
+var adeFrontendVmRedirectionRuleName = 'routingrule-redirection-ade-frontend-vm'
+
+var adeApiGatewayVmProbeName = 'probe-ade-apigateway-vm'
+var adeApiGatewayVmHttpSettingName = 'httpsetting-ade-apigateway-vm'
+var adeApiGatewayVmHttpListenerName = 'listener-http-ade-apigateway-vm'
+var adeApiGatewayVmHttpsListenerName = 'listener-https-ade-apigateway-vm'
+var adeApiGatewayVmRedirectionConfigName = 'redirectionconfig-ade-apigateway-vm'
+var adeApiGatewayVmRuleName = 'routingrule-ade-apigateway-vm'
+var adeApiGatewayVmRedirectionRuleName = 'routingrule-redirection-ade-apigateway-vm'
 
 // variables
 var environmentName = 'production'
@@ -311,7 +320,18 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
         }
       }
       {
-        name: nTierProbeName
+        name: adeFrontendVmProbeName
+        properties: {
+          interval: 30
+          path: '/'
+          protocol: 'Http'
+          timeout: 30
+          unhealthyThreshold: 3
+          pickHostNameFromBackendHttpSettings: true
+        }
+      }
+      {
+        name: adeApiGatewayVmProbeName
         properties: {
           interval: 30
           path: '/'
@@ -363,7 +383,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
         }
       }
       {
-        name: nTierHttpSettingName
+        name: adeFrontendVmHttpSettingName
         properties: {
           port: 80
           protocol: 'Http'
@@ -371,7 +391,20 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
           requestTimeout: 30
           pickHostNameFromBackendAddress: true
           probe: {
-            id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, nTierProbeName)
+            id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, adeFrontendVmProbeName)
+          }
+        }
+      }
+      {
+        name: adeApiGatewayVmHttpSettingName
+        properties: {
+          port: 8080
+          protocol: 'Http'
+          cookieBasedAffinity: 'Disabled'
+          requestTimeout: 30
+          pickHostNameFromBackendAddress: true
+          probe: {
+            id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, adeApiGatewayVmProbeName)
           }
         }
       }
@@ -477,7 +510,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
         }
       }
       {
-        name: nTierHttpListenerName
+        name: adeFrontendVmHttpListenerName
         properties: {
           frontendIPConfiguration: {
             id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, applicationGatewayFrontendIPConfigurationName)
@@ -486,12 +519,12 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
             id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, applicationGatewayFrontendPortHttp)
           }
           protocol: 'Http'
-          hostName: nTierHostName
+          hostName: adeFrontendVmHostName
           requireServerNameIndication: false
         }
       }
       {
-        name: nTierHttpsListenerName
+        name: adeFrontendVmHttpsListenerName
         properties: {
           frontendIPConfiguration: {
             id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, applicationGatewayFrontendIPConfigurationName)
@@ -503,7 +536,38 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
           sslCertificate: {
             id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, sslCertificateName)
           }
-          hostName: nTierHostName
+          hostName: adeFrontendVmHostName
+          requireServerNameIndication: false
+        }
+      }
+      {
+        name: adeApiGatewayVmHttpListenerName
+        properties: {
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, applicationGatewayFrontendIPConfigurationName)
+          }
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, applicationGatewayFrontendPortHttp)
+          }
+          protocol: 'Http'
+          hostName: adeApiGatewayVmHostName
+          requireServerNameIndication: false
+        }
+      }
+      {
+        name: adeApiGatewayVmHttpsListenerName
+        properties: {
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, applicationGatewayFrontendIPConfigurationName)
+          }
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, applicationGatewayFrontendPortHttps)
+          }
+          protocol: 'Https'
+          sslCertificate: {
+            id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, sslCertificateName)
+          }
+          hostName: adeApiGatewayVmHostName
           requireServerNameIndication: false
         }
       }
@@ -537,11 +601,20 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
         }
       }
       {
-        name: nTierRedirectionConfigName
+        name: adeFrontendVmRedirectionConfigName
         properties: {
           redirectType: 'Permanent'
           targetListener: {
-            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, nTierHttpsListenerName)
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, adeFrontendVmHttpsListenerName)
+          }
+        }
+      }
+      {
+        name: adeApiGatewayVmRedirectionConfigName
+        properties: {
+          redirectType: 'Permanent'
+          targetListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, adeApiGatewayVmHttpsListenerName)
           }
         }
       }
@@ -629,29 +702,56 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
         }
       }
       {
-        name: nTierRuleName
+        name: adeFrontendVmRuleName
         properties: {
           ruleType: 'Basic'
           httpListener: {
-            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, nTierHttpsListenerName)
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, adeFrontendVmHttpsListenerName)
           }
           backendAddressPool: {
             id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, nTierBackendPoolName)
           }
           backendHttpSettings: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, nTierHttpSettingName)
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, adeFrontendVmHttpSettingName)
           }
         }
       }
       {
-        name: nTierRedirectionRuleName
+        name: adeFrontendVmRedirectionRuleName
         properties: {
           ruleType: 'Basic'
           httpListener: {
-            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, nTierHttpListenerName)
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, adeFrontendVmHttpListenerName)
           }
           redirectConfiguration: {
-            id: resourceId('Microsoft.Network/applicationGateways/redirectConfigurations', applicationGatewayName, nTierRedirectionConfigName)
+            id: resourceId('Microsoft.Network/applicationGateways/redirectConfigurations', applicationGatewayName, adeFrontendVmRedirectionConfigName)
+          }
+        }
+      }
+      {
+        name: adeApiGatewayVmRuleName
+        properties: {
+          ruleType: 'Basic'
+          httpListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, adeApiGatewayVmHttpsListenerName)
+          }
+          backendAddressPool: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, nTierBackendPoolName)
+          }
+          backendHttpSettings: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, adeApiGatewayVmHttpSettingName)
+          }
+        }
+      }
+      {
+        name: adeApiGatewayVmRedirectionRuleName
+        properties: {
+          ruleType: 'Basic'
+          httpListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, adeApiGatewayVmHttpListenerName)
+          }
+          redirectConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/redirectConfigurations', applicationGatewayName, adeApiGatewayVmRedirectionConfigName)
           }
         }
       }

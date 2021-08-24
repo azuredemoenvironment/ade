@@ -62,7 +62,8 @@ var adeAppApiGatewayAppServiceFqdn = replace('app-ade-${aliasRegion}-ade-apigate
 var adeAppApiGatewayAppServiceHostName = 'ade-apigateway.${rootDomainName}'
 var inspectorGadgetAppServiceFqdn = replace('app-ade-${aliasRegion}-inspectorgadget.azurewebsites.net', '-', '')
 var inspectorGadgetAppServiceHostName = 'inspectorgadget.${rootDomainName}'
-var nTierHostName = 'ntier.${rootDomainName}'
+var adeFrontendVmHostName = 'ade-frontend-vm.${rootDomainName}'
+var adeApiGatewayVmHostName = 'ade-apigateway-vm.${rootDomainName}'
 // module deployment
 module applicationGatewayModule 'azure_application_gateway.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
@@ -83,7 +84,8 @@ module applicationGatewayModule 'azure_application_gateway.bicep' = {
     adeAppApiGatewayAppServiceHostName: adeAppFrontEndAppServiceHostName
     inspectorGadgetAppServiceFqdn: inspectorGadgetAppServiceFqdn
     inspectorGadgetAppServiceHostName: inspectorGadgetAppServiceHostName
-    nTierHostName: nTierHostName
+    adeFrontendVmHostName: adeFrontendVmHostName
+    adeApiGatewayVmHostName: adeApiGatewayVmHostName
     applicationGatewayManagedIdentity: applicationGatewayManagedIdentity.id
   }
 }
