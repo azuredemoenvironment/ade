@@ -1,6 +1,7 @@
 using ADE.ServiceBase;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -38,6 +39,11 @@ namespace ADE.ApiGateway
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGet("/debug-config", ctx =>
+                {
+                    var config = (Configuration as IConfigurationRoot).GetDebugView();
+                    return ctx.Response.WriteAsync(config);
+                });
             });
         }
 
