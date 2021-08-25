@@ -38,10 +38,13 @@ function Deploy-AzureDns {
 
     Write-Log 'Configuring Application Gateway DNS Entries'
     $apps = @(
-        'adefrontend',
-        'adeapigateway',
-        'inspectorgadget',
-        'ntier'
+        'ade-apigateway-appservice',
+        'ade-apigateway-vm',
+        'ade-apigateway',
+        'ade-frontend-appservice',
+        'ade-frontend-vm',
+        'ade-frontend',
+        'inspectorgadget'
     )
 
     $applicationGatewayResourceGroup = $armParameters.networkingResourceGroupName
