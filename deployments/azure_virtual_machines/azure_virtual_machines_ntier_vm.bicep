@@ -3,6 +3,7 @@ param location string
 param logAnalyticsWorkspaceId string
 param logAnalyticsWorkspaceCustomerId string
 param logAnalyticsWorkspaceKey string
+param nTierAppLoadBalancerName string = ''
 param nTierAppLoadBalancerPrivateIpAddress string
 param adminUserName string
 param adminPassword string
@@ -43,6 +44,11 @@ resource nTierVirtualMachineNIC 'Microsoft.Network/networkInterfaces@2020-08-01'
           subnet: {
             id: subnetId
           }
+          loadBalancerBackendAddressPools: nTierAppLoadBalancerName != '' ? [
+            {
+              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', nTierAppLoadBalancerName, 'bep-nTierApp')
+            }
+          ] : null
         }
       }
     ]

@@ -84,6 +84,25 @@ resource proximityPlacementGroupAz3 'Microsoft.Compute/proximityPlacementGroups@
   }
 }
 
+var backendServices = [
+  {
+    name: 'DataIngestorService'
+    port: 5000
+  }
+  {
+    name: 'DataReporterService'
+    port: 5001
+  }
+  {
+    name: 'UserService'
+    port: 5002
+  }
+  {
+    name: 'EventIngestorService'
+    port: 5003
+  }
+]
+
 // resource - load balancer - ntierapp
 resource nTierAppLoadBalancer 'Microsoft.Network/loadBalancers@2020-11-01' = {
   name: nTierAppLoadBalancerName
@@ -114,38 +133,34 @@ resource nTierAppLoadBalancer 'Microsoft.Network/loadBalancers@2020-11-01' = {
         name: 'bep-nTierApp'
       }
     ]
-    probes: [
-      {
-        name: 'probe-nTierApp'
-        properties: {
-          protocol: 'Https'
-          requestPath: '/'
-          port: 443
-          intervalInSeconds: 15
-          numberOfProbes: 2
-        }
+    probes: [for backendService in backendServices: {
+      name: 'probe-${backendService.name}'
+      properties: {
+        protocol: 'Http'
+        requestPath: '/swagger'
+        port: backendService.port
+        intervalInSeconds: 15
+        numberOfProbes: 2
       }
-    ]
-    loadBalancingRules: [
-      {
-        name: 'lbr-nTierApp'
-        properties: {
-          frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', nTierAppLoadBalancerName, 'fip-nTierApp')
-          }
-          backendAddressPool: {
-            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', nTierAppLoadBalancerName, 'bep-nTierApp')
-          }
-          probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/probes', nTierAppLoadBalancerName, 'probe-nTierApp')
-          }
-          protocol: 'Tcp'
-          frontendPort: 443
-          backendPort: 443
-          idleTimeoutInMinutes: 15
+    }]
+    loadBalancingRules: [for backendService in backendServices: {
+      name: 'lbr-${backendService.name}'
+      properties: {
+        frontendIPConfiguration: {
+          id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', nTierAppLoadBalancerName, 'fip-nTierApp')
         }
+        backendAddressPool: {
+          id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', nTierAppLoadBalancerName, 'bep-nTierApp')
+        }
+        probe: {
+          id: resourceId('Microsoft.Network/loadBalancers/probes', nTierAppLoadBalancerName, 'probe-${backendService.name}')
+        }
+        protocol: 'Tcp'
+        frontendPort: backendService.port
+        backendPort: backendService.port
+        idleTimeoutInMinutes: 15
       }
-    ]
+    }]
   }
 }
 
@@ -197,6 +212,8 @@ var ntierVirtualMachines = [
     zone: '1'
     proximityPlacementGroupId: proximityPlacementGroupAz1.id
     adeModule: 'backend'
+    loadBalancerName: nTierAppLoadBalancerName
+    loadBalancerPrivateIpAddress: nTierAppLoadBalancerPrivateIpAddress
   }
   {
     name: nTierApp02Name
@@ -207,6 +224,8 @@ var ntierVirtualMachines = [
     zone: '2'
     proximityPlacementGroupId: proximityPlacementGroupAz2.id
     adeModule: 'backend'
+    loadBalancerName: nTierAppLoadBalancerName
+    loadBalancerPrivateIpAddress: nTierAppLoadBalancerPrivateIpAddress
   }
   {
     name: nTierApp03Name
@@ -217,6 +236,8 @@ var ntierVirtualMachines = [
     zone: '3'
     proximityPlacementGroupId: proximityPlacementGroupAz3.id
     adeModule: 'backend'
+    loadBalancerName: nTierAppLoadBalancerName
+    loadBalancerPrivateIpAddress: nTierAppLoadBalancerPrivateIpAddress
   }
   {
     name: nTierWeb01Name
@@ -227,6 +248,8 @@ var ntierVirtualMachines = [
     zone: '1'
     proximityPlacementGroupId: proximityPlacementGroupAz1.id
     adeModule: 'frontend'
+    loadBalancerName: ''
+    loadBalancerPrivateIpAddress: ''
   }
   {
     name: nTierWeb02Name
@@ -237,6 +260,8 @@ var ntierVirtualMachines = [
     zone: '2'
     proximityPlacementGroupId: proximityPlacementGroupAz2.id
     adeModule: 'frontend'
+    loadBalancerName: ''
+    loadBalancerPrivateIpAddress: ''
   }
   {
     name: nTierWeb03Name
@@ -247,6 +272,8 @@ var ntierVirtualMachines = [
     zone: '3'
     proximityPlacementGroupId: proximityPlacementGroupAz3.id
     adeModule: 'frontend'
+    loadBalancerName: ''
+    loadBalancerPrivateIpAddress: ''
   }
 ]
 module AzureVirtualMachinesNTierVm 'azure_virtual_machines_ntier_vm.bicep' = [for nTierVirtualMachine in ntierVirtualMachines: {
@@ -261,7 +288,9 @@ module AzureVirtualMachinesNTierVm 'azure_virtual_machines_ntier_vm.bicep' = [fo
     logAnalyticsWorkspaceKey: logAnalyticsWorkspaceKey
     name: nTierVirtualMachine.name
     nicName: nTierVirtualMachine.nicName
-    nTierAppLoadBalancerPrivateIpAddress: nTierAppLoadBalancerPrivateIpAddress
+    nTierAppLoadBalancerName: nTierVirtualMachine.loadBalancerName
+    nTierAppLoadBalancerPrivateIpAddress: '10.102.2.5'
+    // nTierAppLoadBalancerPrivateIpAddress: nTierVirtualMachine.loadBalancerPrivateIpAddress
     osDiskName: nTierVirtualMachine.osDiskName
     privateIpAddress: nTierVirtualMachine.privateIpAddress
     proximityPlacementGroupId: nTierVirtualMachine.proximityPlacementGroupId
