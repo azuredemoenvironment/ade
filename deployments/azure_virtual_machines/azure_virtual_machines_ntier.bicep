@@ -137,7 +137,7 @@ resource nTierAppLoadBalancer 'Microsoft.Network/loadBalancers@2020-11-01' = {
       name: 'probe-${backendService.name}'
       properties: {
         protocol: 'Http'
-        requestPath: '/swagger'
+        requestPath: '/swagger/index.html'
         port: backendService.port
         intervalInSeconds: 15
         numberOfProbes: 2
@@ -213,7 +213,6 @@ var ntierVirtualMachines = [
     proximityPlacementGroupId: proximityPlacementGroupAz1.id
     adeModule: 'backend'
     loadBalancerName: nTierAppLoadBalancerName
-    loadBalancerPrivateIpAddress: nTierAppLoadBalancerPrivateIpAddress
   }
   {
     name: nTierApp02Name
@@ -225,7 +224,6 @@ var ntierVirtualMachines = [
     proximityPlacementGroupId: proximityPlacementGroupAz2.id
     adeModule: 'backend'
     loadBalancerName: nTierAppLoadBalancerName
-    loadBalancerPrivateIpAddress: nTierAppLoadBalancerPrivateIpAddress
   }
   {
     name: nTierApp03Name
@@ -237,7 +235,6 @@ var ntierVirtualMachines = [
     proximityPlacementGroupId: proximityPlacementGroupAz3.id
     adeModule: 'backend'
     loadBalancerName: nTierAppLoadBalancerName
-    loadBalancerPrivateIpAddress: nTierAppLoadBalancerPrivateIpAddress
   }
   {
     name: nTierWeb01Name
@@ -249,7 +246,6 @@ var ntierVirtualMachines = [
     proximityPlacementGroupId: proximityPlacementGroupAz1.id
     adeModule: 'frontend'
     loadBalancerName: ''
-    loadBalancerPrivateIpAddress: ''
   }
   {
     name: nTierWeb02Name
@@ -261,7 +257,6 @@ var ntierVirtualMachines = [
     proximityPlacementGroupId: proximityPlacementGroupAz2.id
     adeModule: 'frontend'
     loadBalancerName: ''
-    loadBalancerPrivateIpAddress: ''
   }
   {
     name: nTierWeb03Name
@@ -273,7 +268,6 @@ var ntierVirtualMachines = [
     proximityPlacementGroupId: proximityPlacementGroupAz3.id
     adeModule: 'frontend'
     loadBalancerName: ''
-    loadBalancerPrivateIpAddress: ''
   }
 ]
 module AzureVirtualMachinesNTierVm 'azure_virtual_machines_ntier_vm.bicep' = [for nTierVirtualMachine in ntierVirtualMachines: {
@@ -289,8 +283,7 @@ module AzureVirtualMachinesNTierVm 'azure_virtual_machines_ntier_vm.bicep' = [fo
     name: nTierVirtualMachine.name
     nicName: nTierVirtualMachine.nicName
     nTierAppLoadBalancerName: nTierVirtualMachine.loadBalancerName
-    nTierAppLoadBalancerPrivateIpAddress: '10.102.2.5'
-    // nTierAppLoadBalancerPrivateIpAddress: nTierVirtualMachine.loadBalancerPrivateIpAddress
+    nTierAppLoadBalancerPrivateIpAddress: nTierAppLoadBalancerPrivateIpAddress
     osDiskName: nTierVirtualMachine.osDiskName
     privateIpAddress: nTierVirtualMachine.privateIpAddress
     proximityPlacementGroupId: nTierVirtualMachine.proximityPlacementGroupId
