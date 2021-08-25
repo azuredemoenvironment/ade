@@ -10,4 +10,4 @@ node configuration.js
 ./env.sh
 
 # Start Server
-http-server ./ -p 80
+http-server --cors ./ -p 80

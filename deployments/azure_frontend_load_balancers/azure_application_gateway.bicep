@@ -301,7 +301,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
         name: adeAppApiGatewayAppServiceProbeName
         properties: {
           interval: 30
-          path: '/'
+          path: '/swagger'
           protocol: 'Http'
           timeout: 30
           unhealthyThreshold: 3
@@ -334,7 +334,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
         name: adeApiGatewayVmProbeName
         properties: {
           interval: 30
-          path: '/'
+          path: '/swagger'
           protocol: 'Http'
           timeout: 30
           unhealthyThreshold: 3
