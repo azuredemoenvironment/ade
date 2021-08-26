@@ -17,10 +17,10 @@ function Remove-AzureDnsEntries {
 
     Write-Log "Removing A Records"
     $aRecords = @(
-        'ade-apigateway-appservice',
+        'ade-apigateway-as',
         'ade-apigateway-vm',
         'ade-apigateway',
-        'ade-frontend-appservice',
+        'ade-frontend-as',
         'ade-frontend-vm',
         'ade-frontend',
         'inspectorgadget',
