@@ -20,7 +20,6 @@ resource nsgFlowLogsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01
   kind: 'StorageV2'
   sku: {
     name: 'Standard_RAGRS'
-    tier: 'Standard'
   }
   properties: {
     accessTier: 'Hot'
@@ -37,6 +36,27 @@ resource nsgFlowLogsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01
   }
   resource queueServices 'queueServices@2021-01-01' = {
     name: 'default'
+  }
+}
+
+// resource - storage account - diagnostic settings
+resource nsgFlowLogsStorageAccountDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+  scope: nsgFlowLogsStorageAccount
+  name: '${nsgFlowLogsStorageAccount.name}-diagnostics'
+  properties: {
+    workspaceId: logAnalyticsWorkspaceId
+    logAnalyticsDestinationType: 'Dedicated'
+
+    metrics: [
+      {
+        category: 'Transaction'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
+    ]
   }
 }
 

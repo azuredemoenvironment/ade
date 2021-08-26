@@ -23,8 +23,8 @@
         "containerRegistrySPNAppID": {
             "value": "@@containerRegistrySPNAppID@@"
         },
-        "containerRegistryObjectId": {
-            "value": "@@containerRegistryObjectId@@"
+        "containerRegistrySPNObjectID": {
+            "value": "@@containerRegistrySPNObjectID@@"
         },
         "githubActionsSPNPassword": {
             "value": "@@githubActionsSPNPassword@@"
@@ -32,17 +32,11 @@
         "githubActionsSPNAppID": {
             "value": "@@githubActionsSPNAppID@@"
         },
-        "githubActionsObjectId": {
-            "value": "@@githubActionsObjectId@@"
-        },
         "restAPISPNPassword": {
             "value": "@@restAPISPNPassword@@"
         },
         "restAPISPNAppID": {
             "value": "@@restAPISPNAppID@@"
-        },
-        "restAPIObjectId": {
-            "value": "@@restAPIObjectId@@"
         }
     }
 }

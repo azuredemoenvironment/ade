@@ -57,7 +57,7 @@ resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' 
 }
 
 // resource - sql database - diagnostic settings - adeAppSqlServerDatabase
-resource adeAppSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource adeAppSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: adeAppSqlDatabase
   name: '${adeAppSqlDatabase.name}-diagnostics'
   properties: {

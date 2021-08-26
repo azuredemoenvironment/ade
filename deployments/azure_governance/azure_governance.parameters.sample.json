@@ -14,9 +14,6 @@
         "identityResourceGroupName": {
             "value": "@@identityResourceGroupName@@"
         },
-        "sourceAddressPrefix": {
-            "value": "@@sourceAddressPrefix@@"
-        },
         "listOfAllowedLocations": {
             "value": [
                 "@@defaultPrimaryRegion@@",

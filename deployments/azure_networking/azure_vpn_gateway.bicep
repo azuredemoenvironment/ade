@@ -30,7 +30,7 @@ resource vpnGatewayPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-
 }
 
 // resource - public ip address - diagnostic settings - vpn gateway
-resource azureFirewallPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource vpnGatewayPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
   scope: vpnGatewayPublicIpAddress
   name: '${vpnGatewayPublicIpAddress.name}-diagnostics'
   properties: {

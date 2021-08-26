@@ -7,12 +7,12 @@ function Set-AzureVirtualMachinesToAllocated {
 
     $virtualMachines = @(
         @{ Name = $armParameters.jumpboxName; ResourceGroup = $armParameters.jumpboxResourceGroupName },
-        @{ Name = 'vm-ntierweb01'; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = 'vm-ntierweb02'; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = 'vm-ntierweb03'; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = 'vm-ntierapp01'; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = 'vm-ntierapp02'; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = 'vm-ntierapp03'; ResourceGroup = $armParameters.ntierResourceGroupName },
+        @{ Name = $armParameters.nTierWeb01Name; ResourceGroup = $armParameters.ntierResourceGroupName },
+        @{ Name = $armParameters.nTierWeb02Name; ResourceGroup = $armParameters.ntierResourceGroupName },
+        @{ Name = $armParameters.nTierWeb03Name; ResourceGroup = $armParameters.ntierResourceGroupName },
+        @{ Name = $armParameters.nTierApp01Name; ResourceGroup = $armParameters.ntierResourceGroupName },
+        @{ Name = $armParameters.nTierApp02Name; ResourceGroup = $armParameters.ntierResourceGroupName },
+        @{ Name = $armParameters.nTierApp03Name; ResourceGroup = $armParameters.ntierResourceGroupName },
         @{ Name = $armParameters.w10clientName; ResourceGroup = $armParameters.w10clientResourceGroupName }
     )
     
@@ -22,7 +22,7 @@ function Set-AzureVirtualMachinesToAllocated {
 
         Write-Log "Allocating $name in resource group $rg"
 
-        az vm start --resource-group $rg --name $name
+        az vm start --resource-group $rg --name $name --no-wait
         Confirm-LastExitCode
     }
 
