@@ -23,7 +23,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
 }
 // variables
 var virtualNetwork001Name = 'vnet-ade-${aliasRegion}-001'
-var managementSubnetName = 'snet-management'
+var managementSubnetName = 'snet-ade-${aliasRegion}-management'
 // resource - virtual network - virtual network 001
 resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
@@ -34,10 +34,10 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' existi
 }
 // variables
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
-var nTierWebSubnetName = 'snet-nTierWeb'
-var nTierAppSubnetName = 'snet-nTierApp'
-var vmssSubnetName = 'snet-vmss'
-var clientServicesSubnetName = 'snet-clientServices'
+var nTierWebSubnetName = 'snet-ade-${aliasRegion}-nTierWeb'
+var nTierAppSubnetName = 'snet-ade-${aliasRegion}-nTierApp'
+var vmssSubnetName = 'snet-ade-${aliasRegion}-vmss'
+var clientServicesSubnetName = 'snet-ade-${aliasRegion}-clientServices'
 // resource - virtual network - virtual network 002
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)

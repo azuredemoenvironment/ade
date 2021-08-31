@@ -38,6 +38,9 @@
         "containerRegistryResourceGroupName": {
             "value": "@@containerRegistryResourceGroupName@@"
         },
+        "adeAppLoadTestingResourceGroupName": {
+            "value": "@@adeAppLoadTestingResourceGroupName@@"
+        },
         "appServicePlanResourceGroupName": {
             "value": "@@appServicePlanResourceGroupName@@"
         },

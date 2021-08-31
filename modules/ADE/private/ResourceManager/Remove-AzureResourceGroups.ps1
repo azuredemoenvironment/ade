@@ -12,14 +12,14 @@ function Remove-AzureResourceGroups {
         $armParameters.inspectorGadgetResourceGroupName
         $armParameters.adeAppAppServicesResourceGroupName
         $armParameters.appServicePlanResourceGroupName
-        $armParameters.aksResourceGroupName
-        $armParameters.wordpressResourceGroupName
-        $armParameters.containerRegistryResourceGroupName
+        $armParameters.aksResourceGroupName   
         $armParameters.vmssResourceGroupName
         $armParameters.ntierResourceGroupName
         $armParameters.w10clientResourceGroupName
         $armParameters.jumpboxResourceGroupName
-        $armParameters.adeAppSqlResourceGroupName   
+        $armParameters.adeAppLoadTestingResourceGroupName
+        $armParameters.adeAppSqlResourceGroupName
+        $armParameters.containerRegistryResourceGroupName
         $armParameters.networkingResourceGroupName
         $armParameters.identityResourceGroupName
     )

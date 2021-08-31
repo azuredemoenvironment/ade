@@ -51,7 +51,6 @@ var inspectorGadgetAppServiceRedirectionConfigName = 'redirectionconfig-inspecto
 var inspectorGadgetAppServiceRuleName = 'routingrule-inspectorgadget'
 var inspectorGadgetAppServiceRedirectionRuleName = 'routingrule-redirection-inspectorgadget'
 
-var nTierWafPolicyRuleName = 'ntier'
 var nTierBackendPoolName = 'backendPool-ntier'
 var adeFrontendVmProbeName = 'probe-ade-frontend-vm'
 var adeFrontendVmHttpSettingName = 'httpsetting-ade-frontend-vm'

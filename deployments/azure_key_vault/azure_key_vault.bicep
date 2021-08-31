@@ -7,13 +7,11 @@ param applicationGatewayManagedIdentitySPNID string
 param containerRegistryManagedIdentitySPNID string
 param containerRegistrySPNPassword string
 param containerRegistrySPNAppID string
-param containerRegistryObjectId string
+param containerRegistrySPNObjectID string
 param githubActionsSPNPassword string
 param githubActionsSPNAppID string
-param githubActionsObjectId string
 param restAPISPNPassword string
 param restAPISPNAppID string
-param restAPIObjectId string
 
 // variables
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
@@ -31,7 +29,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
 }
 
 // resource - key vault
-resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' = {
+resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
   name: keyVaultName
   location: location
   tags: {
@@ -51,6 +49,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' = {
     softDeleteRetentionInDays: 7
     enablePurgeProtection: true
     tenantId: azureActiveDirectoryTenantID
+    publicNetworkAccess: 'enabled'
     accessPolicies: [
       {
         objectId: azureActiveDirectoryUserID
@@ -104,7 +103,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' = {
 }
 
 // resource - key vault - secret - containerRegistryUserName
-resource containerRegistryUserNameSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+resource containerRegistryUserNameSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
   name: '${keyVault.name}/${'containerRegistryUserName'}'
   properties: {
     value: containerRegistrySPNAppID
@@ -112,7 +111,7 @@ resource containerRegistryUserNameSecret 'Microsoft.KeyVault/vaults/secrets@2019
 }
 
 // resource - key vault - secret - containerRegistryPassword
-resource containerRegistryPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+resource containerRegistryPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
   name: '${keyVault.name}/${'containerRegistryPassword'}'
   properties: {
     value: containerRegistrySPNPassword
@@ -120,15 +119,15 @@ resource containerRegistryPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2019
 }
 
 // resource - key vault - secret - containerRegistryObjectId
-resource containerRegistryObjectIdSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+resource containerRegistryObjectIdSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
   name: '${keyVault.name}/${'containerRegistryObjectId'}'
   properties: {
-    value: containerRegistryObjectId
+    value: containerRegistrySPNObjectID
   }
 }
 
 // resource - key vault - secret - githubActionsUserName
-resource githubActionsUserNameSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+resource githubActionsUserNameSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
   name: '${keyVault.name}/${'githubActionsUserName'}'
   properties: {
     value: githubActionsSPNAppID
@@ -136,23 +135,15 @@ resource githubActionsUserNameSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-
 }
 
 // resource - key vault - secret - githubActionsPassword
-resource githubActionsPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+resource githubActionsPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
   name: '${keyVault.name}/${'githubActionsPassword'}'
   properties: {
     value: githubActionsSPNPassword
   }
 }
 
-// resource - key vault - secret - githubActionsObjectId
-resource githubActionsObjectIdSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
-  name: '${keyVault.name}/${'githubActionsObjectId'}'
-  properties: {
-    value: githubActionsObjectId
-  }
-}
-
 // resource - key vault - secret - restAPIUserName
-resource restAPIUserNameSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+resource restAPIUserNameSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
   name: '${keyVault.name}/${'restAPIUserName'}'
   properties: {
     value: restAPISPNAppID
@@ -160,18 +151,10 @@ resource restAPIUserNameSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = 
 }
 
 // resource - key vault - secret - restAPIPassword
-resource restAPIPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+resource restAPIPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
   name: '${keyVault.name}/${'restAPIPassword'}'
   properties: {
     value: restAPISPNPassword
-  }
-}
-
-// resource - key vault - secret - restAPIObjectId
-resource restAPIObjectIdSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
-  name: '${keyVault.name}/${'restAPIObjectId'}'
-  properties: {
-    value: restAPIObjectId
   }
 }
 

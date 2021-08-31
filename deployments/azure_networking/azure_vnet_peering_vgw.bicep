@@ -1,5 +1,4 @@
 // parameters
-param networkingResourceGroupName string
 param virtualNetwork001Name string
 param virtualNetwork002Name string
 param virtualNetwork001Id string

@@ -21,7 +21,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
 }
 // variables
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
-var privateEndpointSubnetName = 'snet-privateEndpoint'
+var privateEndpointSubnetName = 'snet-ade-${aliasRegion}-privateEndpoint'
 // resource - virtual network - virtual network 002
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
@@ -78,6 +78,6 @@ module inspectorGadgetSqlModule './azure_databases_inspectorgadget_sql.bicep' = 
     azureSQLPrivateDnsZoneId: azureSQLPrivateDnsZone.id
     inspectorGadgetSqlServerName: inspectorGadgetSqlServerName
     inspectorGadgetSqlDatabaseName: inspectorGadgetSqlDatabaseName
-    inspectorGadgetSqlServerPrivateEndpointName: adeAppSqlServerPrivateEndpointName
+    inspectorGadgetSqlServerPrivateEndpointName: inspectorGadgetSqlServerPrivateEndpointName
   }
 }

@@ -23,7 +23,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
 }
 // variables
 var virtualNetwork001Name = 'vnet-ade-${aliasRegion}-001'
-var applicationGatewaySubnetName = 'snet-agw'
+var applicationGatewaySubnetName = 'snet-ade-${aliasRegion}-applicationGateway'
 // resource - virtual network - virtual network 001
 resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
@@ -34,7 +34,7 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' existi
 }
 // variables
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
-var nTierWebSubnetName = 'snet-nTierWeb'
+var nTierWebSubnetName = 'snet-ade-${aliasRegion}-nTierWeb'
 // resource - virtual network - virtual network 002
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
@@ -57,9 +57,9 @@ var applicationGatewayPublicIpAddressName = 'pip-ade-${aliasRegion}-appgw001'
 var inspectorGadgetAppServiceWafPolicyName = 'waf-ade-${aliasRegion}-inspectorgadget'
 var applicationGatewayName = 'appgw-ade-${aliasRegion}-001'
 var adeAppFrontEndAppServiceFqdn = replace('app-ade-${aliasRegion}-ade-frontend.azurewebsites.net', '-', '')
-var adeAppFrontEndAppServiceHostName = 'ade-frontend.${rootDomainName}'
+var adeAppFrontEndAppServiceHostName = 'adefrontend.${rootDomainName}'
 var adeAppApiGatewayAppServiceFqdn = replace('app-ade-${aliasRegion}-ade-apigateway.azurewebsites.net', '-', '')
-var adeAppApiGatewayAppServiceHostName = 'ade-apigateway.${rootDomainName}'
+var adeAppApiGatewayAppServiceHostName = 'adeapigateway.${rootDomainName}'
 var inspectorGadgetAppServiceFqdn = replace('app-ade-${aliasRegion}-inspectorgadget.azurewebsites.net', '-', '')
 var inspectorGadgetAppServiceHostName = 'inspectorgadget.${rootDomainName}'
 var adeFrontendVmHostName = 'ade-frontend-vm.${rootDomainName}'
@@ -79,9 +79,9 @@ module applicationGatewayModule 'azure_application_gateway.bicep' = {
     inspectorGadgetAppServiceWafPolicyName: inspectorGadgetAppServiceWafPolicyName
     applicationGatewayName: applicationGatewayName
     adeAppFrontEndAppServiceFqdn: adeAppFrontEndAppServiceFqdn
-    adeAppFrontEndAppServiceHostName: adeAppApiGatewayAppServiceHostName
+    adeAppFrontEndAppServiceHostName: adeAppFrontEndAppServiceHostName
     adeAppApiGatewayAppServiceFqdn: adeAppApiGatewayAppServiceFqdn
-    adeAppApiGatewayAppServiceHostName: adeAppFrontEndAppServiceHostName
+    adeAppApiGatewayAppServiceHostName: adeAppApiGatewayAppServiceHostName
     inspectorGadgetAppServiceFqdn: inspectorGadgetAppServiceFqdn
     inspectorGadgetAppServiceHostName: inspectorGadgetAppServiceHostName
     adeFrontendVmHostName: adeFrontendVmHostName

@@ -24,6 +24,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
   scope: resourceGroup(monitorResourceGroupName)
   name: logAnalyticsWorkspaceName
 }
+
 // application insights
 // variables
 var applicationInsightsName = 'appinsights-ade-${aliasRegion}-001'
@@ -32,12 +33,13 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02-preview' 
   scope: resourceGroup(monitorResourceGroupName)
   name: applicationInsightsName
 }
+
 // virtual network - virtual network 002
 // variables
 var networkingResourceGroupName = 'rg-ade-${aliasRegion}-networking'
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
-var vnetIntegrationSubnetName = 'snet-vnetIntegration'
-var privateEndpointSubnetName = 'snet-privateEndpoint'
+var vnetIntegrationSubnetName = 'snet-ade-${aliasRegion}-vnetIntegration'
+var privateEndpointSubnetName = 'snet-ade-${aliasRegion}-privateEndpoint'
 // resource
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
@@ -49,6 +51,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existi
     name: privateEndpointSubnetName
   }
 }
+
 // sql server - inspectorgadget
 // variables
 var inspectorGadgetSqlServerName = 'sql-ade-${aliasRegion}-inspectorgadget'
@@ -57,6 +60,7 @@ resource inspectorGadgetSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' exi
   scope: resourceGroup(inspectorGadgetResourceGroupName)
   name: inspectorGadgetSqlServerName
 }
+
 // sql database - inspector gadget
 // variables
 var inspectorGadgetSqlDatabaseName = 'sqldb-ade-${aliasRegion}-inspectorgadget'
@@ -65,6 +69,7 @@ resource inspectorGadgetSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-
   scope: resourceGroup(inspectorGadgetResourceGroupName)
   name: inspectorGadgetSqlDatabaseName
 }
+
 // container registry
 // variables
 var azureContainerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
@@ -73,6 +78,7 @@ resource azureContainerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-
   scope: resourceGroup(containerRegistryResourceGroupName)
   name: azureContainerRegistryName
 }
+
 // sql server - adeappsql
 // variables
 var adeAppSqlServerName = 'sql-ade-${aliasRegion}-adeapp'
@@ -81,6 +87,7 @@ resource adeAppSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' existing = {
   scope: resourceGroup(adeAppSqlResourceGroupName)
   name: adeAppSqlServerName
 }
+
 // sql database - adeappsql
 // variables
 var adeAppSqlDatabaseName = 'sqldb-ade-${aliasRegion}-adeapp'
@@ -89,6 +96,7 @@ resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' 
   scope: resourceGroup(adeAppSqlResourceGroupName)
   name: adeAppSqlDatabaseName
 }
+
 // private dns zone - app services
 // variables
 var azureAppServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
