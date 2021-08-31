@@ -3,6 +3,11 @@ param location string
 param adminUserName string
 param adminPassword string
 param logAnalyticsWorkspaceId string
+<<<<<<< HEAD
+param logAnalyticsWorkspaceCustomerId string
+param logAnalyticsWorkspaceKey string
+=======
+>>>>>>> origin/dev
 param clientServicesSubnetId string
 param w10ClientNICName string
 param w10ClientPrivateIpAddress string

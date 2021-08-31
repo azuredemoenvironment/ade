@@ -359,4 +359,7 @@ MigrationBackup/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio
 
+# Dev App Settings and Azure Functions localsettings file
 appsettings.Development.json
+local.settings.json
+*.local.json

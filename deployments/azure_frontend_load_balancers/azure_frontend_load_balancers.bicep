@@ -4,6 +4,16 @@ targetScope = 'subscription'
 // parameters
 param defaultPrimaryRegion string
 param aliasRegion string
+<<<<<<< HEAD
+param monitorResourceGroupName string
+param networkingResourceGroupName string
+param jumpboxResourceGroupName string
+param nTierResourceGroupName string
+param vmssResourceGroupName string
+param w10clientResourceGroupName string
+param adminUserName string
+param adminPassword string
+=======
 param rootDomainName string
 param monitorResourceGroupName string
 param networkingResourceGroupName string
@@ -12,6 +22,7 @@ param nTierResourceGroupName string
 param sslCertificateName string
 param sslCertificateData string
 param sslCertificateDataPassword string
+>>>>>>> origin/dev
 
 // existing resources
 // variables
@@ -28,6 +39,12 @@ var applicationGatewaySubnetName = 'snet-ade-${aliasRegion}-applicationGateway'
 resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
   name: virtualNetwork001Name
+<<<<<<< HEAD
+  resource managementSubnet 'subnets@2020-07-01' existing = {
+    name: applicationGatewaySubnetName
+  }
+}
+=======
   resource applicationGatewaySubnet 'subnets@2020-07-01' existing = {
     name: applicationGatewaySubnetName
   }
@@ -113,3 +130,4 @@ module nTierNICUpdateModule 'azure_virtual_machine_ntier_nic_update.bicep' = {
     nTierBackendPoolId: applicationGatewayModule.outputs.nTierBackendPoolId
   }
 }
+>>>>>>> origin/dev
