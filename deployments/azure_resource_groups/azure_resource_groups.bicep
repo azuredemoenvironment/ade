@@ -14,6 +14,7 @@ param nTierResourceGroupName string
 param vmssResourceGroupName string
 param w10clientResourceGroupName string
 param containerRegistryResourceGroupName string
+param adeAppLoadTestingResourceGroupName string
 param appServicePlanResourceGroupName string
 param adeAppAppServicesResourceGroupName string
 
@@ -80,6 +81,12 @@ resource w10clientResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' 
 // resource group - azure container registry
 resource containerRegistryResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
   name: containerRegistryResourceGroupName
+  location: defaultPrimaryRegion
+}
+
+// resource group - adeAppLoadTesting
+resource adeAppLoadTestingResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+  name: adeAppLoadTestingResourceGroupName
   location: defaultPrimaryRegion
 }
 

@@ -70,7 +70,7 @@ resource inspectorGadgetSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-
 }
 
 // resource - sql database - diagnostic settings - inspectorGadgetSqlDatabase
-resource inspectorGadgetSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource inspectorGadgetSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: inspectorGadgetSqlDatabase
   name: '${inspectorGadgetSqlDatabase.name}-diagnostics'
   properties: {

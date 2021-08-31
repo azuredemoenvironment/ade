@@ -1,6 +1,4 @@
 // parameters
-param location string
-param networkingResourceGroupName string
 param virtualNetwork001Name string
 param virtualNetwork002Name string
 param appServicePrivateDnsZoneName string

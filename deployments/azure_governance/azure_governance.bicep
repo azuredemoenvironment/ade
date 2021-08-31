@@ -6,7 +6,6 @@ param defaultPrimaryRegion string
 param aliasRegion string
 param monitorResourceGroupName string
 param identityResourceGroupName string
-param sourceAddressPrefix string
 param listOfAllowedLocations array
 param listOfAllowedSKUs array
 

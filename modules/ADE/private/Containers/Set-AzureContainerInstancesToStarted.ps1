@@ -5,12 +5,14 @@ function Set-AzureContainerInstancesToStarted {
 
     Write-ScriptSection "Setting Azure Container Instances to Started"
 
-    $containerGroupResourceGroup = $armParameters.wordpressResourceGroupName
+    $aliasRegion = $armParameters.aliasRegion
+    $containerGroupResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName
 
     $containerGroups = @(
-        'containerGroup-mysql',
-        'containerGroup-share',
-        'containerGroup-wordpress'
+        "ci-ade-$aliasRegion-adeloadtesting-redis",
+        "ci-ade-$aliasRegion-adeloadtesting-influxdb",
+        "ci-ade-$aliasRegion-adeloadtesting-grafana",
+        "ci-ade-$aliasRegion-adeloadtesting-gatling"
     )
     
     $containerGroups | ForEach-Object {

@@ -8,19 +8,20 @@
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
+        "rootDomainName": {
+            "value": "@@rootDomainName@@"
+        },
         "monitorResourceGroupName": {
             "value": "@@monitorResourceGroupName@@"
         },
+        "keyVaultResourceGroupName": {
+            "value": "@@keyVaultResourceGroupName@@"
+        },  
         "containerRegistryResourceGroupName": {
             "value": "@@containerRegistryResourceGroupName@@"
-        },
-        "acrServicePrincipalClientId": {
-            "reference": {
-                "keyVault": {
-                    "id": "@@keyVaultResourceID@@"
-                },
-                "secretName": "containerRegistryObjectId"
-            }
+        },        
+        "adeAppLoadTestingResourceGroupName": {
+            "value": "@@adeAppLoadTestingResourceGroupName@@"
         }
     }
 }

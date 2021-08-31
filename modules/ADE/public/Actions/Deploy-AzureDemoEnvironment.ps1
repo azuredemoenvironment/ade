@@ -38,6 +38,7 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureGovernance $armParameters
     Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
     Deploy-AzureNetworking $armParameters
+    Deploy-AzureContainerRegistry $armParameters
 
     # Data Services
     ###################################
@@ -46,50 +47,23 @@ function Deploy-AzureDemoEnvironment {
     # Compute Infrastructure
     ###################################
     Deploy-AzureVirtualMachines $armParameters
-    Deploy-AzureContainers $armParameters
-    # Deploy-AzureContainerInstances $armParameters
-    # Dedicated Resource Group
-
-    # App Services
-    ###################################
     Deploy-AzureAppServices $armParameters
-
-    # ADE App Kubernetes
-    ###################################
-    # Parallel
-    # Deploy-AzureKubernetesService-ADEApp $armParameters
-    # Dedicated Resource Group
+    # Deploy-AzureKubernetesService $armParameters
+    Deploy-AzureContainerInstances $armParameters
+    Set-AzureContainerInstancesToStopped $armParameters
 
     # Frontend Load Balancers
     ###################################
-<<<<<<< HEAD
-    # Deploy-AzureApplicationGateway $armParameters
-    # Dedicated Resource Group
-=======
     Deploy-AzureFrontendLoadBalancers $armParameters
->>>>>>> origin/dev
-    # Deploy-AzureFrontDoor $armParameters
-    # Dedicated Resource Group
     
     # Service Cleanup
     ###################################
-<<<<<<< HEAD
-    # Deploy-AzureAppServicePlanScaleDown $armParameters 
-
-    # Additional Core Services
-    ###################################
-    # Deploy-AzureAlerts $armParameters
-    # Existing Resource Group
-    # Deploy-AzureDns $armParameters
-    # Existing Resource Group
-=======
     Deploy-AzureAppServicePlanScaleDown $armParameters 
 
     # Additional Core Services
     ###################################
     Deploy-AzureAlerts $armParameters
     Deploy-AzureDns $armParameters
->>>>>>> origin/dev
 
     $stopwatch.Stop()
     $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)

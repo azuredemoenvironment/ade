@@ -87,7 +87,6 @@ var inspectorGadgetAppServiceRedirectionConfigName = 'redirectionconfig-inspecto
 var inspectorGadgetAppServiceRuleName = 'routingrule-inspectorgadget'
 var inspectorGadgetAppServiceRedirectionRuleName = 'routingrule-redirection--inspectorgadget'
 
-var nTierWafPolicyRuleName = 'ntier'
 var nTierBackendPoolName = 'backendPool-ntier'
 var nTierProbeName = 'probe-ntier'
 var nTierHttpSettingName = 'httpsetting-ntier'
@@ -345,7 +344,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
         name: adeAppApiGatewayAppServiceProbeName
         properties: {
           interval: 30
-          path: '/'
+          path: '/swagger/index.html'
           protocol: 'Http'
           timeout: 30
           unhealthyThreshold: 3

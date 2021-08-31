@@ -116,5 +116,15 @@ resource azureBastionDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-
         }
       }
     ]
+    metrics: [
+      {
+        category: 'AllMetrics'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
+    ]
   }
 }

@@ -6,12 +6,12 @@ function Set-AzureFirewallToDeallocated {
     Write-ScriptSection "Setting Azure Firewall to Deallocated (for Cost Savings)"
 
     $networkingResourceGroupName = $armParameters.networkingResourceGroupName
-    $firewallName = $armParameters.firewallName
+    $azureFirewallName = $armParameters.azureFirewallName
 
-    $firewall = Get-AzFirewall -Name $firewallName -ResourceGroupName $networkingResourceGroupName
-    $firewall.Deallocate()
+    $azureFirewall = Get-AzFirewall -Name $azureFirewallName -ResourceGroupName $networkingResourceGroupName
+    $azureFirewall.Deallocate()
 
-    Set-AzFirewall -AzureFirewall $firewall
+    Set-AzFirewall -AzureFirewall $azureFirewall
 
     Write-Log "Finished Deallocating Azure Firewall"
 }

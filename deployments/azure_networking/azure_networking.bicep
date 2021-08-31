@@ -88,11 +88,11 @@ var virtualNetwork001Name = 'vnet-ade-${aliasRegion}-001'
 var virtualnetwork001Prefix = '10.101.0.0/16'
 var azureFirewallSubnetName = 'AzureFirewallSubnet'
 var azureFirewallSubnetPrefix = '10.101.1.0/24'
-var applicationGatewaySubnetName = 'snet-agw'
+var applicationGatewaySubnetName = 'snet-ade-${aliasRegion}-applicationGateway'
 var applicationGatewaySubnetPrefix = '10.101.11.0/24'
 var azureBastionSubnetName = 'AzureBastionSubnet'
 var azureBastionSubnetPrefix = '10.101.21.0/24'
-var managementSubnetName = 'snet-management'
+var managementSubnetName = 'snet-ade-${aliasRegion}-management'
 var managementSubnetPrefix = '10.101.31.0/24'
 var gatewaySubnetName = 'GatewaySubnet'
 var gatewaySubnetPrefix = '10.101.255.0/24'
@@ -124,19 +124,19 @@ module virtualNetwork001Module './azure_virtual_network_001.bicep' = {
 // variables
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
 var virtualnetwork002Prefix = '10.102.0.0/16'
-var nTierWebSubnetName = 'snet-nTierWeb'
+var nTierWebSubnetName = 'snet-ade-${aliasRegion}-nTierWeb'
 var nTierWebSubnetPrefix = '10.102.1.0/24'
-var nTierAppSubnetName = 'snet-nTierApp'
+var nTierAppSubnetName = 'snet-ade-${aliasRegion}-nTierApp'
 var nTierAppSubnetPrefix = '10.102.2.0/24'
-var vmssSubnetName = 'snet-vmss'
+var vmssSubnetName = 'snet-ade-${aliasRegion}-vmss'
 var vmssSubnetPrefix = '10.102.11.0/24'
-var clientServicesSubnetName = 'snet-clientServices'
+var clientServicesSubnetName = 'snet-ade-${aliasRegion}-clientServices'
 var clientServicesSubnetPrefix = '10.102.21.0/24'
-var vnetIntegrationSubnetName = 'snet-vnetIntegration'
+var vnetIntegrationSubnetName = 'snet-ade-${aliasRegion}-vnetIntegration'
 var vnetIntegrationSubnetPrefix = '10.102.101.0/24'
-var privateEndpointSubnetName = 'snet-privateEndpoint'
+var privateEndpointSubnetName = 'snet-ade-${aliasRegion}-privateEndpoint'
 var privateEndpointSubnetPrefix = '10.102.102.0/24'
-var aksSubnetName = 'snet-aks'
+var aksSubnetName = 'snet-ade-${aliasRegion}-aks'
 var aksSubnetPrefix = '10.102.201.0/24'
 // module deployment
 module virtualNetwork002Module './azure_virtual_network_002.bicep' = {
@@ -208,7 +208,7 @@ module azureBastionModule './azure_bastion.bicep' = {
 // variables
 var vpnGatewayPublicIpAddressName = 'pip-ade-${aliasRegion}-vgw001'
 var localNetworkGatewayName = 'lgw-ade-${aliasRegion}-vgw001'
-var vpnGatewayName = 'vgw-ade-${aliasRegion}-001'
+var vpnGatewayName = 'vpng-ade-${aliasRegion}-001'
 var connectionName = 'cn-ade-${aliasRegion}-vgw001'
 // module deployment
 module azureVpnGatewayModule './azure_vpn_gateway.bicep' = if (deployVpnGateway == true) {
@@ -234,7 +234,6 @@ module vnetPeeringVgwModule './azure_vnet_peering_vgw.bicep' = if (deployVpnGate
   scope: resourceGroup(networkingResourceGroupName)
   name: 'vnetPeeringVgwDeployment'
   params: {
-    networkingResourceGroupName: networkingResourceGroupName
     virtualNetwork001Name: virtualNetwork001Name
     virtualNetwork002Name: virtualNetwork002Name
     virtualNetwork001Id: virtualNetwork001Module.outputs.virtualNetwork001Id
@@ -248,7 +247,6 @@ module vnetPeeringNoVgwModule './azure_vnet_peering_no_vgw.bicep' = if (deployVp
   scope: resourceGroup(networkingResourceGroupName)
   name: 'vnetPeeringNoVgwDeployment'
   params: {
-    networkingResourceGroupName: networkingResourceGroupName
     virtualNetwork001Name: virtualNetwork001Name
     virtualNetwork002Name: virtualNetwork002Name
     virtualNetwork001Id: virtualNetwork001Module.outputs.virtualNetwork001Id
@@ -265,8 +263,6 @@ module privateDnsModule './azure_private_dns.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'privateDnsDeployment'
   params: {
-    location: defaultPrimaryRegion
-    networkingResourceGroupName: networkingResourceGroupName
     virtualNetwork001Name: virtualNetwork001Name
     virtualNetwork002Name: virtualNetwork002Name
     appServicePrivateDnsZoneName: appServicePrivateDnsZoneName
