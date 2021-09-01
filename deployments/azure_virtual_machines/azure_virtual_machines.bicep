@@ -199,11 +199,6 @@ module w10ClientModule './azure_virtual_machines_w10client.bicep' = {
     adminUserName: adminUserName
     adminPassword: adminPassword
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-<<<<<<< HEAD
-    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
-    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
-=======
->>>>>>> origin/dev
     clientServicesSubnetId: virtualNetwork002::clientServicesSubnet.id
     w10ClientNICName: w10ClientNICName
     w10ClientPrivateIpAddress: w10ClientPrivateIpAddress

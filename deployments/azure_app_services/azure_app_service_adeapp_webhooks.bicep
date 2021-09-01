@@ -22,11 +22,7 @@ resource adeAppFrontEndAppWebHook 'Microsoft.ContainerRegistry/registries/webhoo
   location: defaultPrimaryRegion
   properties: {
     status: 'enabled'
-<<<<<<< HEAD
-    scope: '${adeAppFrontEndAppServiceImageName}'
-=======
     scope: adeAppFrontEndAppServiceImageName
->>>>>>> origin/dev
     actions: [
       'push'
     ]
@@ -42,11 +38,7 @@ resource adeAppApiGatewayAppWebHook 'Microsoft.ContainerRegistry/registries/webh
   ]
   properties: {
     status: 'enabled'
-<<<<<<< HEAD
-    scope: '${adeAppApiGatewayAppServiceImageName}'
-=======
     scope: adeAppApiGatewayAppServiceImageName
->>>>>>> origin/dev
     actions: [
       'push'
     ]
@@ -62,11 +54,7 @@ resource adeAppUserServiceAppWebHook 'Microsoft.ContainerRegistry/registries/web
   ]
   properties: {
     status: 'enabled'
-<<<<<<< HEAD
-    scope: '${adeAppUserServiceAppServiceImageName}'
-=======
     scope: adeAppUserServiceAppServiceImageName
->>>>>>> origin/dev
     actions: [
       'push'
     ]
@@ -82,11 +70,7 @@ resource adeAppDataIngestorAppWebHook 'Microsoft.ContainerRegistry/registries/we
   ]
   properties: {
     status: 'enabled'
-<<<<<<< HEAD
-    scope: '${adeAppDataIngestorServiceAppServiceImageName}'
-=======
     scope: adeAppDataIngestorServiceAppServiceImageName
->>>>>>> origin/dev
     actions: [
       'push'
     ]
@@ -102,11 +86,7 @@ resource adeAppDataReporterAppWebHook 'Microsoft.ContainerRegistry/registries/we
   ]
   properties: {
     status: 'enabled'
-<<<<<<< HEAD
-    scope: '${adeAppDataReporterServiceAppServiceImageName}'
-=======
     scope: adeAppDataReporterServiceAppServiceImageName
->>>>>>> origin/dev
     actions: [
       'push'
     ]

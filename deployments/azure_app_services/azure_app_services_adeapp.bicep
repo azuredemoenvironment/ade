@@ -9,10 +9,6 @@ param privateEndpointSubnetId string
 param azureContainerRegistryName string
 param azureContainerRegistryURL string
 param azureContainerRegistryCredentials string
-<<<<<<< HEAD
-param adeAppSqlServerName string
-=======
->>>>>>> origin/dev
 param adeAppSqlServerFQDN string
 param adeAppSqlDatabaseName string
 param azureAppServicePrivateDnsZoneId string
@@ -22,10 +18,7 @@ param adeAppApiGatewayAppServiceName string
 param adeAppUserServiceAppServiceName string
 param adeAppDataIngestorServiceAppServiceName string
 param adeAppDataReporterServiceAppServiceName string
-<<<<<<< HEAD
-=======
 param adeAppApiGatewayAppServiceHostName string
->>>>>>> origin/dev
 param adeAppFrontEndAppServiceImageName string
 param adeAppApiGatewayAppServiceImageName string
 param adeAppUserServiceAppServiceImageName string
@@ -98,11 +91,7 @@ resource adeAppFrontEndAppService 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'ADE__APIGATEWAYURI'
-<<<<<<< HEAD
-          value: 'http://${adeAppApiGatewayAppServiceName}.azurewebsites.net'
-=======
           value: 'https://${adeAppApiGatewayAppServiceHostName}'
->>>>>>> origin/dev
         }
         {
           name: 'WEBSITE_VNET_ROUTE_ALL'
@@ -260,13 +249,10 @@ resource adeAppApiGatewayAppService 'Microsoft.Web/sites@2020-12-01' = {
           value: 'false'
         }
         {
-<<<<<<< HEAD
-=======
           name: 'ASPNETCORE_ENVIRONMENT'
           value: 'Development'
         }
         {
->>>>>>> origin/dev
           name: 'ADE__USERSERVICEURI'
           value: 'http://${adeAppUserServiceAppServiceName}.azurewebsites.net'
         }
