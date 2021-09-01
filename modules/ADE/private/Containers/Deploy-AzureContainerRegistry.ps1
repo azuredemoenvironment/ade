@@ -17,31 +17,23 @@ function Deploy-AzureContainerRegistry {
 
     $imagesToPullAndPush = @(
         'apigateway'
-        'frontend'
         'dataingestorservice'
-        'userservice'
         'datareporterservice'
-        'loadtesting-grafana'
+        'eventingestorservice'
+        'frontend'
         'loadtesting-gatling'
+        'loadtesting-grafana'
         'loadtesting-influxdb'
         'loadtesting-redis'
+        'userservice'
     )
     
     $imagesToPullAndPush | ForEach-Object { 
         $containerImageName = "ade-$_"
-        $dockerhubImageName = "azuredemoenvironment/$($containerImageName):latest"
-        $acrImageName = "$containerRegistryLoginServer/$($containerImageName):latest"
+        $dockerHubImageName = "azuredemoenvironment/$($containerImageName):latest"
 
-        Write-Log "Pulling $dockerhubImageName from Docker Hub"
-        docker pull $dockerhubImageName
-        Confirm-LastExitCode
-
-        Write-Log "Tagging $dockerhubImageName as $acrImageName"
-        docker tag $dockerhubImageName $acrImageName
-        Confirm-LastExitCode
-
-        Write-Log "Pushing $acrImageName to ACR"
-        docker push $acrImageName
+        Write-Log "Requesting ACR to Pull Docker Hub Image $dockerHubImageName to $containerRegistryLoginServer"
+        az acr import --name "$containerRegistryName" --source "docker.io/$dockerHubImageName" --image "$($containerImageName):latest" --force
         Confirm-LastExitCode
     }
 

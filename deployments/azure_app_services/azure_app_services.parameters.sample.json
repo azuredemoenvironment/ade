@@ -14,9 +14,6 @@
         "appServicePlanResourceGroupName": {
             "value": "@@appServicePlanResourceGroupName@@"
         },
-        "appServicePlanName": {
-            "value": "@@appServicePlanName@@"
-        },
         "adeAppAppServicesResourceGroupName": {
             "value": "@@adeAppAppServicesResourceGroupName@@"
         },
