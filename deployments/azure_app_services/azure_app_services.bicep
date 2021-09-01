@@ -6,7 +6,6 @@ param defaultPrimaryRegion string
 param aliasRegion string
 param rootDomainName string
 param appServicePlanResourceGroupName string
-param appServicePlanName string
 param adeAppAppServicesResourceGroupName string
 param adeAppSqlResourceGroupName string
 param inspectorGadgetResourceGroupName string
@@ -107,6 +106,9 @@ resource azureAppServicePrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-0
 }
 
 // module - app service plan
+
+// variables
+var appServicePlanName = 'plan-ade-${aliasRegion}-001'
 // module deployment
 module appServicePlanModule 'azure_app_service_plan.bicep' = {
   scope: resourceGroup(appServicePlanResourceGroupName)
@@ -121,6 +123,7 @@ module appServicePlanModule 'azure_app_service_plan.bicep' = {
 // variables
 var inspectorGadgetAppServiceName = replace('app-ade-${aliasRegion}-inspectorgadget', '-', '')
 var inspectorGadgetDockerImage = 'DOCKER|jelledruyts/inspectorgadget:latest'
+
 // // module deployment
 module inspectorGadgetAppServiceModule 'azure_app_services_inspectorgadget.bicep' = {
   scope: resourceGroup(inspectorGadgetResourceGroupName)
