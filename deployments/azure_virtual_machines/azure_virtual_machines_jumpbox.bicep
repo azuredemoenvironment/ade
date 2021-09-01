@@ -1,16 +1,19 @@
 // parameters
 param location string
 param adminUserName string
+@secure()
 param adminPassword string
 param logAnalyticsWorkspaceId string
 param logAnalyticsWorkspaceCustomerId string
 param logAnalyticsWorkspaceKey string
+param dataCollectionRuleId string
 param managementSubnetId string
 param jumpboxPublicIpAddressName string
 param jumpboxNICName string
 param jumpboxPrivateIpAddress string
 param jumpboxName string
 param jumpboxOSDiskName string
+
 
 // variables
 var scriptLocation = 'https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/main/deployments/azure_virtual_machine_jumpbox/jumpboxvm.ps1'
@@ -139,6 +142,9 @@ resource jumpbox 'Microsoft.Compute/virtualMachines@2020-12-01' = {
     function: functionName
     costCenter: costCenterName
   }
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     hardwareProfile: {
       vmSize: 'Standard_B2ms'
@@ -200,14 +206,57 @@ resource jumpboxCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensi
   }
 }
 
+// resource - data collection rule association - jumpbox
+resource jumpboxDataCollectionRuleAssociation 'Microsoft.Insights/dataCollectionRuleAssociations@2021-04-01' = {
+  scope: jumpbox
+  name: '${jumpbox.name}-dataCollectionRuleAssociation'
+  properties: {
+    description: 'Association of data collection rule for VM Insights Health.'
+    dataCollectionRuleId: dataCollectionRuleId
+  }
+}
+
+// resource - azure monitor windows agent - jumpbox
+resource jumpboxAzureMonitorWindowsAgent 'Microsoft.Compute/virtualMachines/extensions@2021-04-01' = {
+  name: '${jumpbox.name}/AzureMonitorWindowsAgent'
+  location: location
+  dependsOn: [
+    jumpboxDataCollectionRuleAssociation
+  ]
+  properties: {
+    publisher: 'Microsoft.Azure.Monitor'
+    type: 'AzureMonitorWindowsAgent'
+    typeHandlerVersion: '1.0'
+    autoUpgradeMinorVersion: true
+  }
+}
+
+// resource - guest health windows agent - jumpbox
+resource jumpboxGuestHealthWindowsAgent 'Microsoft.Compute/virtualMachines/extensions@2021-04-01' = {
+  name: '${jumpbox.name}/GuestHealthWindowsAgent'
+  location: location
+  dependsOn: [
+    jumpboxDataCollectionRuleAssociation
+  ]
+  properties: {
+    publisher: 'Microsoft.Azure.Monitor.VirtualMachines.GuestHealth'
+    type: 'GuestHealthWindowsAgent'
+    typeHandlerVersion: '1.0'
+    autoUpgradeMinorVersion: true
+  }
+}
+
 // resource - dependency agent windows - jumpbox
 resource jumpboxDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
   name: '${jumpbox.name}/DependencyAgentWindows'
   location: location
+  dependsOn: [
+    jumpboxDataCollectionRuleAssociation
+  ]
   properties: {
     publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
     type: 'DependencyAgentWindows'
-    typeHandlerVersion: '9.5'
+    typeHandlerVersion: '9.10'
     autoUpgradeMinorVersion: true
   }
 }
@@ -216,6 +265,9 @@ resource jumpboxDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@20
 resource jumpboxMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
   name: '${jumpbox.name}/MMAExtension'
   location: location
+  dependsOn: [
+    jumpboxDataCollectionRuleAssociation
+  ]
   properties: {
     publisher: 'Microsoft.EnterpriseCloud.Monitoring'
     type: 'MicrosoftMonitoringAgent'

@@ -1,18 +1,27 @@
-// target scope
+// Target Scope - This option sets the scope of the deployment to the subscription.
 targetScope = 'subscription'
 
-// parameters
+// Parameters
+@description('Parameter for the default primary Azure region. Currently set to East US. Defined in azure_governance_parameters.json.')
 param defaultPrimaryRegion string
+
+@description('Parameter for the user alias and default primary Azure region defined from user input. Defined in azure_governance_parameters.json.')
 param aliasRegion string
-param monitorResourceGroupName string
-param identityResourceGroupName string
+
+@description('Parameter for the list of allowed locations for the Log Analytics Workspace. Defined in azure_governance_parameters.json.')
 param listOfAllowedLocations array
+
+@description('Parameter for the list of allowed virtual machine SKUs. Defined in azure_governance_parameters.json.')
 param listOfAllowedSKUs array
 
-// module - log analytics workspace
-// variables
+// Variables
+var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
+var identityResourceGroupName = 'rg-ade-${aliasRegion}-identity'
+
+// Module - Log Anlytics
+// Variables
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
-// module deployment
+// Module Deployment
 module logAnalyticsModule './azure_log_analytics.bicep' = {
   scope: resourceGroup(monitorResourceGroupName)
   name: 'logAnalyticsDeployment'
@@ -22,10 +31,24 @@ module logAnalyticsModule './azure_log_analytics.bicep' = {
   }
 }
 
-// module - application insights
-// variables
+// Module - Data Collection Rule
+// Variables
+var dataCollectionRuleName = 'dcr-ade-${aliasRegion}-vminsights'
+// Module Deployment
+module dataCollectionRuleModule './azure_data_collection_rule.bicep' = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: 'dataCollectionRuleDeployment'
+  params: {
+    location: defaultPrimaryRegion
+    dataCollectionRuleName: dataCollectionRuleName
+    logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
+  }
+}
+
+// Module - Application Insights
+// Variables
 var applicationInsightsName = 'appinsights-ade-${aliasRegion}-001'
-// module deployment
+// Module Deployment
 module applicationInsightsModule './azure_application_insights.bicep' = {
   scope: resourceGroup(monitorResourceGroupName)
   name: 'applicationInsightsDeployment'
@@ -36,10 +59,10 @@ module applicationInsightsModule './azure_application_insights.bicep' = {
   }
 }
 
-// module - storage account diagnostics
-// variables
+// Module - Storage Account - Diagnostics
+// Variables
 var nsgFlowLogsStorageAccountName = replace('saade${aliasRegion}nsgflow', '-', '')
-// module deployment
+// Module Deployment
 module storageAccountDiagnosticsModule './azure_storage_account_diagnostics.bicep' = {
   scope: resourceGroup(monitorResourceGroupName)
   name: 'storageAccountDiagnosticsDeployment'
@@ -50,8 +73,8 @@ module storageAccountDiagnosticsModule './azure_storage_account_diagnostics.bice
   }
 }
 
-// module - activity log
-// module deployment
+// Module - Activity Log
+// Module Deployment
 module activityLogModule './azure_activity_log.bicep' = {
   scope: subscription()
   name: 'activityLogDeployment'
@@ -60,33 +83,34 @@ module activityLogModule './azure_activity_log.bicep' = {
   }
 }
 
-// module - policy
-// variables
+// Module - Policy
+// Variables
 var initiativeDefinitionName = 'policy-ade-${aliasRegion}-adeinitiative'
-// module deployment
+// Module Deployment
 module policyModule './azure_policy.bicep' = {
   scope: subscription()
   name: 'policyDeployment'
   params: {
     defaultPrimaryRegion: defaultPrimaryRegion
+    initiativeDefinitionName: initiativeDefinitionName
     listOfAllowedLocations: listOfAllowedLocations
     listOfAllowedSKUs: listOfAllowedSKUs
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
-    initiativeDefinitionName: initiativeDefinitionName
   }
 }
 
-// module - indentity
-// variables
-var applicationGatewayManagedIdentityName = 'id-ade-${aliasRegion}-agw'
-var containerRegistryManagedIdentityName = 'id-ade-${aliasRegion}-acr'
-// module deployment
+// Module - Identity
+// Variables
+var managedIdentityNames = [
+  'id-ade-${aliasRegion}-agw'
+  'id-ade-${aliasRegion}-acr'
+]
+// Module Deployment
 module identityModule 'azure_identity.bicep' = {
   scope: resourceGroup(identityResourceGroupName)
   name: 'identityDeployment'
   params: {
     location: defaultPrimaryRegion
-    applicationGatewayManagedIdentityName: applicationGatewayManagedIdentityName
-    containerRegistryManagedIdentityName: containerRegistryManagedIdentityName
+    managedIdentityNames: managedIdentityNames
   }
 }

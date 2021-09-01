@@ -8,12 +8,6 @@
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
-        "monitorResourceGroupName": {
-            "value": "@@monitorResourceGroupName@@"
-        },
-        "identityResourceGroupName": {
-            "value": "@@identityResourceGroupName@@"
-        },
         "listOfAllowedLocations": {
             "value": [
                 "@@defaultPrimaryRegion@@",

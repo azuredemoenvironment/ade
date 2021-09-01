@@ -8,34 +8,8 @@
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
-        "monitorResourceGroupName": {
-            "value": "@@monitorResourceGroupName@@"
-        },
-        "networkingResourceGroupName": {
-            "value": "@@networkingResourceGroupName@@"
-        },
-        "jumpboxResourceGroupName": {
-            "value": "@@jumpboxResourceGroupName@@"
-        },
-        "nTierResourceGroupName": {
-            "value": "@@nTierResourceGroupName@@"
-        },
-        "vmssResourceGroupName": {
-            "value": "@@vmssResourceGroupName@@"
-        },
-        "w10clientResourceGroupName": {
-            "value": "@@w10clientResourceGroupName@@"
-        },
         "adminUserName": {
             "value": "@@adminUsername@@"
-        },
-        "adminPassword": {
-            "reference": {
-                "keyVault": {
-                    "id": "@@keyVaultResourceID@@"
-                },
-                "secretName": "resourcePassword"
-            }
         }
     }
 }

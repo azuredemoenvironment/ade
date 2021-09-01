@@ -1,22 +1,31 @@
-// target scope
+// Target Scope - This option sets the scope of the deployment to the subscription.
 targetScope = 'subscription'
 
-// parameters
+// Parameters
+@description('Parameter for the default primary Azure region. Currently set to East US. Defined in azure_governance.bicep.')
 param defaultPrimaryRegion string
-param listOfAllowedLocations array
-param listOfAllowedSKUs array
-param logAnalyticsWorkspaceId string
+
+@description('Parameter for the name of the Initiative Definition. Defined in azure_governance.bicep.')
 param initiativeDefinitionName string
 
-// resource - policy initiative definition
+@description('Parameter for the list of allowed locations for the Log Analytics Workspace. Defined in azure_governance.bicep.')
+param listOfAllowedLocations array
+
+@description('Parameter for the list of allowed virtual machine SKUs. Defined in azure_governance.bicep.')
+param listOfAllowedSKUs array
+
+@description('Parameter for the resource ID of the Log Analytics Workspace. Defined in azure_governance.bicep. Defined in azure_governance.bicep.')
+param logAnalyticsWorkspaceId string
+
+// Resource - Policy Initiative Definition
 resource initiativeDefinition 'Microsoft.Authorization/policySetDefinitions@2019-09-01' = {
   name: initiativeDefinitionName
   properties: {
     policyType: 'Custom'
     displayName: initiativeDefinitionName
-    description: 'Initiative Definition for Resource Location and VM SKU Size'
+    description: 'Initiative Definition'
     metadata: {
-      category: 'ADE Initiative'
+      category: 'Initiative Definition'
     }
     parameters: {
       listOfAllowedLocations: {
@@ -69,7 +78,7 @@ resource initiativeDefinition 'Microsoft.Authorization/policySetDefinitions@2019
   }
 }
 
-// resource - policy assignment
+// Resource - Policy Assignment
 resource initiativeDefinitionPolicyAssignment 'Microsoft.Authorization/policyAssignments@2019-09-01' = {
   name: initiativeDefinitionName
   properties: {
@@ -87,7 +96,7 @@ resource initiativeDefinitionPolicyAssignment 'Microsoft.Authorization/policyAss
   }
 }
 
-// resource - policy assignment
+// Resource - Policy Assignment
 resource azureMonitorVMsPolicyAssignment 'Microsoft.Authorization/policyAssignments@2019-09-01' = {
   name: 'Enable Azure Monitor for VMs'
   location: defaultPrimaryRegion
@@ -106,7 +115,7 @@ resource azureMonitorVMsPolicyAssignment 'Microsoft.Authorization/policyAssignme
   }
 }
 
-// resource - policy assignment
+// Resource - Policy Assignment
 resource azureMonitorVMSSPolicyAssignment 'Microsoft.Authorization/policyAssignments@2019-09-01' = {
   name: 'Enable Azure Monitor for Virtual Machine Scale Sets'
   location: defaultPrimaryRegion

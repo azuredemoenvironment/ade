@@ -21,7 +21,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
 // existing resources
 // variables
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
-// resource key vault
+// resource  - key vault
 resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing = {
   scope: resourceGroup(keyVaultResourceGroupName)
   name: keyVaultName

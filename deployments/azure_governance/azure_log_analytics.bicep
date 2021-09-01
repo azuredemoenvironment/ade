@@ -1,8 +1,11 @@
-// parameters
+// Parameters
+@description('Parameter for the location of resources. Defined in azure_governance.bicep.')
 param location string
+
+@description('Parameter for the name of the Data Collection Rule. Defined in azure_governance.bicep.')
 param logAnalyticsWorkspaceName string
 
-// variables
+// Variables
 var containerInsights = {
   name: 'ContainerInsights(${logAnalyticsWorkspaceName})'
   galleryName: 'ContainerInsights'
@@ -19,7 +22,7 @@ var environmentName = 'production'
 var functionName = 'monitoring and diagnostics'
 var costCenterName = 'it'
 
-// resource - log analytics workspace
+// Resource - Log Anlaytics Workspace
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' = {
   name: logAnalyticsWorkspaceName
   location: location
@@ -36,7 +39,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
   }
 }
 
-// resource - log analytics workspace - solution - container insights
+// Resource - Log Analytics Workspace - Solution - Container Insights
 resource solutionsContainerInsights 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
   name: '${containerInsights.name}'
   location: location
@@ -54,7 +57,7 @@ resource solutionsContainerInsights 'Microsoft.OperationsManagement/solutions@20
   }
 }
 
-// resource - log analytics workspace - solution - key vault analytics
+// Resource - Log Analytics Workspace - Solution - Key Vault Analytics
 resource solutionsKeyVaultAnalytics 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
   name: '${keyVaultAnalytics.name}'
   location: location
@@ -72,7 +75,7 @@ resource solutionsKeyVaultAnalytics 'Microsoft.OperationsManagement/solutions@20
   }
 }
 
-// resource - log analytics workspace - solution - vm insights
+// Resource - Log Analytics Workspace - Solution - Vm Insights
 resource solutionsVMInsights 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
   name: '${vmInsights.name}'
   location: location
@@ -90,7 +93,7 @@ resource solutionsVMInsights 'Microsoft.OperationsManagement/solutions@2015-11-0
   }
 }
 
-// resource - log analytics workspace - diagnostic settings
+// Resource - Log Analytics Workspace - Diagnostic Settings
 resource logAnalyticsWorkspaceDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
   scope: logAnalyticsWorkspace
   name: '${logAnalyticsWorkspace.name}-diagnostics'
@@ -120,5 +123,5 @@ resource logAnalyticsWorkspaceDiagnostics 'microsoft.insights/diagnosticSettings
   }
 }
 
-// outputs
+// Outputs
 output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.id

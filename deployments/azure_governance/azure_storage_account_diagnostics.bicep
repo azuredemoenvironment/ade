@@ -1,14 +1,19 @@
-// parameters
+// Parameters
+@description('Parameter for the location of resources. Defined in azure_governance.bicep.')
 param location string
+
+@description('Parameter for the name of the Storage Account. Defined in azure_governance.bicep.')
 param nsgFlowLogsStorageAccountName string
+
+@description('Parameter for the resource ID of the Log Analytics Workspace. Defined in azure_governance.bicep.')
 param logAnalyticsWorkspaceId string
 
-// variables
+// Variables
 var environmentName = 'production'
 var functionName = 'monitoring and diagnostics'
 var costCenterName = 'it'
 
-// resource - storage account - nsg flow logs
+// Resource - Storage Account - Nsg Flow Logs
 resource nsgFlowLogsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01' = {
   name: nsgFlowLogsStorageAccountName
   location: location
@@ -39,7 +44,7 @@ resource nsgFlowLogsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01
   }
 }
 
-// resource - storage account - diagnostic settings
+// Resource - Storage Account - Diagnostic Settings
 resource nsgFlowLogsStorageAccountDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
   scope: nsgFlowLogsStorageAccount
   name: '${nsgFlowLogsStorageAccount.name}-diagnostics'
@@ -60,7 +65,7 @@ resource nsgFlowLogsStorageAccountDiagnostics 'microsoft.insights/diagnosticSett
   }
 }
 
-// resource - storage account - blob - diagnostic settings
+// Resource - Storage Account - Blob - Diagnostic Settings
 resource nsgFlowLogsStorageAccountBlobDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
   scope: nsgFlowLogsStorageAccount::blobServices
   name: '${nsgFlowLogsStorageAccount.name}-blob-diagnostics'
@@ -106,7 +111,7 @@ resource nsgFlowLogsStorageAccountBlobDiagnostics 'microsoft.insights/diagnostic
   }
 }
 
-// resource - storage account - table - diagnostic settings
+// Resource - Storage Account - Table - Diagnostic Settings
 resource nsgFlowLogsStorageAccountTableDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
   scope: nsgFlowLogsStorageAccount::tableServices
   name: '${nsgFlowLogsStorageAccount.name}-table-diagnostics'
@@ -152,7 +157,7 @@ resource nsgFlowLogsStorageAccountTableDiagnostics 'microsoft.insights/diagnosti
   }
 }
 
-// resource - storage account - file - diagnostic settings
+// Resource - Storage Account - File - Diagnostic Settings
 resource nsgFlowLogsStorageAccountFileDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
   scope: nsgFlowLogsStorageAccount::fileServices
   name: '${nsgFlowLogsStorageAccount.name}-file-diagnostics'
@@ -198,7 +203,7 @@ resource nsgFlowLogsStorageAccountFileDiagnostics 'microsoft.insights/diagnostic
   }
 }
 
-// resource - storage account - queue - diagnostic settings
+// Resource - Storage Account - Queue - Diagnostic Settings
 resource nsgFlowLogsStorageAccountQueueDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
   scope: nsgFlowLogsStorageAccount::queueServices
   name: '${nsgFlowLogsStorageAccount.name}-queue-diagnostics'

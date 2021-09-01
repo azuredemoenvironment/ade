@@ -1,31 +1,22 @@
-// parameters
+// Parameters
+@description('Parameter for the location of resources. Defined in azure_governance.bicep.')
 param location string
-param applicationGatewayManagedIdentityName string
-param containerRegistryManagedIdentityName string
 
-//variables
+@description('Parameter for the names of the Managed Identities. Defined in azure_governance.bicep.')
+param managedIdentityNames array
+
+// Variables
 var environmentName = 'production'
 var functionName = 'identity'
 var costCenterName = 'it'
 
-// resource - managed identity - application gateway
-resource applicationGatewayManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
-  name: applicationGatewayManagedIdentityName
+// Resource - Managed Identity
+resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = [for managedIdentityName in managedIdentityNames: {
+  name: managedIdentityName
   location: location
   tags: {
     environment: environmentName
     function: functionName
     costCenter: costCenterName
   }
-}
-
-// resource - managed identity - container registry
-resource containerRegistryManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
-  name: containerRegistryManagedIdentityName
-  location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-}
+}]

@@ -1,14 +1,19 @@
-// parameters
+// Parameters
+@description('Parameter for the location of resources. Defined in azure_governance.bicep.')
 param location string
+
+@description('Parameter for the name of the Application Insights instance. Defined in azure_governance.bicep.')
 param applicationInsightsName string
+
+@description('Parameter for the resource ID of the Log Analytics Workspace. Defined in azure_governance.bicep.')
 param logAnalyticsWorkspaceId string
 
-// variables
+// Variables
 var environmentName = 'production'
 var functionName = 'monitoring and diagnostics'
 var costCenterName = 'it'
 
-// resource - application insights
+// Resource - Application Insights
 resource applicationInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
   name: applicationInsightsName
   location: location
@@ -24,7 +29,7 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02-preview' 
   }
 }
 
-// resource - application insights - diagnostic settings
+// Resource - Application Insights - Diagnostic Settings
 resource applicationInsightsDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
   scope: applicationInsights
   name: '${applicationInsights.name}-diagnostics'

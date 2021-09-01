@@ -1,15 +1,13 @@
-// target scope
+// Target Scope - This option sets the scope of the deployment to the subscription.
 targetScope = 'subscription'
 
-// parameters
+// Parameters
+@description('Parameter for the resource ID of the Log Analytics Workspace. Defined in azure_governance.bicep.')
 param logAnalyticsWorkspaceId string
 
-// variables
-var diagnosticSettingsName = 'subscriptionactivitylog'
-
-// resource - subscription activity log - diagnostic settings
+// Resource - Subscription Activity Log - Diagnostic Settings
 resource subscriptionActivityLog 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
-  name: diagnosticSettingsName
+  name: 'subscriptionactivitylog'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
