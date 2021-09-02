@@ -34,7 +34,7 @@ function Deploy-AzureDemoEnvironment {
 
     # Core Services
     ###################################
-    # Deploy-AzureResourceGroups $armParameters
+    Deploy-AzureResourceGroups $armParameters
     # Deploy-AzureGovernance $armParameters
     # Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
     # Deploy-AzureNetworking $armParameters

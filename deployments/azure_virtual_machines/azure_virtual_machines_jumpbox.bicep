@@ -258,6 +258,7 @@ resource jumpboxDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@20
     type: 'DependencyAgentWindows'
     typeHandlerVersion: '9.10'
     autoUpgradeMinorVersion: true
+    enableAutomaticUpgrade: true
   }
 }
 
