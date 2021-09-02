@@ -55,74 +55,49 @@ function Deploy-AzureIdentity {
 
     Write-Status "Creating Service Principals"
 
-    # TODO: this could be made into a function
     Write-Log "Creating REST API Service Principal $restAPISPNName"
 
-    $restAPISPNPassword = az ad sp create-for-rbac -n http://$restAPISPNName --query password --output tsv
-    Confirm-LastExitCode
-    $armParameters['restAPISPNPassword'] = $restAPISPNPassword
+    $restAPISPN = $(az ad sp create-for-rbac -n http://$restAPISPNName --skip-assignment true --role acrpull --output json) | ConvertFrom-Json
+    $armParameters['restAPISPNPassword'] = $restAPISPN.password
+    $armParameters['restAPISPNAppId'] = $restAPISPN.appId
 
     Write-Log "Pausing for 10 seconds to allow for propagation."
     Start-Sleep -Seconds 10
 
-    $restAPISPNAppID = az ad sp show --id http://$restAPISPNName --query appId --output tsv
-    Confirm-LastExitCode
-    $armParameters['restAPISPNAppID'] = $restAPISPNAppID
-
-    $restAPISPNObjectID = az ad sp show --id http://$restAPISPNName --query objectId --output tsv
-    Confirm-LastExitCode
-    $armParameters['restAPIObjectId'] = $restAPISPNObjectID
-
-    Set-AzureKeyVaultSecret $keyVaultName 'restAPIUserName' (ConvertTo-SecureString $restAPISPNAppID -AsPlainText -Force)
-    Set-AzureKeyVaultSecret $keyVaultName 'restAPIPassword' (ConvertTo-SecureString $restAPISPNPassword -AsPlainText -Force)
-    Set-AzureKeyVaultSecret $keyVaultName 'restAPIObjectId' (ConvertTo-SecureString $restAPISPNObjectID -AsPlainText -Force)
+    Set-AzureKeyVaultSecret $keyVaultName 'restAPIUserName' (ConvertTo-SecureString $restAPISPN.appId -AsPlainText -Force)
+    Set-AzureKeyVaultSecret $keyVaultName 'restAPIPassword' (ConvertTo-SecureString $restAPISPN.password -AsPlainText -Force)
 
     Write-Log "Finished Creating REST API Service Principal $restAPISPNName"    
     
-    # TODO: this could be made into a function
     Write-Log "Creating GitHub Actions Service Principal $ghaSPNName"
 
-    $ghaSPNPassword = az ad sp create-for-rbac -n http://$ghaSPNName --query password --output tsv
-    Confirm-LastExitCode
-    $armParameters['ghaSPNPassword'] = $ghaSPNPassword
+    $ghaSPN = $(az ad sp create-for-rbac -n http://$ghaSPNName --skip-assignment true --role acrpull --output json) | ConvertFrom-Json
+    $armParameters['ghaSPNPassword'] = $ghaSPN.password
+    $armParameters['ghaSPNAppId'] = $ghaSPN.appId
 
     Write-Log "Pausing for 10 seconds to allow for propagation."
     Start-Sleep -Seconds 10
 
-    $ghaSPNAppID = az ad sp show --id http://$ghaSPNName --query appId --output tsv
-    Confirm-LastExitCode
-    $armParameters['ghaSPNAppID'] = $ghaSPNAppID
-
-    $ghaSPNObjectID = az ad sp show --id http://$ghaSPNName --query objectId --output tsv
-    Confirm-LastExitCode
-    $armParameters['ghaObjectId'] = $ghaSPNObjectID
-
-    Set-AzureKeyVaultSecret $keyVaultName 'ghaUserName' (ConvertTo-SecureString $ghaSPNAppID -AsPlainText -Force)
-    Set-AzureKeyVaultSecret $keyVaultName 'ghaPassword' (ConvertTo-SecureString $ghaSPNPassword -AsPlainText -Force)
-    Set-AzureKeyVaultSecret $keyVaultName 'ghaObjectId' (ConvertTo-SecureString $ghaSPNObjectID -AsPlainText -Force)
+    Set-AzureKeyVaultSecret $keyVaultName 'ghaUserName' (ConvertTo-SecureString $ghaSPN.appId -AsPlainText -Force)
+    Set-AzureKeyVaultSecret $keyVaultName 'ghaPassword' (ConvertTo-SecureString $ghaSPN.password -AsPlainText -Force)
 
     Write-Log "Finished Creating GitHub Actions Service Principal $ghaSPNName"
         
-    # TODO: this could be made into a function
     Write-Log "Creating Container Registry Service Principal $crSPNName"
 
-    $crSPNPassword = az ad sp create-for-rbac -n http://$crSPNName --skip-assignment true --role acrpull --query password --output tsv
-    Confirm-LastExitCode
-    $armParameters['crSPNPassword'] = $crSPNPassword
+    $crSPN = $(az ad sp create-for-rbac -n http://$crSPNName --skip-assignment true --role acrpull --output json) | ConvertFrom-Json
+    $armParameters['crSPNPassword'] = $crSPN.password
+    $armParameters['crSPNAppId'] = $crSPN.appId
 
     Write-Log "Pausing for 10 seconds to allow for propagation."
     Start-Sleep -Seconds 10
 
-    $crSPNAppID = az ad sp show --id http://$crSPNName --query appId --output tsv
+    $crSPNObjectID = az ad sp show --id $crSPN.appId --query objectId --output tsv
     Confirm-LastExitCode
-    $armParameters['crSPNAppID'] = $crSPNAppID
+    $armParameters['crSPNObjectID'] = $crSPNObjectID
 
-    $crSPNObjectID = az ad sp show --id http://$crSPNName --query objectId --output tsv
-    Confirm-LastExitCode
-    $armParameters['containerRegistryObjectId'] = $crSPNObjectID
-
-    Set-AzureKeyVaultSecret $keyVaultName 'containerRegistryUserName' (ConvertTo-SecureString $crSPNAppID -AsPlainText -Force)
-    Set-AzureKeyVaultSecret $keyVaultName 'containerRegistryPassword' (ConvertTo-SecureString $crSPNPassword -AsPlainText -Force)
+    Set-AzureKeyVaultSecret $keyVaultName 'containerRegistryUserName' (ConvertTo-SecureString $crSPN.appId -AsPlainText -Force)
+    Set-AzureKeyVaultSecret $keyVaultName 'containerRegistryPassword' (ConvertTo-SecureString $crSPN.password -AsPlainText -Force)
     Set-AzureKeyVaultSecret $keyVaultName 'containerRegistryObjectId' (ConvertTo-SecureString $crSPNObjectID -AsPlainText -Force)
 
     Write-Log "Finished Creating Container Registry Service Principal $crSPNName"
