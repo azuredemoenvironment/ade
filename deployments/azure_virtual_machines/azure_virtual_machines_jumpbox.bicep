@@ -247,7 +247,7 @@ resource jumpboxGuestHealthWindowsAgent 'Microsoft.Compute/virtualMachines/exten
 }
 
 // resource - dependency agent windows - jumpbox
-resource jumpboxDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
+resource jumpboxDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2021-04-01' = {
   name: '${jumpbox.name}/DependencyAgentWindows'
   location: location
   dependsOn: [
@@ -263,7 +263,7 @@ resource jumpboxDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@20
 }
 
 // resource - microsoft monitoring agent - jumpbox
-resource jumpboxMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
+resource jumpboxMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2021-04-01' = {
   name: '${jumpbox.name}/MMAExtension'
   location: location
   dependsOn: [

@@ -5,10 +5,11 @@ function Deploy-AzureGovernance {
 
     Deploy-ArmTemplate 'Azure Governance' $armParameters -resourceLevel 'sub' -bicep
 
-    $monitorResourceGroupName = $armParameters.monitorResourceGroupName
-    $logAnalyticsWorkspaceName = $armParameters.logAnalyticsWorkspaceName
+    # # TODO:
+    # $monitorResourceGroupName = $armParameters.monitorResourceGroupName
+    # $logAnalyticsWorkspaceName = $armParameters.logAnalyticsWorkspaceName
 
-    az monitor log-analytics solution update -g $monitorResourceGroupName -n '"VMInsights($logAnalyticsWorkspaceName)"' --tags ""
+    # az monitor log-analytics solution update -g $monitorResourceGroupName -n '"VMInsights($logAnalyticsWorkspaceName)"' --tags ""
 
     # # TODO: this could be converted into a deployment script
     # Identity Deployment
