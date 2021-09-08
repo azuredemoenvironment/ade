@@ -17,7 +17,17 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
   name: logAnalyticsWorkspaceName
 }
 
-resource appConfig 'Microsoft.AppConfiguration/configurationStores@2021-03-01-preview' = {
+// variables
+var applicationInsightsName = 'appinsights-ade-${aliasRegion}-001'
+// resource
+resource applicationInsights 'Microsoft.Insights/components@2020-02-02-preview' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: applicationInsightsName
+}
+
+// new resources
+// resource - app configuration service
+resource appConfig 'Microsoft.AppConfiguration/configurationStores@2020-07-01-preview' = {
   name: appConfigName
   location: location
   tags: {
@@ -67,3 +77,32 @@ resource appConfigDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-
     ]
   }
 }
+
+// resource - app config - key value pairs
+var appConfigKeyValuePairs = [
+  {
+    key: 'AppInsights:ConnectionString'
+    // value: applicationInsights.properties.ConnectionString
+    value: 'tbd'
+  }
+  {
+    key: 'AppInsights:InstrumentationKey'
+    // value: applicationInsights.properties.InstrumentationKey
+    value: 'tbd'
+  }
+  {
+    key: 'ADE:SqlServerConnectionString'
+    value: 'tbd'
+  }
+  {
+    key: 'ADE:ApiGatewayUri'
+    value: 'tbd'
+  }
+]
+
+resource appConfigKeys 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = [for appConfigKeyValuePair in appConfigKeyValuePairs: {
+  name: '${appConfig.name}/${appConfigKeyValuePair.key}'
+  properties: {
+    value: appConfigKeyValuePair.value
+  }
+}]
