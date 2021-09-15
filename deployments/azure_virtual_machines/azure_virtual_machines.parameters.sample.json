@@ -11,6 +11,12 @@
         "monitorResourceGroupName": {
             "value": "@@monitorResourceGroupName@@"
         },
+        "appConfigResourceGroupName": {
+            "value": "@@appConfigResourceGroupName@@"
+        },
+        "containerRegistryResourceGroupName": {
+            "value": "@@containerRegistryResourceGroupName@@"
+        },
         "networkingResourceGroupName": {
             "value": "@@networkingResourceGroupName@@"
         },

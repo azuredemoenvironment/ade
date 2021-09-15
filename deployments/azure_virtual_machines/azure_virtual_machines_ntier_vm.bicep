@@ -15,9 +15,9 @@ param subnetId string
 param tags object
 param zone string
 param proximityPlacementGroupId string
-param acrServerName string = 'acradebrmareus001'
-param acrPassword string = 'fH5=cbXIu47TPlW1izjiNP3nkGTNuDOk'
-param appConfigConnectionString string = 'Endpoint=https://appcfg-brmar-eus-adeappconfig.azconfig.io;Id=I53x-l0-s0:rcdYDIq6vAqHRtfypsQf;Secret=KlDTpHpU2Lz3Q+AKJiznXvqeWc4kANXZ6d/dBPBpuWQ='
+param acrServerName string
+param acrPassword string
+param appConfigConnectionString string
 param adeModule string
 param now string = utcNow()
 

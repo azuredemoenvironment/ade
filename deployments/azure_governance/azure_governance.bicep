@@ -5,14 +5,21 @@ targetScope = 'subscription'
 param defaultPrimaryRegion string
 param aliasRegion string
 param monitorResourceGroupName string
+param appConfigResourceGroupName string
 param identityResourceGroupName string
 param listOfAllowedLocations array
 param listOfAllowedSKUs array
 
-// module - log analytics workspace
-// variables
+// service name variables
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
-// module deployment
+var appConfigName = 'appcs-ade-${aliasRegion}-001'
+var applicationInsightsName = 'appinsights-ade-${aliasRegion}-001'
+var nsgFlowLogsStorageAccountName = replace('saade${aliasRegion}nsgflow', '-', '')
+var initiativeDefinitionName = 'policy-ade-${aliasRegion}-adeinitiative'
+var applicationGatewayManagedIdentityName = 'id-ade-${aliasRegion}-agw'
+var containerRegistryManagedIdentityName = 'id-ade-${aliasRegion}-acr'
+
+// module - log analytics workspace
 module logAnalyticsModule './azure_log_analytics.bicep' = {
   scope: resourceGroup(monitorResourceGroupName)
   name: 'logAnalyticsDeployment'
@@ -22,10 +29,18 @@ module logAnalyticsModule './azure_log_analytics.bicep' = {
   }
 }
 
+// module - app config
+module appConfigModule './azure_app_config.bicep' = {
+  scope: resourceGroup(appConfigResourceGroupName)
+  name: 'appConfigDeployment'
+  params: {
+    location: defaultPrimaryRegion
+    appConfigName: appConfigName
+    logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
+  }
+}
+
 // module - application insights
-// variables
-var applicationInsightsName = 'appinsights-ade-${aliasRegion}-001'
-// module deployment
 module applicationInsightsModule './azure_application_insights.bicep' = {
   scope: resourceGroup(monitorResourceGroupName)
   name: 'applicationInsightsDeployment'
@@ -36,10 +51,18 @@ module applicationInsightsModule './azure_application_insights.bicep' = {
   }
 }
 
+// module - app config - application insights
+module appConfigApplicationInsightsModule './azure_app_config_application_insights.bicep' = {
+  scope: resourceGroup(appConfigResourceGroupName)
+  name: 'appConfigApplicationInsightsDeployment'
+  params: {
+    appConfigName: appConfigModule.outputs.appConfigName
+    applicationInsightsConnectionString: applicationInsightsModule.outputs.applicationInsightsConnectionString
+    applicationInsightsInstrumentationKey: applicationInsightsModule.outputs.applicationInsightsInstrumentationKey
+  }
+}
+
 // module - storage account diagnostics
-// variables
-var nsgFlowLogsStorageAccountName = replace('saade${aliasRegion}nsgflow', '-', '')
-// module deployment
 module storageAccountDiagnosticsModule './azure_storage_account_diagnostics.bicep' = {
   scope: resourceGroup(monitorResourceGroupName)
   name: 'storageAccountDiagnosticsDeployment'
@@ -51,7 +74,6 @@ module storageAccountDiagnosticsModule './azure_storage_account_diagnostics.bice
 }
 
 // module - activity log
-// module deployment
 module activityLogModule './azure_activity_log.bicep' = {
   scope: subscription()
   name: 'activityLogDeployment'
@@ -61,9 +83,6 @@ module activityLogModule './azure_activity_log.bicep' = {
 }
 
 // module - policy
-// variables
-var initiativeDefinitionName = 'policy-ade-${aliasRegion}-adeinitiative'
-// module deployment
 module policyModule './azure_policy.bicep' = {
   scope: subscription()
   name: 'policyDeployment'
@@ -77,10 +96,6 @@ module policyModule './azure_policy.bicep' = {
 }
 
 // module - indentity
-// variables
-var applicationGatewayManagedIdentityName = 'id-ade-${aliasRegion}-agw'
-var containerRegistryManagedIdentityName = 'id-ade-${aliasRegion}-acr'
-// module deployment
 module identityModule 'azure_identity.bicep' = {
   scope: resourceGroup(identityResourceGroupName)
   name: 'identityDeployment'

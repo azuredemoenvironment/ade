@@ -3,7 +3,7 @@ param defaultPrimaryRegion string
 param adminUserName string
 param adminPassword string
 param logAnalyticsWorkspaceId string
-param applicationInsightsConnectionString string
+param appConfigConnectionString string
 param vnetIntegrationSubnetId string
 param privateEndpointSubnetId string
 param azureContainerRegistryName string
@@ -29,19 +29,17 @@ param adeAppDataIngestorServiceAppServiceImageName string
 param adeAppDataReporterServiceAppServiceImageName string
 
 // variables
-var environmentName = 'production'
-var functionName = 'appApp'
-var costCenterName = 'it'
+var tags = {
+  environment: 'production'
+  function: 'appApp'
+  costCenter: 'it'
+}
 
 // resource - app service - adeAppFrontendAppService
 resource adeAppFrontEndAppService 'Microsoft.Web/sites@2020-12-01' = {
   name: adeAppFrontEndAppServiceName
   location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   kind: 'container'
   properties: {
     serverFarmId: appServicePlanId
@@ -50,8 +48,8 @@ resource adeAppFrontEndAppService 'Microsoft.Web/sites@2020-12-01' = {
       linuxFxVersion: 'DOCKER|${azureContainerRegistryURL}/${adeAppFrontEndAppServiceImageName}'
       appSettings: [
         {
-          name: 'APPINSIGHTS_CONNECTIONSTRING'
-          value: applicationInsightsConnectionString
+          name: 'AppConfig'
+          value: appConfigConnectionString
         }
         {
           name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
@@ -88,10 +86,6 @@ resource adeAppFrontEndAppService 'Microsoft.Web/sites@2020-12-01' = {
         {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
           value: 'false'
-        }
-        {
-          name: 'ADE__APIGATEWAYURI'
-          value: 'https://${adeAppApiGatewayAppServiceHostName}'
         }
         {
           name: 'WEBSITE_VNET_ROUTE_ALL'
@@ -196,11 +190,7 @@ resource adeAppFrontendAppServiceDiagnostics 'Microsoft.insights/diagnosticSetti
 resource adeAppApiGatewayAppService 'Microsoft.Web/sites@2020-12-01' = {
   name: adeAppApiGatewayAppServiceName
   location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   kind: 'container'
   properties: {
     serverFarmId: appServicePlanId
@@ -209,8 +199,8 @@ resource adeAppApiGatewayAppService 'Microsoft.Web/sites@2020-12-01' = {
       linuxFxVersion: 'DOCKER|${azureContainerRegistryURL}/${adeAppApiGatewayAppServiceImageName}'
       appSettings: [
         {
-          name: 'APPINSIGHTS_CONNECTIONSTRING'
-          value: applicationInsightsConnectionString
+          name: 'AppConfig'
+          value: appConfigConnectionString
         }
         {
           name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
@@ -247,22 +237,6 @@ resource adeAppApiGatewayAppService 'Microsoft.Web/sites@2020-12-01' = {
         {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
           value: 'false'
-        }
-        {
-          name: 'ASPNETCORE_ENVIRONMENT'
-          value: 'Development'
-        }
-        {
-          name: 'ADE__USERSERVICEURI'
-          value: 'http://${adeAppUserServiceAppServiceName}.azurewebsites.net'
-        }
-        {
-          name: 'ADE__DATAINGESTORSERVICEURI'
-          value: 'http://${adeAppDataIngestorServiceAppServiceName}.azurewebsites.net'
-        }
-        {
-          name: 'ADE__DATAREPORTERSERVICEURI'
-          value: 'http://${adeAppDataReporterServiceAppServiceName}.azurewebsites.net'
         }
         {
           name: 'WEBSITE_VNET_ROUTE_ALL'
@@ -367,11 +341,7 @@ resource adeAppApiGatewayAppServiceDiagnostics 'Microsoft.insights/diagnosticSet
 resource adeAppUserServiceAppService 'Microsoft.Web/sites@2020-12-01' = {
   name: adeAppUserServiceAppServiceName
   location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   kind: 'container'
   properties: {
     serverFarmId: appServicePlanId
@@ -380,8 +350,8 @@ resource adeAppUserServiceAppService 'Microsoft.Web/sites@2020-12-01' = {
       linuxFxVersion: 'DOCKER|${azureContainerRegistryURL}/${adeAppUserServiceAppServiceImageName}'
       appSettings: [
         {
-          name: 'APPINSIGHTS_CONNECTIONSTRING'
-          value: applicationInsightsConnectionString
+          name: 'AppConfig'
+          value: appConfigConnectionString
         }
         {
           name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
@@ -418,10 +388,6 @@ resource adeAppUserServiceAppService 'Microsoft.Web/sites@2020-12-01' = {
         {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
           value: 'false'
-        }
-        {
-          name: 'ADE__SQLSERVERCONNECTIONSTRING'
-          value: 'Data Source=tcp:${adeAppSqlServerFQDN},1433;Initial Catalog=${adeAppSqlDatabaseName};User Id=${adminUserName}@${adeAppSqlServerFQDN};Password=${adminPassword};'
         }
         {
           name: 'WEBSITE_VNET_ROUTE_ALL'
@@ -566,11 +532,7 @@ resource adeAppUserServiceAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Netwo
 resource adeAppDataIngestorServiceAppService 'Microsoft.Web/sites@2020-12-01' = {
   name: adeAppDataIngestorServiceAppServiceName
   location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   kind: 'container'
   properties: {
     serverFarmId: appServicePlanId
@@ -579,8 +541,8 @@ resource adeAppDataIngestorServiceAppService 'Microsoft.Web/sites@2020-12-01' = 
       linuxFxVersion: 'DOCKER|${azureContainerRegistryURL}/${adeAppDataIngestorServiceAppServiceImageName}'
       appSettings: [
         {
-          name: 'APPINSIGHTS_CONNECTIONSTRING'
-          value: applicationInsightsConnectionString
+          name: 'AppConfig'
+          value: appConfigConnectionString
         }
         {
           name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
@@ -617,10 +579,6 @@ resource adeAppDataIngestorServiceAppService 'Microsoft.Web/sites@2020-12-01' = 
         {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
           value: 'false'
-        }
-        {
-          name: 'ADE__SQLSERVERCONNECTIONSTRING'
-          value: 'Data Source=tcp:${adeAppSqlServerFQDN},1433;Initial Catalog=${adeAppSqlDatabaseName};User Id=${adminUserName}@${adeAppSqlServerFQDN};Password=${adminPassword};'
         }
         {
           name: 'WEBSITE_VNET_ROUTE_ALL'
@@ -765,11 +723,7 @@ resource adeAppDataIngestorServicePrivateEndpointDnsZoneGroup 'Microsoft.Network
 resource adeAppDataReporterServiceAppService 'Microsoft.Web/sites@2020-12-01' = {
   name: adeAppDataReporterServiceAppServiceName
   location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   kind: 'container'
   properties: {
     serverFarmId: appServicePlanId
@@ -778,8 +732,8 @@ resource adeAppDataReporterServiceAppService 'Microsoft.Web/sites@2020-12-01' = 
       linuxFxVersion: 'DOCKER|${azureContainerRegistryURL}/${adeAppDataReporterServiceAppServiceImageName}'
       appSettings: [
         {
-          name: 'APPINSIGHTS_CONNECTIONSTRING'
-          value: applicationInsightsConnectionString
+          name: 'AppConfig'
+          value: appConfigConnectionString
         }
         {
           name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
@@ -816,10 +770,6 @@ resource adeAppDataReporterServiceAppService 'Microsoft.Web/sites@2020-12-01' = 
         {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
           value: 'false'
-        }
-        {
-          name: 'ADE__SQLSERVERCONNECTIONSTRING'
-          value: 'Data Source=tcp:${adeAppSqlServerFQDN},1433;Initial Catalog=${adeAppSqlDatabaseName};User Id=${adminUserName}@${adeAppSqlServerFQDN};Password=${adminPassword};'
         }
         {
           name: 'WEBSITE_VNET_ROUTE_ALL'

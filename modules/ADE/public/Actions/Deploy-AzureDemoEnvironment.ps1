@@ -39,14 +39,11 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
     Deploy-AzureNetworking $armParameters
     Deploy-AzureContainerRegistry $armParameters
+    Deploy-AppConfig $armParameters
 
     # Data Services
     ###################################
     # Deploy-AzureDatabases $armParameters
-
-    # Configuration Services
-    ###################################
-    Deploy-AppConfig $armParameters
 
     # Compute Infrastructure
     ###################################
@@ -61,8 +58,9 @@ function Deploy-AzureDemoEnvironment {
     ###################################
     Deploy-AzureFrontendLoadBalancers $armParameters
     
-    # Service Cleanup
+    # Service Config and Cleanup
     ###################################
+    Deploy-AppConfigKeyValues $armParameters
     Deploy-AzureAppServicePlanScaleDown $armParameters 
 
     # Additional Core Services

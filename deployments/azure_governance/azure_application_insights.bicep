@@ -133,3 +133,6 @@ resource applicationInsightsDiagnostics 'microsoft.insights/diagnosticSettings@2
     ]
   }
 }
+
+output applicationInsightsConnectionString string = applicationInsights.properties.ConnectionString
+output applicationInsightsInstrumentationKey string = applicationInsights.properties.InstrumentationKey

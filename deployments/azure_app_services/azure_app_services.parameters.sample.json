@@ -26,6 +26,9 @@
         "containerRegistryResourceGroupName": {
             "value": "@@containerRegistryResourceGroupName@@"
         },
+        "appConfigResourceGroupName": {
+            "value": "@@appConfigResourceGroupName@@"
+        },
         "adminUserName": {
             "value": "@@adminUsername@@"
         },

@@ -94,6 +94,7 @@ function Set-InitialArmParameters {
         'adeAppSqlResourceGroupName'            = "$primaryRegionResourceGroupNamePrefix-adeappdb"
         'aksNodeResourceGroupName'              = "$primaryRegionResourceGroupNamePrefix-aks-node"
         'aksResourceGroupName'                  = "$primaryRegionResourceGroupNamePrefix-aks"
+        'appConfigResourceGroupName'            = "$primaryRegionResourceGroupNamePrefix-appconfig"
         'applicationGatewayResourceGroupName'   = "$primaryRegionResourceGroupNamePrefix-applicationgateway"
         'appServicePlanResourceGroupName'       = "$primaryRegionResourceGroupNamePrefix-appserviceplan"
         'cognitiveServicesResourceGroupName'    = "$primaryRegionResourceGroupNamePrefix-cognitiveservices"

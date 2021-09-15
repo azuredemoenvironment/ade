@@ -4,6 +4,7 @@ targetScope = 'subscription'
 // parameters
 param defaultPrimaryRegion string
 param monitorResourceGroupName string
+param appConfigResourceGroupName string
 param identityResourceGroupName string
 param keyVaultResourceGroupName string
 param networkingResourceGroupName string
@@ -21,6 +22,12 @@ param adeAppAppServicesResourceGroupName string
 // resource group - monitor
 resource monitorResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
   name: monitorResourceGroupName
+  location: defaultPrimaryRegion
+}
+
+// resource group - app config
+resource appConfigResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+  name: appConfigResourceGroupName
   location: defaultPrimaryRegion
 }
 

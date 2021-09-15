@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -16,7 +17,15 @@ namespace ADE.EventIngestorService
                         var connection = settings.GetConnectionString("AppConfig");
                         if(!string.IsNullOrWhiteSpace(connection))
                         {
-                            config.AddAzureAppConfiguration(connection, true);
+                            config.AddAzureAppConfiguration(options =>
+                            {
+                                options.Connect(connection)
+                                    .ConfigureRefresh(refresh =>
+                                    {
+                                        refresh.Register("ADE:Sentinel", true)
+                                            .SetCacheExpiration(new TimeSpan(0, 5, 0));
+                                    });
+                            }, true);
                         }
                     }).UseStartup<Startup>();
                 });

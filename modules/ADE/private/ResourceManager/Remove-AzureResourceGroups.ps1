@@ -21,6 +21,7 @@ function Remove-AzureResourceGroups {
         $armParameters.adeAppSqlResourceGroupName
         $armParameters.containerRegistryResourceGroupName
         $armParameters.networkingResourceGroupName
+        $armParameters.appConfigResourceGroupName
         $armParameters.identityResourceGroupName
     )
 
