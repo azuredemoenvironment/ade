@@ -16,7 +16,7 @@ param adminPassword string
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
 var privateEndpointSubnetName = 'snet-ade-${aliasRegion}-privateEndpoint'
-var azureSQLPrivateDnsZoneName = 'privatelink.database.windows.net'
+var azureSQLPrivateDnsZoneName = 'privatelink${environment().suffixes.sqlServerHostname}'
 var appConfigName = 'appcs-ade-${aliasRegion}-001'
 var adeAppSqlServerName = 'sql-ade-${aliasRegion}-adeapp'
 var adeAppSqlDatabaseName = 'sqldb-ade-${aliasRegion}-adeapp'

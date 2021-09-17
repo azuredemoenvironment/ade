@@ -156,9 +156,9 @@ resource nTierVirtualMachineMicrosoftMonitoringAgent 'Microsoft.Compute/virtualM
   }
 }
 
-// resource - custom script extension - jumpbox
+// resource - custom script extension - ade
 resource nTierVirtualMachineCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${name}/CustomScriptextension'
+  name: '${nTierVirtualMachine.name}/CustomScriptextension'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'

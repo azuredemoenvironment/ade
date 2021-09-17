@@ -64,7 +64,7 @@ module azureDatabasesAdeAppSqlAppConfigModule './azure_databases_adeapp_sql_app_
   name: 'azureDatabasesAdeAppSqlAppConfigDeployment'
   params: {
     appConfigName: appConfigName
-    sqlServerConnectionString: 'Data Source=tcp:${adeAppSqlServer.properties.fullyQualifiedDomainName},1433;Initial Catalog=${adeAppSqlDatabaseName};User Id=${adeAppSqlServer.properties.administratorLogin}@${adeAppSqlServer.properties.fullyQualifiedDomainName};Password=${adeAppSqlServer.properties.administratorLoginPassword};'
+    sqlServerConnectionString: 'Data Source=tcp:${adeAppSqlServer.properties.fullyQualifiedDomainName},1433;Initial Catalog=${adeAppSqlDatabaseName};User Id=${adeAppSqlServer.properties.administratorLogin}@${adeAppSqlServer.properties.fullyQualifiedDomainName};Password=${adminPassword};'
   }
 }
 

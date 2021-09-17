@@ -1,7 +1,5 @@
 // parameters
 param defaultPrimaryRegion string
-param adminUserName string
-param adminPassword string
 param logAnalyticsWorkspaceId string
 param appConfigConnectionString string
 param vnetIntegrationSubnetId string
@@ -9,8 +7,6 @@ param privateEndpointSubnetId string
 param azureContainerRegistryName string
 param azureContainerRegistryURL string
 param azureContainerRegistryCredentials string
-param adeAppSqlServerFQDN string
-param adeAppSqlDatabaseName string
 param azureAppServicePrivateDnsZoneId string
 param appServicePlanId string
 param adeAppFrontEndAppServiceName string
@@ -18,7 +14,6 @@ param adeAppApiGatewayAppServiceName string
 param adeAppUserServiceAppServiceName string
 param adeAppDataIngestorServiceAppServiceName string
 param adeAppDataReporterServiceAppServiceName string
-param adeAppApiGatewayAppServiceHostName string
 param adeAppFrontEndAppServiceImageName string
 param adeAppApiGatewayAppServiceImageName string
 param adeAppUserServiceAppServiceImageName string

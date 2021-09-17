@@ -150,17 +150,13 @@ module adeAppAppServiceModule 'azure_app_services_adeapp.bicep' = {
   name: 'adeAppAppServiceDeployment'
   params: {
     defaultPrimaryRegion: defaultPrimaryRegion
-    adminUserName: adminUserName
-    adminPassword: adminPassword
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).connectionStrings).value
+    appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
     vnetIntegrationSubnetId: virtualNetwork002::vnetIntegrationSubnet.id
     privateEndpointSubnetId: virtualNetwork002::privateEndpointSubnet.id
     azureContainerRegistryName: azureContainerRegistryName
     azureContainerRegistryURL: azureContainerRegistry.properties.loginServer
     azureContainerRegistryCredentials: first(listCredentials(azureContainerRegistry.id, azureContainerRegistry.apiVersion).passwords).value
-    adeAppSqlServerFQDN: adeAppSqlServer.properties.fullyQualifiedDomainName
-    adeAppSqlDatabaseName: adeAppSqlDatabase.name
     azureAppServicePrivateDnsZoneId: azureAppServicePrivateDnsZone.id
     appServicePlanId: appServicePlanModule.outputs.appServicePlanId
     adeAppFrontEndAppServiceName: adeAppFrontEndAppServiceName
@@ -168,7 +164,6 @@ module adeAppAppServiceModule 'azure_app_services_adeapp.bicep' = {
     adeAppUserServiceAppServiceName: adeAppUserServiceAppServiceName
     adeAppDataIngestorServiceAppServiceName: adeAppDataIngestorServiceAppServiceName
     adeAppDataReporterServiceAppServiceName: adeAppDataReporterServiceAppServiceName
-    adeAppApiGatewayAppServiceHostName: adeAppApiGatewayAppServiceHostName
     adeAppFrontEndAppServiceImageName: adeAppFrontEndAppServiceImageName
     adeAppApiGatewayAppServiceImageName: adeAppApiGatewayAppServiceImageName
     adeAppUserServiceAppServiceImageName: adeAppUserServiceAppServiceImageName
