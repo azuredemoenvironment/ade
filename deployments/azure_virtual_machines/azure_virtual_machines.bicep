@@ -145,6 +145,8 @@ module nTierModule './azure_virtual_machines_ntier.bicep' = {
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+    appConfigResourceGroupName: appConfigResourceGroupName
+    appConfigName: appConfig.name
     appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
     acrServerName: containerRegistryName
     acrPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value

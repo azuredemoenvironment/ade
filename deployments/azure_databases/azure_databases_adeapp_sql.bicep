@@ -58,7 +58,7 @@ resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' 
   }
 }
 
-// module - app config - application insights
+// module - app config - sql database
 module azureDatabasesAdeAppSqlAppConfigModule './azure_databases_adeapp_sql_app_config.bicep' = {
   scope: resourceGroup(appConfigResourceGroupName)
   name: 'azureDatabasesAdeAppSqlAppConfigDeployment'

@@ -5,6 +5,8 @@ param adminPassword string
 param logAnalyticsWorkspaceId string
 param logAnalyticsWorkspaceCustomerId string
 param logAnalyticsWorkspaceKey string
+param appConfigResourceGroupName string
+param appConfigName string
 param appConfigConnectionString string
 param acrServerName string
 param acrPassword string
@@ -302,3 +304,13 @@ module AzureVirtualMachinesNTierVm 'azure_virtual_machines_ntier_vm.bicep' = [fo
     }
   }
 }]
+
+// module - app config - virtual machines
+module azureVirtualMachinesNTierAppConfig './azure_virtual_machines_ntier_app_config.bicep' = {
+  scope: resourceGroup(appConfigResourceGroupName)
+  name: 'azureVirtualMachinesNTierAppConfigDeployment'
+  params: {
+    appConfigName: appConfigName
+    backendServices: backendServices
+  }
+}
