@@ -195,7 +195,7 @@ module adeAppWebHooksModule 'azure_app_service_adeapp_webhooks.bicep' = [for (ad
   }
 }]
 
-// module - app config - virtual machines
+// module - app config - app services
 module azureAppServicesAdeAppConfig './azure_app_services_adeapp_app_config.bicep' = {
   scope: resourceGroup(appConfigResourceGroupName)
   name: 'azureAppServicesAdeAppConfigDeployment'

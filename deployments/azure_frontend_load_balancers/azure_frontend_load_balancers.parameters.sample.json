@@ -11,6 +11,9 @@
         "rootDomainName": {
             "value": "@@rootDomainName@@"
         },
+        "appConfigResourceGroupName": {
+            "value": "@@appConfigResourceGroupName@@"
+        },
         "monitorResourceGroupName": {
             "value": "@@monitorResourceGroupName@@"
         },

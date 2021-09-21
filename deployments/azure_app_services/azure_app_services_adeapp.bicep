@@ -37,7 +37,7 @@ resource adeAppService 'Microsoft.Web/sites@2020-12-01' = {
       linuxFxVersion: 'DOCKER|${azureContainerRegistryURL}/${adeAppContainerImageName}'
       appSettings: [
         {
-          name: 'AppConfig'
+          name: 'CONNECTIONSTRINGS__APPCONFIG'
           value: appConfigConnectionString
         }
         {

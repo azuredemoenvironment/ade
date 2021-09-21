@@ -5,6 +5,7 @@ targetScope = 'subscription'
 param defaultPrimaryRegion string
 param aliasRegion string
 param rootDomainName string
+param appConfigResourceGroupName string
 param monitorResourceGroupName string
 param networkingResourceGroupName string
 param identityResourceGroupName string
@@ -12,6 +13,9 @@ param nTierResourceGroupName string
 param sslCertificateName string
 param sslCertificateData string
 param sslCertificateDataPassword string
+
+// service name variables
+var appConfigName = 'appcs-ade-${aliasRegion}-001'
 
 // existing resources
 // variables
@@ -113,5 +117,16 @@ module nTierNICUpdateModule 'azure_virtual_machine_ntier_nic_update.bicep' = {
     nTierWeb03NICName: nTierWeb03NICName
     nTierWeb03PrivateIpAddress: nTierWeb03PrivateIpAddress
     nTierBackendPoolId: applicationGatewayModule.outputs.nTierBackendPoolId
+  }
+}
+
+// module - app config - app services
+module azureFrontendLoadBalancersAppConfig './azure_frontend_load_balancers_app_config.bicep' = {
+  scope: resourceGroup(appConfigResourceGroupName)
+  name: 'azureFrontendLoadBalancersAppConfigDeployment'
+  params: {
+    appConfigName: appConfigName
+    adeApiGatewayVmHostName: adeApiGatewayVmHostName
+    adeAppApiGatewayAppServiceHostName: adeAppApiGatewayAppServiceHostName
   }
 }

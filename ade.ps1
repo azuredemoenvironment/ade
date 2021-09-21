@@ -157,6 +157,7 @@ try {
 catch {
     $ErrorMessage = $_.Exception.Message
     Write-Log "An error occurred: $ErrorMessage"
+    Write-Debug ($ErrorMessage | Format-Table | Out-String)
 }
 finally {
     # Clearing the default location
