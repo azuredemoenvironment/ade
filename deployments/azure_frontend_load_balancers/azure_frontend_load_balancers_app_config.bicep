@@ -6,14 +6,14 @@ param adeAppApiGatewayAppServiceHostName string
 resource appConfigKeyAdeApiGatewayUriAppServices 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = {
   name: '${appConfigName}/ADE:ApiGatewayUri$appservices'
   properties: {
-    value: 'https://${adeAppApiGatewayAppServiceHostName}/'
+    value: 'https://${adeAppApiGatewayAppServiceHostName}'
   }
 }
 
 resource appConfigKeyAdeApiGatewayUriVirtualMachines 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = {
   name: '${appConfigName}/ADE:ApiGatewayUri$virtualmachines'
   properties: {
-    value: 'https://${adeApiGatewayVmHostName}/'
+    value: 'https://${adeApiGatewayVmHostName}'
   }
 }
 
