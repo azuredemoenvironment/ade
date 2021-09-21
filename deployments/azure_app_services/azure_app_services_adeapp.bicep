@@ -35,6 +35,9 @@ resource adeAppService 'Microsoft.Web/sites@2020-12-01' = {
     httpsOnly: false
     siteConfig: {
       linuxFxVersion: 'DOCKER|${azureContainerRegistryURL}/${adeAppContainerImageName}'
+      alwaysOn: true
+      http20Enabled: true
+      httpLoggingEnabled: true
       appSettings: [
         {
           name: 'CONNECTIONSTRINGS__APPCONFIG'
