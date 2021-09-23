@@ -11,6 +11,9 @@
         "monitorResourceGroupName": {
             "value": "@@monitorResourceGroupName@@"
         },
+        "appConfigResourceGroupName": {
+            "value": "@@appConfigResourceGroupName@@"
+        },
         "identityResourceGroupName": {
             "value": "@@identityResourceGroupName@@"
         },

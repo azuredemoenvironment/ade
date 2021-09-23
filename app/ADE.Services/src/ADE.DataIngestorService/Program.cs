@@ -1,5 +1,4 @@
 using ADE.ServiceBase;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
 namespace ADE.DataIngestorService
@@ -8,10 +7,7 @@ namespace ADE.DataIngestorService
     {
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+                .ConfigureAdeWebHostDefaults<Startup>();
 
         public static void Main(string[] args) =>
             CreateHostBuilder(args)

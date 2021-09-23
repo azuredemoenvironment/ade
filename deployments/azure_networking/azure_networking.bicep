@@ -257,7 +257,7 @@ module vnetPeeringNoVgwModule './azure_vnet_peering_no_vgw.bicep' = if (deployVp
 // module - private dns
 // variables
 var appServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
-var azureSQLprivateDnsZoneName = 'privatelink.database.windows.net'
+var azureSQLprivateDnsZoneName = 'privatelink${environment().suffixes.sqlServerHostname}'
 // module deployment
 module privateDnsModule './azure_private_dns.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)

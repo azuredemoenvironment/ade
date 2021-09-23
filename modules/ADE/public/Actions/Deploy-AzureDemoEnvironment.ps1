@@ -31,7 +31,7 @@ function Deploy-AzureDemoEnvironment {
     $stopwatch = [system.diagnostics.stopwatch]::StartNew()
 
     Write-ScriptSection "Starting Azure Demo Environment Deployments"
-
+    
     # Core Services
     ###################################
     Deploy-AzureResourceGroups $armParameters
@@ -39,7 +39,7 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
     Deploy-AzureNetworking $armParameters
     Deploy-AzureContainerRegistry $armParameters
-
+    
     # Data Services
     ###################################
     Deploy-AzureDatabases $armParameters

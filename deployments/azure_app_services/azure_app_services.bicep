@@ -4,42 +4,39 @@ targetScope = 'subscription'
 // parameters
 param defaultPrimaryRegion string
 param aliasRegion string
-param rootDomainName string
 param appServicePlanResourceGroupName string
 param adeAppAppServicesResourceGroupName string
 param adeAppSqlResourceGroupName string
 param inspectorGadgetResourceGroupName string
 param containerRegistryResourceGroupName string
+param appConfigResourceGroupName string
 param adminUserName string
 param adminPassword string
 
-// existing resources
-// log analytics workspace
-// variables
+// service name variables
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
-// resource
+var networkingResourceGroupName = 'rg-ade-${aliasRegion}-networking'
+var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
+var vnetIntegrationSubnetName = 'snet-ade-${aliasRegion}-vnetIntegration'
+var privateEndpointSubnetName = 'snet-ade-${aliasRegion}-privateEndpoint'
+var inspectorGadgetSqlServerName = 'sql-ade-${aliasRegion}-inspectorgadget'
+var inspectorGadgetSqlDatabaseName = 'sqldb-ade-${aliasRegion}-inspectorgadget'
+var azureContainerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
+var adeAppSqlServerName = 'sql-ade-${aliasRegion}-adeapp'
+var adeAppSqlDatabaseName = 'sqldb-ade-${aliasRegion}-adeapp'
+var azureAppServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
+var appConfigName = 'appcs-ade-${aliasRegion}-001'
+
+// existing resources
+
+// resource - log analytics workspace
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
   scope: resourceGroup(monitorResourceGroupName)
   name: logAnalyticsWorkspaceName
 }
 
-// application insights
-// variables
-var applicationInsightsName = 'appinsights-ade-${aliasRegion}-001'
-// resource
-resource applicationInsights 'Microsoft.Insights/components@2020-02-02-preview' existing = {
-  scope: resourceGroup(monitorResourceGroupName)
-  name: applicationInsightsName
-}
-
-// virtual network - virtual network 002
-// variables
-var networkingResourceGroupName = 'rg-ade-${aliasRegion}-networking'
-var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
-var vnetIntegrationSubnetName = 'snet-ade-${aliasRegion}-vnetIntegration'
-var privateEndpointSubnetName = 'snet-ade-${aliasRegion}-privateEndpoint'
-// resource
+// resource - virtual network - virtual network 002
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
   name: virtualNetwork002Name
@@ -51,58 +48,46 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existi
   }
 }
 
-// sql server - inspectorgadget
-// variables
-var inspectorGadgetSqlServerName = 'sql-ade-${aliasRegion}-inspectorgadget'
-// resource 
+// resource - sql server - inspectorgadget
 resource inspectorGadgetSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' existing = {
   scope: resourceGroup(inspectorGadgetResourceGroupName)
   name: inspectorGadgetSqlServerName
 }
 
-// sql database - inspector gadget
-// variables
-var inspectorGadgetSqlDatabaseName = 'sqldb-ade-${aliasRegion}-inspectorgadget'
-// resource
+// resource - sql database - inspector gadget
 resource inspectorGadgetSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' existing = {
   scope: resourceGroup(inspectorGadgetResourceGroupName)
   name: inspectorGadgetSqlDatabaseName
 }
 
-// container registry
-// variables
-var azureContainerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
-// resource
+// resource - container registry
 resource azureContainerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-01' existing = {
   scope: resourceGroup(containerRegistryResourceGroupName)
   name: azureContainerRegistryName
 }
 
-// sql server - adeappsql
-// variables
-var adeAppSqlServerName = 'sql-ade-${aliasRegion}-adeapp'
-// resource 
+// resource - sql server - adeappsql
 resource adeAppSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' existing = {
   scope: resourceGroup(adeAppSqlResourceGroupName)
   name: adeAppSqlServerName
 }
 
-// sql database - adeappsql
-// variables
-var adeAppSqlDatabaseName = 'sqldb-ade-${aliasRegion}-adeapp'
-// resource
+// resource - sql database - adeappsql
 resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' existing = {
   scope: resourceGroup(adeAppSqlResourceGroupName)
   name: adeAppSqlDatabaseName
 }
 
-// private dns zone - app services
-// variables
-var azureAppServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
-// resource
+// resource - private dns zone - app services
 resource azureAppServicePrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
   name: azureAppServicePrivateDnsZoneName
+}
+
+// resource - app config
+resource appConfig 'Microsoft.AppConfiguration/configurationStores@2020-07-01-preview' existing = {
+  scope: resourceGroup(appConfigResourceGroupName)
+  name: appConfigName
 }
 
 // module - app service plan
@@ -124,7 +109,7 @@ module appServicePlanModule 'azure_app_service_plan.bicep' = {
 var inspectorGadgetAppServiceName = replace('app-ade-${aliasRegion}-inspectorgadget', '-', '')
 var inspectorGadgetDockerImage = 'DOCKER|jelledruyts/inspectorgadget:latest'
 
-// // module deployment
+// module deployment
 module inspectorGadgetAppServiceModule 'azure_app_services_inspectorgadget.bicep' = {
   scope: resourceGroup(inspectorGadgetResourceGroupName)
   name: 'inspectorGadgetAppServiceDeployment'
@@ -144,79 +129,79 @@ module inspectorGadgetAppServiceModule 'azure_app_services_inspectorgadget.bicep
 
 // module - adeApp
 // variables
-var adeAppFrontEndAppServiceName = replace('app-ade-${aliasRegion}-ade-frontend', '-', '')
-var adeAppApiGatewayAppServiceName = replace('app-ade-${aliasRegion}-ade-apigateway', '-', '')
-var adeAppUserServiceAppServiceName = replace('app-ade-${aliasRegion}-ade-userservice', '-', '')
-var adeAppDataIngestorServiceAppServiceName = replace('app-ade-${aliasRegion}-ade-dataingestorservice', '-', '')
-var adeAppDataReporterServiceAppServiceName = replace('app-ade-${aliasRegion}-ade-datareporterservice', '-', '')
-var adeAppApiGatewayAppServiceHostName = 'ade-apigateway.${rootDomainName}'
-var adeAppFrontEndAppServiceImageName = 'ade-frontend:latest'
-var adeAppApiGatewayAppServiceImageName = 'ade-apigateway:latest'
-var adeAppUserServiceAppServiceImageName = 'ade-userservice:latest'
-var adeAppDataIngestorServiceAppServiceImageName = 'ade-dataingestorservice'
-var adeAppDataReporterServiceAppServiceImageName = 'ade-datareporterservice'
-var adeAppUserServiceAppServicePrivateEndpointName = 'pl-ade-${aliasRegion}-ade-userservice'
-var adeAppDataIngestorServiceAppServicePrivateEndpointName = 'pl-ade-${aliasRegion}-ade-dataingestorservice'
-var adeAppDataReporterServiceAppServicePrivateEndpointName = 'pl-ade-${aliasRegion}-ade-datareporterservice'
+var adeApps = [
+  {
+    name: 'Frontend'
+    usePrivateEndpoint: false
+  }
+  {
+    name: 'ApiGateway'
+    usePrivateEndpoint: false
+  }
+  {
+    name: 'UserService'
+    usePrivateEndpoint: true
+  }
+  {
+    name: 'DataIngestorService'
+    usePrivateEndpoint: true
+  }
+  {
+    name: 'DataReporterService'
+    usePrivateEndpoint: true
+  }
+  {
+    name: 'EventIngestorService'
+    usePrivateEndpoint: true
+  }
+]
+
+var appConfigConnectionString = first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
+var azureContainerRegistryCredentials = first(listCredentials(azureContainerRegistry.id, azureContainerRegistry.apiVersion).passwords).value
+
 // module deployment
-module adeAppAppServiceModule 'azure_app_services_adeapp.bicep' = {
+module adeAppServicesModule 'azure_app_services_adeapp.bicep' = [for adeApp in adeApps: {
   scope: resourceGroup(adeAppAppServicesResourceGroupName)
-  name: 'adeAppAppServiceDeployment'
+  name: 'ade${adeApp.name}AppServicesDeployment'
   params: {
     defaultPrimaryRegion: defaultPrimaryRegion
-    adminUserName: adminUserName
-    adminPassword: adminPassword
+    aliasRegion: aliasRegion
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
+    appConfigConnectionString: appConfigConnectionString
     vnetIntegrationSubnetId: virtualNetwork002::vnetIntegrationSubnet.id
     privateEndpointSubnetId: virtualNetwork002::privateEndpointSubnet.id
     azureContainerRegistryName: azureContainerRegistryName
     azureContainerRegistryURL: azureContainerRegistry.properties.loginServer
-    azureContainerRegistryCredentials: first(listCredentials(azureContainerRegistry.id, azureContainerRegistry.apiVersion).passwords).value
-    adeAppSqlServerFQDN: adeAppSqlServer.properties.fullyQualifiedDomainName
-    adeAppSqlDatabaseName: adeAppSqlDatabase.name
+    azureContainerRegistryCredentials: azureContainerRegistryCredentials
     azureAppServicePrivateDnsZoneId: azureAppServicePrivateDnsZone.id
     appServicePlanId: appServicePlanModule.outputs.appServicePlanId
-    adeAppFrontEndAppServiceName: adeAppFrontEndAppServiceName
-    adeAppApiGatewayAppServiceName: adeAppApiGatewayAppServiceName
-    adeAppUserServiceAppServiceName: adeAppUserServiceAppServiceName
-    adeAppDataIngestorServiceAppServiceName: adeAppDataIngestorServiceAppServiceName
-    adeAppDataReporterServiceAppServiceName: adeAppDataReporterServiceAppServiceName
-    adeAppApiGatewayAppServiceHostName: adeAppApiGatewayAppServiceHostName
-    adeAppFrontEndAppServiceImageName: adeAppFrontEndAppServiceImageName
-    adeAppApiGatewayAppServiceImageName: adeAppApiGatewayAppServiceImageName
-    adeAppUserServiceAppServiceImageName: adeAppUserServiceAppServiceImageName
-    adeAppUserServiceAppServicePrivateEndpointName: adeAppUserServiceAppServicePrivateEndpointName
-    adeAppDataIngestorServiceAppServicePrivateEndpointName: adeAppDataIngestorServiceAppServicePrivateEndpointName
-    adeAppDataReporterServiceAppServicePrivateEndpointName: adeAppDataReporterServiceAppServicePrivateEndpointName
-    adeAppDataIngestorServiceAppServiceImageName: adeAppDataIngestorServiceAppServiceImageName
-    adeAppDataReporterServiceAppServiceImageName: adeAppDataReporterServiceAppServiceImageName
+    adeAppName: toLower(adeApp.name)
+    usePrivateEndpoint: adeApp.usePrivateEndpoint
   }
-}
+}]
 
 // module - adeAppWebHooks
 // variables
 // module deployment
-module adeAppWebHooksModule 'azure_app_service_adeapp_webhooks.bicep' = {
+module adeAppWebHooksModule 'azure_app_service_adeapp_webhooks.bicep' = [for (adeApp, i) in adeApps: {
   scope: resourceGroup(containerRegistryResourceGroupName)
-  name: 'adeAppWebHooksDeployment'
+  name: 'ade${adeApp.name}AppWebHooksDeployment'
   params: {
     defaultPrimaryRegion: defaultPrimaryRegion
     azureContainerRegistryName: azureContainerRegistryName
-    adeAppFrontEndAppServiceName: adeAppFrontEndAppServiceName
-    adeAppApiGatewayAppServiceName: adeAppApiGatewayAppServiceName
-    adeAppUserServiceAppServiceName: adeAppUserServiceAppServiceName
-    adeAppDataIngestorServiceAppServiceName: adeAppDataIngestorServiceAppServiceName
-    adeAppDataReporterServiceAppServiceName: adeAppDataReporterServiceAppServiceName
-    adeAppFrontEndAppServiceImageName: adeAppFrontEndAppServiceImageName
-    adeAppApiGatewayAppServiceImageName: adeAppApiGatewayAppServiceImageName
-    adeAppUserServiceAppServiceImageName: adeAppUserServiceAppServiceImageName
-    adeAppDataIngestorServiceAppServiceImageName: adeAppDataIngestorServiceAppServiceImageName
-    adeAppDataReporterServiceAppServiceImageName: adeAppDataReporterServiceAppServiceImageName
-    adeAppFrontEndAppServiceUri: adeAppAppServiceModule.outputs.adeAppFrontEndAppServiceUri
-    adeAppApiGatewayAppServiceUri: adeAppAppServiceModule.outputs.adeAppApiGatewayAppServiceUri
-    adeAppUserServiceAppServiceUri: adeAppAppServiceModule.outputs.adeAppUserServiceAppServiceUri
-    adeAppDataIngestorServiceAppServiceUri: adeAppAppServiceModule.outputs.adeAppDataIngestorServiceAppServiceUri
-    adeAppDataReporterServiceAppServiceUri: adeAppAppServiceModule.outputs.adeAppDataReporterServiceAppServiceUri
+    adeAppServiceName: adeAppServicesModule[i].outputs.adeAppServiceName
+    adeAppContainerImageName: adeAppServicesModule[i].outputs.adeAppContainerImageName
+    adeAppDockerWebHookUri: adeAppServicesModule[i].outputs.adeAppDockerWebHookUri
+  }
+}]
+
+// module - app config - app services
+module azureAppServicesAdeAppConfig './azure_app_services_adeapp_app_config.bicep' = {
+  scope: resourceGroup(appConfigResourceGroupName)
+  name: 'azureAppServicesAdeAppConfigDeployment'
+  params: {
+    aliasRegion: aliasRegion
+    appConfigName: appConfigName
+    backendServices: adeApps
   }
 }

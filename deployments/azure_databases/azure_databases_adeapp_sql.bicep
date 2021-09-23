@@ -3,6 +3,8 @@ param defaultPrimaryRegion string
 param adminUserName string
 param adminPassword string
 param logAnalyticsWorkspaceId string
+param appConfigResourceGroupName string
+param appConfigName string
 param privateEndpointSubnetId string
 param azureSQLPrivateDnsZoneId string
 param adeAppSqlServerName string
@@ -53,6 +55,16 @@ resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' 
     zoneRedundant: true
     autoPauseDelay: 60
     minCapacity: 5
+  }
+}
+
+// module - app config - sql database
+module azureDatabasesAdeAppSqlAppConfigModule './azure_databases_adeapp_sql_app_config.bicep' = {
+  scope: resourceGroup(appConfigResourceGroupName)
+  name: 'azureDatabasesAdeAppSqlAppConfigDeployment'
+  params: {
+    appConfigName: appConfigName
+    sqlServerConnectionString: 'Data Source=tcp:${adeAppSqlServer.properties.fullyQualifiedDomainName},1433;Initial Catalog=${adeAppSqlDatabaseName};User Id=${adeAppSqlServer.properties.administratorLogin}@${adeAppSqlServer.properties.fullyQualifiedDomainName};Password=${adminPassword};'
   }
 }
 
@@ -188,7 +200,7 @@ resource adeAppSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2020
   }
 }
 
-// resource - prviate endpoint dns group - private endpoint - sql server - adeAppSqlServer
+// resource - private endpoint dns group - private endpoint - sql server - adeAppSqlServer
 resource azureSQLprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
   name: '${adeAppSqlServerPrivateEndpoint.name}/dnsgroupname'
   dependsOn: [

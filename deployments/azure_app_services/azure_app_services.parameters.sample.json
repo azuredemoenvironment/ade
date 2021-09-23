@@ -8,9 +8,6 @@
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
-        "rootDomainName": {
-            "value": "@@rootDomainName@@"
-        },
         "appServicePlanResourceGroupName": {
             "value": "@@appServicePlanResourceGroupName@@"
         },
@@ -25,6 +22,9 @@
         },
         "containerRegistryResourceGroupName": {
             "value": "@@containerRegistryResourceGroupName@@"
+        },
+        "appConfigResourceGroupName": {
+            "value": "@@appConfigResourceGroupName@@"
         },
         "adminUserName": {
             "value": "@@adminUsername@@"

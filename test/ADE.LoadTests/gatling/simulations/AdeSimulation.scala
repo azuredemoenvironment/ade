@@ -31,11 +31,11 @@ class AdeSimulation extends Simulation {
   )
 
   // Test Run Configuration TODO: inject from Environment Variables
-  val webFrontEndBaseUrl  = "http://" + webFrontEndDomain + "/"
+  val webFrontEndBaseUrl  = "https://" + webFrontEndDomain + "/"
   val webFrontEndHeaders  = baseHeaders + ("Host" -> webFrontEndDomain)
   val webFrontEndProtocol = http.baseUrl(webFrontEndDomain)
 
-  val webBackEndBaseUrl  = "http://" + webBackEndDomain + "/"
+  val webBackEndBaseUrl  = "https://" + webBackEndDomain + "/"
   val webBackEndHeaders  = baseHeaders + ("Host" -> webBackEndDomain)
   val webBackEndProtocol = http.baseUrl(webBackEndDomain)
 

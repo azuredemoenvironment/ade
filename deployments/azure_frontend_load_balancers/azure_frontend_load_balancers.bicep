@@ -5,6 +5,7 @@ targetScope = 'subscription'
 param defaultPrimaryRegion string
 param aliasRegion string
 param rootDomainName string
+param appConfigResourceGroupName string
 param monitorResourceGroupName string
 param networkingResourceGroupName string
 param identityResourceGroupName string
@@ -12,6 +13,9 @@ param nTierResourceGroupName string
 param sslCertificateName string
 param sslCertificateData string
 param sslCertificateDataPassword string
+
+// service name variables
+var appConfigName = 'appcs-ade-${aliasRegion}-001'
 
 // existing resources
 // variables
@@ -57,12 +61,13 @@ var applicationGatewayPublicIpAddressName = 'pip-ade-${aliasRegion}-appgw001'
 var inspectorGadgetAppServiceWafPolicyName = 'waf-ade-${aliasRegion}-inspectorgadget'
 var applicationGatewayName = 'appgw-ade-${aliasRegion}-001'
 var adeAppFrontEndAppServiceFqdn = replace('app-ade-${aliasRegion}-ade-frontend.azurewebsites.net', '-', '')
-var adeAppFrontEndAppServiceHostName = 'adefrontend.${rootDomainName}'
+var adeAppFrontEndAppServiceHostName = 'ade-frontend.${rootDomainName}'
 var adeAppApiGatewayAppServiceFqdn = replace('app-ade-${aliasRegion}-ade-apigateway.azurewebsites.net', '-', '')
-var adeAppApiGatewayAppServiceHostName = 'adeapigateway.${rootDomainName}'
+var adeAppApiGatewayAppServiceHostName = 'ade-apigateway.${rootDomainName}'
 var inspectorGadgetAppServiceFqdn = replace('app-ade-${aliasRegion}-inspectorgadget.azurewebsites.net', '-', '')
 var inspectorGadgetAppServiceHostName = 'inspectorgadget.${rootDomainName}'
-var nTierHostName = 'ntier.${rootDomainName}'
+var adeFrontendVmHostName = 'ade-frontend-vm.${rootDomainName}'
+var adeApiGatewayVmHostName = 'ade-apigateway-vm.${rootDomainName}'
 // module deployment
 module applicationGatewayModule 'azure_application_gateway.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
@@ -83,7 +88,8 @@ module applicationGatewayModule 'azure_application_gateway.bicep' = {
     adeAppApiGatewayAppServiceHostName: adeAppApiGatewayAppServiceHostName
     inspectorGadgetAppServiceFqdn: inspectorGadgetAppServiceFqdn
     inspectorGadgetAppServiceHostName: inspectorGadgetAppServiceHostName
-    nTierHostName: nTierHostName
+    adeFrontendVmHostName: adeFrontendVmHostName
+    adeApiGatewayVmHostName: adeApiGatewayVmHostName
     applicationGatewayManagedIdentity: applicationGatewayManagedIdentity.id
   }
 }
@@ -111,5 +117,16 @@ module nTierNICUpdateModule 'azure_virtual_machine_ntier_nic_update.bicep' = {
     nTierWeb03NICName: nTierWeb03NICName
     nTierWeb03PrivateIpAddress: nTierWeb03PrivateIpAddress
     nTierBackendPoolId: applicationGatewayModule.outputs.nTierBackendPoolId
+  }
+}
+
+// module - app config - app services
+module azureFrontendLoadBalancersAppConfig './azure_frontend_load_balancers_app_config.bicep' = {
+  scope: resourceGroup(appConfigResourceGroupName)
+  name: 'azureFrontendLoadBalancersAppConfigDeployment'
+  params: {
+    appConfigName: appConfigName
+    adeApiGatewayVmHostName: adeApiGatewayVmHostName
+    adeAppApiGatewayAppServiceHostName: adeAppApiGatewayAppServiceHostName
   }
 }
