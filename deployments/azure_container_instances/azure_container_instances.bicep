@@ -97,8 +97,8 @@ module azureContainerInstancesADELoadTestingGrafanaModule 'azure_container_insta
 // variables
 var adeLoadTestingGatlingContainerGroupName = 'ci-ade-${aliasRegion}-adeloadtesting-gatling'
 var adeLoadTestingGatlingContainerImageName = '${azureContainerRegistry.properties.loginServer}/ade-loadtesting-gatling:latest'
-var adeAppFrontEndHostName = 'adefrontend.${rootDomainName}'
-var adeAppApiGatewayHostName = 'adeapigateway.${rootDomainName}'
+var adeAppFrontEndHostName = 'ade-frontend.${rootDomainName}'
+var adeAppApiGatewayHostName = 'ade-apigateway.${rootDomainName}'
 
 // module deployment
 module azureContainerInstancesADELoadTestingGatlingModule 'azure_container_instances_adeloadtesting_gatling.bicep' = {
