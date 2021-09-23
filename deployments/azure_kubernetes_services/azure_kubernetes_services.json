@@ -1,0 +1,235 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location For All Resources."
+            }
+        },
+        "virtualNetwork03ResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of Virtual Network 03 Resource Group."
+            }
+        },
+        "virtualNetwork03Name": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of Virtual Network 03."
+            }
+        },
+        "aksClusterName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the AKS Cluster"
+            }
+        },
+        "aksClusterDNSName": {
+            "type": "string",
+            "metadata": {
+                "description": "The DNS Name of the AKS cluster"
+            }
+        },
+        "aksNodeResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the AKS Node Resource Group."
+            }
+        },
+        "logAnalyticsWorkspaceResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Log Analytics Workspace Resource Group."
+            }
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Name of the Log Analytics Workspace."
+            }
+        }
+    },
+    "variables": {
+        "aksSubnetName": "aks",
+        "aksServiceAddressPrefix": "192.168.0.0/24",
+        "aksDNSServiceIPAddress": "192.168.0.10",
+        "aksDockerBridgeAddress": "172.17.0.1/16",
+        "aksSubnetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('virtualNetwork03ResourceGroupName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('virtualNetwork03Name'), '/subnets/', variables('aksSubnetName'))]",
+        "logAnalyticsWorkspaceID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('logAnalyticsWorkspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]",
+        "environmentName": "Production",
+        "functionName": "Vote",
+        "costCenterName": "IT"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "ClusterSubnetRoleAssignmentDeployment",
+            "subscriptionId": "[subscription().subscriptionId]",
+            "resourceGroup": "[parameters('virtualNetwork03ResourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/virtualNetworks/subnets/providers/roleAssignments",
+                            "apiVersion": "2019-04-01-preview",
+                            "name": "[concat(parameters('virtualNetwork03Name'), '/', variables('aksSubnetName'), '/Microsoft.Authorization/', guid(resourceGroup().id, deployment().name))]",
+                            "properties": {
+                                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
+                                "principalId": "[reference(resourceId('Microsoft.ContainerService/managedClusters/', parameters('aksClusterName')), '2020-06-01', 'Full').identity.principalId]",
+                                "scope": "[variables('aksSubnetId')]"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.ContainerService/managedClusters",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('aksClusterName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {
+                "Environment": "[variables('environmentName')]",
+                "Function": "[variables('functionName')]",
+                "Cost Center": "[variables('costCenterName')]"
+            },
+            "properties": {
+                "kubernetesVersion": "1.18.14",
+                "nodeResourceGroup": "[parameters('aksNodeResourceGroupName')]",
+                "enableRBAC": true,
+                "dnsPrefix": "[parameters('aksClusterDNSName')]",
+                "agentPoolProfiles": [
+                    {
+                        "name": "agentpool",                        
+                        "osDiskSizeGB": 0,
+                        "count": 1,
+                        "vmSize": "Standard_B2s",
+                        "osType": "Linux",
+                        "storageProfile": "ManagedDisks",
+                        "type": "VirtualMachineScaleSets",
+                        "mode": "System",
+                        "enableAutoScaling": true,
+                        "minCount": 1,
+                        "maxCount": 3,
+                        "vnetSubnetID": "[variables('aksSubnetId')]",
+                        "tags": {
+                            "Environment": "[variables('environmentName')]",
+                            "Function": "[variables('functionName')]",
+                            "Cost Center": "[variables('costCenterName')]"
+                        }
+                    }
+                ],                
+                "servicePrincipalProfile": {
+                    "ClientId": "msi"
+                },
+                "networkProfile": {
+                    "loadBalancerSku": "standard",
+                    "networkPlugin": "azure",
+                    "serviceCidr": "[variables('aksServiceAddressPrefix')]",
+                    "dnsServiceIP": "[variables('aksDNSServiceIPAddress')]",
+                    "dockerBridgeCidr": "[variables('aksDockerBridgeAddress')]"
+                },
+                "apiServerAccessProfile": {
+                    "enablePrivateCluster": false
+                },
+                "addonProfiles": {
+                    "httpApplicationRouting": {
+                        "enabled": true
+                    },
+                    "omsagent": {
+                        "enabled": true,
+                        "config": {
+                            "logAnalyticsWorkspaceResourceID": "[variables('logAnalyticsWorkspaceID')]"
+                        }
+                    }
+                }
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "resources": [
+                {
+                    "type": "providers/diagnosticSettings",
+                    "apiVersion": "2017-05-01-preview",
+                    "name": "[concat('Microsoft.Insights/', parameters('aksClusterName'), '-Diagnostics')]",
+                    "dependsOn": [
+                        "[parameters('aksClusterName')]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "name": "[concat(parameters('aksClusterName'), '-Diagnostics')]",
+                        "workspaceId": "[variables('logAnalyticsWorkspaceID')]",
+                        "logs": [
+                            {
+                                "category": "kube-apiserver",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            },
+                            {
+                                "category": "kube-audit",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            },
+                            {
+                                "category": "kube-controller-manager",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            },
+                            {
+                                "category": "kube-scheduler",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            },
+                            {
+                                "category": "cluster-autoscaler",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            }
+                        ],
+                        "metrics": [
+                            {
+                                "category": "AllMetrics",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 7,
+                                    "enabled": true
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {
+        "controlPlaneFQDN": {
+            "type": "string",
+            "value": "[reference(concat('Microsoft.ContainerService/managedClusters/', parameters('aksClusterName'))).fqdn]"
+        }
+    }
+}
