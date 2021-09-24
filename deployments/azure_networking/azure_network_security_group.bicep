@@ -89,7 +89,7 @@ resource azureBastionSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-
 }
 
 // resource - network security group - diagnostic settings - azure bastion subnet 
-resource azureBastionSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource azureBastionSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: azureBastionSubnetNSG
   name: '${azureBastionSubnetNSG.name}-diagnostics'
   properties: {
@@ -146,7 +146,7 @@ resource managementSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01
 }
 
 // resource - network security group - diagnostic settings - azure bastion subnet
-resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: managementSubnetNSG
   name: '${managementSubnetNSG.name}-diagnostics'
   properties: {
@@ -188,7 +188,7 @@ resource nTierWebSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' 
 }
 
 // resource - network security group - diagnostic settings - ntier web subnet
-resource nTierWebSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource nTierWebSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: nTierWebSubnetNSG
   name: '${nTierWebSubnetNSG.name}-diagnostics'
   properties: {
@@ -230,7 +230,7 @@ resource nTierAppSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' 
 }
 
 // resource - network security group - diagnostic settings - ntier app subnet
-resource nTierAppSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource nTierAppSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: nTierAppSubnetNSG
   name: '${nTierAppSubnetNSG.name}-diagnostics'
   properties: {
@@ -287,7 +287,7 @@ resource vmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
 }
 
 // resource - network security group - diagnostic settings - vmss subnet
-resource vmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource vmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: vmssSubnetNSG
   name: '${vmssSubnetNSG.name}-diagnostics'
   properties: {
@@ -329,7 +329,7 @@ resource clientServicesSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-0
 }
 
 // resource - network security group - diagnostic settings - client services subnet
-resource clientServicesSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource clientServicesSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: clientServicesSubnetNSG
   name: '${clientServicesSubnetNSG.name}-diagnostics'
   properties: {

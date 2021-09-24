@@ -1,5 +1,5 @@
 // parameters
-param defaultPrimaryRegion string
+param azureRegion string
 param containerRegistryLoginServer string
 @secure()
 param containerRegistryLoginUserName string
@@ -20,7 +20,7 @@ var costCenterName = 'it'
 // resource - azure container instance - container group - adeLoadTestingGatling
 resource adeLoadTestingGatlingContainerGroup 'Microsoft.ContainerInstance/containerGroups@2021-03-01' = {
   name: adeLoadTestingGatlingContainerGroupName
-  location: defaultPrimaryRegion
+  location: azureRegion
   tags: {
     environment: environmentName
     function: functionName

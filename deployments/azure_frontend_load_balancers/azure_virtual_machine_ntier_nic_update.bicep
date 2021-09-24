@@ -46,7 +46,7 @@ resource nTierWeb01NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
 }
 
 // resource - network interface - diagnostic settings - ntierweb01
-resource nTierWeb01NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource nTierWeb01NICDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: nTierWeb01NIC
   name: '${nTierWeb01NIC.name}-diagnostics'
   properties: {
@@ -96,7 +96,7 @@ resource nTierWeb02NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
 }
 
 // resource - network interface - diagnostic settings - ntierWeb02
-resource nTierWeb02NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource nTierWeb02NICDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: nTierWeb02NIC
   name: '${nTierWeb02NIC.name}-diagnostics'
   properties: {
@@ -146,7 +146,7 @@ resource nTierWeb03NIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
 }
 
 // resource - network interface - diagnostic settings - ntierWeb03
-resource nTierWeb03NICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource nTierWeb03NICDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: nTierWeb03NIC
   name: '${nTierWeb03NIC.name}-diagnostics'
   properties: {

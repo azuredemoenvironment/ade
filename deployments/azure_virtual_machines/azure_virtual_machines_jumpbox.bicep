@@ -37,7 +37,7 @@ resource jumpboxPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01'
 }
 
 // resource - public ip address - diagnostic settings - jumpbox
-resource jumpboxPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource jumpboxPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: jumpboxPublicIpAddress
   name: '${jumpboxPublicIpAddress.name}-diagnostics'
   properties: {
@@ -111,7 +111,7 @@ resource jumpboxNIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
 }
 
 // resource - network interface - diagnostic settings - jumpbox
-resource jumpboxNICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource jumpboxNICDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: jumpboxNIC
   name: '${jumpboxNIC.name}-diagnostics'
   properties: {

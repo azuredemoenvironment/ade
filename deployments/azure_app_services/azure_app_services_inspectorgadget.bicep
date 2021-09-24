@@ -1,5 +1,5 @@
 // parameters
-param defaultPrimaryRegion string
+param azureRegion string
 param adminUserName string
 param adminPassword string
 param logAnalyticsWorkspaceId string
@@ -18,7 +18,7 @@ var costCenterName = 'it'
 // resource - web app - inspectorGadgetAppService
 resource inspectorGadgetAppService 'Microsoft.Web/sites@2020-12-01' = {
   name: inspectorGadgetAppServiceName
-  location: defaultPrimaryRegion
+  location: azureRegion
   tags: {
     environment: environmentName
     function: functionName
@@ -59,7 +59,7 @@ resource inspectorGadgetAppServiceNetworking 'Microsoft.Web/sites/config@2020-12
 }
 
 // resource - web app - diagnostics settings - inspectorGadgetAppService
-resource inspectorGadgetAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource inspectorGadgetAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: inspectorGadgetAppService
   name: '${inspectorGadgetAppService.name}-diagnostics'
   properties: {

@@ -1,8 +1,11 @@
-// parameters
-param location string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the Log Analytics Workspace')
 param logAnalyticsWorkspaceName string
 
-// variables
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
 var containerInsights = {
   name: 'ContainerInsights(${logAnalyticsWorkspaceName})'
   galleryName: 'ContainerInsights'
@@ -15,19 +18,18 @@ var vmInsights = {
   name: 'VMInsights(${logAnalyticsWorkspaceName})'
   galleryName: 'VMInsights'
 }
-var environmentName = 'production'
-var functionName = 'monitoring and diagnostics'
-var costCenterName = 'it'
+var tags = {
+  environment: 'production'
+  function: 'monitoring and diagnostics'
+  costCenter: 'it'
+}
 
-// resource - log analytics workspace
+// Resource - Log Analytics Workspace
+//////////////////////////////////////////////////
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' = {
   name: logAnalyticsWorkspaceName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     retentionInDays: 30
     sku: {
@@ -36,7 +38,8 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
   }
 }
 
-// resource - log analytics workspace - solution - container insights
+// Resource - Log Analytics Workspace - Solution - Container Insights
+//////////////////////////////////////////////////
 resource solutionsContainerInsights 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
   name: '${containerInsights.name}'
   location: location
@@ -54,7 +57,8 @@ resource solutionsContainerInsights 'Microsoft.OperationsManagement/solutions@20
   }
 }
 
-// resource - log analytics workspace - solution - key vault analytics
+// Resource - Log Analytics Workspace - Solution - Key Vault Analytics
+//////////////////////////////////////////////////
 resource solutionsKeyVaultAnalytics 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
   name: '${keyVaultAnalytics.name}'
   location: location
@@ -72,7 +76,8 @@ resource solutionsKeyVaultAnalytics 'Microsoft.OperationsManagement/solutions@20
   }
 }
 
-// resource - log analytics workspace - solution - vm insights
+// Resource - Log Analytics Workspace - Solution - Vm Insights
+//////////////////////////////////////////////////
 resource solutionsVMInsights 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
   name: '${vmInsights.name}'
   location: location
@@ -90,8 +95,9 @@ resource solutionsVMInsights 'Microsoft.OperationsManagement/solutions@2015-11-0
   }
 }
 
-// resource - log analytics workspace - diagnostic settings
-resource logAnalyticsWorkspaceDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+// Resource - Log Analytics Workspace - Diagnostic Settings
+//////////////////////////////////////////////////
+resource logAnalyticsWorkspaceDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: logAnalyticsWorkspace
   name: '${logAnalyticsWorkspace.name}-diagnostics'
   properties: {
@@ -120,5 +126,6 @@ resource logAnalyticsWorkspaceDiagnostics 'microsoft.insights/diagnosticSettings
   }
 }
 
-// outputs
+// Outputs
+//////////////////////////////////////////////////
 output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.id

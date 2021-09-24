@@ -2,7 +2,7 @@
 targetScope = 'subscription'
 
 // parameters
-param defaultPrimaryRegion string
+param azureRegion string
 param aliasRegion string
 param monitorResourceGroupName string
 param appConfigResourceGroupName string
@@ -119,7 +119,7 @@ module jumpBoxModule './azure_virtual_machines_jumpbox.bicep' = {
   scope: resourceGroup(jumpboxResourceGroupName)
   name: 'jumpBoxDeployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
@@ -139,7 +139,7 @@ module nTierModule './azure_virtual_machines_ntier.bicep' = {
   scope: resourceGroup(nTierResourceGroupName)
   name: 'nTierDeployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
@@ -189,7 +189,7 @@ module vmssModule 'azure_virtual_machines_vmss.bicep' = {
   scope: resourceGroup(vmssResourceGroupName)
   name: 'vmssDeployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
@@ -208,7 +208,7 @@ module w10ClientModule './azure_virtual_machines_w10client.bicep' = {
   scope: resourceGroup(w10clientResourceGroupName)
   name: 'w10ClientDeployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id

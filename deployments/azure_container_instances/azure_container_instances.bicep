@@ -2,7 +2,7 @@
 targetScope = 'subscription'
 
 // parameters
-param defaultPrimaryRegion string
+param azureRegion string
 param aliasRegion string
 param rootDomainName string
 param monitorResourceGroupName string
@@ -45,7 +45,7 @@ module azureContainerInstancesADELoadTestingRedisModule 'azure_container_instanc
   scope: resourceGroup(adeAppLoadTestingResourceGroupName)
   name: 'azureContainerInstancesADELoadTestingRedisDeployment'
   params: {
-    defaultPrimaryRegion: defaultPrimaryRegion
+    azureRegion: azureRegion
     containerRegistryLoginServer: azureContainerRegistry.properties.loginServer
     containerRegistryLoginUserName: keyVault.getSecret('containerRegistryUserName')
     containerRegistryLoginPassword: keyVault.getSecret('containerRegistryPassword')
@@ -64,7 +64,7 @@ module azureContainerInstancesADELoadTestingInfluxDBModule 'azure_container_inst
   scope: resourceGroup(adeAppLoadTestingResourceGroupName)
   name: 'azureContainerInstancesADELoadTestingInfluxDBDeployment'
   params: {
-    defaultPrimaryRegion: defaultPrimaryRegion
+    azureRegion: azureRegion
     containerRegistryLoginServer: azureContainerRegistry.properties.loginServer
     containerRegistryLoginUserName: keyVault.getSecret('containerRegistryUserName')
     containerRegistryLoginPassword: keyVault.getSecret('containerRegistryPassword')
@@ -83,7 +83,7 @@ module azureContainerInstancesADELoadTestingGrafanaModule 'azure_container_insta
   scope: resourceGroup(adeAppLoadTestingResourceGroupName)
   name: 'azureContainerInstancesADELoadTestingGrafanaDeployment'
   params: {
-    defaultPrimaryRegion: defaultPrimaryRegion
+    azureRegion: azureRegion
     containerRegistryLoginServer: azureContainerRegistry.properties.loginServer
     containerRegistryLoginUserName: keyVault.getSecret('containerRegistryUserName')
     containerRegistryLoginPassword: keyVault.getSecret('containerRegistryPassword')
@@ -105,7 +105,7 @@ module azureContainerInstancesADELoadTestingGatlingModule 'azure_container_insta
   scope: resourceGroup(adeAppLoadTestingResourceGroupName)
   name: 'azureContainerInstancesADELoadTestingGatlingDeployment'
   params: {
-    defaultPrimaryRegion: defaultPrimaryRegion
+    azureRegion: azureRegion
     containerRegistryLoginServer: azureContainerRegistry.properties.loginServer
     containerRegistryLoginUserName: keyVault.getSecret('containerRegistryUserName')
     containerRegistryLoginPassword: keyVault.getSecret('containerRegistryPassword')

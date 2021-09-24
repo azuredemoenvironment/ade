@@ -1,5 +1,5 @@
 // parameters
-param defaultPrimaryRegion string
+param azureRegion string
 param adminUserName string
 param adminPassword string
 param logAnalyticsWorkspaceId string
@@ -19,7 +19,7 @@ var costCenterName = 'it'
 // resource - sql server - adeAppSqlServer
 resource adeAppSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
   name: adeAppSqlServerName
-  location: defaultPrimaryRegion
+  location: azureRegion
   tags: {
     environment: environmentName
     function: functionName
@@ -37,7 +37,7 @@ resource adeAppSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
 resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' = {
   parent: adeAppSqlServer
   name: adeAppSqlDatabaseName
-  location: defaultPrimaryRegion
+  location: azureRegion
   tags: {
     environment: environmentName
     function: functionName
@@ -181,7 +181,7 @@ resource adeAppSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@202
 // resource - private endpoint - adeAppSqlServer
 resource adeAppSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = {
   name: adeAppSqlServerPrivateEndpointName
-  location: defaultPrimaryRegion
+  location: azureRegion
   properties: {
     subnet: {
       id: privateEndpointSubnetId

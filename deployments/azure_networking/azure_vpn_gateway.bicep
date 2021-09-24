@@ -30,7 +30,7 @@ resource vpnGatewayPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-
 }
 
 // resource - public ip address - diagnostic settings - vpn gateway
-resource vpnGatewayPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource vpnGatewayPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: vpnGatewayPublicIpAddress
   name: '${vpnGatewayPublicIpAddress.name}-diagnostics'
   properties: {
@@ -128,7 +128,7 @@ resource vpnGateway 'Microsoft.Network/virtualNetworkGateways@2020-08-01' = {
 }
 
 // resource - vpn gateway - diagnostic settings
-resource vpnGatewayDiagnostics 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
+resource vpnGatewayDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   name: '${vpnGateway.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId

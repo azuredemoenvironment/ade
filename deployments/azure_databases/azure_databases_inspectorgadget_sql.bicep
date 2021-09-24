@@ -1,5 +1,5 @@
 // parameters
-param defaultPrimaryRegion string
+param azureRegion string
 param adminUserName string
 param adminPassword string
 param logAnalyticsWorkspaceId string
@@ -17,7 +17,7 @@ var costCenterName = 'it'
 // resource - sql server - inspectorGadgetSqlServer
 resource inspectorGadgetSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
   name: inspectorGadgetSqlServerName
-  location: defaultPrimaryRegion
+  location: azureRegion
   tags: {
     environment: environmentName
     function: functionName
@@ -35,7 +35,7 @@ resource inspectorGadgetSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
 resource inspectorGadgetSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' = {
   parent: inspectorGadgetSqlServer
   name: inspectorGadgetSqlDatabaseName
-  location: defaultPrimaryRegion
+  location: azureRegion
   tags: {
     environment: environmentName
     function: functionName
@@ -169,7 +169,7 @@ resource inspectorGadgetSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSet
 // resource - private endpoint - sql server - inspectorGadgetSqlServer
 resource inspectorGadgetSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = {
   name: inspectorGadgetSqlServerPrivateEndpointName
-  location: defaultPrimaryRegion
+  location: azureRegion
   properties: {
     subnet: {
       id: privateEndpointSubnetId

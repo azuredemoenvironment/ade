@@ -1,24 +1,39 @@
-// main.bicep files
+// Main.Bicep Files
 
-// target scope
+// Target Scope
+//////////////////////////////////////////////////
 
-// parameters
+// Parameters
+//////////////////////////////////////////////////
+@description('The selected Azure region for deployment.')
+param azureRegion string
 
-// existing resources
+@description('The user alias and Azure region defined from user input.')
+param aliasRegion string
 
-// module - resource type
-// variables
-// module deployment
+// Global Variables
+//////////////////////////////////////////////////
 
-// module.bicep files
+// Existing Resources
+//////////////////////////////////////////////////
+TODO:
 
-// parameters
+// Module - Resource Type
+//////////////////////////////////////////////////
 
-// variables
+// Module.Bicep Files
 
-// existing resources
-// resource type - resource descriptor
+// Parameters
+//////////////////////////////////////////////////
 
-// resource - resource type - additional descriptor
+// Variables
+//////////////////////////////////////////////////
 
-// outputs
+// Resource Type - Resource Descriptor
+//////////////////////////////////////////////////
+
+// Resource - Resource Type - Additional Descriptor (Child / Extension Resources)
+//////////////////////////////////////////////////
+
+// Outputs
+//////////////////////////////////////////////////

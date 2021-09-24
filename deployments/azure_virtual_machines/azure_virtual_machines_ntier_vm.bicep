@@ -56,7 +56,7 @@ resource nTierVirtualMachineNIC 'Microsoft.Network/networkInterfaces@2020-08-01'
 }
 
 // resource - network interfaces - diagnostic settings
-resource ntierVirtualMachineNICDiagnostic 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource ntierVirtualMachineNICDiagnostic 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: nTierVirtualMachineNIC
   name: '${nTierVirtualMachineNIC.name}-diagnostics'
   properties: {

@@ -28,7 +28,7 @@ resource azureBastionPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-0
 }
 
 // resource - public ip address - diagnostic settings - azure bastion
-resource azureBastionPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource azureBastionPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: azureBastionPublicIpAddress
   name: '${azureBastionPublicIpAddress.name}-diagnostics'
   properties: {
@@ -100,7 +100,7 @@ resource azureBastion 'Microsoft.Network/bastionHosts@2020-07-01' = {
 }
 
 // resource - azure bastion - diagnostic settings
-resource azureBastionDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource azureBastionDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: azureBastion
   name: '${azureBastion.name}-diagnostics'
   properties: {

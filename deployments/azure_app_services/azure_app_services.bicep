@@ -2,7 +2,7 @@
 targetScope = 'subscription'
 
 // parameters
-param defaultPrimaryRegion string
+param azureRegion string
 param aliasRegion string
 param appServicePlanResourceGroupName string
 param adeAppAppServicesResourceGroupName string
@@ -99,7 +99,7 @@ module appServicePlanModule 'azure_app_service_plan.bicep' = {
   scope: resourceGroup(appServicePlanResourceGroupName)
   name: 'appServicePlanDeployment'
   params: {
-    defaultPrimaryRegion: defaultPrimaryRegion
+    azureRegion: azureRegion
     appServicePlanName: appServicePlanName
   }
 }
@@ -114,7 +114,7 @@ module inspectorGadgetAppServiceModule 'azure_app_services_inspectorgadget.bicep
   scope: resourceGroup(inspectorGadgetResourceGroupName)
   name: 'inspectorGadgetAppServiceDeployment'
   params: {
-    defaultPrimaryRegion: defaultPrimaryRegion
+    azureRegion: azureRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
@@ -164,7 +164,7 @@ module adeAppServicesModule 'azure_app_services_adeapp.bicep' = [for adeApp in a
   scope: resourceGroup(adeAppAppServicesResourceGroupName)
   name: 'ade${adeApp.name}AppServicesDeployment'
   params: {
-    defaultPrimaryRegion: defaultPrimaryRegion
+    azureRegion: azureRegion
     aliasRegion: aliasRegion
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     appConfigConnectionString: appConfigConnectionString
@@ -187,7 +187,7 @@ module adeAppWebHooksModule 'azure_app_service_adeapp_webhooks.bicep' = [for (ad
   scope: resourceGroup(containerRegistryResourceGroupName)
   name: 'ade${adeApp.name}AppWebHooksDeployment'
   params: {
-    defaultPrimaryRegion: defaultPrimaryRegion
+    azureRegion: azureRegion
     azureContainerRegistryName: azureContainerRegistryName
     adeAppServiceName: adeAppServicesModule[i].outputs.adeAppServiceName
     adeAppContainerImageName: adeAppServicesModule[i].outputs.adeAppContainerImageName

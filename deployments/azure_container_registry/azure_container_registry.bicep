@@ -38,7 +38,7 @@ resource azureContainerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-
 }
 
 // resource - azure container registry - diagnostics
-resource azureContainerRegistryDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource azureContainerRegistryDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   name: '${azureContainerRegistry.name}-diagnostics'
   scope: azureContainerRegistry
   properties: {

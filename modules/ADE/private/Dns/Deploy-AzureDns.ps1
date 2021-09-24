@@ -10,7 +10,7 @@ function Deploy-AzureDns {
     $dnsResourceGroup = $armParameters.dnsResourceGroupName
     $rootDomainName = $armParameters.rootDomainName
 
-    New-ResourceGroup $dnsResourceGroup $armParameters.defaultPrimaryRegion
+    New-ResourceGroup $dnsResourceGroup $armParameters.azureRegion
 
     # TODO: we cannot automatically create the zone right now because nameservers need to be established with the domain name
     Deploy-AzureDnsZone $dnsResourceGroup $rootDomainName

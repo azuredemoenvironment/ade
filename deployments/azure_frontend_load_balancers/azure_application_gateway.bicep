@@ -91,7 +91,7 @@ resource applicationGatewayPublicIpAddress 'Microsoft.Network/publicIPAddresses@
 }
 
 // resource - public ip address - diagnostic settings - application gateway
-resource applicationGatewayPublicIpAddressDiagnostics 'Microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource applicationGatewayPublicIpAddressDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: applicationGatewayPublicIpAddress
   name: '${applicationGatewayPublicIpAddress.name}-diagnostics'
   properties: {
@@ -771,7 +771,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
 }
 
 // resource - application gateway - diagnostic settings
-resource applicationGatewayDiagnostics 'Microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource applicationGatewayDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: applicationGateway
   name: '${applicationGateway.name}-diagnostics'
   properties: {

@@ -5,7 +5,6 @@ function Deploy-AzureGovernance {
 
     Deploy-ArmTemplate 'Azure Governance' $armParameters -resourceLevel 'sub' -bicep
 
-    # # TODO: this could be converted into a deployment script
     # Identity Deployment
     $identityResourceGroupName = $armParameters.identityResourceGroupName
     $applicationGatewayManagedIdentityName = $armParameters.applicationGatewayManagedIdentityName
@@ -31,7 +30,7 @@ function Deploy-AzureGovernance {
     # Create Service Principals
     Write-Status "Creating Service Principals"
 
-    # # TODO: this could be made into a function
+
     # Create Container Registry Service Principal
     Write-Log "Creating Container Registry Service Principal $containerRegistrySPNName"
 
@@ -48,7 +47,7 @@ function Deploy-AzureGovernance {
 
     Write-Log "Finished Creating Container Registry Service Principal $containerRegistrySPNName"
 
-    # # TODO: this could be made into a function
+
     # Create GitHub Actions Service Principal
     Write-Log "Creating GitHub Actions Service Principal $githubActionsSPNName"    
     
@@ -59,15 +58,26 @@ function Deploy-AzureGovernance {
     Write-Log "Pausing for 10 seconds to allow for propagation."
     Start-Sleep -Seconds 10
 
+    $githubActionsSPNObjectID = az ad sp show --id $githubActionsSPN.appId --query objectId --output tsv
+    Confirm-LastExitCode
+    $armParameters['githubActionsSPNObjectID'] = $githubActionsSPNObjectID
+
     Write-Log "Finished Creating GitHub Actions Service Principal $githubActionsSPNName"
 
-    # # TODO: this could be made into a function
+
     # Create REST API Service Principal
     Write-Log "Creating REST API Service Principal $restAPISPNName"
 
     $restAPISPN = $(az ad sp create-for-rbac -n http://$restAPISPNName --skip-assignment true --role acrpull --output json) | ConvertFrom-Json
     $armParameters['restAPISPNPassword'] = $restAPISPN.password
     $armParameters['restAPISPNAppId'] = $restAPISPN.appId
+
+    Write-Log "Pausing for 10 seconds to allow for propagation."
+    Start-Sleep -Seconds 10
+
+    $restAPISPNObjectID = az ad sp show --id $restAPISPN.appId --query objectId --output tsv
+    Confirm-LastExitCode
+    $armParameters['restAPISPNObjectID'] = $restAPISPNObjectID
 
     Write-Log "Finished Creating REST API Service Principal $restAPISPNName"
         

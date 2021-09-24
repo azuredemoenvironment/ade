@@ -110,17 +110,17 @@ try {
     # Configuring ARM Parameters Parameters
     ###################################################################################################
     Write-Status 'Configuring Parameters'
-    $defaultPrimaryRegion = 'EastUS'
-    $defaultSecondaryRegion = 'WestUS'
-    $armParameters = Set-InitialArmParameters $alias $email $resourceUserName $rootDomainName $localNetworkRange $defaultPrimaryRegion $defaultSecondaryRegion $module $overwriteParameterFiles $skipConfirmation
+    $azureRegion = 'EastUS'
+    $azurePairedRegion = 'WestUS'
+    $armParameters = Set-InitialArmParameters $alias $email $resourceUserName $rootDomainName $localNetworkRange $azureRegion $azurePairedRegion $module $overwriteParameterFiles $skipConfirmation
 
     ###################################################################################################
     # Configuring AZ CLI
     ###################################################################################################
 
     # Setting the default location for services
-    Write-Status "Setting the Default Resource Location to $defaultPrimaryRegion"
-    az configure --defaults location=$defaultPrimaryRegion group=
+    Write-Status "Setting the Default Resource Location to $azureRegion"
+    az configure --defaults location=$azureRegion group=
     Confirm-LastExitCode
 
     ###################################################################################################

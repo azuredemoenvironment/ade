@@ -1,5 +1,5 @@
 // parameters
-param defaultPrimaryRegion string
+param azureRegion string
 param aliasRegion string
 param logAnalyticsWorkspaceId string
 param appConfigConnectionString string
@@ -27,7 +27,7 @@ var adeAppPrivateEndpointName = 'pl-ade-${aliasRegion}-ade-${adeAppName}'
 // resource - app service
 resource adeAppService 'Microsoft.Web/sites@2020-12-01' = {
   name: adeAppServiceName
-  location: defaultPrimaryRegion
+  location: azureRegion
   tags: tags
   kind: 'container'
   properties: {
@@ -106,7 +106,7 @@ resource adeAppServiceNetworking 'Microsoft.Web/sites/config@2020-12-01' = {
 }
 
 // resource - app service - diagnostics settings
-resource adeAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource adeAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: adeAppService
   name: '${adeAppService.name}-diagnostics'
   properties: {
@@ -185,7 +185,7 @@ resource adeAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2017-05
 // resource - private endpoint - app service
 resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = if (usePrivateEndpoint) {
   name: adeAppPrivateEndpointName
-  location: defaultPrimaryRegion
+  location: azureRegion
   properties: {
     subnet: {
       id: privateEndpointSubnetId

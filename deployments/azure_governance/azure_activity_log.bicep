@@ -1,15 +1,19 @@
-// target scope
+// Target Scope
+//////////////////////////////////////////////////
 targetScope = 'subscription'
 
-// parameters
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the Activity Log Diagnostic Settings.')
+param activityLogDiagnosticSettingsName string
+
+@description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-// variables
-var diagnosticSettingsName = 'subscriptionactivitylog'
-
-// resource - subscription activity log - diagnostic settings
-resource subscriptionActivityLog 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
-  name: diagnosticSettingsName
+// Resource - Subscription Activity Log - Diagnostic Settings
+//////////////////////////////////////////////////
+resource subscriptionActivityLog 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  name: activityLogDiagnosticSettingsName
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'

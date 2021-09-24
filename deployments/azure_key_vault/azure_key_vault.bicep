@@ -1,192 +1,89 @@
-// parameters
-param location string = resourceGroup().location
+// Target Scope
+//////////////////////////////////////////////////
+targetScope = 'subscription'
+
+// Parameters
+//////////////////////////////////////////////////
+@description('The selected Azure region for deployment.')
+param azureRegion string
+
+@description('The user alias and Azure region defined from user input.')
 param aliasRegion string
+
+@description('The Azure Active Directory Tenant ID.')
 param azureActiveDirectoryTenantID string
+
+@description('The Azure Active Directory User ID.')
 param azureActiveDirectoryUserID string
+
+@description('The Service Principal Name ID of the Application Gateway Managed Identity.')
 param applicationGatewayManagedIdentitySPNID string
+
+@description('The Service Principal Name ID of the Container Registry Managed Identity.')
 param containerRegistryManagedIdentitySPNID string
+
+@description('The Password of the Container Registry Service Principal.')
 param containerRegistrySPNPassword string
+
+@description('The Application ID of the Container Registry Service Principal.')
 param containerRegistrySPNAppID string
+
+@description('The Object ID of the Container Registry Service Principal.')
 param containerRegistrySPNObjectID string
+
+@description('The Password of the GitHub Actions Service Principal.')
 param githubActionsSPNPassword string
+
+@description('The Application ID of the GitHub Actions Service Principal.')
 param githubActionsSPNAppID string
+
+@description('The Password of the REST API Service Principal.')
 param restAPISPNPassword string
+
+@description('The Application ID of the REST API Service Principal.')
 param restAPISPNAppID string
 
-// variables
-var keyVaultName = 'kv-ade-${aliasRegion}-001'
-var environmentName = 'production'
-var functionName = 'key vault'
-var costCenterName = 'it'
-
-// existing resources
-// log analytics workspace
+// Global Variables
+//////////////////////////////////////////////////
+// Resource Groups
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
+var keyVaultResourceGroupName = 'rg-ade-${aliasRegion}-keyvault'
+// Resources
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
+var keyVaultName = 'kv-ade-${aliasRegion}-001'
+
+// Existing Resource - Log Analytics Workspace
+//////////////////////////////////////////////////
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
   scope: resourceGroup(monitorResourceGroupName)
   name: logAnalyticsWorkspaceName
 }
 
-// resource - key vault
-resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
-  name: keyVaultName
-  location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    sku: {
-      name: 'standard'
-      family: 'A'
-    }
-    enabledForDeployment: true
-    enabledForDiskEncryption: true
-    enabledForTemplateDeployment: true
-    enableSoftDelete: true
-    softDeleteRetentionInDays: 7
-    enablePurgeProtection: true
-    tenantId: azureActiveDirectoryTenantID
-    publicNetworkAccess: 'enabled'
-    accessPolicies: [
-      {
-        objectId: azureActiveDirectoryUserID
-        tenantId: azureActiveDirectoryTenantID
-        permissions: {
-          keys: [
-            'all'
-          ]
-          secrets: [
-            'all'
-          ]
-          certificates: [
-            'all'
-          ]
-        }
-      }
-      {
-        objectId: applicationGatewayManagedIdentitySPNID
-        tenantId: azureActiveDirectoryTenantID
-        permissions: {
-          secrets: [
-            'get'
-          ]
-        }
-      }
-      {
-        objectId: containerRegistryManagedIdentitySPNID
-        tenantId: azureActiveDirectoryTenantID
-        permissions: {
-          keys: [
-            'get'
-            'unwrapKey'
-            'wrapKey'
-          ]
-        }
-      }
-      {
-        objectId: 'abfa0a7c-a6b6-4736-8310-5855508787cd'
-        tenantId: azureActiveDirectoryTenantID
-        permissions: {
-          secrets: [
-            'get'
-          ]
-          certificates: [
-            'get'
-          ]
-        }
-      }
-    ]
-  }
+// Resource Group - Key Vault
+//////////////////////////////////////////////////
+resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+  name: keyVaultResourceGroupName
+  location: azureRegion
 }
 
-// resource - key vault - secret - containerRegistryUserName
-resource containerRegistryUserNameSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
-  name: '${keyVault.name}/${'containerRegistryUserName'}'
-  properties: {
-    value: containerRegistrySPNAppID
+// Module - Key Vault
+//////////////////////////////////////////////////
+module keyVaultModule './azure_key_vault_vault.bicep' = {
+  scope: resourceGroup(keyVaultResourceGroupName)
+  name: 'logAnalyticsDeployment'
+  params: {
+    azureActiveDirectoryTenantID: azureActiveDirectoryTenantID
+    azureActiveDirectoryUserID: azureActiveDirectoryUserID
+    applicationGatewayManagedIdentitySPNID: applicationGatewayManagedIdentitySPNID
+    containerRegistryManagedIdentitySPNID: containerRegistryManagedIdentitySPNID
+    containerRegistrySPNPassword: containerRegistrySPNPassword
+    containerRegistrySPNAppID: containerRegistrySPNAppID
+    containerRegistrySPNObjectID: containerRegistrySPNObjectID
+    githubActionsSPNPassword: githubActionsSPNPassword
+    githubActionsSPNAppID: githubActionsSPNAppID
+    restAPISPNPassword: restAPISPNPassword
+    restAPISPNAppID: restAPISPNAppID
+    keyVaultName: keyVaultName
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }
-
-// resource - key vault - secret - containerRegistryPassword
-resource containerRegistryPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
-  name: '${keyVault.name}/${'containerRegistryPassword'}'
-  properties: {
-    value: containerRegistrySPNPassword
-  }
-}
-
-// resource - key vault - secret - containerRegistryObjectId
-resource containerRegistryObjectIdSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
-  name: '${keyVault.name}/${'containerRegistryObjectId'}'
-  properties: {
-    value: containerRegistrySPNObjectID
-  }
-}
-
-// resource - key vault - secret - githubActionsUserName
-resource githubActionsUserNameSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
-  name: '${keyVault.name}/${'githubActionsUserName'}'
-  properties: {
-    value: githubActionsSPNAppID
-  }
-}
-
-// resource - key vault - secret - githubActionsPassword
-resource githubActionsPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
-  name: '${keyVault.name}/${'githubActionsPassword'}'
-  properties: {
-    value: githubActionsSPNPassword
-  }
-}
-
-// resource - key vault - secret - restAPIUserName
-resource restAPIUserNameSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
-  name: '${keyVault.name}/${'restAPIUserName'}'
-  properties: {
-    value: restAPISPNAppID
-  }
-}
-
-// resource - key vault - secret - restAPIPassword
-resource restAPIPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
-  name: '${keyVault.name}/${'restAPIPassword'}'
-  properties: {
-    value: restAPISPNPassword
-  }
-}
-
-// resource - key vault - diagnostic settings
-resource keyVaultDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: keyVault
-  name: '${keyVault.name}-diagnostics'
-  properties: {
-    workspaceId: logAnalyticsWorkspace.id
-    logAnalyticsDestinationType: 'Dedicated'
-    logs: [
-      {
-        category: 'AuditEvent'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-  }
-}
-
-// outputs
-output keyVaultResourceID string = keyVault.id

@@ -1,22 +1,26 @@
-// parameters
-param location string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the NSG Flow Logs Storage Account.')
 param nsgFlowLogsStorageAccountName string
+
+@description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-// variables
-var environmentName = 'production'
-var functionName = 'monitoring and diagnostics'
-var costCenterName = 'it'
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'monitoring and diagnostics'
+  costCenter: 'it'
+}
 
-// resource - storage account - nsg flow logs
+// Resource - Storage Account - Nsg Flow Logs
+//////////////////////////////////////////////////
 resource nsgFlowLogsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01' = {
   name: nsgFlowLogsStorageAccountName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   kind: 'StorageV2'
   sku: {
     name: 'Standard_RAGRS'
@@ -39,8 +43,9 @@ resource nsgFlowLogsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01
   }
 }
 
-// resource - storage account - diagnostic settings
-resource nsgFlowLogsStorageAccountDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+// Resource - Storage Account - Diagnostic Settings
+//////////////////////////////////////////////////
+resource nsgFlowLogsStorageAccountDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: nsgFlowLogsStorageAccount
   name: '${nsgFlowLogsStorageAccount.name}-diagnostics'
   properties: {
@@ -60,8 +65,9 @@ resource nsgFlowLogsStorageAccountDiagnostics 'microsoft.insights/diagnosticSett
   }
 }
 
-// resource - storage account - blob - diagnostic settings
-resource nsgFlowLogsStorageAccountBlobDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+// Resource - Storage Account - Blob - Diagnostic Settings
+//////////////////////////////////////////////////
+resource nsgFlowLogsStorageAccountBlobDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: nsgFlowLogsStorageAccount::blobServices
   name: '${nsgFlowLogsStorageAccount.name}-blob-diagnostics'
   properties: {
@@ -106,8 +112,9 @@ resource nsgFlowLogsStorageAccountBlobDiagnostics 'microsoft.insights/diagnostic
   }
 }
 
-// resource - storage account - table - diagnostic settings
-resource nsgFlowLogsStorageAccountTableDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+// Resource - Storage Account - Table - Diagnostic Settings
+//////////////////////////////////////////////////
+resource nsgFlowLogsStorageAccountTableDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: nsgFlowLogsStorageAccount::tableServices
   name: '${nsgFlowLogsStorageAccount.name}-table-diagnostics'
   properties: {
@@ -152,8 +159,9 @@ resource nsgFlowLogsStorageAccountTableDiagnostics 'microsoft.insights/diagnosti
   }
 }
 
-// resource - storage account - file - diagnostic settings
-resource nsgFlowLogsStorageAccountFileDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+// Resource - Storage Account - File - Diagnostic Settings
+//////////////////////////////////////////////////
+resource nsgFlowLogsStorageAccountFileDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: nsgFlowLogsStorageAccount::fileServices
   name: '${nsgFlowLogsStorageAccount.name}-file-diagnostics'
   properties: {
@@ -198,8 +206,9 @@ resource nsgFlowLogsStorageAccountFileDiagnostics 'microsoft.insights/diagnostic
   }
 }
 
-// resource - storage account - queue - diagnostic settings
-resource nsgFlowLogsStorageAccountQueueDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+// Resource - Storage Account - Queue - Diagnostic Settings
+//////////////////////////////////////////////////
+resource nsgFlowLogsStorageAccountQueueDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: nsgFlowLogsStorageAccount::queueServices
   name: '${nsgFlowLogsStorageAccount.name}-queue-diagnostics'
   properties: {

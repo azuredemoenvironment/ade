@@ -83,7 +83,7 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
 }
 
 // resource - virtual network - diagnostic settings - virtual network 001
-resource virtualNetwork001Diagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource virtualNetwork001Diagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: virtualNetwork001
   name: '${virtualNetwork001.name}-diagnostics'
   properties: {

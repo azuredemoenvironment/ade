@@ -1,6 +1,6 @@
 // parameters
 param aliasRegion string
-param defaultPrimaryRegion string
+param azureRegion string
 param contactEmailAddress string
 
 // variables
@@ -202,7 +202,7 @@ resource virtualMachineCpuAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
     evaluationFrequency: 'PT1M'
     windowSize: 'PT5M'
     targetResourceType: 'microsoft.compute/virtualmachines'
-    targetResourceRegion: defaultPrimaryRegion
+    targetResourceRegion: azureRegion
     criteria: {
       'odata.type': 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria'
       allOf: [

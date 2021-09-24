@@ -170,7 +170,7 @@ resource nTierAppLoadBalancer 'Microsoft.Network/loadBalancers@2020-11-01' = {
 }
 
 // resource - load balancer - diagnostic settings - ntierapp
-resource nTierAppLoadBalancerDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource nTierAppLoadBalancerDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: nTierAppLoadBalancer
   name: '${nTierAppLoadBalancer.name}-diagnostics'
   properties: {

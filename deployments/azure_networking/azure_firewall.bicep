@@ -28,7 +28,7 @@ resource azureFirewallPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-
 }
 
 // resource - public ip address - diagnostic settings - azure firewall
-resource azureFirewallPublicIpAddressDiagnostics 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
+resource azureFirewallPublicIpAddressDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   scope: azureFirewallPublicIpAddress
   name: '${azureFirewallPublicIpAddress.name}-diagnostics'
   properties: {
@@ -148,7 +148,7 @@ resource azureFirewall 'Microsoft.Network/azureFirewalls@2020-07-01' = {
 }
 
 // resource - azure firewall - diagnostic settings
-resource azureFirewallDiagnostics 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
+resource azureFirewallDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   scope: azureFirewall
   name: '${azureFirewall.name}-diagnostics'
   properties: {

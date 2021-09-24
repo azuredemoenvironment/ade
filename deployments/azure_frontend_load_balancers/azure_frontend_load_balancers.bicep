@@ -2,7 +2,7 @@
 targetScope = 'subscription'
 
 // parameters
-param defaultPrimaryRegion string
+param azureRegion string
 param aliasRegion string
 param rootDomainName string
 param appConfigResourceGroupName string
@@ -73,7 +73,7 @@ module applicationGatewayModule 'azure_application_gateway.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'applicationGatewayDeployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     sslCertificateName: sslCertificateName
     sslCertificateData: sslCertificateData
@@ -107,7 +107,7 @@ module nTierNICUpdateModule 'azure_virtual_machine_ntier_nic_update.bicep' = {
   scope: resourceGroup(nTierResourceGroupName)
   name: 'nTierNICUpdateDeployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     nTierWebSubnetId: virtualNetwork002::nTierWebSubnet.id
     nTierWeb01NICName: nTierWeb01NICName

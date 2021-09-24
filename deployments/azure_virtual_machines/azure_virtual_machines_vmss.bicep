@@ -43,7 +43,7 @@ resource vmssLoadBalancerPublicIpAddress 'Microsoft.Network/publicIPAddresses@20
 }
 
 // resource - public ip address - diagnostic settings - load balancer - vmss
-resource vmssLoadBalancerPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource vmssLoadBalancerPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: vmssLoadBalancerPublicIpAddress
   name: '${vmssLoadBalancerPublicIpAddress.name}-diagnostics'
   properties: {
@@ -146,7 +146,7 @@ resource vmssLoadBalancer 'Microsoft.Network/loadBalancers@2020-11-01' = {
 }
 
 // resource - load balancer - diagnostic settings - vmss
-resource vmssLoadBalancerDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource vmssLoadBalancerDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: vmssLoadBalancer
   name: '${vmssLoadBalancer.name}-diagnostics'
   properties: {

@@ -40,7 +40,7 @@ resource w10ClientNIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
 }
 
 // resource - network interface - diagnostic settings - jumpbox
-resource w10ClientNICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+resource w10ClientNICDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   name: '${w10ClientNIC.name}-diagnostics'
   scope: w10ClientNIC
   properties: {

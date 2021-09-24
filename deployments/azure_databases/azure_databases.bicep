@@ -2,7 +2,7 @@
 targetScope = 'subscription'
 
 // parameters
-param defaultPrimaryRegion string
+param azureRegion string
 param aliasRegion string
 param monitorResourceGroupName string
 param appConfigResourceGroupName string
@@ -59,7 +59,7 @@ module adeAppSqlModule './azure_databases_adeapp_sql.bicep' = {
   scope: resourceGroup(adeAppSqlResourceGroupName)
   name: 'adeAppSqlDeployment'
   params: {
-    defaultPrimaryRegion: defaultPrimaryRegion
+    azureRegion: azureRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
@@ -78,7 +78,7 @@ module inspectorGadgetSqlModule './azure_databases_inspectorgadget_sql.bicep' = 
   scope: resourceGroup(inspectorGadgetResourceGroupName)
   name: 'inspectorGadgetSqlDeployment'
   params: {
-    defaultPrimaryRegion: defaultPrimaryRegion
+    azureRegion: azureRegion
     adminUserName: adminUserName
     adminPassword: adminPassword
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id

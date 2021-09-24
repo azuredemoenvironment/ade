@@ -1,5 +1,5 @@
 // parameters
-param defaultPrimaryRegion string
+param azureRegion string
 param appServicePlanName string
 
 // variables
@@ -10,7 +10,7 @@ var costCenterName = 'it'
 // resource - app service plan
 resource appServicePlan 'Microsoft.Web/serverfarms@2020-10-01' = {
   name: appServicePlanName
-  location: defaultPrimaryRegion
+  location: azureRegion
   tags: {
     environment: environmentName
     function: functionName
@@ -28,7 +28,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2020-10-01' = {
 // resource - app service plan - autoscale setting
 resource autoscaleSetting 'Microsoft.insights/autoscalesettings@2015-04-01' = {
   name: '${appServicePlan.name}-autoscale'
-  location: defaultPrimaryRegion
+  location: azureRegion
   tags: {
     environment: environmentName
     function: functionName

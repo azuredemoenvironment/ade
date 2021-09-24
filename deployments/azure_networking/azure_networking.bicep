@@ -2,7 +2,7 @@
 targetScope = 'subscription'
 
 // parameters
-param defaultPrimaryRegion string
+param azureRegion string
 param aliasRegion string
 param sourceAddressPrefix string
 param monitorResourceGroupName string
@@ -38,7 +38,7 @@ module natGatewayModule './azure_nat_gateway.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'natGatewayDeployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     natGatewayPublicIPPrefixName: natGatewayPublicIPPrefixName
     natGatewayName: natGatewayName
   }
@@ -57,7 +57,7 @@ module networkSecurityGroupsModule './azure_network_security_group.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'networkSecurityGroupsDeployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     sourceAddressPrefix: sourceAddressPrefix
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     azureBastionSubnetNSGName: azureBastionSubnetNSGName
@@ -77,7 +77,7 @@ module routeTableModule './azure_route_table.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'routeTableDeployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     internetRouteTableName: internetRouteTableName
   }
 }
@@ -101,7 +101,7 @@ module virtualNetwork001Module './azure_virtual_network_001.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'virtualNetwork001Deployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     virtualNetwork001Name: virtualNetwork001Name
     virtualnetwork001Prefix: virtualnetwork001Prefix
@@ -143,7 +143,7 @@ module virtualNetwork002Module './azure_virtual_network_002.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'virtualNetwork002Deployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     virtualNetwork002Name: virtualNetwork002Name
     virtualnetwork002Prefix: virtualnetwork002Prefix
@@ -179,7 +179,7 @@ module azureFirewallModule './azure_firewall.bicep' = if (deployAzureFirewall ==
   scope: resourceGroup(networkingResourceGroupName)
   name: 'azureFirewallDeployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     azureFirewallPublicIpAddressName: azureFirewallPublicIpAddressName
     azureFirewallName: azureFirewallName
@@ -196,7 +196,7 @@ module azureBastionModule './azure_bastion.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'azureBastionDeployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     azureBastionPublicIpAddressName: azureBastionPublicIpAddressName
     azureBastionName: azureBastionName
@@ -215,7 +215,7 @@ module azureVpnGatewayModule './azure_vpn_gateway.bicep' = if (deployVpnGateway 
   scope: resourceGroup(networkingResourceGroupName)
   name: 'vpnGatewayDeployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     sourceAddressPrefix: sourceAddressPrefix
     localNetworkGatewayAddressPrefix: localNetworkGatewayAddressPrefix
     connectionSharedKey: connectionSharedKey
@@ -280,7 +280,7 @@ module nsgFlowLogsModule './azure_network_security_group_flow_logs.bicep' = {
   scope: resourceGroup(networkWatcherResourceGroupName)
   name: 'nsgFlowLogsDeployment'
   params: {
-    location: defaultPrimaryRegion
+    location: azureRegion
     nsgFlowLogsStorageAccountId: nsgFlowLogsStorageAccount.id
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     azureBastionSubnetNSGId: networkSecurityGroupsModule.outputs.azureBastionSubnetNSGId
