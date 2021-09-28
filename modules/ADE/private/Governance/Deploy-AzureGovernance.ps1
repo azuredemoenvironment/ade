@@ -3,84 +3,23 @@ function Deploy-AzureGovernance {
         [object] $armParameters
     )
 
+    # Deploy the Azure Governance Bicep template at the subscription scope.
     Deploy-ArmTemplate 'Azure Governance' $armParameters -resourceLevel 'sub' -bicep
 
-    # Identity Deployment
-    $identityResourceGroupName = $armParameters.identityResourceGroupName
-    $applicationGatewayManagedIdentityName = $armParameters.applicationGatewayManagedIdentityName
-    $containerRegistryManagedIdentityName = $armParameters.containerRegistryManagedIdentityName
-    $containerRegistrySPNName = $armParameters.containerRegistrySPNName
-    $githubActionsSPNName = $armParameters.githubActionsSPNName
-    $restAPISPNName = $armParameters.restAPISPNName
+    # Configure Azure KeyVault
+    Write-Status "Configuring Azure Key Vault $($armParameters.keyVaultName)"
 
-    # Assign Managed Identity Principal Ids to Parameter Values
-    Write-Status "Assign Managed Identity Principal Ids to Parameter Values"
-    $appGWManagedIdentitySPNID = az identity show -g $identityResourceGroupName -n $applicationGatewayManagedIdentityName --query principalId
-    Confirm-LastExitCode
+    # Configure the resource password KeyVault secret.
+    Set-AzureKeyVaultSecret $armParameters.keyVaultName 'resourcePassword' $secureResourcePassword
 
-    $armParameters['applicationGatewayManagedIdentitySPNID'] = $appGWManagedIdentitySPNID.replace('"','')
+    # Deploy the wildcard certificate KeyVault secret.
+    Deploy-WildcardCertificateToAzureKeyVault $armParameters.keyVaultName $secureCertificatePassword $wildcardCertificatePath
 
-    $crManagedIdentitySPNID = az identity show -g $identityResourceGroupName -n $containerRegistryManagedIdentityName --query principalId
-    Confirm-LastExitCode
-
-    $armParameters['containerRegistryManagedIdentitySPNID'] = $crManagedIdentitySPNID.replace('"','')
-
-    Write-Status "Finished Assigning Managed Identity Principal Ids to Parameter Values"
-
-    # Create Service Principals
-    Write-Status "Creating Service Principals"
-
-
-    # Create Container Registry Service Principal
-    Write-Log "Creating Container Registry Service Principal $containerRegistrySPNName"
-
-    $containerRegistrySPN = $(az ad sp create-for-rbac -n http://$containerRegistrySPNName --skip-assignment true --role acrpull --output json) | ConvertFrom-Json
-    $armParameters['containerRegistrySPNPassword'] = $containerRegistrySPN.password
-    $armParameters['containerRegistrySPNAppId'] = $containerRegistrySPN.appId
+    # Create the Container Registry encryption key.
+    New-AzureKeyVaultKey $armParameters.keyVaultName 'containerRegistry'
     
-    Write-Log "Pausing for 10 seconds to allow for propagation."
-    Start-Sleep -Seconds 10
+    # Set the Azure KeyVault resource id for future deployments.
+    Set-AzureKeyVaultResourceId $armParameters
 
-    $containerRegistrySPNObjectID = az ad sp show --id $containerRegistrySPN.appId --query objectId --output tsv
-    Confirm-LastExitCode
-    $armParameters['containerRegistrySPNObjectID'] = $containerRegistrySPNObjectID
-
-    Write-Log "Finished Creating Container Registry Service Principal $containerRegistrySPNName"
-
-
-    # Create GitHub Actions Service Principal
-    Write-Log "Creating GitHub Actions Service Principal $githubActionsSPNName"    
-    
-    $githubActionsSPN = $(az ad sp create-for-rbac -n http://$githubActionsSPNName --skip-assignment true --role acrpull --output json) | ConvertFrom-Json
-    $armParameters['githubActionsSPNPassword'] = $githubActionsSPN.password
-    $armParameters['githubActionsSPNAppId'] = $githubActionsSPN.appId
-    
-    Write-Log "Pausing for 10 seconds to allow for propagation."
-    Start-Sleep -Seconds 10
-
-    $githubActionsSPNObjectID = az ad sp show --id $githubActionsSPN.appId --query objectId --output tsv
-    Confirm-LastExitCode
-    $armParameters['githubActionsSPNObjectID'] = $githubActionsSPNObjectID
-
-    Write-Log "Finished Creating GitHub Actions Service Principal $githubActionsSPNName"
-
-
-    # Create REST API Service Principal
-    Write-Log "Creating REST API Service Principal $restAPISPNName"
-
-    $restAPISPN = $(az ad sp create-for-rbac -n http://$restAPISPNName --skip-assignment true --role acrpull --output json) | ConvertFrom-Json
-    $armParameters['restAPISPNPassword'] = $restAPISPN.password
-    $armParameters['restAPISPNAppId'] = $restAPISPN.appId
-
-    Write-Log "Pausing for 10 seconds to allow for propagation."
-    Start-Sleep -Seconds 10
-
-    $restAPISPNObjectID = az ad sp show --id $restAPISPN.appId --query objectId --output tsv
-    Confirm-LastExitCode
-    $armParameters['restAPISPNObjectID'] = $restAPISPNObjectID
-
-    Write-Log "Finished Creating REST API Service Principal $restAPISPNName"
-        
-    Write-Status "Finished Creating Service Principals"
-
+    Write-Status "Finished Configuring Azure Key Vault $($armParameters.keyVaultName)"
 }

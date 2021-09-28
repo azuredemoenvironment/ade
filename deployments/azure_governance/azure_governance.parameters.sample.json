@@ -26,6 +26,12 @@
                 "Standard_D2s_v3",
                 "Standard_D4s_v3"
             ]
+        },
+        "azureActiveDirectoryTenantID": {
+            "value": "@@azureActiveDirectoryTenantID@@"
+        },
+        "azureActiveDirectoryUserID": {
+            "value": "@@azureActiveDirectoryUserID@@"
         }
     }
 }

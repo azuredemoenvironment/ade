@@ -32,7 +32,7 @@ function Set-InitialArmParameters {
     $armParameters = @{
         # Standard Parameters
         'aliasRegion'                           = $aliasRegion
-        'aliasPairedRegion'                  = $aliasPairedRegion
+        'aliasPairedRegion'                     = $aliasPairedRegion
         'contactEmailAddress'                   = $email
         'azureRegion'                           = $azureRegion
         'azurePairedRegion'                     = $azurePairedRegion
@@ -62,6 +62,7 @@ function Set-InitialArmParameters {
         'monitorResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-monitor"
         'appConfigResourceGroupName'            = "$azureRegionResourceGroupNamePrefix-appconfiguration"
         'identityResourceGroupName'             = "$azureRegionResourceGroupNamePrefix-identity"
+        'keyVaultResourceGroupName'             = "$azureRegionResourceGroupNamePrefix-keyvault"
         'activityLogDiagnosticsName'            = "subscriptionActivityLog"
         'adeInitiativeDefinition'               = "policy-ade-$aliasRegion-adeinitiative"
         'applicationGatewayManagedIdentityName' = "id-ade-$aliasRegion-agw"
@@ -69,9 +70,6 @@ function Set-InitialArmParameters {
         'containerRegistrySPNName'              = "spn-ade-$aliasRegion-acr"          
         'githubActionsSPNName'                  = "spn-ade-$aliasRegion-gha"
         'restAPISPNName'                        = "spn-ade-$aliasRegion-restapi"
-
-        # Required for Deploy-AzureKeyVault.ps1
-        'keyVaultResourceGroupName'             = "$azureRegionResourceGroupNamePrefix-keyvault"
         'keyVaultName'                          = "kv-ade-$aliasRegion-001"
 
         # Required for Deploy-AzureAppServicePlanScaleDown.ps1
