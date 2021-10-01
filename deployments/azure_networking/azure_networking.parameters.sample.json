@@ -8,14 +8,6 @@
         "azureRegion": {
             "value": "@@azureRegion@@"
         },
-        "connectionSharedKey": {
-            "reference": {
-                "keyVault": {
-                    "id": "@@keyVaultResourceID@@"
-                },
-                "secretName": "resourcePassword"
-            }
-        },
         "localNetworkGatewayAddressPrefix": {
             "value": "@@localNetworkGatewayAddressPrefix@@"
         }, 

@@ -10,8 +10,6 @@ param aliasRegion string
 @description('The selected Azure region for deployment.')
 param azureRegion string
 
-param connectionSharedKey string
-
 param deployAzureFirewall bool = false
 
 param deployVpnGateway bool = false
@@ -23,6 +21,7 @@ param sourceAddressPrefix string
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
+var keyVaultResourceGroupName = 'rg-ade-${aliasRegion}-keyvault'
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 var networkingResourceGroupName = 'rg-ade-${aliasRegion}-networking'
 // Resources
@@ -48,6 +47,7 @@ var connectionName = 'cn-ade-${aliasRegion}-vgw001'
 var gatewaySubnetName = 'GatewaySubnet'
 var gatewaySubnetPrefix = '10.101.255.0/24'
 var internetRouteTableName = 'route-ade-${aliasRegion}-internet'
+var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var localNetworkGatewayName = 'lgw-ade-${aliasRegion}-vgw001'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 var managementSubnetName = 'snet-ade-${aliasRegion}-management'
@@ -76,6 +76,13 @@ var vnetIntegrationSubnetName = 'snet-ade-${aliasRegion}-vnetIntegration'
 var vnetIntegrationSubnetPrefix = '10.102.101.0/24'
 var vpnGatewayName = 'vpng-ade-${aliasRegion}-001'
 var vpnGatewayPublicIpAddressName = 'pip-ade-${aliasRegion}-vgw001'
+
+// Existing Resource - Key Vault
+//////////////////////////////////////////////////
+resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing = {
+  scope: resourceGroup(keyVaultResourceGroupName)
+  name: keyVaultName
+}
 
 // Existing Resource - Log Analytics Workspace
 //////////////////////////////////////////////////
@@ -216,7 +223,7 @@ module azureVpnGatewayModule './azure_vpn_gateway.bicep' = if (deployVpnGateway 
   name: 'vpnGatewayDeployment'
   params: {
     connectionName: connectionName
-    connectionSharedKey: connectionSharedKey
+    connectionSharedKey: keyVault.getSecret('resourcePassword')
     gatewaySubnetId: virtualNetwork001Module.outputs.gatewaySubnetId
     localNetworkGatewayAddressPrefix: localNetworkGatewayAddressPrefix
     localNetworkGatewayName: localNetworkGatewayName
