@@ -82,42 +82,8 @@ resource servicePrincipalsDeploymentScript 'Microsoft.Resources/deploymentScript
   }
   properties: {
     azCliVersion: '2.2.0'
-    arguments: '-containerRegistrySpnName "${containerRegistrySpnName}" -githubActionsSpnName "${githubActionsSpnName}" -restApiSpnName "${restApiSpnName}"'
-    scriptContent: '''
-      param([string]$containerRegistrySpnName, [string]$githubActionsSpnName, [string]$restApiSpnName)
-
-      $containerRegistrySpn = $(az ad sp create-for-rbac -n http://$containerRegistrySpnName --skip-assignment true --role acrpull --output json) | ConvertFrom-Json
-      $containerRegistrySpnPassword = $containerRegistrySpn.password
-      $containerRegistrySpnAppId = $containerRegistrySpn.appId      
-      Write-Log "Pausing for 10 seconds to allow for propagation."
-      Start-Sleep -Seconds 10
-      $containerRegistrySpnObjectID = az ad sp show --id $containerRegistrySpn.appId --query objectId --output tsv
-
-      $githubActionsSpn = $(az ad sp create-for-rbac -n http://$githubActionsSpnName --skip-assignment true --role acrpull --output json) | ConvertFrom-Json
-      $githubActionsSpnPassword = $githubActionsSpn.password
-      $githubActionsSpnAppId = $githubActionsSpn.appId      
-      Write-Log "Pausing for 10 seconds to allow for propagation."
-      Start-Sleep -Seconds 10
-      $githubActionsSpnObjectID = az ad sp show --id $githubActionsSpn.appId --query objectId --output tsv
-
-      $restApiSpn = $(az ad sp create-for-rbac -n http://$restApiSpnName --skip-assignment true --role acrpull --output json) | ConvertFrom-Json
-      $restApiSpnPassword = $restApiSpn.password
-      $restApiSpnAppId = $restApiSpn.appId      
-      Write-Log "Pausing for 10 seconds to allow for propagation."
-      Start-Sleep -Seconds 10
-      $restApiSpnObjectID = az ad sp show --id $restApiSpn.appId --query objectId --output tsv
-
-      $DeploymentScriptOutputs= @{}      
-      $DeploymentScriptOutputs['containerRegistrySpnPassword'] = $containerRegistrySpnPassword
-      $DeploymentScriptOutputs['containerRegistrySpnAppId'] = $containerRegistrySpnAppId
-      $DeploymentScriptOutputs['containerRegistrySpnObjectID'] = $containerRegistrySpnObjectID
-      $DeploymentScriptOutputs['githubActionsSpnPassword'] = $githubActionsSpnPassword
-      $DeploymentScriptOutputs['githubActionsSpnAppId'] = $githubActionsSpnAppId
-      $DeploymentScriptOutputs['githubActionsSpnObjectID'] = $githubActionsSpnObjectID
-      $DeploymentScriptOutputs['restApiSpnPassword'] = $restApiSpnPassword
-      $DeploymentScriptOutputs['restApiSpnAppId'] = $restApiSpnAppId
-      $DeploymentScriptOutputs['restApiSpnObjectID'] = $restApiSpnObjectID
-    '''
+    arguments: '"${containerRegistrySpnName}" "${githubActionsSpnName}" "${restApiSpnName}"'
+    scriptContent: loadTextContent('createServicePrincipals.sh')
     retentionInterval: 'P1D'
   }
 }
