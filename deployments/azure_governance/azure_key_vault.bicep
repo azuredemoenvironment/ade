@@ -12,14 +12,14 @@ param applicationGatewayManagedIdentityPrincipalID string
 @description('The Service Principal Name ID of the Container Registry Managed Identity.')
 param containerRegistryManagedIdentityPrincipalID string
 
-@description('The Service Principal property objects in an array.')
-param servicePrincipals array
-
 @description('The name of the Key Vault.')
 param keyVaultName string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
+
+@description('The Service Principal property objects in an array.')
+param servicePrincipals array
 
 // Variables
 //////////////////////////////////////////////////

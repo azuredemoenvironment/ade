@@ -2,23 +2,11 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "azureRegion": {
-            "value": "@@azureRegion@@"
-        },
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
-        "sourceAddressPrefix": {
-            "value": "@@sourceAddressPrefix@@"
-        },
-        "monitorResourceGroupName": {
-            "value": "@@monitorResourceGroupName@@"
-        },
-        "networkingResourceGroupName": {
-            "value": "@@networkingResourceGroupName@@"
-        },
-        "localNetworkGatewayAddressPrefix": {
-            "value": "@@localNetworkGatewayAddressPrefix@@"
+        "azureRegion": {
+            "value": "@@azureRegion@@"
         },
         "connectionSharedKey": {
             "reference": {
@@ -27,6 +15,12 @@
                 },
                 "secretName": "resourcePassword"
             }
-        }
+        },
+        "localNetworkGatewayAddressPrefix": {
+            "value": "@@localNetworkGatewayAddressPrefix@@"
+        }, 
+        "sourceAddressPrefix": {
+            "value": "@@sourceAddressPrefix@@"
+        }              
     }
 }

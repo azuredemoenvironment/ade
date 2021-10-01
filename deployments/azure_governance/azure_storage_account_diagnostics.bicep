@@ -1,10 +1,10 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the NSG Flow Logs Storage Account.')
-param nsgFlowLogsStorageAccountName string
-
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
+
+@description('The name of the NSG Flow Logs Storage Account.')
+param nsgFlowLogsStorageAccountName string
 
 // Variables
 //////////////////////////////////////////////////

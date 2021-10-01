@@ -5,7 +5,6 @@ param logAnalyticsWorkspaceName string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var containerInsights = {
   name: 'ContainerInsights(${logAnalyticsWorkspaceName})'
   galleryName: 'ContainerInsights'
@@ -14,14 +13,15 @@ var keyVaultAnalytics = {
   name: 'KeyVaultAnalytics(${logAnalyticsWorkspaceName})'
   galleryName: 'KeyVaultAnalytics'
 }
-var vmInsights = {
-  name: 'VMInsights(${logAnalyticsWorkspaceName})'
-  galleryName: 'VMInsights'
-}
+var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'monitoring and diagnostics'
   costCenter: 'it'
+}
+var vmInsights = {
+  name: 'VMInsights(${logAnalyticsWorkspaceName})'
+  galleryName: 'VMInsights'
 }
 
 // Resource - Log Analytics Workspace

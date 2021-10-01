@@ -7,14 +7,14 @@ targetScope = 'subscription'
 @description('The selected Azure region for deployment.')
 param azureRegion string
 
+@description('The name of the Azure Policy Initiative Definition.')
+param initiativeDefinitionName string
+
 @description('The list of allowed locations for resource deployment. Used in Azure Policy module.')
 param listOfAllowedLocations array
 
 @description('The list of allowed virtual machine SKUs. Used in Azure Policy module.')
 param listOfAllowedSKUs array
-
-@description('The name of the Azure Policy Initiative Definition.')
-param initiativeDefinitionName string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string

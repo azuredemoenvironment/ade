@@ -6,11 +6,11 @@ param applicationGatewayManagedIdentityName string
 @description('The name of the Container Registry Managed Identity.')
 param containerRegistryManagedIdentityName string
 
-@description('The name of the Deployment Script Managed Identity.')
-param deploymentScriptManagedIdentityName string
-
 @description('The name of the Container Registry Service Principal.')
 param containerRegistrySpnName string
+
+@description('The name of the Deployment Script Managed Identity.')
+param deploymentScriptManagedIdentityName string
 
 @description('The name of the GitHub Actions Service Principal.')
 param githubActionsSpnName string
@@ -20,9 +20,9 @@ param restApiSpnName string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var contributorRoleAssignmentName = guid(resourceGroup().id, 'contributor')
 var contributorRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
+var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'identity'

@@ -4,17 +4,8 @@ targetScope = 'subscription'
 
 // Parameters
 //////////////////////////////////////////////////
-@description('The selected Azure region for deployment.')
-param azureRegion string
-
 @description('The user alias and Azure region defined from user input.')
 param aliasRegion string
-
-@description('The list of allowed locations for resource deployment. Used in Azure Policy module.')
-param listOfAllowedLocations array
-
-@description('The list of allowed virtual machine SKUs. Used in Azure Policy module.')
-param listOfAllowedSKUs array
 
 @description('The Azure Active Directory Tenant ID.')
 param azureActiveDirectoryTenantID string
@@ -22,34 +13,46 @@ param azureActiveDirectoryTenantID string
 @description('The Azure Active Directory User ID.')
 param azureActiveDirectoryUserID string
 
+@description('The selected Azure region for deployment.')
+param azureRegion string
+
+@description('The list of allowed locations for resource deployment. Used in Azure Policy module.')
+param listOfAllowedLocations array
+
+@description('The list of allowed virtual machine SKUs. Used in Azure Policy module.')
+param listOfAllowedSKUs array = [
+  'Standard_B1ls'
+  'Standard_B1ms'
+  'Standard_B1s'
+  'Standard_B2ms'
+  'Standard_B2s'
+  'Standard_B4ms'
+  'Standard_B4s'
+  'Standard_D2s_v3'
+  'Standard_D4s_v3'
+]
+
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
-var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 var appConfigResourceGroupName = 'rg-ade-${aliasRegion}-appconfiguration'
 var identityResourceGroupName = 'rg-ade-${aliasRegion}-identity'
 var keyVaultResourceGroupName = 'rg-ade-${aliasRegion}-keyvault'
+var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 // Resources
-var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
-var appConfigName = 'appcs-ade-${aliasRegion}-001'
-var applicationInsightsName = 'appinsights-ade-${aliasRegion}-001'
-var nsgFlowLogsStorageAccountName = replace('saade${aliasRegion}nsgflow', '-', '')
 var activityLogDiagnosticSettingsName = 'subscriptionactivitylog'
-var initiativeDefinitionName = 'policy-ade-${aliasRegion}-adeinitiative'
+var appConfigName = 'appcs-ade-${aliasRegion}-001'
 var applicationGatewayManagedIdentityName = 'id-ade-${aliasRegion}-applicationgateway'
+var applicationInsightsName = 'appinsights-ade-${aliasRegion}-001'
 var containerRegistryManagedIdentityName = 'id-ade-${aliasRegion}-containerregistry'
-var deploymentScriptManagedIdentityName = 'id-ade-${aliasRegion}-deploymentscript'
 var containerRegistrySpnName = 'spn-ade-$aliasRegion-acr'
+var deploymentScriptManagedIdentityName = 'id-ade-${aliasRegion}-deploymentscript'
 var githubActionsSpnName = 'spn-ade-$aliasRegion-gha'
-var restApiSpnName = 'spn-ade-$aliasRegion-restapi'
+var initiativeDefinitionName = 'policy-ade-${aliasRegion}-adeinitiative'
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
-
-// Resource Group - Monitor
-//////////////////////////////////////////////////
-resource monitorResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
-  name: monitorResourceGroupName
-  location: azureRegion
-}
+var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
+var nsgFlowLogsStorageAccountName = replace('saade${aliasRegion}nsgflow', '-', '')
+var restApiSpnName = 'spn-ade-$aliasRegion-restapi'
 
 // Resource Group - App Configuration
 //////////////////////////////////////////////////
@@ -69,6 +72,13 @@ resource identityResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' =
 //////////////////////////////////////////////////
 resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
   name: keyVaultResourceGroupName
+  location: azureRegion
+}
+
+// Resource Group - Monitor
+//////////////////////////////////////////////////
+resource monitorResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+  name: monitorResourceGroupName
   location: azureRegion
 }
 
@@ -134,8 +144,8 @@ module storageAccountDiagnosticsModule './azure_storage_account_diagnostics.bice
     monitorResourceGroup
   ]
   params: {
-    nsgFlowLogsStorageAccountName: nsgFlowLogsStorageAccountName
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
+    nsgFlowLogsStorageAccountName: nsgFlowLogsStorageAccountName
   }
 }
 
@@ -157,14 +167,14 @@ module policyModule './azure_policy.bicep' = {
   name: 'policyDeployment'
   params: {
     azureRegion: azureRegion
+    initiativeDefinitionName: initiativeDefinitionName
     listOfAllowedLocations: listOfAllowedLocations
     listOfAllowedSKUs: listOfAllowedSKUs
-    initiativeDefinitionName: initiativeDefinitionName
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
   }
 }
 
-// module - indentity
+// Module - Indentity
 //////////////////////////////////////////////////
 module identityModule 'azure_identity.bicep' = {
   scope: resourceGroup(identityResourceGroupName)
@@ -175,8 +185,8 @@ module identityModule 'azure_identity.bicep' = {
   params: {
     applicationGatewayManagedIdentityName: applicationGatewayManagedIdentityName
     containerRegistryManagedIdentityName: containerRegistryManagedIdentityName
-    deploymentScriptManagedIdentityName: deploymentScriptManagedIdentityName
     containerRegistrySpnName: containerRegistrySpnName
+    deploymentScriptManagedIdentityName: deploymentScriptManagedIdentityName
     githubActionsSpnName: githubActionsSpnName
     restApiSpnName: restApiSpnName
   }
@@ -191,12 +201,12 @@ module keyVaultModule './azure_key_vault.bicep' = {
     keyVaultResourceGroup
   ]
   params: {
+    applicationGatewayManagedIdentityPrincipalID: identityModule.outputs.applicationGatewayManagedIdentityPrincipalId
     azureActiveDirectoryTenantID: azureActiveDirectoryTenantID
     azureActiveDirectoryUserID: azureActiveDirectoryUserID
-    applicationGatewayManagedIdentityPrincipalID: identityModule.outputs.applicationGatewayManagedIdentityPrincipalId
     containerRegistryManagedIdentityPrincipalID: identityModule.outputs.containerRegistryManagedIdentityPrincipalId
-    servicePrincipals: identityModule.outputs.servicePrincipals
     keyVaultName: keyVaultName
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
+    servicePrincipals: identityModule.outputs.servicePrincipals
   }
 }
