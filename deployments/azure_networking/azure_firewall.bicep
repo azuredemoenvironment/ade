@@ -1,24 +1,32 @@
-// parameters
-param location string
-param logAnalyticsWorkspaceId string
-param azureFirewallPublicIpAddressName string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the Azure Firewall')
 param azureFirewallName string
+
+@description('The name of the Azure Firewall Public IP Address.')
+param azureFirewallPublicIpAddressName string
+
+@description('The ID of the Azure Firewall Subnet.')
 param azureFirewallSubnetId string
 
-// variables
-var environmentName = 'production'
-var functionName = 'networking'
-var costCenterName = 'it'
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
 
-// resource - public ip address - azure firewall
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'networking'
+  costCenter: 'it'
+}
+
+// Resource - Public Ip Address
+//////////////////////////////////////////////////
 resource azureFirewallPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
   name: azureFirewallPublicIpAddressName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     publicIPAllocationMethod: 'Static'
   }
@@ -27,7 +35,8 @@ resource azureFirewallPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-// resource - public ip address - diagnostic settings - azure firewall
+// Resource - Public Ip Address - Diagnostic Settings
+//////////////////////////////////////////////////
 resource azureFirewallPublicIpAddressDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   scope: azureFirewallPublicIpAddress
   name: '${azureFirewallPublicIpAddress.name}-diagnostics'
@@ -73,15 +82,12 @@ resource azureFirewallPublicIpAddressDiagnostics 'Microsoft.Insights/diagnosticS
   }
 }
 
-// resource - azure firewall
+// Resource - Azure Firewall
+//////////////////////////////////////////////////
 resource azureFirewall 'Microsoft.Network/azureFirewalls@2020-07-01' = {
   name: azureFirewallName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     ipConfigurations: [
       {
@@ -147,7 +153,8 @@ resource azureFirewall 'Microsoft.Network/azureFirewalls@2020-07-01' = {
   }
 }
 
-// resource - azure firewall - diagnostic settings
+// Resource - Azure Firewall - Diagnostic Settings
+//////////////////////////////////////////////////
 resource azureFirewallDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   scope: azureFirewall
   name: '${azureFirewall.name}-diagnostics'

@@ -8,6 +8,12 @@
         "azureRegion": {
             "value": "@@azureRegion@@"
         },
+        "deployAzureFirewall": {
+            "value": "@@deployAzureFirewall@@"
+        },
+        "deployVpnGateway": {
+            "value": "@@deployVpnGateway@@"
+        },
         "localNetworkGatewayAddressPrefix": {
             "value": "@@localNetworkGatewayAddressPrefix@@"
         }, 

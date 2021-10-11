@@ -56,12 +56,15 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
         permissions: {
           keys: [
             'all'
+            'purge'
           ]
           secrets: [
             'all'
+            'purge'
           ]
           certificates: [
             'all'
+            'purge'
           ]
         }
       }
@@ -135,26 +138,26 @@ resource keyVaultDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-p
 // Resource - Key Vault - Secret - Service Principal Password
 resource servicePrincipalPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = [for servicePrincipal in servicePrincipals: {
   parent: keyVault
-  name: '${servicePrincipal.name}SpnPassword'
+  name: '${servicePrincipal.name}Password'
   properties: {
-    value: servicePrincipal.password
+    value: servicePrincipal.Password
   }
 }]
 
 // Resource - Key Vault - Secret - ApplicationId
 resource servicePrincipalAppIdSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = [for servicePrincipal in servicePrincipals: {
   parent: keyVault
-  name: '${servicePrincipal.name}AppId'
+  name: '${servicePrincipal.name}UserName'
   properties: {
-    value: servicePrincipal.appId
+    value: servicePrincipal.UserName
   }
 }]
 
 // Resource - Key Vault - Secret - Service Principal Object Id
 resource servicePrincipalObjectIdSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = [for servicePrincipal in servicePrincipals: {
   parent: keyVault
-  name: '${servicePrincipal.name}objectId'
+  name: '${servicePrincipal.name}ObjectId'
   properties: {
-    value: servicePrincipal.objectId
+    value: servicePrincipal.ObjectId
   }
 }]

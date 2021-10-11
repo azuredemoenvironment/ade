@@ -1,35 +1,55 @@
-// parameters
-param location string
-param sourceAddressPrefix string
-param localNetworkGatewayAddressPrefix string
-param connectionSharedKey string
-param logAnalyticsWorkspaceId string
-param vpnGatewayPublicIpAddressName string
-param localNetworkGatewayName string
-param vpnGatewayName string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the VPN Connection.')
 param connectionName string
+
+@description('The value for the VPN Connection Shared Key.')
+@secure()
+param connectionSharedKey string
+
+@description('The ID of the Gateway Subnet.')
 param gatewaySubnetId string
 
-// variables
-var environmentName = 'production'
-var functionName = 'networking'
-var costCenterName = 'it'
+@description('The address prefix of the on-premises network.')
+param localNetworkGatewayAddressPrefix string
 
-// resource - public ip address - vpn gateway
+@description('The name of the Local Network Gateway')
+param localNetworkGatewayName string
+
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
+
+@description('The public IP address of the on-premises network.')
+param sourceAddressPrefix string
+
+@description('The name of the VPN Gateway.')
+param vpnGatewayName string
+
+@description('The name of the VPN Gateway Public IP Address.')
+param vpnGatewayPublicIpAddressName string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'networking'
+  costCenter: 'it'
+}
+
+// Resource - Public Ip Address
+//////////////////////////////////////////////////
 resource vpnGatewayPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
   name: vpnGatewayPublicIpAddressName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     publicIPAllocationMethod: 'Dynamic'
   }
 }
 
-// resource - public ip address - diagnostic settings - vpn gateway
+// Resource - Public Ip Address - Diagnostic Settings
+//////////////////////////////////////////////////
 resource vpnGatewayPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: vpnGatewayPublicIpAddress
   name: '${vpnGatewayPublicIpAddress.name}-diagnostics'
@@ -75,15 +95,12 @@ resource vpnGatewayPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSett
   }
 }
 
-// resource - local network gateway
+// Resource - Local Network Gateway
+//////////////////////////////////////////////////
 resource localNetworkGateway 'Microsoft.Network/localNetworkGateways@2020-08-01' = {
   name: localNetworkGatewayName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     localNetworkAddressSpace: {
       addressPrefixes: [
@@ -94,15 +111,12 @@ resource localNetworkGateway 'Microsoft.Network/localNetworkGateways@2020-08-01'
   }
 }
 
-// resource - vpn gateway
+// Resource - Vpn Gateway
+//////////////////////////////////////////////////
 resource vpnGateway 'Microsoft.Network/virtualNetworkGateways@2020-08-01' = {
   name: vpnGatewayName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     gatewayType: 'Vpn'
     ipConfigurations: [
@@ -127,7 +141,8 @@ resource vpnGateway 'Microsoft.Network/virtualNetworkGateways@2020-08-01' = {
   }
 }
 
-// resource - vpn gateway - diagnostic settings
+// Resource - Vpn Gateway - Diagnostic Settings
+//////////////////////////////////////////////////
 resource vpnGatewayDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   name: '${vpnGateway.name}-diagnostics'
   properties: {
@@ -188,15 +203,12 @@ resource vpnGatewayDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01
   }
 }
 
-// resource - connection
+// Resource - Connection
+//////////////////////////////////////////////////
 resource connection 'Microsoft.Network/connections@2020-08-01' = {
   name: connectionName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     virtualNetworkGateway1: {
       id: vpnGateway.id

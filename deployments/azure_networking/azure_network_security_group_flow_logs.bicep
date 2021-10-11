@@ -1,15 +1,20 @@
-// parameters
-param location string
-param nsgFlowLogsStorageAccountId string
-param logAnalyticsWorkspaceId string
+// Parameters
+//////////////////////////////////////////////////
 param azureBastionSubnetNSGId string
-param managementSubnetNSGId string
-param nTierWebSubnetNSGId string
-param nTierAppSubnetNSGId string
-param vmssSubnetNSGId string
 param clientServicesSubnetNSGId string
+param logAnalyticsWorkspaceId string
+param managementSubnetNSGId string
+param nsgFlowLogsStorageAccountId string
+param nTierAppSubnetNSGId string
+param nTierWebSubnetNSGId string
+param vmssSubnetNSGId string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
 
 // resource - nsg flow log - azure bastion subnet nsg
+//////////////////////////////////////////////////
 resource azureBastionSubnetNSGFlowLog 'Microsoft.Network/networkWatchers/flowLogs@2020-11-01' = {
   name: 'NetworkWatcher_${location}/bastion'
   location: location

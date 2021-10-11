@@ -15,7 +15,7 @@ param deploymentScriptManagedIdentityName string
 @description('The name of the GitHub Actions Service Principal.')
 param githubActionsSpnName string
 
-@description('The name of the Rest API Service Principal.')
+@description('The name of the Rest Api Service Principal.')
 param restApiSpnName string
 
 // Variables
@@ -95,20 +95,20 @@ output containerRegistryManagedIdentityPrincipalId string = containerRegistryMan
 output servicePrincipals array = [
   {
     name: 'containerRegistry'
-    password: servicePrincipalsDeploymentScript.properties.outputs.containerRegistrySpnPassword
-    appId: servicePrincipalsDeploymentScript.properties.outputs.containerRegistrySpnAppId
-    objectId: servicePrincipalsDeploymentScript.properties.outputs.containerRegistrySpnObjectId
+    Password: servicePrincipalsDeploymentScript.properties.outputs.containerRegistryPassword
+    UserName: servicePrincipalsDeploymentScript.properties.outputs.containerRegistryUserName
+    ObjectId: servicePrincipalsDeploymentScript.properties.outputs.containerRegistryObjectId
   }
   {
     name: 'githubActions'
-    password: servicePrincipalsDeploymentScript.properties.outputs.githubActionsSpnPassword
-    appId: servicePrincipalsDeploymentScript.properties.outputs.githubActionsSpnAppId
-    objectId: servicePrincipalsDeploymentScript.properties.outputs.githubActionsSpnObjectId
+    Password: servicePrincipalsDeploymentScript.properties.outputs.githubActionsPassword
+    UserName: servicePrincipalsDeploymentScript.properties.outputs.githubActionsUserName
+    ObjectId: servicePrincipalsDeploymentScript.properties.outputs.githubActionsObjectId
   }
   {
     name: 'restApi'
-    password: servicePrincipalsDeploymentScript.properties.outputs.restApiSpnPassword
-    appId: servicePrincipalsDeploymentScript.properties.outputs.restApiSpnAppId
-    objectId: servicePrincipalsDeploymentScript.properties.outputs.restApiSpnObjectId
+    Password: servicePrincipalsDeploymentScript.properties.outputs.restApiPassword
+    UserName: servicePrincipalsDeploymentScript.properties.outputs.restApiUserName
+    ObjectId: servicePrincipalsDeploymentScript.properties.outputs.restApiObjectId
   }
 ]

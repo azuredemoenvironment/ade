@@ -1,21 +1,23 @@
-// parameters
-param location string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the Route Table.')
 param internetRouteTableName string
 
-// variables
-var environmentName = 'production'
-var functionName = 'networking'
-var costCenterName = 'it'
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'networking'
+  costCenter: 'it'
+}
 
-// resource - route table
+// Resource - Route Table
+//////////////////////////////////////////////////
 resource internetRouteTable 'Microsoft.Network/routeTables@2020-07-01' = {
   name: internetRouteTableName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     routes: [
       {
@@ -30,5 +32,6 @@ resource internetRouteTable 'Microsoft.Network/routeTables@2020-07-01' = {
   }
 }
 
-// outputs
+// Outputs
+//////////////////////////////////////////////////
 output internetRouteTableId string = internetRouteTable.id

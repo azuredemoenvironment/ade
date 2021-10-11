@@ -1,28 +1,44 @@
-// parameters
-param location string
-param sourceAddressPrefix string
-param logAnalyticsWorkspaceId string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the Azure Basion Subnet NSG.')
 param azureBastionSubnetNSGName string
-param managementSubnetNSGName string
-param nTierWebSubnetNSGName string
-param nTierAppSubnetNSGName string
-param vmssSubnetNSGName string
+
+@description('The name of the Client Services Subnet NSG.')
 param clientServicesSubnetNSGName string
 
-// variables
-var environmentName = 'production'
-var functionName = 'networking'
-var costCenterName = 'it'
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
 
-// resource - network security group - azure bastion subnet
+@description('The name of the Management Subnet NSG.')
+param managementSubnetNSGName string
+
+@description('The name of the NTier App Subnet NSG.')
+param nTierAppSubnetNSGName string
+
+@description('The name of the NTier Web Subnet NSG.')
+param nTierWebSubnetNSGName string
+
+@description('The public IP address of the on-premises network.')
+param sourceAddressPrefix string
+
+@description('The name of the VMSS Subnet NSG.')
+param vmssSubnetNSGName string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'networking'
+  costCenter: 'it'
+}
+
+// Resource - Network Security Group - Azure Bastion Subnet
+//////////////////////////////////////////////////
 resource azureBastionSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: azureBastionSubnetNSGName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     securityRules: [
       {
@@ -88,7 +104,8 @@ resource azureBastionSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-
   }
 }
 
-// resource - network security group - diagnostic settings - azure bastion subnet 
+// Resource - Network Security Group - Diagnostic Settings - Azure Bastion Subnet
+//////////////////////////////////////////////////
 resource azureBastionSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: azureBastionSubnetNSG
   name: '${azureBastionSubnetNSG.name}-diagnostics'
@@ -116,15 +133,12 @@ resource azureBastionSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings
   }
 }
 
-// resource - network security group - management subnet
+// Resource - Network Security Group - Management Subnet
+//////////////////////////////////////////////////
 resource managementSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: managementSubnetNSGName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     securityRules: [
       {
@@ -145,7 +159,8 @@ resource managementSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01
   }
 }
 
-// resource - network security group - diagnostic settings - azure bastion subnet
+// Resource - Network Security Group - Diagnostic Settings - Azure Bastion Subnet
+//////////////////////////////////////////////////
 resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: managementSubnetNSG
   name: '${managementSubnetNSG.name}-diagnostics'
@@ -173,21 +188,19 @@ resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2
   }
 }
 
-// resource - network security group - ntier web subnet
+// Resource - Network Security Group - Ntier Web Subnet
+//////////////////////////////////////////////////
 resource nTierWebSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: nTierWebSubnetNSGName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     securityRules: []
   }
 }
 
-// resource - network security group - diagnostic settings - ntier web subnet
+// Resource - Network Security Group - Diagnostic Settings - Ntier Web Subnet
+//////////////////////////////////////////////////
 resource nTierWebSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: nTierWebSubnetNSG
   name: '${nTierWebSubnetNSG.name}-diagnostics'
@@ -215,21 +228,19 @@ resource nTierWebSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@202
   }
 }
 
-// resource - network security group - ntier app subnet
+// Resource - Network Security Group - Ntier App Subnet
+//////////////////////////////////////////////////
 resource nTierAppSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: nTierAppSubnetNSGName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     securityRules: []
   }
 }
 
-// resource - network security group - diagnostic settings - ntier app subnet
+// Resource - Network Security Group - Diagnostic Settings - Ntier App Subnet
+//////////////////////////////////////////////////
 resource nTierAppSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: nTierAppSubnetNSG
   name: '${nTierAppSubnetNSG.name}-diagnostics'
@@ -257,15 +268,12 @@ resource nTierAppSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@202
   }
 }
 
-// resource - network security group - vmss subnet
+// Resource - Network Security Group - Vmss Subnet
+//////////////////////////////////////////////////
 resource vmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: vmssSubnetNSGName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     securityRules: [
       {
@@ -286,7 +294,8 @@ resource vmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   }
 }
 
-// resource - network security group - diagnostic settings - vmss subnet
+// Resource - Network Security Group - Diagnostic Settings - Vmss Subnet
+//////////////////////////////////////////////////
 resource vmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: vmssSubnetNSG
   name: '${vmssSubnetNSG.name}-diagnostics'
@@ -314,21 +323,19 @@ resource vmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05
   }
 }
 
-// resource - network security group - client services subnet
+// Resource - Network Security Group - Client Services Subnet
+//////////////////////////////////////////////////
 resource clientServicesSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: clientServicesSubnetNSGName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     securityRules: []
   }
 }
 
-// resource - network security group - diagnostic settings - client services subnet
+// Resource - Network Security Group - Diagnostic Settings - Client Services Subnet
+//////////////////////////////////////////////////
 resource clientServicesSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: clientServicesSubnetNSG
   name: '${clientServicesSubnetNSG.name}-diagnostics'
@@ -356,7 +363,8 @@ resource clientServicesSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettin
   }
 }
 
-// outputs
+// Outputs
+//////////////////////////////////////////////////
 output azureBastionSubnetNSGId string = azureBastionSubnetNSG.id
 output managementSubnetNSGId string = managementSubnetNSG.id
 output nTierWebSubnetNSGId string = nTierWebSubnetNSG.id

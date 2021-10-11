@@ -19,9 +19,9 @@ register_spn () {
 
     SPN_OBJECTID=$(az ad sp show --id $SPN_APPID --query objectId --output tsv)
 
-    echo "\"${VARIABLE_PREFIX}SpnPassword\":\"$SPN_PASSWORD\"," >> $AZ_SCRIPTS_OUTPUT_PATH
-    echo "\"${VARIABLE_PREFIX}SpnAppId\":\"$SPN_APPID\"," >> $AZ_SCRIPTS_OUTPUT_PATH
-    echo "\"${VARIABLE_PREFIX}SpnObjectId\":\"$SPN_OBJECTID\"," >> $AZ_SCRIPTS_OUTPUT_PATH
+    echo "\"${VARIABLE_PREFIX}Password\":\"$SPN_PASSWORD\"," >> $AZ_SCRIPTS_OUTPUT_PATH
+    echo "\"${VARIABLE_PREFIX}UserName\":\"$SPN_APPID\"," >> $AZ_SCRIPTS_OUTPUT_PATH
+    echo "\"${VARIABLE_PREFIX}ObjectId\":\"$SPN_OBJECTID\"," >> $AZ_SCRIPTS_OUTPUT_PATH
 
     echo "Finished creating $SPN_NAME"
 }
@@ -30,5 +30,5 @@ echo '{' > $AZ_SCRIPTS_OUTPUT_PATH
 
 register_spn $CONTAINER_REGISTRY_SPN_NAME 'containerRegistry'
 register_spn $GITHUB_ACTIONS_SPN_NAME 'githubActions'
-register_spn $REST_API_SPN_NAME 'restApi'
+register_spn $REST_API_SPN_NAME 'restAPI'
 echo $'"complete":true}' >> $AZ_SCRIPTS_OUTPUT_PATH
