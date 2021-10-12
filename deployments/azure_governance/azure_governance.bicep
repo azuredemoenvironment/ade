@@ -7,9 +7,6 @@ targetScope = 'subscription'
 @description('The user alias and Azure region defined from user input.')
 param aliasRegion string
 
-@description('The Azure Active Directory Tenant ID.')
-param azureActiveDirectoryTenantID string
-
 @description('The Azure Active Directory User ID.')
 param azureActiveDirectoryUserID string
 
@@ -45,14 +42,14 @@ var appConfigName = 'appcs-ade-${aliasRegion}-001'
 var applicationGatewayManagedIdentityName = 'id-ade-${aliasRegion}-applicationgateway'
 var applicationInsightsName = 'appinsights-ade-${aliasRegion}-001'
 var containerRegistryManagedIdentityName = 'id-ade-${aliasRegion}-containerregistry'
-var containerRegistrySpnName = 'spn-ade-$aliasRegion-acr'
+var containerRegistrySpnName = 'spn-ade-${aliasRegion}-acr'
 var deploymentScriptManagedIdentityName = 'id-ade-${aliasRegion}-deploymentscript'
-var githubActionsSpnName = 'spn-ade-$aliasRegion-gha'
+var githubActionsSpnName = 'spn-ade-${aliasRegion}-gha'
 var initiativeDefinitionName = 'policy-ade-${aliasRegion}-adeinitiative'
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 var nsgFlowLogsStorageAccountName = replace('saade${aliasRegion}nsgflow', '-', '')
-var restApiSpnName = 'spn-ade-$aliasRegion-restapi'
+var restApiSpnName = 'spn-ade-${aliasRegion}-restapi'
 
 // Resource Group - App Configuration
 //////////////////////////////////////////////////
@@ -202,7 +199,6 @@ module keyVaultModule './azure_key_vault.bicep' = {
   ]
   params: {
     applicationGatewayManagedIdentityPrincipalID: identityModule.outputs.applicationGatewayManagedIdentityPrincipalId
-    azureActiveDirectoryTenantID: azureActiveDirectoryTenantID
     azureActiveDirectoryUserID: azureActiveDirectoryUserID
     containerRegistryManagedIdentityPrincipalID: identityModule.outputs.containerRegistryManagedIdentityPrincipalId
     keyVaultName: keyVaultName

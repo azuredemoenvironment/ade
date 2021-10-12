@@ -1,8 +1,5 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The Azure Active Directory Tenant ID.')
-param azureActiveDirectoryTenantID string
-
 @description('The Azure Active Directory User ID.')
 param azureActiveDirectoryUserID string
 
@@ -47,12 +44,12 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
     enableSoftDelete: true
     softDeleteRetentionInDays: 7
     enablePurgeProtection: true
-    tenantId: azureActiveDirectoryTenantID
+    tenantId: subscription().tenantId
     publicNetworkAccess: 'enabled'
     accessPolicies: [
       {
         objectId: azureActiveDirectoryUserID
-        tenantId: azureActiveDirectoryTenantID
+        tenantId: subscription().tenantId
         permissions: {
           keys: [
             'all'
@@ -70,7 +67,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
       }
       {
         objectId: applicationGatewayManagedIdentityPrincipalID
-        tenantId: azureActiveDirectoryTenantID
+        tenantId: subscription().tenantId
         permissions: {
           secrets: [
             'get'
@@ -79,7 +76,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
       }
       {
         objectId: containerRegistryManagedIdentityPrincipalID
-        tenantId: azureActiveDirectoryTenantID
+        tenantId: subscription().tenantId
         permissions: {
           keys: [
             'get'
@@ -90,7 +87,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
       }
       {
         objectId: 'abfa0a7c-a6b6-4736-8310-5855508787cd'
-        tenantId: azureActiveDirectoryTenantID
+        tenantId: subscription().tenantId
         permissions: {
           secrets: [
             'get'

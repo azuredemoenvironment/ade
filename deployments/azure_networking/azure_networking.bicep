@@ -94,6 +94,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
   scope: resourceGroup(monitorResourceGroupName)
   name: logAnalyticsWorkspaceName
 }
+
 // Existing Resource - Storage Account - NSG Flow Logs
 //////////////////////////////////////////////////
 resource nsgFlowLogsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01' existing = {
@@ -317,13 +318,8 @@ module nsgFlowLogsModule './azure_network_security_group_flow_logs.bicep' = {
     networkingResourceGroup
   ]
   params: {
-    azureBastionSubnetNSGId: networkSecurityGroupsModule.outputs.azureBastionSubnetNSGId
-    clientServicesSubnetNSGId: networkSecurityGroupsModule.outputs.clientServicesSubnetNSGId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    managementSubnetNSGId: networkSecurityGroupsModule.outputs.managementSubnetNSGId
+    nsgConfigurations: networkSecurityGroupsModule.outputs.nsgConfigurations
     nsgFlowLogsStorageAccountId: nsgFlowLogsStorageAccount.id
-    nTierAppSubnetNSGId: networkSecurityGroupsModule.outputs.nTierAppSubnetNSGId
-    nTierWebSubnetNSGId: networkSecurityGroupsModule.outputs.nTierWebSubnetNSGId
-    vmssSubnetNSGId: networkSecurityGroupsModule.outputs.vmssSubnetNSGId
   }
 }

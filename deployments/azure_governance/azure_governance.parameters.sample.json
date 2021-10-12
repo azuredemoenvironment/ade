@@ -5,9 +5,6 @@
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
-        "azureActiveDirectoryTenantID": {
-            "value": "@@azureActiveDirectoryTenantID@@"
-        },
         "azureActiveDirectoryUserID": {
             "value": "@@azureActiveDirectoryUserID@@"
         },

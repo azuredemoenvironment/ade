@@ -24,7 +24,6 @@ function Set-InitialArmParameters {
     $acrName = "acr-ade-$aliasRegion-001".replace('-', '')
 
     Write-Log 'Gathering User Information from az'
-    $currentAccount = az account show | ConvertFrom-Json
     $adSignedInUser = az ad signed-in-user show | ConvertFrom-Json
 
     Write-Log 'Generating ARM Parameters'
@@ -36,7 +35,7 @@ function Set-InitialArmParameters {
         'contactEmailAddress'                   = $email
         'azureRegion'                           = $azureRegion
         'azurePairedRegion'                     = $azurePairedRegion
-        'deployAzureFirewall'                   = 'true'
+        'deployAzureFirewall'                   = 'false'
         'deployAzureVpnGateway'                 = 'false'
         'module'                                = $module
         'overwriteParameterFiles'               = $overwriteParameterFiles
@@ -48,8 +47,7 @@ function Set-InitialArmParameters {
         'acrName'                               = $acrName        
         'adminUserName'                         = $resourceUserName
         'aksClusterDNSName'                     = "aks-$aliasRegion-01-dns"
-        'aksClusterName'                        = "aks-$aliasRegion-01"        
-        'azureActiveDirectoryTenantID'          = $currentAccount.tenantId
+        'aksClusterName'                        = "aks-$aliasRegion-01"
         'azureActiveDirectoryUserID'            = $adSignedInUser.objectId   
         'containerRegistryLoginServer'          = "$acrName.azurecr.io"    
         'localNetworkGatewayAddressPrefix'      = $localNetworkRange

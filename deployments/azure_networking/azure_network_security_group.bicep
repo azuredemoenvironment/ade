@@ -371,3 +371,29 @@ output nTierWebSubnetNSGId string = nTierWebSubnetNSG.id
 output nTierAppSubnetNSGId string = nTierAppSubnetNSG.id
 output vmssSubnetNSGId string = vmssSubnetNSG.id
 output clientServicesSubnetNSGId string = clientServicesSubnetNSG.id
+output nsgConfigurations array = [
+  {
+    name: 'azureBastionSubnet'
+    id: azureBastionSubnetNSG.id
+  }
+  {
+    name: 'managementSubnet'
+    id: managementSubnetNSG.id
+  }
+  {
+    name: 'nTierWebSubnet'
+    id: nTierWebSubnetNSG.id
+  }
+  {
+    name: 'nTierAppSubnet'
+    id: nTierAppSubnetNSG.id
+  }
+  {
+    name: 'vmssSubnet'
+    id: vmssSubnetNSG.id
+  }
+  {
+    name: 'clientServicesSubnet'
+    id: clientServicesSubnetNSG.id
+  }
+]
