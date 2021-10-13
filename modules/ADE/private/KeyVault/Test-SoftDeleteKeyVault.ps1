@@ -1,6 +1,6 @@
 function Test-SoftDeleteKeyVault {
     param(
-        [string] $KeyvaultName       
+        [string] $KeyVaultName       
     )
 
     $ListSoftDeletedKVs = az keyvault list-deleted --resource-type vault | ConvertFrom-Json
