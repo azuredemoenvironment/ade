@@ -4,7 +4,7 @@ function Test-SoftDeleteKeyVault {
     )
 
     $ListSoftDeletedKVs = az keyvault list-deleted --resource-type vault | ConvertFrom-Json
-    If ($ListSoftDeletedKVs.Name -contains $armParameters.keyVaultName){
+    If ($ListSoftDeletedKVs.Name -contains $armParameters.keyVaultName) {
         return $true
     }
     else {
