@@ -6,13 +6,10 @@ function Deploy-AzureKeyVault {
         [object] $wildcardCertificatePath
     )
 
-    # Similar to other 'Deploy' functions, skip this KV Creation if the KV already exists
-    If ($armParameters.keyVaultResourceID){ # We already Confirmed that this Azure resource existed earlier in script Set-InitialArmParameters.ps1 and populated the property keyVaultResourceID
-        Write-Log "Key Vault $($armParameters.keyVaultName) already exists; skipping creation."
-    }
-    elseIf (Test-SoftDeleteKeyVault -KeyvaultName $armParameters.keyVaultName){
-        Write-Status "'Soft Delete' KV $($armParameters.keyVaultName) exists. Recovering now..."
-        Restore-SoftDeleteKeyvault -KeyvaultName $armParameters.keyVaultName
+    # Check to see if our Soft-Delete KeyVault exists
+    If (Test-SoftDeleteKeyVault -KeyvaultName $armParameters.keyVaultName){
+        Write-Status "'Soft Delete' KV $($armParameters.keyVaultName) exists. Running Restore-SoftDeleteKeyVault..."
+        Restore-SoftDeleteKeyVault -KeyvaultName $armParameters.keyVaultName
     }
     else {
         Deploy-ArmTemplate 'Azure Key Vault' $armParameters -resourceGroupName $armParameters.keyVaultResourceGroupName -bicep
