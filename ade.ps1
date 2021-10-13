@@ -156,6 +156,7 @@ try {
 }
 catch {
     $ErrorMessage = $_.Exception.Message
+    Resolve-AdeError $_
     Write-Log "An error occurred: $ErrorMessage"
     Write-Debug ($ErrorMessage | Format-Table | Out-String)
 }
