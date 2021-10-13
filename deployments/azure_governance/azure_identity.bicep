@@ -6,22 +6,8 @@ param applicationGatewayManagedIdentityName string
 @description('The name of the Container Registry Managed Identity.')
 param containerRegistryManagedIdentityName string
 
-@description('The name of the Container Registry Service Principal.')
-param containerRegistrySpnName string
-
-@description('The name of the Deployment Script Managed Identity.')
-param deploymentScriptManagedIdentityName string
-
-@description('The name of the GitHub Actions Service Principal.')
-param githubActionsSpnName string
-
-@description('The name of the Rest Api Service Principal.')
-param restApiSpnName string
-
 // Variables
 //////////////////////////////////////////////////
-var contributorRoleAssignmentName = guid(resourceGroup().id, 'contributor')
-var contributorRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
 var location = resourceGroup().location
 var tags = {
   environment: 'production'
@@ -45,70 +31,7 @@ resource containerRegistryManagedIdentity 'Microsoft.ManagedIdentity/userAssigne
   tags: tags
 }
 
-// Resource - Managed Identity - Deployment Script
-//////////////////////////////////////////////////
-resource deploymentScriptManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
-  name: deploymentScriptManagedIdentityName
-  location: location
-  tags: tags
-}
-
-// Resource - Role Asignment - Contributor
-//////////////////////////////////////////////////
-resource deploymentScriptRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: contributorRoleAssignmentName
-  properties: {
-    roleDefinitionId: contributorRoleDefinitionId
-    principalId: deploymentScriptManagedIdentity.properties.principalId
-    principalType: 'ServicePrincipal'
-  }
-}
-
-// Resource - Deployment Script - Service Principals
-//////////////////////////////////////////////////
-resource servicePrincipalsDeploymentScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
-  name: 'servicePrincipalsDeploymentScript'
-  location: location
-  dependsOn: [
-    deploymentScriptManagedIdentity
-    deploymentScriptRoleAssignment
-  ]
-  kind: 'AzureCLI'
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${deploymentScriptManagedIdentity.id}': {}
-    }
-  }
-  properties: {
-    azCliVersion: '2.2.0'
-    arguments: '"${containerRegistrySpnName}" "${githubActionsSpnName}" "${restApiSpnName}"'
-    scriptContent: loadTextContent('createServicePrincipals.sh')
-    retentionInterval: 'P1D'
-  }
-}
-
 // Outputs
 //////////////////////////////////////////////////
 output applicationGatewayManagedIdentityPrincipalId string = applicationGatewayManagedIdentity.properties.principalId
 output containerRegistryManagedIdentityPrincipalId string = containerRegistryManagedIdentity.properties.principalId
-output servicePrincipals array = [
-  {
-    name: 'containerRegistry'
-    Password: servicePrincipalsDeploymentScript.properties.outputs.containerRegistryPassword
-    UserName: servicePrincipalsDeploymentScript.properties.outputs.containerRegistryUserName
-    ObjectId: servicePrincipalsDeploymentScript.properties.outputs.containerRegistryObjectId
-  }
-  {
-    name: 'githubActions'
-    Password: servicePrincipalsDeploymentScript.properties.outputs.githubActionsPassword
-    UserName: servicePrincipalsDeploymentScript.properties.outputs.githubActionsUserName
-    ObjectId: servicePrincipalsDeploymentScript.properties.outputs.githubActionsObjectId
-  }
-  {
-    name: 'restApi'
-    Password: servicePrincipalsDeploymentScript.properties.outputs.restApiPassword
-    UserName: servicePrincipalsDeploymentScript.properties.outputs.restApiUserName
-    ObjectId: servicePrincipalsDeploymentScript.properties.outputs.restApiObjectId
-  }
-]

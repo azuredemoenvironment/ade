@@ -1,17 +1,39 @@
-// parameters
-param location string
-param adminUserName string
+// Parameters
+//////////////////////////////////////////////////
+@description('The password of the admin user.')
+@secure()
 param adminPassword string
-param logAnalyticsWorkspaceId string
+
+@description('The name of the admin user.')
+param adminUserName string
+
+@description('The customer Id of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceCustomerId string
+
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
+
+@description('The Workspace Key of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceKey string
-param vmssSubnetId string
-param vmssLoadBalancerPublicIpAddressName string
+
+@description('The name of the VMSS Load Balancer.')
 param vmssLoadBalancerName string
+
+@description('The name of the VMSS Public Ip Address')
+param vmssLoadBalancerPublicIpAddressName string
+
+@description('The name of the Virtual Machine Scale Set.')
 param vmssName string
+
+@description('The name of the VMSS NIC.')
 param vmssNICName string
 
-// variables
+@description('The ID of the VMSS Subnet.')
+param vmssSubnetId string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
 var imageReference = osType
 var osType = {
   publisher: 'Canonical'
@@ -21,19 +43,18 @@ var osType = {
 }
 var script1Location = 'https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/main/deployments/azure_vmss/installserver.sh'
 var script2Location = 'https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/main/deployments/azure_vmss/workserver.py'
-var environmentName = 'production'
-var functionName = 'vmss'
-var costCenterName = 'it'
+var tags = {
+  environment: 'production'
+  function: 'vmss'
+  costCenter: 'it'
+}
 
-// resource - public ip address - load balancer - vmss
+// Resource - Public Ip Address - Load Balancer - Vmss
+//////////////////////////////////////////////////
 resource vmssLoadBalancerPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
   name: vmssLoadBalancerPublicIpAddressName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     publicIPAllocationMethod: 'Static'
   }
@@ -42,7 +63,8 @@ resource vmssLoadBalancerPublicIpAddress 'Microsoft.Network/publicIPAddresses@20
   }
 }
 
-// resource - public ip address - diagnostic settings - load balancer - vmss
+// Resource - Public Ip Address - Diagnostic Settings - Load Balancer - Vmss
+//////////////////////////////////////////////////
 resource vmssLoadBalancerPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: vmssLoadBalancerPublicIpAddress
   name: '${vmssLoadBalancerPublicIpAddress.name}-diagnostics'
@@ -88,15 +110,12 @@ resource vmssLoadBalancerPublicIpAddressDiagnostics 'microsoft.insights/diagnost
   }
 }
 
-// resource - load balancer - vmss
+// Resource - Load Balancer - Vmss
+//////////////////////////////////////////////////
 resource vmssLoadBalancer 'Microsoft.Network/loadBalancers@2020-11-01' = {
   name: vmssLoadBalancerName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   sku: {
     name: 'Basic'
   }
@@ -145,7 +164,8 @@ resource vmssLoadBalancer 'Microsoft.Network/loadBalancers@2020-11-01' = {
   }
 }
 
-// resource - load balancer - diagnostic settings - vmss
+// Resource - Load Balancer - Diagnostic Settings - Vmss
+//////////////////////////////////////////////////
 resource vmssLoadBalancerDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: vmssLoadBalancer
   name: '${vmssLoadBalancer.name}-diagnostics'
@@ -183,18 +203,15 @@ resource vmssLoadBalancerDiagnostics 'microsoft.insights/diagnosticSettings@2021
   }
 }
 
-// resource - virtual machine scale set - vmss
+// Resource - Virtual Machine Scale Set - Vmss
+//////////////////////////////////////////////////
 resource vmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
   name: vmssName
   location: location
   dependsOn: [
     vmssLoadBalancer
   ]
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   sku: {
     name: 'Standard_B2ms'
     tier: 'Standard'

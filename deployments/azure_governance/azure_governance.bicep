@@ -42,14 +42,10 @@ var appConfigName = 'appcs-ade-${aliasRegion}-001'
 var applicationGatewayManagedIdentityName = 'id-ade-${aliasRegion}-applicationgateway'
 var applicationInsightsName = 'appinsights-ade-${aliasRegion}-001'
 var containerRegistryManagedIdentityName = 'id-ade-${aliasRegion}-containerregistry'
-var containerRegistrySpnName = 'spn-ade-${aliasRegion}-acr'
-var deploymentScriptManagedIdentityName = 'id-ade-${aliasRegion}-deploymentscript'
-var githubActionsSpnName = 'spn-ade-${aliasRegion}-gha'
 var initiativeDefinitionName = 'policy-ade-${aliasRegion}-adeinitiative'
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 var nsgFlowLogsStorageAccountName = replace('saade${aliasRegion}nsgflow', '-', '')
-var restApiSpnName = 'spn-ade-${aliasRegion}-restapi'
 
 // Resource Group - App Configuration
 //////////////////////////////////////////////////
@@ -182,10 +178,6 @@ module identityModule 'azure_identity.bicep' = {
   params: {
     applicationGatewayManagedIdentityName: applicationGatewayManagedIdentityName
     containerRegistryManagedIdentityName: containerRegistryManagedIdentityName
-    containerRegistrySpnName: containerRegistrySpnName
-    deploymentScriptManagedIdentityName: deploymentScriptManagedIdentityName
-    githubActionsSpnName: githubActionsSpnName
-    restApiSpnName: restApiSpnName
   }
 }
 
@@ -203,6 +195,5 @@ module keyVaultModule './azure_key_vault.bicep' = {
     containerRegistryManagedIdentityPrincipalID: identityModule.outputs.containerRegistryManagedIdentityPrincipalId
     keyVaultName: keyVaultName
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
-    servicePrincipals: identityModule.outputs.servicePrincipals
   }
 }

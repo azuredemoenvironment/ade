@@ -15,9 +15,6 @@ param keyVaultName string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The Service Principal property objects in an array.')
-param servicePrincipals array
-
 // Variables
 //////////////////////////////////////////////////
 var location = resourceGroup().location
@@ -131,30 +128,3 @@ resource keyVaultDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-p
     ]
   }
 }
-
-// Resource - Key Vault - Secret - Service Principal Password
-resource servicePrincipalPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = [for servicePrincipal in servicePrincipals: {
-  parent: keyVault
-  name: '${servicePrincipal.name}Password'
-  properties: {
-    value: servicePrincipal.Password
-  }
-}]
-
-// Resource - Key Vault - Secret - ApplicationId
-resource servicePrincipalAppIdSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = [for servicePrincipal in servicePrincipals: {
-  parent: keyVault
-  name: '${servicePrincipal.name}UserName'
-  properties: {
-    value: servicePrincipal.UserName
-  }
-}]
-
-// Resource - Key Vault - Secret - Service Principal Object Id
-resource servicePrincipalObjectIdSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = [for servicePrincipal in servicePrincipals: {
-  parent: keyVault
-  name: '${servicePrincipal.name}ObjectId'
-  properties: {
-    value: servicePrincipal.ObjectId
-  }
-}]

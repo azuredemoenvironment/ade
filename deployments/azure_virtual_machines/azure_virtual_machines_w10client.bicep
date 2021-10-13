@@ -1,28 +1,45 @@
-// parameters
-param location string
-param adminUserName string
+// Parameters
+//////////////////////////////////////////////////
+@description('The password of the admin user.')
+@secure()
 param adminPassword string
-param logAnalyticsWorkspaceId string
+
+@description('The name of the admin user.')
+param adminUserName string
+
+@description('The ID of the Client Services Subnet.')
 param clientServicesSubnetId string
-param w10ClientNICName string
-param w10ClientPrivateIpAddress string
+
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
+
+@description('The name of the Windows 10 Client Virtual Machine.')
 param w10ClientName string
+
+@description('The name of the Windows 10 Client NIC.')
+param w10ClientNICName string
+
+@description('The name of the Windows 10 Client operating system disk.')
 param w10ClientOSDiskName string
 
-// variables
-var environmentName = 'production'
-var functionName = 'clientServices'
-var costCenterName = 'it'
+@description('The private Ip address of the Windows 10 Client.')
+param w10ClientPrivateIpAddress string
 
-// resource - network interface - w10client
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'clientServices'
+  costCenter: 'it'
+}
+
+// Resource - Network Interface - W10client
+//////////////////////////////////////////////////
 resource w10ClientNIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   name: w10ClientNICName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     ipConfigurations: [
       {
@@ -39,7 +56,8 @@ resource w10ClientNIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - diagnostic settings - jumpbox
+// Resource - Network Interface - Diagnostic Settings - Jumpbox
+//////////////////////////////////////////////////
 resource w10ClientNICDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   name: '${w10ClientNIC.name}-diagnostics'
   scope: w10ClientNIC
@@ -59,15 +77,12 @@ resource w10ClientNICDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-
   }
 }
 
-// resource - virtual machine - w10client
+// Resource - Virtual Machine - W10client
+//////////////////////////////////////////////////
 resource w10Client 'Microsoft.Compute/virtualMachines@2020-12-01' = {
   name: w10ClientName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     hardwareProfile: {
       vmSize: 'Standard_B2s'

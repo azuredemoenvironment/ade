@@ -1,28 +1,45 @@
-// parameters
-param azureRegion string
-param adminUserName string
+// Parameters
+//////////////////////////////////////////////////
+@description('The password of the admin user.')
+@secure()
 param adminPassword string
-param logAnalyticsWorkspaceId string
-param privateEndpointSubnetId string
-param azureSQLPrivateDnsZoneId string
-param inspectorGadgetSqlServerName string
+
+@description('The name of the admin user.')
+param adminUserName string
+
+@description('The ID of the Azure Sql Private Dns Zone.')
+param azureSqlPrivateDnsZoneId string
+
+@description('The name of the Inspector Gadget Sql Database.')
 param inspectorGadgetSqlDatabaseName string
+
+@description('The name of the Inspector Gadget Sql Server.')
+param inspectorGadgetSqlServerName string
+
+@description('The name of the Inspector Gadget Sql Server Private Endpoint.')
 param inspectorGadgetSqlServerPrivateEndpointName string
 
-// variables
-var environmentName = 'production'
-var functionName = 'sql'
-var costCenterName = 'it'
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
 
-// resource - sql server - inspectorGadgetSqlServer
+@description('The ID of the Private Endpoint Subnet.')
+param privateEndpointSubnetId string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'sql'
+  costCenter: 'it'
+}
+
+// Resource - Sql Server - Inspector Gadget
+//////////////////////////////////////////////////
 resource inspectorGadgetSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
   name: inspectorGadgetSqlServerName
-  location: azureRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  location: location
+  tags: tags
   properties: {
     publicNetworkAccess: 'Disabled'
     administratorLogin: adminUserName
@@ -31,16 +48,13 @@ resource inspectorGadgetSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
   }
 }
 
-// resource - sql database - inspectorGadgetSqlDatabase
+// Resource - Sql Database - Inspector Gadget
+//////////////////////////////////////////////////
 resource inspectorGadgetSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' = {
   parent: inspectorGadgetSqlServer
   name: inspectorGadgetSqlDatabaseName
-  location: azureRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  location: location
+  tags: tags
   sku: {
     name: 'GP_S_Gen5'
     tier: 'GeneralPurpose'
@@ -48,7 +62,7 @@ resource inspectorGadgetSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-
     capacity: 40
   }
   properties: {
-    collation: 'SQL_Latin1_General_CP1_CI_AS'
+    collation: 'Sql_Latin1_General_CP1_CI_AS'
     maxSizeBytes: 2147483648
     zoneRedundant: true
     autoPauseDelay: 60
@@ -56,7 +70,8 @@ resource inspectorGadgetSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-
   }
 }
 
-// resource - sql database - diagnostic settings - inspectorGadgetSqlDatabase
+// Resource - Sql Database - Diagnostic Settings - Inspector Gadget
+//////////////////////////////////////////////////
 resource inspectorGadgetSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: inspectorGadgetSqlDatabase
   name: '${inspectorGadgetSqlDatabase.name}-diagnostics'
@@ -65,7 +80,7 @@ resource inspectorGadgetSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSet
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
-        category: 'SQLInsights'
+        category: 'SqlInsights'
         enabled: true
         retentionPolicy: {
           days: 7
@@ -166,10 +181,11 @@ resource inspectorGadgetSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSet
   }
 }
 
-// resource - private endpoint - sql server - inspectorGadgetSqlServer
+// Resource - Private Endpoint - Sql Server - Inspector Gadget
+//////////////////////////////////////////////////
 resource inspectorGadgetSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = {
   name: inspectorGadgetSqlServerPrivateEndpointName
-  location: azureRegion
+  location: location
   properties: {
     subnet: {
       id: privateEndpointSubnetId
@@ -188,8 +204,9 @@ resource inspectorGadgetSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpo
   }
 }
 
-// resource - prviate endpoint dns group - private endpoint - sql server - inspectorGadgetSqlServer
-resource azureSQLprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
+// Resource - Prviate Endpoint Dns Group - Private Endpoint - Inspector Gadget Sql Server
+//////////////////////////////////////////////////
+resource azureSqlprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
   name: '${inspectorGadgetSqlServerPrivateEndpoint.name}/dnsgroupname'
   dependsOn: [
     inspectorGadgetSqlServerPrivateEndpoint
@@ -199,7 +216,7 @@ resource azureSQLprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints
       {
         name: 'config1'
         properties: {
-          privateDnsZoneId: azureSQLPrivateDnsZoneId
+          privateDnsZoneId: azureSqlPrivateDnsZoneId
         }
       }
     ]

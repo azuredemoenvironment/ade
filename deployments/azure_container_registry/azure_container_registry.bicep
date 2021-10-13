@@ -1,91 +1,58 @@
-// parameters
-param location string = resourceGroup().location
+// Target Scope
+//////////////////////////////////////////////////
+targetScope = 'subscription'
+
+// Parameters
+//////////////////////////////////////////////////
+@description('The user alias and Azure region defined from user input.')
 param aliasRegion string
-param containerRegistrySPNObjectID string
 
-// variables
-var azureContainerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
-var roleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d') // role assignment definition for acr pull - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#acrpull
-var environmentName = 'production'
-var functionName = 'containerRegistry'
-var costCenterName = 'it'
+@description('The selected Azure region for deployment.')
+param azureRegion string
 
-// existing resources
-// variables
+// Global Variables
+//////////////////////////////////////////////////
+// Resource Groups
+var containerRegistryResourceGroupName = 'rg-ade-${aliasRegion}-containerregistry'
+var keyVaultResourceGroupName = 'rg-ade-${aliasRegion}-keyvault'
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
+// Resources
+var containerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
+var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
-// resource log analytics workspace
+
+// Existing Resource - Key Vault
+//////////////////////////////////////////////////
+resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing = {
+  scope: resourceGroup(keyVaultResourceGroupName)
+  name: keyVaultName
+}
+
+// Existing Resource - Log Analytics Workspace
+//////////////////////////////////////////////////
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
   scope: resourceGroup(monitorResourceGroupName)
   name: logAnalyticsWorkspaceName
 }
 
-// resource - azure container registry
-resource azureContainerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-01' = {
-  name: azureContainerRegistryName
-  location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  sku: {
-    name: 'Premium'
-  }
-  properties: {
-    adminUserEnabled: true
-  }
+// Resource Group - Container Registry
+//////////////////////////////////////////////////
+resource containerRegistryResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+  name: containerRegistryResourceGroupName
+  location: azureRegion
 }
 
-// resource - azure container registry - diagnostics
-resource azureContainerRegistryDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  name: '${azureContainerRegistry.name}-diagnostics'
-  scope: azureContainerRegistry
-  properties: {
-    workspaceId: logAnalyticsWorkspace.id
-    logAnalyticsDestinationType: 'Dedicated'
-    logs: [
-      {
-        category: 'ContainerRegistryRepositoryEvents'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'ContainerRegistryLoginEvents'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
+// Module - Container Registry
+//////////////////////////////////////////////////
+module containerRegistryModule './azure_container_registry_docker.bicep' = {
+  scope: resourceGroup(containerRegistryResourceGroupName)
+  name: 'containerRegistryDeployment'
+  dependsOn: [
+    containerRegistryResourceGroup
+  ]
+  params: {
+    containerRegistryName: containerRegistryName
+    containerRegistrySPNObjectID: keyVault.getSecret('containerRegistryObjectId')
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }
-
-// resource - role asignment - acr pull
-resource azureContainerRegistryRoleAssignments 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  scope: azureContainerRegistry
-  name: guid(resourceGroup().id, roleDefinitionId, containerRegistrySPNObjectID)
-  properties: {
-    roleDefinitionId: roleDefinitionId
-    principalId: containerRegistrySPNObjectID
-    principalType: 'ServicePrincipal'
-  }
-}
-
-// outputs
-output azureContainerRegistryURL string = azureContainerRegistry.properties.loginServer
-output azureContainerRegistryCredentials string = first(listCredentials(azureContainerRegistry.id, azureContainerRegistry.apiVersion).passwords).value

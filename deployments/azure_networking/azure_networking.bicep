@@ -110,6 +110,7 @@ resource networkingResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01'
 }
 
 // Module - Nat Gateway
+//////////////////////////////////////////////////
 module natGatewayModule './azure_nat_gateway.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'natGatewayDeployment'
@@ -123,6 +124,7 @@ module natGatewayModule './azure_nat_gateway.bicep' = {
 }
 
 // Module - Network Security Group
+//////////////////////////////////////////////////
 module networkSecurityGroupsModule './azure_network_security_group.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'networkSecurityGroupsDeployment'
@@ -142,6 +144,7 @@ module networkSecurityGroupsModule './azure_network_security_group.bicep' = {
 }
 
 // Module - Route Table
+//////////////////////////////////////////////////
 module routeTableModule './azure_route_table.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'routeTableDeployment'
@@ -154,6 +157,7 @@ module routeTableModule './azure_route_table.bicep' = {
 }
 
 // Module - Virtual Network - Virtual Network 001
+//////////////////////////////////////////////////
 module virtualNetwork001Module './azure_virtual_network_001.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'virtualNetwork001Deployment'
@@ -180,6 +184,7 @@ module virtualNetwork001Module './azure_virtual_network_001.bicep' = {
 }
 
 // Module - Virtual Network - Virtual Network 002
+//////////////////////////////////////////////////
 module virtualNetwork002Module './azure_virtual_network_002.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'virtualNetwork002Deployment'
@@ -214,6 +219,7 @@ module virtualNetwork002Module './azure_virtual_network_002.bicep' = {
 }
 
 // Module - Azure Firewall
+//////////////////////////////////////////////////
 module azureFirewallModule './azure_firewall.bicep' = if (deployAzureFirewall == true) {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'azureFirewallDeployment'
@@ -229,6 +235,7 @@ module azureFirewallModule './azure_firewall.bicep' = if (deployAzureFirewall ==
 }
 
 // Module - Azure Bastion
+//////////////////////////////////////////////////
 module azureBastionModule './azure_bastion.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'azureBastionDeployment'
@@ -244,6 +251,7 @@ module azureBastionModule './azure_bastion.bicep' = {
 }
 
 // Module - Azure Vpn Gateway
+//////////////////////////////////////////////////
 module azureVpnGatewayModule './azure_vpn_gateway.bicep' = if (deployVpnGateway == true) {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'vpnGatewayDeployment'
@@ -264,6 +272,7 @@ module azureVpnGatewayModule './azure_vpn_gateway.bicep' = if (deployVpnGateway 
 }
 
 // Module - Virtual Network Peering (deployVpnGateway == true)
+//////////////////////////////////////////////////
 module vnetPeeringVgwModule './azure_vnet_peering_vgw.bicep' = if (deployVpnGateway == true) {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'vnetPeeringVgwDeployment'
@@ -279,6 +288,7 @@ module vnetPeeringVgwModule './azure_vnet_peering_vgw.bicep' = if (deployVpnGate
 }
 
 // Module - Virtual Network Peering (deployVpnGateway == false)
+//////////////////////////////////////////////////
 module vnetPeeringNoVgwModule './azure_vnet_peering_no_vgw.bicep' = if (deployVpnGateway == false) {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'vnetPeeringNoVgwDeployment'
@@ -294,6 +304,7 @@ module vnetPeeringNoVgwModule './azure_vnet_peering_no_vgw.bicep' = if (deployVp
 }
 
 // Module - Private Dns
+//////////////////////////////////////////////////
 module privateDnsModule './azure_private_dns.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
   name: 'privateDnsDeployment'
@@ -311,6 +322,7 @@ module privateDnsModule './azure_private_dns.bicep' = {
 }
 
 // Module - Network Security Group Flow Logs
+//////////////////////////////////////////////////
 module nsgFlowLogsModule './azure_network_security_group_flow_logs.bicep' = {
   scope: resourceGroup(networkWatcherResourceGroupName)
   name: 'nsgFlowLogsDeployment'
