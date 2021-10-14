@@ -65,3 +65,24 @@ Get-AzSubscription -SubscriptionName $subscriptionName | Set-AzContext
 Write-Header 'Logging in to Docker'
 
 docker login
+
+# Customizeable Regional Support Logic
+Write-Header "Setting Region To Deploy"
+$regions = $(az account list-locations --query "[].{RegionName:name}" --output json)
+
+[int]$regionCount = ($regions | ConvertFrom-Json).count
+$regions = ($regions | ConvertFrom-Json)
+Write-Host "Found" $regionCount "regions"
+$i = 0
+foreach ($region in $regions) {
+  $sregionValue = $i
+  Write-Host $sregionValue ":" $region.regionName
+  $i++
+}
+Do {
+  [int]$regionChoice = read-host -prompt "Select number & press enter"
+} 
+until ($regionChoice -le $regionCount)
+
+Write-Host "You selected $($regions[$regionChoice].regionName). Setting 'ade_selected_region' environmental variable"
+Set-Item -Path Env:ade_selected_region -Value $regions[$regionChoice].regionName
