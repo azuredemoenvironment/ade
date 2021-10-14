@@ -85,4 +85,5 @@ Do {
 until ($regionChoice -le $regionCount)
 
 Write-Host "You selected $($regions[$regionChoice].regionName). Setting 'ade_selected_region' environmental variable"
+# ade_selected_region (underscores versus '-' due to Windows vs Linux compatibility)
 Set-Item -Path Env:ade_selected_region -Value $regions[$regionChoice].regionName
