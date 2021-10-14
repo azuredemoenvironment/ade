@@ -9,22 +9,27 @@ Write-Header "Logging in to az CLI"
 
 az login
 
+$subscriptions = $(az account list --query "[].{Name:name,subscriptionId:id}" --output json) | ConvertFrom-Json
+[int]$subscriptionCount = $subscriptions.count
+[int]$subscriptionChoice = $null;
 if ($subscriptionName -eq $null -or $subscriptionName -eq "") {
     # get all subscriptions and save into variable
-    $subscriptions = $(az account list --query "[].{Name:name,subscriptionId:id}" --output json) | ConvertFrom-Json
+    #$subscriptions = $(az account list --query "[].{Name:name,subscriptionId:id}" --output json) | ConvertFrom-Json
 
     # get a count of subscriptions for loop
-    [int]$subscriptionCount = $subscriptions.count
-    if (1 -eq $subscriptionCount) {
-        $subscriptionName = $subscriptions[0].Name
-        break
-    }
+    #[int]$subscriptionCount = $subscriptions.count
+    # if (1 -eq $subscriptionCount) {
+    #     $subscriptionName = $subscriptions[0].Name
+    #     return
+    # }
 
     Write-Header "Select a Subscription; found $subscriptionCount"
     
     # starting value for array for loop
     $i = 0
     foreach ($subscription in $subscriptions) {
+
+        
         # start of menu - value = 0
         $subValue = $i
 
@@ -34,18 +39,24 @@ if ($subscriptionName -eq $null -or $subscriptionName -eq "") {
         # increment value
         $i++
     }
-
-    Do {
-        # repeat loop until valid number is chosen
-        [int]$subscriptionChoice = read-host -prompt "Select number & press enter"
-    }
-
-    # exit criteria for loop
-    until ($subscriptionChoice -le $subscriptionCount)
-
-    Write-Host "You selected" $subscriptions[$subscriptionChoice].Name
-    $subscriptionName = $subscriptions[$subscriptionChoice].Name
 }
+
+Do {
+    # repeat loop until valid number is chosen
+     if (1 -eq $subscriptionCount) {
+        $subscriptionName = $subscriptions[0].Name
+        $subscriptionChoice -le $subscriptionCount
+        break
+    }
+    $subscriptionChoice = read-host -prompt "Select number & press enter"
+}
+
+
+# exit criteria for loop
+until ($subscriptionChoice -le $subscriptionCount)
+
+Write-Host "You selected" $subscriptions[$subscriptionChoice].Name
+$subscriptionName = $subscriptions[$subscriptionChoice].Name
 
 Write-Header "Setting az CLI Subscription to $subscriptionName"
 
@@ -66,6 +77,6 @@ Write-Header "Setting Az PowerShell Subscription to $subscriptionName"
 
 Get-AzSubscription -SubscriptionName $subscriptionName | Set-AzContext
 
-# Write-Header 'Logging in to Docker'
+Write-Header 'Logging in to Docker'
 
-# docker login
+docker login
