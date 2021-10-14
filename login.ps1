@@ -15,6 +15,10 @@ if ($subscriptionName -eq $null -or $subscriptionName -eq "") {
 
     # get a count of subscriptions for loop
     [int]$subscriptionCount = $subscriptions.count
+    if (1 -eq $subscriptionCount) {
+        $subscriptionName = $subscriptions[0].Name
+        break
+    }
 
     Write-Header "Select a Subscription; found $subscriptionCount"
     
@@ -62,6 +66,6 @@ Write-Header "Setting Az PowerShell Subscription to $subscriptionName"
 
 Get-AzSubscription -SubscriptionName $subscriptionName | Set-AzContext
 
-Write-Header 'Logging in to Docker'
+# Write-Header 'Logging in to Docker'
 
-docker login
+# docker login
