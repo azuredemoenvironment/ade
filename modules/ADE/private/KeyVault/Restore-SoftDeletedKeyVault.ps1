@@ -2,7 +2,11 @@ function Restore-SoftDeleteKeyVault {
     param(
         [string] $KeyVaultName       
     )
-    Write-Log "Restoring Soft-Delete KeyVault by running: az keyvault recover -n $KeyVaultName | Out-Null" 
+
+    Write-ScriptSection "Restoring Soft-Deleted KeyVault $KeyVaultName"
+
     az keyvault recover -n $KeyVaultName | Out-Null
     Confirm-LastExitCode
+
+    Write-Log "Restored Soft-Deleted KeyVault $KeyVaultName"
 }
