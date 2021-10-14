@@ -34,10 +34,10 @@ function Deploy-AzureDemoEnvironment {
     
     # Core Services
     ###################################
-    # Deploy-AzureResourceGroups $armParameters
-    # Deploy-AzureGovernance $armParameters
+    Deploy-AzureResourceGroups $armParameters
+    Deploy-AzureGovernance $armParameters
     Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
-    <#Deploy-AzureNetworking $armParameters
+    Deploy-AzureNetworking $armParameters
     Deploy-AzureContainerRegistry $armParameters
     
     # Data Services
@@ -64,7 +64,6 @@ function Deploy-AzureDemoEnvironment {
     ###################################
     Deploy-AzureAlerts $armParameters
     Deploy-AzureDns $armParameters
-    #>
 
     $stopwatch.Stop()
     $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)
