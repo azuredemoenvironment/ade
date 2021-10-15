@@ -62,6 +62,7 @@ Write-Header "Setting Az PowerShell Subscription to $subscriptionName"
 
 Get-AzSubscription -SubscriptionName $subscriptionName | Set-AzContext
 
-Write-Header 'Logging in to Docker'
+# TODO: re-enable docker when it's relevant again
+# Write-Header 'Logging in to Docker'
 
-docker login
+# docker login
