@@ -75,10 +75,16 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
         objectId: containerRegistryManagedIdentityPrincipalID
         tenantId: subscription().tenantId
         permissions: {
+          certificates: [
+            'get'
+          ]
           keys: [
             'get'
             'unwrapKey'
             'wrapKey'
+          ]
+          secrets: [
+            'get'
           ]
         }
       }
@@ -86,10 +92,10 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
         objectId: 'abfa0a7c-a6b6-4736-8310-5855508787cd'
         tenantId: subscription().tenantId
         permissions: {
-          secrets: [
+          certificates: [
             'get'
           ]
-          certificates: [
+          secrets: [
             'get'
           ]
         }

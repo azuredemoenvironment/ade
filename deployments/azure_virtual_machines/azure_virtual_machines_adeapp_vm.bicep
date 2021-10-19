@@ -6,6 +6,9 @@ param acrPassword string
 @description('The name of the admin user of the Azure Container Registry.')
 param acrServerName string
 
+@description('The ID of the ADE App Vmss Load Balancer Backend Pool.')
+param adeAppVmLoadBalancerBackendPoolId string
+
 @description('The private Ip address of the ADE App Vm Load Balancer.')
 param adeAppVmLoadBalancerPrivateIpAddress string
 
@@ -65,6 +68,11 @@ resource adeAppVmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for ade
           subnet: {
             id: adeAppVmSubnetId
           }
+          loadBalancerBackendAddressPools: [
+            {
+              id: adeAppVmLoadBalancerBackendPoolId
+            }
+          ]
         }
       }
     ]

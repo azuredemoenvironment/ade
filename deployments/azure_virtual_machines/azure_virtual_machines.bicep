@@ -327,6 +327,7 @@ module adeAppVmModule 'azure_virtual_machines_adeapp_vm.bicep' = {
   params: {
     acrPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     acrServerName: containerRegistryName
+    adeAppVmLoadBalancerBackendPoolId: adeAppVmLoadBalancerModule.outputs.adeAppVmLoadBalancerBackendPoolId
     adeAppVmLoadBalancerPrivateIpAddress: adeAppVmLoadBalancerPrivateIpAddress
     adeAppVirtualMachines: adeAppVirtualMachines
     adeAppVmSubnetId: virtualNetwork002::adeAppVmSubnet.id
