@@ -16,69 +16,132 @@ param azureRegion string
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
+var adeAppVmResourceGroupName = 'rg-ade-${aliasRegion}-adeappvm'
+var adeAppVmssResourceGroupName = 'rg-ade-${aliasRegion}-adeappvmss'
 var appConfigResourceGroupName = 'rg-ade-${aliasRegion}-appconfiguration'
 var containerRegistryResourceGroupName = 'rg-ade-${aliasRegion}-containerregistry'
 var jumpboxResourceGroupName = 'rg-ade-${aliasRegion}-jumpbox'
 var keyVaultResourceGroupName = 'rg-ade-${aliasRegion}-keyvault'
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 var networkingResourceGroupName = 'rg-ade-${aliasRegion}-networking'
-var nTierResourceGroupName = 'rg-ade-${aliasRegion}-ntier'
-var vmssResourceGroupName = 'rg-ade-${aliasRegion}-vmss'
-var w10clientResourceGroupName = 'rg-ade-${aliasRegion}-w10client'
+var proximityPlacementGroupResourceGroupName = 'rg-ade-${aliasRegion}-proximityplacementgroup'
 // Resources
+var adeAppModuleName = 'backend'
+var adeAppVirtualMachines = [
+  {
+    name: adeAppVm01Name
+    nicName: adeAppVm01NICName
+    osDiskName: adeAppVm01OSDiskName
+    availabilityZone: '1'
+    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupAz1Id
+    adeModule: adeAppModuleName
+  }
+  {
+    name: adeAppVm02Name
+    nicName: adeAppVm02NICName
+    osDiskName: adeAppVm02OSDiskName
+    availabilityZone: '2'
+    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupAz2Id
+    adeModule: adeAppModuleName
+  }
+  {
+    name: adeAppVm03Name
+    nicName: adeAppVm03NICName
+    osDiskName: adeAppVm03OSDiskName
+    availabilityZone: '3'
+    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupAz3Id
+    adeModule: adeAppModuleName
+  }
+]
+var adeAppVm01Name = 'vm-ade-${aliasRegion}-adeapp01'
+var adeAppVm01NICName = 'nic-ade-${aliasRegion}-adeapp01'
+var adeAppVm01OSDiskName = 'disk-ade-${aliasRegion}-adeapp01-os'
+var adeAppVm02Name = 'vm-ade-${aliasRegion}-adeapp02'
+var adeAppVm02NICName = 'nic-ade-${aliasRegion}-adeapp02'
+var adeAppVm02OSDiskName = 'disk-ade-${aliasRegion}-adeapp02-os'
+var adeAppVm03Name = 'vm-ade-${aliasRegion}-adeapp03'
+var adeAppVm03NICName = 'nic-ade-${aliasRegion}-adeapp03'
+var adeAppVm03OSDiskName = 'disk-ade-${aliasRegion}-adeapp03-os'
+var adeAppVmLoadBalancerName = 'lbi-ade-${aliasRegion}-adeapp-vm'
+var adeAppVmLoadBalancerPrivateIpAddress = '10.102.2.4'
+var adeAppVmssLoadBalancerName = 'lbi-ade-${aliasRegion}-adeapp-vmss'
+var adeAppVmssLoadBalancerPrivateIpAddress = '10.102.12.4'
+var adeAppVmssName = 'vmss-ade-${aliasRegion}-adeapp-vmss'
+var adeAppVmssNICName = 'nic-ade-${aliasRegion}-adeapp-vmss'
+var adeAppVmssSubnetName = 'snet-ade-${aliasRegion}-adeapp-vmss'
+var adeAppVmSubnetName = 'snet-ade-${aliasRegion}-adeapp-vm'
+var adeWebModuleName = 'frontend'
+var adeWebVirtualMachines = [
+  {
+    name: adeWebVm01Name
+    nicName: adeWebVm01NICName
+    osDiskName: adeWebVm01OSDiskName
+    availabilityZone: '1'
+    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupAz1Id
+    adeModule: adeWebModuleName
+  }
+  {
+    name: adeWebVm02Name
+    nicName: adeWebVm02NICName
+    osDiskName: adeWebVm02OSDiskName
+    availabilityZone: '2'
+    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupAz2Id
+    adeModule: adeWebModuleName
+  }
+  {
+    name: adeWebVm03Name
+    nicName: adeWebVm03NICName
+    osDiskName: adeWebVm03OSDiskName
+    availabilityZone: '3'
+    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupAz3Id
+    adeModule: adeWebModuleName
+  }
+]
+var adeWebVm01Name = 'vm-ade-${aliasRegion}-adeweb01'
+var adeWebVm01NICName = 'nic-ade-${aliasRegion}-adeweb01'
+var adeWebVm01OSDiskName = 'disk-ade-${aliasRegion}-adeweb01-os'
+var adeWebVm02Name = 'vm-ade-${aliasRegion}-adeweb02'
+var adeWebVm02NICName = 'nic-ade-${aliasRegion}-adeweb02'
+var adeWebVm02OSDiskName = 'disk-ade-${aliasRegion}-adeweb02-os'
+var adeWebVm03Name = 'vm-ade-${aliasRegion}-adeweb03'
+var adeWebVm03NICName = 'nic-ade-${aliasRegion}-adeweb03'
+var adeWebVm03OSDiskName = 'disk-ade-${aliasRegion}-adeweb03-os'
+var adeWebVmssName = 'vmss-ade-${aliasRegion}-adeweb-vmss'
+var adeWebVmssNICName = 'nic-ade-${aliasRegion}-adeweb-vmss'
+var adeWebVmssSubnetName = 'snet-ade-${aliasRegion}-adeweb-vmss'
+var adeWebVmSubnetName = 'snet-ade-${aliasRegion}-adeweb-vm'
 var appConfigName = 'appcs-ade-${aliasRegion}-001'
-var clientServicesSubnetName = 'snet-ade-${aliasRegion}-clientServices'
+var backendServices = [
+  {
+    name: 'DataIngestorService'
+    port: 5000
+  }
+  {
+    name: 'DataReporterService'
+    port: 5001
+  }
+  {
+    name: 'UserService'
+    port: 5002
+  }
+  {
+    name: 'EventIngestorService'
+    port: 5003
+  }
+]
 var containerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
 var jumpboxName = 'vm-jumpbox01'
 var jumpboxNICName = 'nic-ade-${aliasRegion}-jumpbox01'
 var jumpboxOSDiskName = 'osdisk-ade-${aliasRegion}-jumpbox01'
-var jumpboxPrivateIpAddress = '10.101.31.4'
 var jumpboxPublicIpAddressName = 'pip-ade-${aliasRegion}-jumpbox01'
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 var managementSubnetName = 'snet-ade-${aliasRegion}-management'
-var nTierApp01Name = 'vm-ntierapp01'
-var nTierApp01NICName = 'nic-ade-${aliasRegion}-ntierapp01'
-var nTierApp01OSDiskName = 'disk-ade-${aliasRegion}-ntierapp01-os'
-var nTierApp01PrivateIpAddress = '10.102.2.5'
-var nTierApp02Name = 'vm-ntierapp02'
-var nTierApp02NICName = 'nic-ade-${aliasRegion}-ntierapp02'
-var nTierApp02OSDiskName = 'disk-ade-${aliasRegion}-ntierapp02-os'
-var nTierApp02PrivateIpAddress = '10.102.2.6'
-var nTierApp03Name = 'vm-ntierapp03'
-var nTierApp03NICName = 'nic-ade-${aliasRegion}-ntierapp03'
-var nTierApp03OSDiskName = 'disk-ade-${aliasRegion}-ntierapp03-os'
-var nTierApp03PrivateIpAddress = '10.102.2.7'
-var nTierAppLoadBalancerName = 'lbi-ade-${aliasRegion}-ntierapp'
-var nTierAppLoadBalancerPrivateIpAddress = '10.102.2.4'
-var nTierAppSubnetName = 'snet-ade-${aliasRegion}-nTierApp'
-var nTierWeb01Name = 'vm-ntierweb01'
-var nTierWeb01NICName = 'nic-ade-${aliasRegion}-ntierweb01'
-var nTierWeb01OSDiskName = 'disk-ade-${aliasRegion}-ntierweb01-os'
-var nTierWeb01PrivateIpAddress = '10.102.1.5'
-var nTierWeb02Name = 'vm-ntierweb02'
-var nTierWeb02NICName = 'nic-ade-${aliasRegion}-ntierweb02'
-var nTierWeb02OSDiskName = 'disk-ade-${aliasRegion}-ntierweb02-os'
-var nTierWeb02PrivateIpAddress = '10.102.1.6'
-var nTierWeb03Name = 'vm-ntierweb03'
-var nTierWeb03NICName = 'nic-ade-${aliasRegion}-ntierweb03'
-var nTierWeb03OSDiskName = 'disk-ade-${aliasRegion}-ntierweb03-os'
-var nTierWeb03PrivateIpAddress = '10.102.1.7'
-var nTierWebSubnetName = 'snet-ade-${aliasRegion}-nTierWeb'
 var proximityPlacementGroupAz1Name = 'ppg-ade-${aliasRegion}-ntier-az1'
 var proximityPlacementGroupAz2Name = 'ppg-ade-${aliasRegion}-ntier-az2'
 var proximityPlacementGroupAz3Name = 'ppg-ade-${aliasRegion}-ntier-az3'
 var virtualNetwork001Name = 'vnet-ade-${aliasRegion}-001'
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
-var vmssLoadBalancerName = 'lbe-ade-${aliasRegion}-vmss01'
-var vmssLoadBalancerPublicIpAddressName = 'pip-ade-${aliasRegion}-vmss01'
-var vmssName = 'vmss01'
-var vmssNICName = 'nic-ade-${aliasRegion}-vmss01'
-var vmssSubnetName = 'snet-ade-${aliasRegion}-vmss'
-var w10ClientName = 'vm-w10client'
-var w10ClientNICName = 'nic-ade-${aliasRegion}-w10client'
-var w10ClientOSDiskName = 'disk-ade-${aliasRegion}-w10client-os'
-var w10ClientPrivateIpAddress = '10.102.21.4'
 
 // Existing Resource - App Config
 //////////////////////////////////////////////////
@@ -123,17 +186,17 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' existi
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
   name: virtualNetwork002Name
-  resource nTierWebSubnet 'subnets@2020-07-01' existing = {
-    name: nTierWebSubnetName
+  resource adeWebVmSubnet 'subnets@2020-07-01' existing = {
+    name: adeWebVmSubnetName
   }
-  resource nTierAppSubnet 'subnets@2020-07-01' existing = {
-    name: nTierAppSubnetName
+  resource adeAppVmSubnet 'subnets@2020-07-01' existing = {
+    name: adeAppVmSubnetName
   }
-  resource vmssSubnet 'subnets@2020-07-01' existing = {
-    name: vmssSubnetName
+  resource adeWebVmssSubnet 'subnets@2020-07-01' existing = {
+    name: adeWebVmssSubnetName
   }
-  resource clientServicesSubnet 'subnets@2020-07-01' existing = {
-    name: clientServicesSubnetName
+  resource adeAppVmssSubnet 'subnets@2020-07-01' existing = {
+    name: adeAppVmssSubnetName
   }
 }
 
@@ -144,24 +207,24 @@ resource jumpboxResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = 
   location: azureRegion
 }
 
-// Resource Group - Ntier
+// Resource Group - Proximity Placement Group
 //////////////////////////////////////////////////
-resource nTierResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
-  name: nTierResourceGroupName
+resource proximityPlacementGroupResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+  name: proximityPlacementGroupResourceGroupName
   location: azureRegion
 }
 
-// Resource Group - Vmss
+// Resource Group - ADE App Vm
 //////////////////////////////////////////////////
-resource vmssResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
-  name: vmssResourceGroupName
+resource adeAppVmResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+  name: adeAppVmResourceGroupName
   location: azureRegion
 }
 
-// Resource Group - W10client
+// Resource Group - ADE App Vmss
 //////////////////////////////////////////////////
-resource w10clientResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
-  name: w10clientResourceGroupName
+resource adeAppVmssResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+  name: adeAppVmssResourceGroupName
   location: azureRegion
 }
 
@@ -179,7 +242,6 @@ module jumpBoxModule './azure_virtual_machines_jumpbox.bicep' = {
     jumpboxName: jumpboxName
     jumpboxNICName: jumpboxNICName
     jumpboxOSDiskName: jumpboxOSDiskName
-    jumpboxPrivateIpAddress: jumpboxPrivateIpAddress
     jumpboxPublicIpAddressName: jumpboxPublicIpAddressName
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
@@ -188,97 +250,151 @@ module jumpBoxModule './azure_virtual_machines_jumpbox.bicep' = {
   }
 }
 
-// Module - Ntier
+// Module - Proximity Placement Group
 //////////////////////////////////////////////////
-module nTierModule './azure_virtual_machines_ntier.bicep' = {
-  scope: resourceGroup(nTierResourceGroupName)
-  name: 'nTierDeployment'
+module proximityPlacementGroupModule 'azure_proximity_placement_groups_adeapp.bicep' = {
+  scope: resourceGroup(proximityPlacementGroupResourceGroupName)
+  name: 'proximityPlacementGroupDeployment'
   dependsOn: [
-    nTierResourceGroup
+    proximityPlacementGroupResourceGroup
   ]
   params: {
-    acrPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
-    acrServerName: containerRegistryName
-    adminPassword: keyVault.getSecret('resourcePassword')
-    adminUserName: adminUserName
-    appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
-    appConfigName: appConfig.name
-    appConfigResourceGroupName: appConfigResourceGroupName
-    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
-    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
-    nTierApp01Name: nTierApp01Name
-    nTierApp01NICName: nTierApp01NICName
-    nTierApp01OSDiskName: nTierApp01OSDiskName
-    nTierApp01PrivateIpAddress: nTierApp01PrivateIpAddress
-    nTierApp02Name: nTierApp02Name
-    nTierApp02NICName: nTierApp02NICName
-    nTierApp02OSDiskName: nTierApp02OSDiskName
-    nTierApp02PrivateIpAddress: nTierApp02PrivateIpAddress
-    nTierApp03Name: nTierApp03Name
-    nTierApp03NICName: nTierApp03NICName
-    nTierApp03OSDiskName: nTierApp03OSDiskName
-    nTierApp03PrivateIpAddress: nTierApp03PrivateIpAddress
-    nTierAppLoadBalancerName: nTierAppLoadBalancerName
-    nTierAppLoadBalancerPrivateIpAddress: nTierAppLoadBalancerPrivateIpAddress
-    nTierAppSubnetId: virtualNetwork002::nTierAppSubnet.id
-    nTierWeb01Name: nTierWeb01Name
-    nTierWeb01NICName: nTierWeb01NICName
-    nTierWeb01OSDiskName: nTierWeb01OSDiskName
-    nTierWeb01PrivateIpAddress: nTierWeb01PrivateIpAddress
-    nTierWeb02Name: nTierWeb02Name
-    nTierWeb02NICName: nTierWeb02NICName
-    nTierWeb02OSDiskName: nTierWeb02OSDiskName
-    nTierWeb02PrivateIpAddress: nTierWeb02PrivateIpAddress
-    nTierWeb03Name: nTierWeb03Name
-    nTierWeb03NICName: nTierWeb03NICName
-    nTierWeb03OSDiskName: nTierWeb03OSDiskName
-    nTierWeb03PrivateIpAddress: nTierWeb03PrivateIpAddress
-    nTierWebSubnetId: virtualNetwork002::nTierWebSubnet.id
     proximityPlacementGroupAz1Name: proximityPlacementGroupAz1Name
     proximityPlacementGroupAz2Name: proximityPlacementGroupAz2Name
     proximityPlacementGroupAz3Name: proximityPlacementGroupAz3Name
   }
 }
 
-// Module - Vmss
+// Module - Load Balancer - ADE App Vm
 //////////////////////////////////////////////////
-module vmssModule 'azure_virtual_machines_vmss.bicep' = {
-  scope: resourceGroup(vmssResourceGroupName)
-  name: 'vmssDeployment'
-  dependsOn: [
-    vmssResourceGroup
-  ]
+module adeAppVmLoadBalancerModule 'azure_load_balancers_adeapp_vm.bicep' = {
+  scope: resourceGroup(adeAppVmResourceGroupName)
+  name: 'adeAppVmLoadBalancerDeployment'
   params: {
-    adminPassword: keyVault.getSecret('resourcePassword')
-    adminUserName: adminUserName
-    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
+    adeAppVmLoadBalancerName: adeAppVmLoadBalancerName
+    adeAppVmLoadBalancerPrivateIpAddress: adeAppVmLoadBalancerPrivateIpAddress
+    adeAppVmSubnetId: virtualNetwork002::adeAppVmSubnet.id
+    backendServices: backendServices
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
-    vmssLoadBalancerName: vmssLoadBalancerName
-    vmssLoadBalancerPublicIpAddressName: vmssLoadBalancerPublicIpAddressName
-    vmssName: vmssName
-    vmssNICName: vmssNICName
-    vmssSubnetId: virtualNetwork002::vmssSubnet.id
   }
 }
 
-// Module - Windows 10 Client
+// Module - Load Balancer - ADE App Vmss
 //////////////////////////////////////////////////
-module w10ClientModule './azure_virtual_machines_w10client.bicep' = {
-  scope: resourceGroup(w10clientResourceGroupName)
-  name: 'w10ClientDeployment'
+module adeAppVmssLoadBalancerModule 'azure_load_balancers_adeapp_vmss.bicep' = {
+  scope: resourceGroup(adeAppVmssResourceGroupName)
+  name: 'adeAppVmssLoadBalancerDeployment'
+  params: {
+    adeAppVmssLoadBalancerName: adeAppVmssLoadBalancerName
+    adeAppVmssLoadBalancerPrivateIpAddress: adeAppVmssLoadBalancerPrivateIpAddress
+    adeAppVmssSubnetId: virtualNetwork002::adeAppVmssSubnet.id
+    backendServices: backendServices
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+  }
+}
+
+// Module - ADE Web Vm
+//////////////////////////////////////////////////
+module adeWebVmModule 'azure_virtual_machines_adeweb_vm.bicep' = {
+  scope: resourceGroup(adeAppVmResourceGroupName)
+  name: 'adeWebVmDeployment'
   dependsOn: [
-    w10clientResourceGroup
+    adeAppVmResourceGroup
   ]
   params: {
+    acrPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
+    acrServerName: containerRegistryName
+    adeAppVmLoadBalancerPrivateIpAddress: adeAppVmLoadBalancerPrivateIpAddress
+    adeWebVirtualMachines: adeWebVirtualMachines
+    adeWebVmSubnetId: virtualNetwork002::adeWebVmSubnet.id
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
-    clientServicesSubnetId: virtualNetwork002::clientServicesSubnet.id
+    appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
+    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    w10ClientName: w10ClientName
-    w10ClientNICName: w10ClientNICName
-    w10ClientOSDiskName: w10ClientOSDiskName
-    w10ClientPrivateIpAddress: w10ClientPrivateIpAddress
+    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+  }
+}
+
+// Module - ADE App Vm
+//////////////////////////////////////////////////
+module adeAppVmModule 'azure_virtual_machines_adeapp_vm.bicep' = {
+  scope: resourceGroup(adeAppVmResourceGroupName)
+  name: 'adeAppVmDeployment'
+  dependsOn: [
+    adeAppVmResourceGroup
+  ]
+  params: {
+    acrPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
+    acrServerName: containerRegistryName
+    adeAppVmLoadBalancerPrivateIpAddress: adeAppVmLoadBalancerPrivateIpAddress
+    adeAppVirtualMachines: adeAppVirtualMachines
+    adeAppVmSubnetId: virtualNetwork002::adeAppVmSubnet.id
+    adminPassword: keyVault.getSecret('resourcePassword')
+    adminUserName: adminUserName
+    appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
+    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+  }
+}
+
+// Module - ADE Web Vmss
+//////////////////////////////////////////////////
+module adeWebVmssModule 'azure_virtual_machines_adeweb_vmss.bicep' = {
+  scope: resourceGroup(adeAppVmssResourceGroupName)
+  name: 'adeWebVmssDeployment'
+  dependsOn: [
+    adeAppVmssResourceGroup
+  ]
+  params: {
+    acrPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
+    acrServerName: containerRegistryName
+    adeAppVmssLoadBalancerPrivateIpAddress: adeAppVmssLoadBalancerPrivateIpAddress
+    adeWebModuleName: adeWebModuleName
+    adeWebVmssName: adeWebVmssName
+    adeWebVmssNICName: adeWebVmssNICName
+    adeWebVmssSubnetId: virtualNetwork002::adeWebVmssSubnet.id
+    adminPassword: keyVault.getSecret('resourcePassword')
+    adminUserName: adminUserName
+    appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
+    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
+    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+  }
+}
+
+// Module - ADE App Vmss
+//////////////////////////////////////////////////
+module adeAppVmssModule 'azure_virtual_machines_adeapp_vmss.bicep' = {
+  scope: resourceGroup(adeAppVmssResourceGroupName)
+  name: 'adeAppVmssDeployment'
+  dependsOn: [
+    adeAppVmssResourceGroup
+  ]
+  params: {
+    acrPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
+    acrServerName: containerRegistryName
+    adeAppModuleName: adeAppModuleName
+    adeAppVmssLoadBalancerBackendPoolId: adeAppVmssLoadBalancerModule.outputs.adeAppVmssLoadBalancerBackendPoolId
+    adeAppVmssLoadBalancerPrivateIpAddress: adeAppVmssLoadBalancerPrivateIpAddress
+    adeAppVmssName: adeAppVmssName
+    adeAppVmssNICName: adeAppVmssNICName
+    adeAppVmssSubnetId: virtualNetwork002::adeAppVmssSubnet.id
+    adminPassword: keyVault.getSecret('resourcePassword')
+    adminUserName: adminUserName
+    appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
+    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
+    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+  }
+}
+
+// Module - App Configuration - Virtual Machines
+//////////////////////////////////////////////////
+module appConfigVirtualMachines 'azure_app_config_virtual_machines.bicep' = {
+  scope: resourceGroup(appConfigResourceGroupName)
+  name: 'azureAppServicesAdeAppConfigDeployment'
+  params: {
+    appConfigName: appConfigName
+    backendServices: backendServices
   }
 }

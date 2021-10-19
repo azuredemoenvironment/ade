@@ -1,10 +1,19 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the Azure Basion Subnet NSG.')
-param azureBastionSubnetNSGName string
+@description('The name of the ADE App Vmss Subnet NSG.')
+param adeAppVmssSubnetNSGName string
 
-@description('The name of the Client Services Subnet NSG.')
-param clientServicesSubnetNSGName string
+@description('The name of the ADE App Vm Subnet NSG.')
+param adeAppVmSubnetNSGName string
+
+@description('The name of the ADE Web Vmss Subnet NSG.')
+param adeWebVmssSubnetNSGName string
+
+@description('The name of the ADE Web Vm Subnet NSG.')
+param adeWebVmSubnetNSGName string
+
+@description('The name of the Azure Bastion Subnet NSG.')
+param azureBastionSubnetNSGName string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
@@ -12,17 +21,8 @@ param logAnalyticsWorkspaceId string
 @description('The name of the Management Subnet NSG.')
 param managementSubnetNSGName string
 
-@description('The name of the NTier App Subnet NSG.')
-param nTierAppSubnetNSGName string
-
-@description('The name of the NTier Web Subnet NSG.')
-param nTierWebSubnetNSGName string
-
 @description('The public IP address of the on-premises network.')
 param sourceAddressPrefix string
-
-@description('The name of the VMSS Subnet NSG.')
-param vmssSubnetNSGName string
 
 // Variables
 //////////////////////////////////////////////////
@@ -159,7 +159,7 @@ resource managementSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01
   }
 }
 
-// Resource - Network Security Group - Diagnostic Settings - Azure Bastion Subnet
+// Resource - Network Security Group - Diagnostic Settings - Management Subnet
 //////////////////////////////////////////////////
 resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: managementSubnetNSG
@@ -188,10 +188,10 @@ resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2
   }
 }
 
-// Resource - Network Security Group - Ntier Web Subnet
+// Resource - Network Security Group - ADE Web Vm Subnet
 //////////////////////////////////////////////////
-resource nTierWebSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
-  name: nTierWebSubnetNSGName
+resource adeWebVmSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
+  name: adeWebVmSubnetNSGName
   location: location
   tags: tags
   properties: {
@@ -199,11 +199,11 @@ resource nTierWebSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' 
   }
 }
 
-// Resource - Network Security Group - Diagnostic Settings - Ntier Web Subnet
+// Resource - Network Security Group - Diagnostic Settings - ADE Web Vm Subnet
 //////////////////////////////////////////////////
-resource nTierWebSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: nTierWebSubnetNSG
-  name: '${nTierWebSubnetNSG.name}-diagnostics'
+resource adeWebVmSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: adeWebVmSubnetNSG
+  name: '${adeWebVmSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
@@ -228,10 +228,10 @@ resource nTierWebSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@202
   }
 }
 
-// Resource - Network Security Group - Ntier App Subnet
+// Resource - Network Security Group - ADE App Vm Subnet
 //////////////////////////////////////////////////
-resource nTierAppSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
-  name: nTierAppSubnetNSGName
+resource adeAppVmSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
+  name: adeAppVmSubnetNSGName
   location: location
   tags: tags
   properties: {
@@ -239,11 +239,11 @@ resource nTierAppSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' 
   }
 }
 
-// Resource - Network Security Group - Diagnostic Settings - Ntier App Subnet
+// Resource - Network Security Group - Diagnostic Settings - ADE App Vm Subnet
 //////////////////////////////////////////////////
-resource nTierAppSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: nTierAppSubnetNSG
-  name: '${nTierAppSubnetNSG.name}-diagnostics'
+resource adeAppVmSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: adeAppVmSubnetNSG
+  name: '${adeAppVmSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
@@ -268,37 +268,22 @@ resource nTierAppSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@202
   }
 }
 
-// Resource - Network Security Group - Vmss Subnet
+// Resource - Network Security Group - ADE Web Vmss Subnet
 //////////////////////////////////////////////////
-resource vmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
-  name: vmssSubnetNSGName
+resource adeWebVmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
+  name: adeWebVmssSubnetNSGName
   location: location
   tags: tags
   properties: {
-    securityRules: [
-      {
-        name: 'HTTP_Inbound'
-        properties: {
-          description: 'Allow HTTP Inbound Over Port 9000'
-          protocol: 'Tcp'
-          sourcePortRange: '*'
-          destinationPortRange: '9000'
-          sourceAddressPrefix: sourceAddressPrefix
-          destinationAddressPrefix: '*'
-          access: 'Allow'
-          priority: 100
-          direction: 'Inbound'
-        }
-      }
-    ]
+    securityRules: []
   }
 }
 
-// Resource - Network Security Group - Diagnostic Settings - Vmss Subnet
+// Resource - Network Security Group - Diagnostic Settings - ADE Web Vmss Subnet
 //////////////////////////////////////////////////
-resource vmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: vmssSubnetNSG
-  name: '${vmssSubnetNSG.name}-diagnostics'
+resource adeWebVmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: adeWebVmssSubnetNSG
+  name: '${adeWebVmssSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
@@ -323,10 +308,10 @@ resource vmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05
   }
 }
 
-// Resource - Network Security Group - Client Services Subnet
+// Resource - Network Security Group - ADE App Vmss Subnet
 //////////////////////////////////////////////////
-resource clientServicesSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
-  name: clientServicesSubnetNSGName
+resource adeAppVmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
+  name: adeAppVmssSubnetNSGName
   location: location
   tags: tags
   properties: {
@@ -334,11 +319,11 @@ resource clientServicesSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-0
   }
 }
 
-// Resource - Network Security Group - Diagnostic Settings - Client Services Subnet
+// Resource - Network Security Group - Diagnostic Settings - ADE App Vmss Subnet
 //////////////////////////////////////////////////
-resource clientServicesSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: clientServicesSubnetNSG
-  name: '${clientServicesSubnetNSG.name}-diagnostics'
+resource adeAppVmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: adeAppVmssSubnetNSG
+  name: '${adeAppVmssSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
@@ -367,10 +352,10 @@ resource clientServicesSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettin
 //////////////////////////////////////////////////
 output azureBastionSubnetNSGId string = azureBastionSubnetNSG.id
 output managementSubnetNSGId string = managementSubnetNSG.id
-output nTierWebSubnetNSGId string = nTierWebSubnetNSG.id
-output nTierAppSubnetNSGId string = nTierAppSubnetNSG.id
-output vmssSubnetNSGId string = vmssSubnetNSG.id
-output clientServicesSubnetNSGId string = clientServicesSubnetNSG.id
+output adeWebVmSubnetNSGId string = adeWebVmSubnetNSG.id
+output adeAppVmSubnetNSGId string = adeAppVmSubnetNSG.id
+output adeWebVmssSubnetNSGId string = adeWebVmssSubnetNSG.id
+output adeAppVmssSubnetNSGId string = adeAppVmssSubnetNSG.id
 output nsgConfigurations array = [
   {
     name: 'azureBastionSubnet'
@@ -381,19 +366,19 @@ output nsgConfigurations array = [
     id: managementSubnetNSG.id
   }
   {
-    name: 'nTierWebSubnet'
-    id: nTierWebSubnetNSG.id
+    name: 'adeWebVmSubnet'
+    id: adeWebVmSubnetNSG.id
   }
   {
-    name: 'nTierAppSubnet'
-    id: nTierAppSubnetNSG.id
+    name: 'adeAppVmSubnet'
+    id: adeAppVmSubnetNSG.id
   }
   {
-    name: 'vmssSubnet'
-    id: vmssSubnetNSG.id
+    name: 'adeWebVmssSubnet'
+    id: adeWebVmssSubnetNSG.id
   }
   {
-    name: 'clientServicesSubnet'
-    id: clientServicesSubnetNSG.id
+    name: 'adeAppVmssSubnet'
+    id: adeAppVmssSubnetNSG.id
   }
 ]

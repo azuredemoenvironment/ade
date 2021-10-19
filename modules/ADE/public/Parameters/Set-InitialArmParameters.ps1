@@ -61,10 +61,6 @@ function Set-InitialArmParameters {
         'applicationGatewayPublicIPAddressName' = "pip-ade-$aliasRegion-appgw001"
 
         # Required for Deploy-AzureGovernance.ps1
-        'appConfigResourceGroupName'            = "$azureRegionResourceGroupNamePrefix-appconfiguration"
-        'identityResourceGroupName'             = "$azureRegionResourceGroupNamePrefix-identity"
-        'keyVaultResourceGroupName'             = "$azureRegionResourceGroupNamePrefix-keyvault"
-        'monitorResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-monitor"
         'activityLogDiagnosticsName'            = "subscriptionActivityLog"
         'adeInitiativeDefinition'               = "policy-ade-$aliasRegion-adeinitiative"
         'applicationGatewayManagedIdentityName' = "id-ade-$aliasRegion-applicationgateway"
@@ -75,22 +71,14 @@ function Set-InitialArmParameters {
         'keyVaultName'                          = "kv-ade-$aliasRegion-001"
 
         # Required for Deploy-AzureContainerRegistry.ps1
-        'containerRegistryResourceGroupName'    = "$azureRegionResourceGroupNamePrefix-containerregistry"
         'acrName'                               = $acrName
         'containerRegistryLoginServer'          = "$acrName.azurecr.io"
 
-        # Required for Deploy-AzureDatabases.ps1
-        'adeAppSqlResourceGroupName'            = "$azureRegionResourceGroupNamePrefix-adeappdb"
-        'inspectorGadgetResourceGroupName'      = "$azureRegionResourceGroupNamePrefix-inspectorgadget"
+        # Required for Deploy-AzureDatabases.ps1        
 
-        # Required for Deploy-AzureNetworking.ps1
-        'networkingResourceGroupName'           = "$azureRegionResourceGroupNamePrefix-networking"
+        # Required for Deploy-AzureNetworking.ps1        
 
-        # Required for Deploy-AzureVirtualMachines.ps1
-        'jumpboxResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-jumpbox"   
-        'nTierResourceGroupName'                = "$azureRegionResourceGroupNamePrefix-ntier"
-        'vmssResourceGroupName'                 = "$azureRegionResourceGroupNamePrefix-vmss"
-        'w10clientResourceGroupName'            = "$azureRegionResourceGroupNamePrefix-w10client"
+        # Required for Deploy-AzureVirtualMachines.ps1        
 
         # Required for Enable-HighCostAzureServices.ps1 and Disable-HighCostAzureServices.ps1
         'azureFirewallPublicIpAddressName'      = "pip-ade-$aliasRegion-fw001"
@@ -109,14 +97,27 @@ function Set-InitialArmParameters {
         # Resource Group Names
         'adeAppAppServicesResourceGroupName'    = "$azureRegionResourceGroupNamePrefix-adeappweb"
         'adeAppLoadTestingResourceGroupName'    = "$azureRegionResourceGroupNamePrefix-adeapploadtesting"
+        'adeAppSqlResourceGroupName'            = "$azureRegionResourceGroupNamePrefix-adeappdb"
         'aksNodeResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-aks-node"
         'aksResourceGroupName'                  = "$azureRegionResourceGroupNamePrefix-aks"        
+        'appConfigResourceGroupName'            = "$azureRegionResourceGroupNamePrefix-appconfiguration"
         'applicationGatewayResourceGroupName'   = "$azureRegionResourceGroupNamePrefix-applicationgateway"
         'appServicePlanResourceGroupName'       = "$azureRegionResourceGroupNamePrefix-appserviceplan"
         'cognitiveServicesResourceGroupName'    = "$azureRegionResourceGroupNamePrefix-cognitiveservices"        
+        'containerRegistryResourceGroupName'    = "$azureRegionResourceGroupNamePrefix-containerregistry"
         'dnsResourceGroupName'                  = "$azureRegionResourceGroupNamePrefix-dns"
+        'identityResourceGroupName'             = "$azureRegionResourceGroupNamePrefix-identity"
         'imageResizerResourceGroupName'         = "$azureRegionResourceGroupNamePrefix-imageresizer"        
+        'inspectorGadgetResourceGroupName'      = "$azureRegionResourceGroupNamePrefix-inspectorgadget"
+        'jumpboxResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-jumpbox"   
+        'keyVaultResourceGroupName'             = "$azureRegionResourceGroupNamePrefix-keyvault"
+        'monitorResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-monitor"
+        'networkingResourceGroupName'           = "$azureRegionResourceGroupNamePrefix-networking"
+        'adeAppVmResourceGroupName'             = "$azureRegionResourceGroupNamePrefix-adeappvm"
+        'adeAppVmssResourceGroupName'           = "$azureRegionResourceGroupNamePrefix-adeappvmss"
         'trafficManagerResourceGroupName'       = "$azureRegionResourceGroupNamePrefix-trafficmanager"        
+        'vmssResourceGroupName'                 = "$azureRegionResourceGroupNamePrefix-vmss"
+        'w10clientResourceGroupName'            = "$azureRegionResourceGroupNamePrefix-w10client"
         'wordpressResourceGroupName'            = "$azureRegionResourceGroupNamePrefix-wordpress"
     }
 

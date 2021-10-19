@@ -16,9 +16,6 @@ param jumpboxNICName string
 @description('The name of the Jumpbox operating system disk.')
 param jumpboxOSDiskName string
 
-@description('The private Ip address of the Jumpbox.')
-param jumpboxPrivateIpAddress string
-
 @description('The name of the Jumpbox Public Ip Address')
 param jumpboxPublicIpAddressName string
 
@@ -117,8 +114,7 @@ resource jumpboxNIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
       {
         name: 'ipconfig1'
         properties: {
-          privateIPAddress: jumpboxPrivateIpAddress
-          privateIPAllocationMethod: 'Static'
+          privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
             id: jumpboxPublicIpAddress.id
           }

@@ -23,8 +23,8 @@
         "identityResourceGroupName": {
             "value": "@@identityResourceGroupName@@"
         },
-        "nTierResourceGroupName": {
-            "value": "@@nTierResourceGroupName@@"
+        "adeAppVmResourceGroupName": {
+            "value": "@@adeAppVmResourceGroupName@@"
         },
         "sslCertificateName":{
             "value": "@@sslCertificateName@@"

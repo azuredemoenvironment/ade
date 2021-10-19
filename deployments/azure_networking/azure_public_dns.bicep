@@ -2,7 +2,7 @@
 param aliasRegion string
 param networkingResourceGroupName string
 param jumpboxResourceGroupName string
-param nTierResourceGroupName string
+param adeAppVmResourceGroupName string
 
 param adeAppFrontEndAppServiceARecordName string
 param adeAppApiGatewayAppServiceARecordName string
@@ -22,7 +22,7 @@ resource applicationGatewayPublicIpAddress 'Microsoft.Network/publicIPAddresses@
 var jumpboxPublicIpAddressName = 'pip-ade-${aliasRegion}-jumpbox01'
 // resource - network interface - jumpbox
 resource jumpboxPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01' existing = {
-  scope: resourceGroup(nTierResourceGroupName)
+  scope: resourceGroup(adeAppVmResourceGroupName)
   name: jumpboxPublicIpAddressName
 }
 

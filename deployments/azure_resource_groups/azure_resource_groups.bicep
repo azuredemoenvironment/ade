@@ -16,7 +16,7 @@ param networkingResourceGroupName string
 param adeAppSqlResourceGroupName string
 param inspectorGadgetResourceGroupName string
 param jumpboxResourceGroupName string
-param nTierResourceGroupName string
+param adeAppVmResourceGroupName string
 param vmssResourceGroupName string
 param w10clientResourceGroupName string
 param containerRegistryResourceGroupName string
@@ -83,7 +83,7 @@ resource jumpboxResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = 
 // Resource Group - Ntier
 //////////////////////////////////////////////////
 resource nTierResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
-  name: nTierResourceGroupName
+  name: adeAppVmResourceGroupName
   location: azureRegion
 }
 

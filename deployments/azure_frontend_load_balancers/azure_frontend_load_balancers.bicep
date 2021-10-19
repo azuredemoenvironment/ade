@@ -9,7 +9,7 @@ param appConfigResourceGroupName string
 param monitorResourceGroupName string
 param networkingResourceGroupName string
 param identityResourceGroupName string
-param nTierResourceGroupName string
+param adeAppVmResourceGroupName string
 param sslCertificateName string
 param sslCertificateData string
 param sslCertificateDataPassword string
@@ -104,7 +104,7 @@ var nTierWeb03NICName = 'nic-ade-${aliasRegion}-ntierweb03'
 var nTierWeb03PrivateIpAddress = '10.102.1.7'
 // module deployment
 module nTierNICUpdateModule 'azure_virtual_machine_ntier_nic_update.bicep' = {
-  scope: resourceGroup(nTierResourceGroupName)
+  scope: resourceGroup(adeAppVmResourceGroupName)
   name: 'nTierNICUpdateDeployment'
   params: {
     location: azureRegion

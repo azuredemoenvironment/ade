@@ -7,12 +7,12 @@ function Set-AzureVirtualMachinesToAllocated {
 
     $virtualMachines = @(
         @{ Name = $armParameters.jumpboxName; ResourceGroup = $armParameters.jumpboxResourceGroupName },
-        @{ Name = $armParameters.nTierWeb01Name; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = $armParameters.nTierWeb02Name; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = $armParameters.nTierWeb03Name; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = $armParameters.nTierApp01Name; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = $armParameters.nTierApp02Name; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = $armParameters.nTierApp03Name; ResourceGroup = $armParameters.ntierResourceGroupName },
+        @{ Name = $armParameters.nTierWeb01Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.nTierWeb02Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.nTierWeb03Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.nTierApp01Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.nTierApp02Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.nTierApp03Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
         @{ Name = $armParameters.w10clientName; ResourceGroup = $armParameters.w10clientResourceGroupName }
     )
     

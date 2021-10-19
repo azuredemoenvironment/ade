@@ -29,8 +29,8 @@
         "jumpboxResourceGroupName": {
             "value": "@@jumpboxResourceGroupName@@"
         },
-        "nTierResourceGroupName": {
-            "value": "@@nTierResourceGroupName@@"
+        "adeAppVmResourceGroupName": {
+            "value": "@@adeAppVmResourceGroupName@@"
         },
         "vmssResourceGroupName": {
             "value": "@@vmssResourceGroupName@@"

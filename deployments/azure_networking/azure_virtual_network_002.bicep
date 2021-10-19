@@ -1,46 +1,49 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the AKS Subnet.')
-param aksSubnetName string
+@description('The name of the ADE AKS Subnet.')
+param adeAksSubnetName string
 
-@description('The address prefix of the AKS Subnet.')
-param aksSubnetPrefix string
+@description('The address prefix of the ADE AKS Subnet.')
+param adeAksSubnetPrefix string
 
-@description('The name of the Client Services Subnet.')
-param clientServicesSubnetName string
+@description('The name of the ADE App Vmss Subnet.')
+param adeAppVmssSubnetName string
 
-@description('The ID of the Client Services Subnet NSG.')
-param clientServicesSubnetNSGId string
+@description('The ID of the ADE App Vmss Subnet NSG.')
+param adeAppVmssSubnetNSGId string
 
-@description('The address prefix of the Client Services Subnet.')
-param clientServicesSubnetPrefix string
+@description('The address prefix of the ADE App Vmss Subnet.')
+param adeAppVmssSubnetPrefix string
 
-@description('The ID of the Route Table.')
-param internetRouteTableId string
+@description('The name of the ADE App Vm Subnet.')
+param adeAppVmSubnetName string
+
+@description('The ID of the ADE App Vm Subnet NSG.')
+param adeAppVmSubnetNSGId string
+
+@description('The address prefix of the ADE App Vm Subnet.')
+param adeAppVmSubnetPrefix string
+
+@description('The name of the ADE Web Vmss Subnet.')
+param adeWebVmssSubnetName string
+
+@description('The ID of the ADE Web Vmss Subnet NSG.')
+param adeWebVmssSubnetNSGId string
+
+@description('The address prefix of the ADE Web Vmss Subnet.')
+param adeWebVmssSubnetPrefix string
+
+@description('The name of the ADE Web Vm Subnet.')
+param adeWebVmSubnetName string
+
+@description('The ID of the ADE Web Vm Subnet NSG.')
+param adeWebVmSubnetNSGId string
+
+@description('The address prefix of the ADE Web Vm Subnet.')
+param adeWebVmSubnetPrefix string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
-
-@description('The ID of the Nat Gateway.')
-param natGatewayId string
-
-@description('The name of the NTier App Subnet.')
-param nTierAppSubnetName string
-
-@description('The ID of the NTier App Subnet NSG.')
-param nTierAppSubnetNSGId string
-
-@description('The address prefix of the NTier App Subnet.')
-param nTierAppSubnetPrefix string
-
-@description('The name of the NTier Web Subnet.')
-param nTierWebSubnetName string
-
-@description('The ID of the NTier Web Subnet NSG.')
-param nTierWebSubnetNSGId string
-
-@description('The address prefix of the NTier Web Subnet.')
-param nTierWebSubnetPrefix string
 
 @description('The name of the Private Endpoint Subnet.')
 param privateEndpointSubnetName string
@@ -53,15 +56,6 @@ param virtualNetwork002Name string
 
 @description('The address prefix of the Virtual Network.')
 param virtualnetwork002Prefix string
-
-@description('The name of the VMSS Subnet.')
-param vmssSubnetName string
-
-@description('The ID of the VMSS Subnet NSG.')
-param vmssSubnetNSGId string
-
-@description('The address prefix of the VMSS Subnet.')
-param vmssSubnetPrefix string
 
 @description('The name of the VNET Integration Subnet.')
 param vnetIntegrationSubnetName string
@@ -92,23 +86,20 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
     }
     subnets: [
       {
-        name: nTierWebSubnetName
+        name: adeWebVmSubnetName
         properties: {
-          addressPrefix: nTierWebSubnetPrefix
+          addressPrefix: adeWebVmSubnetPrefix
           networkSecurityGroup: {
-            id: nTierWebSubnetNSGId
+            id: adeWebVmSubnetNSGId
           }
         }
       }
       {
-        name: nTierAppSubnetName
+        name: adeAppVmSubnetName
         properties: {
-          addressPrefix: nTierAppSubnetPrefix
-          natGateway: {
-            id: natGatewayId
-          }
+          addressPrefix: adeAppVmSubnetPrefix
           networkSecurityGroup: {
-            id: nTierAppSubnetNSGId
+            id: adeAppVmSubnetNSGId
           }
           serviceEndpoints: [
             {
@@ -118,24 +109,37 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         }
       }
       {
-        name: vmssSubnetName
+        name: adeWebVmssSubnetName
         properties: {
-          addressPrefix: vmssSubnetPrefix
+          addressPrefix: adeWebVmssSubnetPrefix
           networkSecurityGroup: {
-            id: vmssSubnetNSGId
+            id: adeWebVmssSubnetNSGId
           }
         }
       }
       {
-        name: clientServicesSubnetName
+        name: adeAppVmssSubnetName
         properties: {
-          addressPrefix: clientServicesSubnetPrefix
+          addressPrefix: adeAppVmssSubnetPrefix
           networkSecurityGroup: {
-            id: clientServicesSubnetNSGId
+            id: adeAppVmssSubnetNSGId
           }
-          routeTable: {
-            id: internetRouteTableId
-          }
+          serviceEndpoints: [
+            {
+              service: 'Microsoft.Sql'
+            }
+          ]
+        }
+      }
+      {
+        name: adeAksSubnetName
+        properties: {
+          addressPrefix: adeAksSubnetPrefix
+          serviceEndpoints: [
+            {
+              service: 'Microsoft.ContainerRegistry'
+            }
+          ]
         }
       }
       {
@@ -157,17 +161,6 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         properties: {
           addressPrefix: privateEndpointSubnetPrefix
           privateEndpointNetworkPolicies: 'Disabled'
-        }
-      }
-      {
-        name: aksSubnetName
-        properties: {
-          addressPrefix: aksSubnetPrefix
-          serviceEndpoints: [
-            {
-              service: 'Microsoft.ContainerRegistry'
-            }
-          ]
         }
       }
     ]

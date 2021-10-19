@@ -29,8 +29,20 @@ var keyVaultResourceGroupName = 'rg-ade-${aliasRegion}-keyvault'
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 var networkingResourceGroupName = 'rg-ade-${aliasRegion}-networking'
 // Resources
-var aksSubnetName = 'snet-ade-${aliasRegion}-aks'
-var aksSubnetPrefix = '10.102.201.0/24'
+var adeAksSubnetName = 'snet-ade-${aliasRegion}-ade-aks'
+var adeAksSubnetPrefix = '10.102.101.0/24'
+var adeAppVmssSubnetName = 'snet-ade-${aliasRegion}-adeapp-vmss'
+var adeAppVmssSubnetNSGName = 'nsg-ade-${aliasRegion}-adeapp-vmss'
+var adeAppVmssSubnetPrefix = '10.102.12.0/24'
+var adeAppVmSubnetName = 'snet-ade-${aliasRegion}-adeapp-vm'
+var adeAppVmSubnetNSGName = 'nsg-ade-${aliasRegion}-adeapp-vm'
+var adeAppVmSubnetPrefix = '10.102.2.0/24'
+var adeWebVmssSubnetName = 'snet-ade-${aliasRegion}-adeweb-vmss'
+var adeWebVmssSubnetNSGName = 'nsg-ade-${aliasRegion}-adeweb-vmss'
+var adeWebVmssSubnetPrefix = '10.102.11.0/24'
+var adeWebVmSubnetName = 'snet-ade-${aliasRegion}-adeweb-vm'
+var adeWebVmSubnetNSGName = 'nsg-ade-${aliasRegion}-adeweb-vm'
+var adeWebVmSubnetPrefix = '10.102.1.0/24'
 var applicationGatewaySubnetName = 'snet-ade-${aliasRegion}-applicationGateway'
 var applicationGatewaySubnetPrefix = '10.101.11.0/24'
 var appServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
@@ -44,9 +56,6 @@ var azureFirewallPublicIpAddressName = 'pip-ade-${aliasRegion}-fw001'
 var azureFirewallSubnetName = 'AzureFirewallSubnet'
 var azureFirewallSubnetPrefix = '10.101.1.0/24'
 var azureSQLprivateDnsZoneName = 'privatelink${environment().suffixes.sqlServerHostname}'
-var clientServicesSubnetName = 'snet-ade-${aliasRegion}-clientServices'
-var clientServicesSubnetNSGName = 'nsg-ade-${aliasRegion}-clientservices'
-var clientServicesSubnetPrefix = '10.102.21.0/24'
 var connectionName = 'cn-ade-${aliasRegion}-vgw001'
 var gatewaySubnetName = 'GatewaySubnet'
 var gatewaySubnetPrefix = '10.101.255.0/24'
@@ -61,23 +70,14 @@ var natGatewayName = 'ngw-ade-${aliasRegion}-001'
 var natGatewayPublicIPPrefixName = 'pipp-ade-${aliasRegion}-ngw001'
 var networkWatcherResourceGroupName = 'NetworkWatcherRG'
 var nsgFlowLogsStorageAccountName = replace('saade${aliasRegion}nsgflow', '-', '')
-var nTierAppSubnetName = 'snet-ade-${aliasRegion}-nTierApp'
-var nTierAppSubnetNSGName = 'nsg-ade-${aliasRegion}-ntierapp'
-var nTierAppSubnetPrefix = '10.102.2.0/24'
-var nTierWebSubnetName = 'snet-ade-${aliasRegion}-nTierWeb'
-var nTierWebSubnetNSGName = 'nsg-ade-${aliasRegion}-ntierweb'
-var nTierWebSubnetPrefix = '10.102.1.0/24'
 var privateEndpointSubnetName = 'snet-ade-${aliasRegion}-privateEndpoint'
 var privateEndpointSubnetPrefix = '10.102.102.0/24'
 var virtualNetwork001Name = 'vnet-ade-${aliasRegion}-001'
 var virtualnetwork001Prefix = '10.101.0.0/16'
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
 var virtualnetwork002Prefix = '10.102.0.0/16'
-var vmssSubnetName = 'snet-ade-${aliasRegion}-vmss'
-var vmssSubnetNSGName = 'nsg-ade-${aliasRegion}-vmss'
-var vmssSubnetPrefix = '10.102.11.0/24'
-var vnetIntegrationSubnetName = 'snet-ade-${aliasRegion}-vnetIntegration'
-var vnetIntegrationSubnetPrefix = '10.102.101.0/24'
+var vnetIntegrationSubnetName = 'snet-ade-${aliasRegion}-vnetintegration'
+var vnetIntegrationSubnetPrefix = '10.102.201.0/24'
 var vpnGatewayName = 'vpng-ade-${aliasRegion}-001'
 var vpnGatewayPublicIpAddressName = 'pip-ade-${aliasRegion}-vgw001'
 
@@ -132,14 +132,14 @@ module networkSecurityGroupsModule './azure_network_security_group.bicep' = {
     networkingResourceGroup
   ]
   params: {
+    adeAppVmssSubnetNSGName: adeAppVmssSubnetNSGName
+    adeAppVmSubnetNSGName: adeAppVmSubnetNSGName
+    adeWebVmssSubnetNSGName: adeWebVmssSubnetNSGName
+    adeWebVmSubnetNSGName: adeWebVmSubnetNSGName
     azureBastionSubnetNSGName: azureBastionSubnetNSGName
-    clientServicesSubnetNSGName: clientServicesSubnetNSGName
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     managementSubnetNSGName: managementSubnetNSGName
-    nTierAppSubnetNSGName: nTierAppSubnetNSGName
-    nTierWebSubnetNSGName: nTierWebSubnetNSGName
     sourceAddressPrefix: sourceAddressPrefix
-    vmssSubnetNSGName: vmssSubnetNSGName
   }
 }
 
@@ -192,27 +192,25 @@ module virtualNetwork002Module './azure_virtual_network_002.bicep' = {
     networkingResourceGroup
   ]
   params: {
-    aksSubnetName: aksSubnetName
-    aksSubnetPrefix: aksSubnetPrefix
-    clientServicesSubnetName: clientServicesSubnetName
-    clientServicesSubnetNSGId: networkSecurityGroupsModule.outputs.clientServicesSubnetNSGId
-    clientServicesSubnetPrefix: clientServicesSubnetPrefix
-    internetRouteTableId: routeTableModule.outputs.internetRouteTableId
+    adeAksSubnetName: adeAksSubnetName
+    adeAksSubnetPrefix: adeAksSubnetPrefix
+    adeAppVmssSubnetName: adeAppVmssSubnetName
+    adeAppVmssSubnetNSGId: networkSecurityGroupsModule.outputs.adeAppVmssSubnetNSGId
+    adeAppVmssSubnetPrefix: adeAppVmssSubnetPrefix
+    adeAppVmSubnetName: adeAppVmSubnetName
+    adeAppVmSubnetNSGId: networkSecurityGroupsModule.outputs.adeAppVmSubnetNSGId
+    adeAppVmSubnetPrefix: adeAppVmSubnetPrefix
+    adeWebVmssSubnetName: adeWebVmssSubnetName
+    adeWebVmssSubnetNSGId: networkSecurityGroupsModule.outputs.adeWebVmssSubnetNSGId
+    adeWebVmssSubnetPrefix: adeWebVmssSubnetPrefix
+    adeWebVmSubnetName: adeWebVmSubnetName
+    adeWebVmSubnetNSGId: networkSecurityGroupsModule.outputs.adeWebVmSubnetNSGId
+    adeWebVmSubnetPrefix: adeWebVmSubnetPrefix
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    natGatewayId: natGatewayModule.outputs.natGatewayId
-    nTierAppSubnetName: nTierAppSubnetName
-    nTierAppSubnetNSGId: networkSecurityGroupsModule.outputs.nTierAppSubnetNSGId
-    nTierAppSubnetPrefix: nTierAppSubnetPrefix
-    nTierWebSubnetName: nTierWebSubnetName
-    nTierWebSubnetNSGId: networkSecurityGroupsModule.outputs.nTierWebSubnetNSGId
-    nTierWebSubnetPrefix: nTierWebSubnetPrefix
     privateEndpointSubnetName: privateEndpointSubnetName
     privateEndpointSubnetPrefix: privateEndpointSubnetPrefix
     virtualNetwork002Name: virtualNetwork002Name
     virtualnetwork002Prefix: virtualnetwork002Prefix
-    vmssSubnetName: vmssSubnetName
-    vmssSubnetNSGId: networkSecurityGroupsModule.outputs.vmssSubnetNSGId
-    vmssSubnetPrefix: vmssSubnetPrefix
     vnetIntegrationSubnetName: vnetIntegrationSubnetName
     vnetIntegrationSubnetPrefix: vnetIntegrationSubnetPrefix
   }

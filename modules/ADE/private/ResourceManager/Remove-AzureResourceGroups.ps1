@@ -14,7 +14,7 @@ function Remove-AzureResourceGroups {
         $armParameters.appServicePlanResourceGroupName
         $armParameters.aksResourceGroupName   
         $armParameters.vmssResourceGroupName
-        $armParameters.ntierResourceGroupName
+        $armParameters.adeAppVmResourceGroupName
         $armParameters.w10clientResourceGroupName
         $armParameters.jumpboxResourceGroupName
         $armParameters.adeAppLoadTestingResourceGroupName
