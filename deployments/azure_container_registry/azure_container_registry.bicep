@@ -14,12 +14,21 @@ param azureRegion string
 //////////////////////////////////////////////////
 // Resource Groups
 var containerRegistryResourceGroupName = 'rg-ade-${aliasRegion}-containerregistry'
+var identityResourceGroupName = 'rg-ade-${aliasRegion}-identity'
 var keyVaultResourceGroupName = 'rg-ade-${aliasRegion}-keyvault'
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 // Resources
+var containerRegistryManagedIdentityName = 'id-ade-${aliasRegion}-containerregistry'
 var containerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
+
+// Existing Resource - Managed Identity - Container Registry
+//////////////////////////////////////////////////
+resource containerRegistryManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
+  scope: resourceGroup(identityResourceGroupName)
+  name: containerRegistryManagedIdentityName
+}
 
 // Existing Resource - Key Vault
 //////////////////////////////////////////////////
@@ -42,9 +51,9 @@ resource containerRegistryResourceGroup 'Microsoft.Resources/resourceGroups@2021
   location: azureRegion
 }
 
-// Module - Container Registry
+// Module - Container Registry - ADE App
 //////////////////////////////////////////////////
-module containerRegistryModule './azure_container_registry_docker.bicep' = {
+module containerRegistryModule './azure_container_registry_adeapp.bicep' = {
   scope: resourceGroup(containerRegistryResourceGroupName)
   name: 'containerRegistryDeployment'
   dependsOn: [
@@ -52,7 +61,7 @@ module containerRegistryModule './azure_container_registry_docker.bicep' = {
   ]
   params: {
     containerRegistryName: containerRegistryName
-    containerRegistrySPNObjectID: keyVault.getSecret('containerRegistryObjectId')
+    // containerRegistryManagedIdentityPrincipalID: containerRegistryManagedIdentity.properties
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }

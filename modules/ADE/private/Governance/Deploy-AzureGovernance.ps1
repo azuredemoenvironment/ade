@@ -3,6 +3,10 @@ function Deploy-AzureGovernance {
         [object] $armParameters
     )
 
+    # Parameters
+    ##################################################
+    $keyVaultName = $armParameters.keyVaultName
+
     # Deploy the Azure Governance Bicep template at the subscription scope.
     ##################################################
     Deploy-ArmTemplate 'Azure Governance' $armParameters -resourceLevel 'sub' -bicep

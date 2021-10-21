@@ -3,9 +3,9 @@
 @description('The name of the Container Registry.')
 param containerRegistryName string
 
-@description('The value of the Container Registry SPN Object ID.')
-@secure()
-param containerRegistrySPNObjectID string
+// @description('The Principal ID of the Container Registry Managed Identity.')
+// @secure()
+// param containerRegistryManagedIdentityPrincipalID string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
@@ -13,8 +13,7 @@ param logAnalyticsWorkspaceId string
 // Variables
 //////////////////////////////////////////////////
 var location = resourceGroup().location
-var acrPullRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d') // Role Assignment Definition for ACR Pull - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#acrpull
-
+// var acrPullRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d') // Role Assignment Definition for ACR Pull - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#acrpull
 var tags = {
   environment: 'production'
   function: 'containerRegistry'
@@ -76,15 +75,15 @@ resource containerRegistryDiagnostics 'microsoft.insights/diagnosticSettings@202
 
 // Resource - Role Asignment - Acr Pull
 //////////////////////////////////////////////////
-resource containerRegistryRoleAssignments 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  scope: containerRegistry
-  name: guid(resourceGroup().id, acrPullRoleDefinitionId, containerRegistrySPNObjectID)
-  properties: {
-    roleDefinitionId: acrPullRoleDefinitionId
-    principalId: containerRegistrySPNObjectID
-    principalType: 'ServicePrincipal'
-  }
-}
+// resource containerRegistryRoleAssignments 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+//   scope: containerRegistry
+//   name: guid(resourceGroup().id, acrPullRoleDefinitionId, containerRegistryManagedIdentityPrincipalID)
+//   properties: {
+//     roleDefinitionId: acrPullRoleDefinitionId
+//     principalId: containerRegistryManagedIdentityPrincipalID
+//     principalType: 'User'
+//   }
+// }
 
 // Outputs
 //////////////////////////////////////////////////

@@ -1,11 +1,5 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The password of the admin user of the Azure Container Registry.')
-param acrPassword string
-
-@description('The name of the admin user of the Azure Container Registry.')
-param acrServerName string
-
 @description('The private Ip address of the ADE App Vm Load Balancer.')
 param adeAppVmLoadBalancerPrivateIpAddress string
 
@@ -24,6 +18,12 @@ param adminUserName string
 
 @description('The connection string from the App Configuration instance.')
 param appConfigConnectionString string
+
+@description('The name of the admin user of the Azure Container Registry.')
+param containerRegistryName string
+
+@description('The password of the admin user of the Azure Container Registry.')
+param containerRegistryPassword string
 
 @description('Function to generate the current time.')
 param currentTime string = utcNow()
@@ -52,7 +52,7 @@ var timeStamp = int('${substring(sanitizeCurrentTime, 1, 2)}${substring(sanitize
 
 // Resource - Network Interface - ADE Web Vm
 //////////////////////////////////////////////////
-resource adeWebVmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for adeWebVirtualMachine in adeWebVirtualMachines: {
+resource adeWebVmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
   name: adeWebVirtualMachine.nicName
   location: location
   tags: tags
@@ -73,8 +73,8 @@ resource adeWebVmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for ade
 
 // Resource - Network Interface - Diagnostic Settings
 //////////////////////////////////////////////////
-resource adeWebVmNicDiagnosticSetting 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for adeWebVirtualMachine in adeWebVirtualMachines: {
-  scope: adeWebVmNic[adeWebVirtualMachine]
+resource adeWebVmNicDiagnosticSetting 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
+  scope: adeWebVmNic[i]
   name: '${adeWebVirtualMachine.nicName}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
@@ -94,7 +94,7 @@ resource adeWebVmNicDiagnosticSetting 'microsoft.insights/diagnosticSettings@202
 
 // Resource - Virtual Machine
 //////////////////////////////////////////////////
-resource adeWebVm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for adeWebVirtualMachine in adeWebVirtualMachines: {
+resource adeWebVm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
   name: adeWebVirtualMachine.name
   location: location
   zones: [
@@ -132,7 +132,7 @@ resource adeWebVm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for adeWebVi
     networkProfile: {
       networkInterfaces: [
         {
-          id: adeWebVmNic[adeWebVirtualMachine].id
+          id: adeWebVmNic[i].id
         }
       ]
     }
@@ -146,8 +146,8 @@ resource adeWebVm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for adeWebVi
 
 // Resource - Dependency Agent Linux
 //////////////////////////////////////////////////
-resource adeWebVmDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for adeWebVirtualMachine in adeWebVirtualMachines: {
-  name: '${adeWebVirtualMachine.name}/DependencyAgentLinux'
+resource adeWebVmDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
+  name: '${adeWebVm[i].name}/DependencyAgentLinux'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
@@ -159,8 +159,8 @@ resource adeWebVmDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2
 
 // Resource - Microsoft Monitoring Agent
 //////////////////////////////////////////////////
-resource adeWebVmMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for adeWebVirtualMachine in adeWebVirtualMachines: {
-  name: '${adeWebVirtualMachine.name}/OMSExtension'
+resource adeWebVmMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
+  name: '${adeWebVm[i].name}/OMSExtension'
   location: location
   properties: {
     publisher: 'Microsoft.EnterpriseCloud.Monitoring'
@@ -178,8 +178,8 @@ resource adeWebVmMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/ext
 
 // Resource - Custom Script Extension - ADE Web Vmss
 //////////////////////////////////////////////////
-resource adeWebVmCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for adeWebVirtualMachine in adeWebVirtualMachines: {
-  name: '${adeWebVirtualMachine.name}/CustomScriptextension'
+resource adeWebVmCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
+  name: '${adeWebVm[i].name}/CustomScriptextension'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -194,7 +194,7 @@ resource adeWebVmCustomScriptExtension 'Microsoft.Compute/virtualMachines/extens
       fileUris: [
         scriptLocation
       ]
-      commandToExecute: './${scriptName} "${acrServerName}" "${acrPassword}" "${appConfigConnectionString}" "${adeWebVirtualMachine.adeModule}" "${adeAppVmLoadBalancerPrivateIpAddress}"'
+      commandToExecute: './${scriptName} "${containerRegistryName}" "${containerRegistryPassword}" "${appConfigConnectionString}" "${adeWebVirtualMachine.adeModule}" "${adeAppVmLoadBalancerPrivateIpAddress}"'
     }
   }
 }]

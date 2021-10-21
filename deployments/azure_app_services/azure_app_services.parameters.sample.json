@@ -2,40 +2,15 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "azureRegion": {
-            "value": "@@azureRegion@@"
+        "adminUserName": {
+            "value": "@@adminUsername@@"
         },
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
-        "appServicePlanResourceGroupName": {
-            "value": "@@appServicePlanResourceGroupName@@"
-        },
-        "adeAppAppServicesResourceGroupName": {
-            "value": "@@adeAppAppServicesResourceGroupName@@"
-        },
-        "adeAppSqlResourceGroupName": {
-            "value": "@@adeAppSqlResourceGroupName@@"
-        },
-        "inspectorGadgetResourceGroupName": {
-            "value": "@@inspectorGadgetResourceGroupName@@"
-        },
-        "containerRegistryResourceGroupName": {
-            "value": "@@containerRegistryResourceGroupName@@"
-        },
-        "appConfigResourceGroupName": {
-            "value": "@@appConfigResourceGroupName@@"
-        },
-        "adminUserName": {
-            "value": "@@adminUsername@@"
-        },
-        "adminPassword": {
-            "reference": {
-                "keyVault": {
-                    "id": "@@keyVaultResourceID@@"
-                },
-                "secretName": "resourcePassword"
-            }
+        "azureRegion": {
+            "value": "@@azureRegion@@"
         }
+        
     }
 }

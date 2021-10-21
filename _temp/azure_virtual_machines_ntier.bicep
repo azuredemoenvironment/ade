@@ -8,8 +8,8 @@ param logAnalyticsWorkspaceKey string
 param appConfigResourceGroupName string
 param appConfigName string
 param appConfigConnectionString string
-param acrServerName string
-param acrPassword string
+param containerRegistryName string
+param containerRegistryPassword string
 param nTierWebSubnetId string
 param nTierAppSubnetId string
 param proximityPlacementGroupAz1Name string
@@ -286,8 +286,8 @@ module AzureVirtualMachinesNTierVm 'azure_virtual_machines_ntier_vm.bicep' = [fo
     logAnalyticsWorkspaceId: logAnalyticsWorkspaceId
     logAnalyticsWorkspaceKey: logAnalyticsWorkspaceKey
     appConfigConnectionString: appConfigConnectionString
-    acrServerName: acrServerName
-    acrPassword: acrPassword
+    containerRegistryName: containerRegistryName
+    containerRegistryPassword: containerRegistryPassword
     name: nTierVirtualMachine.name
     nicName: nTierVirtualMachine.nicName
     nTierAppLoadBalancerName: nTierVirtualMachine.loadBalancerName

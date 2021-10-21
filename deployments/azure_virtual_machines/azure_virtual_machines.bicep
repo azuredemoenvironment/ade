@@ -270,6 +270,9 @@ module proximityPlacementGroupModule 'azure_proximity_placement_groups_adeapp.bi
 module adeAppVmLoadBalancerModule 'azure_load_balancers_adeapp_vm.bicep' = {
   scope: resourceGroup(adeAppVmResourceGroupName)
   name: 'adeAppVmLoadBalancerDeployment'
+  dependsOn: [
+    adeAppVmResourceGroup
+  ]
   params: {
     adeAppVmLoadBalancerName: adeAppVmLoadBalancerName
     adeAppVmLoadBalancerPrivateIpAddress: adeAppVmLoadBalancerPrivateIpAddress
@@ -284,6 +287,9 @@ module adeAppVmLoadBalancerModule 'azure_load_balancers_adeapp_vm.bicep' = {
 module adeAppVmssLoadBalancerModule 'azure_load_balancers_adeapp_vmss.bicep' = {
   scope: resourceGroup(adeAppVmssResourceGroupName)
   name: 'adeAppVmssLoadBalancerDeployment'
+  dependsOn: [
+    adeAppVmssResourceGroup
+  ]
   params: {
     adeAppVmssLoadBalancerName: adeAppVmssLoadBalancerName
     adeAppVmssLoadBalancerPrivateIpAddress: adeAppVmssLoadBalancerPrivateIpAddress
@@ -302,14 +308,14 @@ module adeWebVmModule 'azure_virtual_machines_adeweb_vm.bicep' = {
     adeAppVmResourceGroup
   ]
   params: {
-    acrPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
-    acrServerName: containerRegistryName
     adeAppVmLoadBalancerPrivateIpAddress: adeAppVmLoadBalancerPrivateIpAddress
     adeWebVirtualMachines: adeWebVirtualMachines
     adeWebVmSubnetId: virtualNetwork002::adeWebVmSubnet.id
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
     appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
+    containerRegistryName: containerRegistryName
+    containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
@@ -325,15 +331,15 @@ module adeAppVmModule 'azure_virtual_machines_adeapp_vm.bicep' = {
     adeAppVmResourceGroup
   ]
   params: {
-    acrPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
-    acrServerName: containerRegistryName
+    adeAppVirtualMachines: adeAppVirtualMachines
     adeAppVmLoadBalancerBackendPoolId: adeAppVmLoadBalancerModule.outputs.adeAppVmLoadBalancerBackendPoolId
     adeAppVmLoadBalancerPrivateIpAddress: adeAppVmLoadBalancerPrivateIpAddress
-    adeAppVirtualMachines: adeAppVirtualMachines
     adeAppVmSubnetId: virtualNetwork002::adeAppVmSubnet.id
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
     appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
+    containerRegistryName: containerRegistryName
+    containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
@@ -349,8 +355,6 @@ module adeWebVmssModule 'azure_virtual_machines_adeweb_vmss.bicep' = {
     adeAppVmssResourceGroup
   ]
   params: {
-    acrPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
-    acrServerName: containerRegistryName
     adeAppVmssLoadBalancerPrivateIpAddress: adeAppVmssLoadBalancerPrivateIpAddress
     adeWebModuleName: adeWebModuleName
     adeWebVmssName: adeWebVmssName
@@ -359,6 +363,8 @@ module adeWebVmssModule 'azure_virtual_machines_adeweb_vmss.bicep' = {
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
     appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
+    containerRegistryName: containerRegistryName
+    containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
   }
@@ -373,8 +379,6 @@ module adeAppVmssModule 'azure_virtual_machines_adeapp_vmss.bicep' = {
     adeAppVmssResourceGroup
   ]
   params: {
-    acrPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
-    acrServerName: containerRegistryName
     adeAppModuleName: adeAppModuleName
     adeAppVmssLoadBalancerBackendPoolId: adeAppVmssLoadBalancerModule.outputs.adeAppVmssLoadBalancerBackendPoolId
     adeAppVmssLoadBalancerPrivateIpAddress: adeAppVmssLoadBalancerPrivateIpAddress
@@ -384,6 +388,8 @@ module adeAppVmssModule 'azure_virtual_machines_adeapp_vmss.bicep' = {
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
     appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
+    containerRegistryName: containerRegistryName
+    containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
   }

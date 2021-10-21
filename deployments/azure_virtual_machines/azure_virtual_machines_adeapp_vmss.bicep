@@ -1,11 +1,5 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The password of the admin user of the Azure Container Registry.')
-param acrPassword string
-
-@description('The name of the admin user of the Azure Container Registry.')
-param acrServerName string
-
 @description('The name of the ADE App Module.')
 param adeAppModuleName string
 
@@ -33,6 +27,12 @@ param adminUserName string
 
 @description('The connection string from the App Configuration instance.')
 param appConfigConnectionString string
+
+@description('The name of the admin user of the Azure Container Registry.')
+param containerRegistryName string
+
+@description('The password of the admin user of the Azure Container Registry.')
+param containerRegistryPassword string
 
 @description('Function to generate the current time.')
 param currentTime string = utcNow()
@@ -122,6 +122,53 @@ resource adeAppVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
           }
         ]
       }
+      extensionProfile: {
+        extensions: [
+          {
+            name: 'DependencyAgentLinux'
+            properties: {
+              publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
+              type: 'DependencyAgentLinux'
+              typeHandlerVersion: '9.5'
+              autoUpgradeMinorVersion: true
+            }
+          }
+          {
+            name: 'OMSExtension'
+            properties: {
+              publisher: 'Microsoft.EnterpriseCloud.Monitoring'
+              type: 'OmsAgentForLinux'
+              typeHandlerVersion: '1.4'
+              autoUpgradeMinorVersion: true
+              settings: {
+                workspaceId: logAnalyticsWorkspaceCustomerId
+              }
+              protectedSettings: {
+                workspaceKey: logAnalyticsWorkspaceKey
+              }
+            }
+          }
+          {
+            name: 'lapextension'
+            properties: {
+              publisher: 'Microsoft.Azure.Extensions'
+              type: 'CustomScript'
+              typeHandlerVersion: '2.1'
+              autoUpgradeMinorVersion: true
+              settings: {
+                skipDos2Unix: true
+                timestamp: timeStamp
+              }
+              protectedSettings: {
+                fileUris: [
+                  scriptLocation
+                ]
+                commandToExecute: './${scriptName} "${containerRegistryName}" "${containerRegistryPassword}" "${appConfigConnectionString}" "${adeAppModuleName}" "${adeAppVmssLoadBalancerPrivateIpAddress}"'
+              }
+            }
+          }
+        ]
+      }
     }
   }
 }
@@ -129,10 +176,10 @@ resource adeAppVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
 // Resource - Auto Scale Setting
 //////////////////////////////////////////////////
 resource adeAppVmssAutoScaleSettings 'microsoft.insights/autoscalesettings@2015-04-01' = {
-  name: 'cpuautoscale'
+  name: '${adeAppVmss.name}-autoscale'
   location: location
   properties: {
-    name: 'cpuautoscale'
+    name: '${adeAppVmss.name}-autoscale'
     targetResourceUri: adeAppVmss.id
     enabled: true
     profiles: [
@@ -185,60 +232,5 @@ resource adeAppVmssAutoScaleSettings 'microsoft.insights/autoscalesettings@2015-
         ]
       }
     ]
-  }
-}
-
-// Resource - Dependency Agent Linux
-//////////////////////////////////////////////////
-resource adeAppVmssDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${adeAppVmss.name}/DependencyAgentLinux'
-  location: location
-  properties: {
-    publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
-    type: 'DependencyAgentLinux'
-    typeHandlerVersion: '9.5'
-    autoUpgradeMinorVersion: true
-  }
-}
-
-// Resource - Microsoft Monitoring Agent
-//////////////////////////////////////////////////
-resource adeAppVmssMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${adeAppVmss.name}/OMSExtension'
-  location: location
-  properties: {
-    publisher: 'Microsoft.EnterpriseCloud.Monitoring'
-    type: 'OmsAgentForLinux'
-    typeHandlerVersion: '1.4'
-    autoUpgradeMinorVersion: true
-    settings: {
-      workspaceId: logAnalyticsWorkspaceCustomerId
-    }
-    protectedSettings: {
-      workspaceKey: logAnalyticsWorkspaceKey
-    }
-  }
-}
-
-// Resource - Custom Script Extension - ADE App Vmss
-//////////////////////////////////////////////////
-resource adeAppVmssCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${adeAppVmss.name}/CustomScriptextension'
-  location: location
-  properties: {
-    publisher: 'Microsoft.Azure.Extensions'
-    type: 'CustomScript'
-    typeHandlerVersion: '2.1'
-    autoUpgradeMinorVersion: true
-    settings: {
-      skipDos2Unix: true
-      timestamp: timeStamp
-    }
-    protectedSettings: {
-      fileUris: [
-        scriptLocation
-      ]
-      commandToExecute: './${scriptName} "${acrServerName}" "${acrPassword}" "${appConfigConnectionString}" "${adeAppModuleName}" "${adeAppVmssLoadBalancerPrivateIpAddress}"'
-    }
   }
 }

@@ -7,13 +7,12 @@ function Set-AzureVirtualMachinesToDeallocated {
 
     $virtualMachines = @(
         @{ Name = $armParameters.jumpboxName; ResourceGroup = $armParameters.jumpboxResourceGroupName },
-        @{ Name = $armParameters.nTierWeb01Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
-        @{ Name = $armParameters.nTierWeb02Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
-        @{ Name = $armParameters.nTierWeb03Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
-        @{ Name = $armParameters.nTierApp01Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
-        @{ Name = $armParameters.nTierApp02Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
-        @{ Name = $armParameters.nTierApp03Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
-        @{ Name = $armParameters.w10clientName; ResourceGroup = $armParameters.w10clientResourceGroupName }
+        @{ Name = $armParameters.adeWebVm01Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.adeWebVm02Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.adeWebVm03Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.adeAppVm01Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.adeAppVm02Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.adeAppVm03Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName }
     )
     
     $virtualMachines | ForEach-Object {

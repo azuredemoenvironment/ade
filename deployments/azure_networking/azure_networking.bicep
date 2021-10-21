@@ -207,6 +207,7 @@ module virtualNetwork002Module './azure_virtual_network_002.bicep' = {
     adeWebVmSubnetNSGId: networkSecurityGroupsModule.outputs.adeWebVmSubnetNSGId
     adeWebVmSubnetPrefix: adeWebVmSubnetPrefix
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    natGatewayId: natGatewayModule.outputs.natGatewayId
     privateEndpointSubnetName: privateEndpointSubnetName
     privateEndpointSubnetPrefix: privateEndpointSubnetPrefix
     virtualNetwork002Name: virtualNetwork002Name

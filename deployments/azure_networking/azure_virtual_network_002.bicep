@@ -45,6 +45,9 @@ param adeWebVmSubnetPrefix string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
+@description('The ID of the Nat Gateway.')
+param natGatewayId string
+
 @description('The name of the Private Endpoint Subnet.')
 param privateEndpointSubnetName string
 
@@ -106,6 +109,9 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
               service: 'Microsoft.Sql'
             }
           ]
+          natGateway: {
+            id: natGatewayId
+          }
         }
       }
       {
@@ -129,6 +135,9 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
               service: 'Microsoft.Sql'
             }
           ]
+          natGateway: {
+            id: natGatewayId
+          }
         }
       }
       {

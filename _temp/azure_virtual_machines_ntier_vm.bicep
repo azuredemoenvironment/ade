@@ -15,8 +15,8 @@ param subnetId string
 param tags object
 param zone string
 param proximityPlacementGroupId string
-param acrServerName string
-param acrPassword string
+param containerRegistryName string
+param containerRegistryPassword string
 param appConfigConnectionString string
 param adeModule string
 param now string = utcNow()
@@ -173,7 +173,7 @@ resource nTierVirtualMachineCustomScriptExtension 'Microsoft.Compute/virtualMach
       fileUris: [
         scriptLocation
       ]
-      commandToExecute: './${scriptName} "${acrServerName}" "${acrPassword}" "${appConfigConnectionString}" "${adeModule}" "${nTierAppLoadBalancerPrivateIpAddress}"'
+      commandToExecute: './${scriptName} "${containerRegistryName}" "${containerRegistryPassword}" "${appConfigConnectionString}" "${adeModule}" "${nTierAppLoadBalancerPrivateIpAddress}"'
     }
   }
 }
