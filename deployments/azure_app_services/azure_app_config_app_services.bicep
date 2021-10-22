@@ -9,6 +9,6 @@ param appConfigName string
 resource appConfigKeyVirtualMachineBackingServiceConnectionStrings 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = [for (adeAppAppService, i) in adeAppAppServices: {
   name: '${appConfigName}/ADE:${adeAppAppService.adeAppName}Uri$appservices'
   properties: {
-    value: 'https://${adeAppAppService[i].adeAppAppServiceName}.azurewebsites.net'
+    value: 'https://${adeAppAppService.adeAppAppServiceName}.azurewebsites.net'
   }
 }]

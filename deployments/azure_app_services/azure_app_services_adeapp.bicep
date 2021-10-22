@@ -125,7 +125,8 @@ resource adeAppServiceNetworking 'Microsoft.Web/sites/config@2020-12-01' = [for 
 // Resource - App Service - Diagnostic Settings - ADE App(s)
 //////////////////////////////////////////////////
 resource adeAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (adeAppAppService, i) in adeAppAppServices: {
-  name: '${adeAppService[i].name}-diagnostics'
+  scope: adeAppService[i]
+  name: '${adeAppAppService.adeAppAppServiceName}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logs: [
@@ -202,7 +203,7 @@ resource adeAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05
 // Resource - Private Endpoint - App Service - ADE App(s)
 //////////////////////////////////////////////////
 resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = [for (adeAppAppService, i) in adeAppAppServices: if (adeAppAppService.usePrivateEndpoint) {
-  name: adeAppAppService[i].privateEndpointName
+  name: adeAppAppService.privateEndpointName
   location: location
   properties: {
     subnet: {
@@ -210,7 +211,7 @@ resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-1
     }
     privateLinkServiceConnections: [
       {
-        name: adeAppAppService[i].privateEndpointName
+        name: adeAppAppService.privateEndpointName
         properties: {
           privateLinkServiceId: adeAppService[i].id
           groupIds: [
@@ -225,7 +226,7 @@ resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-1
 // Resource - Prviate Endpoint Dns Group - Private Endpoint - App Service - ADE App(s)
 //////////////////////////////////////////////////
 resource adeAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = [for (adeAppAppService, i) in adeAppAppServices: if (adeAppAppService.usePrivateEndpoint) {
-  name: '${adeAppAppService[i].privateEndpointName}/dnsgroupname'
+  name: '${adeAppAppService.privateEndpointName}/dnsgroupname'
   dependsOn: [
     adeAppServicePrivateEndpoint
   ]
@@ -244,5 +245,5 @@ resource adeAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndp
 // Outputs
 //////////////////////////////////////////////////
 output adeAppDockerWebHookUris array = [for (adeAppAppService, i) in adeAppAppServices: {
-  adeAppDockerWebHookUri: '${list(resourceId('Microsoft.Web/sites/config', adeAppAppService[i].name, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
+  adeAppDockerWebHookUri: '${list(resourceId('Microsoft.Web/sites/config', adeAppAppService.adeAppAppServiceName, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
 }]

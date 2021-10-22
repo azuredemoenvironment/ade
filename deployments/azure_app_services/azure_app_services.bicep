@@ -187,23 +187,23 @@ module appServicePlanModule 'azure_app_service_plan.bicep' = {
   }
 }
 
-// // Module - App Service - Inspector Gadget
-// //////////////////////////////////////////////////
-// module inspectorGadgetAppServiceModule 'azure_app_services_inspectorgadget.bicep' = {
-//   scope: resourceGroup(inspectorGadgetResourceGroupName)
-//   name: 'inspectorGadgetAppServiceDeployment'
-//   params: {
-//     adminPassword: keyVault.getSecret('resourcePassword')
-//     adminUserName: adminUserName
-//     appServicePlanId: appServicePlanModule.outputs.appServicePlanId
-//     inspectorGadgetAppServiceName: inspectorGadgetAppServiceName
-//     inspectorGadgetDockerImage: inspectorGadgetDockerImage
-//     inspectorGadgetSqlDatabaseName: inspectorGadgetSqlDatabase.name
-//     inspectorGadgetSqlServerFQDN: inspectorGadgetSqlServer.properties.fullyQualifiedDomainName
-//     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-//     vnetIntegrationSubnetId: virtualNetwork002::vnetIntegrationSubnet.id
-//   }
-// }
+// Module - App Service - Inspector Gadget
+//////////////////////////////////////////////////
+module inspectorGadgetAppServiceModule 'azure_app_services_inspectorgadget.bicep' = {
+  scope: resourceGroup(inspectorGadgetResourceGroupName)
+  name: 'inspectorGadgetAppServiceDeployment'
+  params: {
+    adminPassword: keyVault.getSecret('resourcePassword')
+    adminUserName: adminUserName
+    appServicePlanId: appServicePlanModule.outputs.appServicePlanId
+    inspectorGadgetAppServiceName: inspectorGadgetAppServiceName
+    inspectorGadgetDockerImage: inspectorGadgetDockerImage
+    inspectorGadgetSqlDatabaseName: inspectorGadgetSqlDatabase.name
+    inspectorGadgetSqlServerFQDN: inspectorGadgetSqlServer.properties.fullyQualifiedDomainName
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    vnetIntegrationSubnetId: virtualNetwork002::vnetIntegrationSubnet.id
+  }
+}
 
 // Module - App Service - ADE App(s)
 //////////////////////////////////////////////////
@@ -227,25 +227,25 @@ module adeAppServicesModule 'azure_app_services_adeapp.bicep' = {
   }
 }
 
-// // Module - Webhooks - ADE App(s)
-// //////////////////////////////////////////////////
-// module adeAppWebHooksModule 'azure_app_service_adeapp_webhooks.bicep' = {
-//   scope: resourceGroup(containerRegistryResourceGroupName)
-//   name: 'adeAppWebHooksDeployment'
-//   params: {
-//     adeAppAppServices: adeAppAppServices
-//     containerRegistryName: containerRegistryName
-//     adeAppDockerWebHookUri: adeAppServicesModule.outputs.adeAppDockerWebHookUris
-//   }
-// }
+// Module - Webhooks - ADE App(s)
+//////////////////////////////////////////////////
+module adeAppWebHooksModule 'azure_app_service_adeapp_webhooks.bicep' = {
+  scope: resourceGroup(containerRegistryResourceGroupName)
+  name: 'adeAppWebHooksDeployment'
+  params: {
+    adeAppAppServices: adeAppAppServices
+    containerRegistryName: containerRegistryName
+    adeAppDockerWebHookUris: adeAppServicesModule.outputs.adeAppDockerWebHookUris
+  }
+}
 
-// // Module - App Config - ADE App(s)
-// //////////////////////////////////////////////////
-// module appConfigAppServices './azure_app_config_app_services.bicep' = {
-//   scope: resourceGroup(appConfigResourceGroupName)
-//   name: 'azureAppServicesAdeAppConfigDeployment'
-//   params: {
-//     adeAppAppServices: adeAppAppServices
-//     appConfigName: appConfigName
-//   }
-// }
+// Module - App Config - ADE App(s)
+//////////////////////////////////////////////////
+module appConfigAppServices './azure_app_config_app_services.bicep' = {
+  scope: resourceGroup(appConfigResourceGroupName)
+  name: 'azureAppServicesAdeAppConfigDeployment'
+  params: {
+    adeAppAppServices: adeAppAppServices
+    appConfigName: appConfigName
+  }
+}

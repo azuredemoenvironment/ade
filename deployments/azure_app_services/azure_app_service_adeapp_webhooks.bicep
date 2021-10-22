@@ -7,21 +7,22 @@ param adeAppAppServices array
 param containerRegistryName string
 
 @description('The array of ADE App Docker Web Hook Uris.')
-param adeAppDockerWebHookUri array
+param adeAppDockerWebHookUris array
 
 // Variables
 //////////////////////////////////////////////////
 var location = resourceGroup().location
 
+@batchSize(1)
 resource adeAppWebHook 'Microsoft.ContainerRegistry/registries/webhooks@2019-05-01' = [for (adeAppAppService, i) in adeAppAppServices: {
-  name: '${containerRegistryName}/${adeAppAppServices[i].adeAppName}'
+  name: '${containerRegistryName}/${adeAppAppService.adeAppAppServiceName}'
   location: location
   properties: {
     status: 'enabled'
-    scope: adeAppAppServices[i].containerImageName
+    scope: adeAppAppService.containerImageName
     actions: [
       'push'
     ]
-    serviceUri: adeAppDockerWebHookUri[i]
+    serviceUri: adeAppDockerWebHookUris[i].adeAppDockerWebHookUri
   }
 }]
