@@ -73,11 +73,9 @@ function Set-InitialArmParameters {
 
         # Required for Deploy-AzureNetworking.ps1        
 
-        # Required for Deploy-AzureVirtualMachines.ps1        
-
-        # Required for Enable-HighCostAzureServices.ps1 and Disable-HighCostAzureServices.ps1
-        'azureFirewallPublicIpAddressName'         = "pip-ade-$aliasRegion-fw001"
-        'azureFirewallName'                        = "fw-ade-$aliasRegion-001"
+        # Required for Deploy-AzureVirtualMachines.ps1
+        
+        # Required for Set-AzureVirtualMachinesToAllocated.ps1 and Set-AzureVirtualMachinesToDellocated.ps1
         'jumpboxName'                              = "vm-jumpbox01"
         'adeWebVm01Name'                           = "vm-ade-$aliasRegion-adeweb01"
         'adeWebVm02Name'                           = "vm-ade-$aliasRegion-adeweb02"
@@ -85,9 +83,21 @@ function Set-InitialArmParameters {
         'adeAppVm01Name'                           = "vm-ade-$aliasRegion-adeapp01"
         'adeAppVm02Name'                           = "vm-ade-$aliasRegion-adeapp02"
         'adeAppVm03Name'                           = "vm-ade-$aliasRegion-adeapp03"
+
+        # Required for Set-AzureVmssToAllocated.ps1 and Set-AzureVmssToAllocated.ps1
         'adeAppVmssName'                           = "vmss-ade-$aliasRegion-adeapp-vmss"
         'adeWebVmssName'                           = "vmss-ade-$aliasRegion-adeweb-vmss"
-        'virtualNetwork001Name'                    = "vnet-ade-${aliasRegion}-001"
+
+        # Required for Set-AzureFirewallToAllocated.ps1 and Set-AzureFirewallToDeallocated.ps1
+        'azureFirewallPublicIpAddressName'         = "pip-ade-$aliasRegion-fw001"
+        'azureFirewallName'                        = "fw-ade-$aliasRegion-001"        
+        'virtualNetwork001Name'                    = "vnet-ade-$aliasRegion-001"
+
+        # Required for Set-AzureContainerInstancesToStarted.ps1 and Set-AzureContainerInstancesToStopped.ps1
+        'adeLoadTestingGatlingContainerGroupName'  = "ci-ade-$aliasRegion-adeloadtesting-gatling"
+        'adeLoadTestingGrafanaContainerGroupName'  = "ci-ade-$aliasRegion-adeloadtesting-grafana"
+        'adeLoadTestingInfluxDbContainerGroupName' = "ci-ade-$aliasRegion-adeloadtesting-influxdb"
+        'adeLoadTestingRedisContainerGroupName'    = "ci-ade-$aliasRegion-adeloadtesting-redis"
         
         # Resource Group Names
         'adeAppAppServicesResourceGroupName'       = "$azureRegionResourceGroupNamePrefix-adeappweb"

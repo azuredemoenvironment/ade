@@ -2,26 +2,14 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "azureRegion": {
-            "value": "@@azureRegion@@"
-        },
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
+        "azureRegion": {
+            "value": "@@azureRegion@@"
+        },        
         "rootDomainName": {
             "value": "@@rootDomainName@@"
-        },
-        "monitorResourceGroupName": {
-            "value": "@@monitorResourceGroupName@@"
-        },
-        "keyVaultResourceGroupName": {
-            "value": "@@keyVaultResourceGroupName@@"
-        },  
-        "containerRegistryResourceGroupName": {
-            "value": "@@containerRegistryResourceGroupName@@"
-        },        
-        "adeAppLoadTestingResourceGroupName": {
-            "value": "@@adeAppLoadTestingResourceGroupName@@"
         }
     }
 }

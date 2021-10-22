@@ -1,31 +1,47 @@
-// parameters
-param azureRegion string
-param containerRegistryLoginServer string
-@secure()
-param containerRegistryLoginUserName string
-@secure()
-param containerRegistryLoginPassword string
-param adeLoadTestingGatlingContainerGroupName string
-param adeLoadTestingGatlingContainerImageName string
-param adeLoadTestingRedisDNSNameLabal string
-param adeLoadTestingInfluxDBDNSNameLabal string
+// Parameters
+//////////////////////////////////////////////////
+@description('The host name of the ADE App Frontend.')
 param adeAppFrontEndHostName string
+
+@description('The host name of the ADE App Api Gateway.')
 param adeAppApiGatewayHostName string
 
-// variables
-var environmentName = 'production'
-var functionName = 'aci'
-var costCenterName = 'it'
+@description('The name of the Gatling Container Group.')
+param adeLoadTestingGatlingContainerGroupName string
 
-// resource - azure container instance - container group - adeLoadTestingGatling
+@description('The name of the Gatling Container Image.')
+param adeLoadTestingGatlingContainerImageName string
+
+@description('The DNS Name Labl of the Influx Db Container Group.')
+param adeLoadTestingRedisDNSNameLabal string
+
+@description('The DNS Name Labl of the Influx Db Container Group.')
+param adeLoadTestingInfluxDbDNSNameLabal string
+
+@description('The name of the admin user of the Azure Container Registry.')
+param containerRegistryName string
+
+@description('The password of the admin user of the Azure Container Registry.')
+param containerRegistryPassword string
+
+@description('The URL of the Azure Container Registry.')
+param containerRegistryURL string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'aci'
+  costCenter: 'it'
+}
+
+// Resource - Azure Container Instance - Container Group - Gatling
+//////////////////////////////////////////////////
 resource adeLoadTestingGatlingContainerGroup 'Microsoft.ContainerInstance/containerGroups@2021-03-01' = {
   name: adeLoadTestingGatlingContainerGroupName
-  location: azureRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  location: location
+  tags: tags
   properties: {
     containers: [
       {
@@ -41,7 +57,7 @@ resource adeLoadTestingGatlingContainerGroup 'Microsoft.ContainerInstance/contai
           environmentVariables: [
             {
               name: 'JAVA_OPTS'
-              value: '-Dgatling.data.graphite.host=${adeLoadTestingInfluxDBDNSNameLabal} -Dgatling.data.graphite.port=2003 -DwebFrontEndDomain=${adeAppFrontEndHostName} -DwebBackEndDomain=${adeAppApiGatewayHostName} -DredisHost=${adeLoadTestingRedisDNSNameLabal} -DredisPort=6379 -DusersPerSecond=1 -DmaxUsersPerSecond=100 -DoverMinutes=5 -Djsse.enableSNIExtension=false'
+              value: '-Dgatling.data.graphite.host=${adeLoadTestingInfluxDbDNSNameLabal} -Dgatling.data.graphite.port=2003 -DwebFrontEndDomain=${adeAppFrontEndHostName} -DwebBackEndDomain=${adeAppApiGatewayHostName} -DredisHost=${adeLoadTestingRedisDNSNameLabal} -DredisPort=6379 -DusersPerSecond=1 -DmaxUsersPerSecond=100 -DoverMinutes=5 -Djsse.enableSNIExtension=false'
             }
           ]
           resources: {
@@ -67,9 +83,9 @@ resource adeLoadTestingGatlingContainerGroup 'Microsoft.ContainerInstance/contai
     }
     imageRegistryCredentials: [
       {
-        server: containerRegistryLoginServer
-        username: containerRegistryLoginUserName
-        password: containerRegistryLoginPassword
+        server: containerRegistryURL
+        username: containerRegistryName
+        password: containerRegistryPassword
       }
     ]
   }

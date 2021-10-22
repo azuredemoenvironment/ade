@@ -1,27 +1,35 @@
-// parameters
-param azureRegion string
-param containerRegistryLoginServer string
-@secure()
-param containerRegistryLoginUserName string
-@secure()
-param containerRegistryLoginPassword string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the Redis Container Group.')
 param adeLoadTestingRedisContainerGroupName string
+
+@description('The name of the Redis Container Image.')
 param adeLoadTestingRedisContainerImageName string
 
-// variables
-var environmentName = 'production'
-var functionName = 'aci'
-var costCenterName = 'it'
+@description('The name of the admin user of the Azure Container Registry.')
+param containerRegistryName string
 
-// resource - azure container instance - container group - adeLoadTestingRedis
+@description('The password of the admin user of the Azure Container Registry.')
+param containerRegistryPassword string
+
+@description('The URL of the Azure Container Registry.')
+param containerRegistryURL string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'aci'
+  costCenter: 'it'
+}
+
+// Resource - Azure Container Instance - Container Group - Redis
+//////////////////////////////////////////////////
 resource adeLoadTestingRedisContainerGroup 'Microsoft.ContainerInstance/containerGroups@2021-03-01' = {
   name: adeLoadTestingRedisContainerGroupName
-  location: azureRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  location: location
+  tags: tags
   properties: {
     containers: [
       {
@@ -58,13 +66,14 @@ resource adeLoadTestingRedisContainerGroup 'Microsoft.ContainerInstance/containe
     }
     imageRegistryCredentials: [
       {
-        server: containerRegistryLoginServer
-        username: containerRegistryLoginUserName
-        password: containerRegistryLoginPassword
+        server: containerRegistryURL
+        username: containerRegistryName
+        password: containerRegistryPassword
       }
     ]
   }
 }
 
-// outputs
+// Outputs
+//////////////////////////////////////////////////
 output redisFqdn string = adeLoadTestingRedisContainerGroup.properties.ipAddress.fqdn
