@@ -48,12 +48,12 @@ function Deploy-AzureDemoEnvironment {
     # Deploy-AzureVirtualMachines $armParameters
     # Deploy-AzureAppServices $armParameters
     # Deploy-AzureKubernetesService $armParameters
-    Deploy-AzureContainerInstances $armParameters
+    # Deploy-AzureContainerInstances $armParameters
     # Set-AzureContainerInstancesToStopped $armParameters
 
     # Frontend Load Balancers
     ###################################
-    # Deploy-AzureFrontendLoadBalancers $armParameters
+    Deploy-AzureFrontendLoadBalancers $armParameters
     
     # Service Cleanup
     ###################################

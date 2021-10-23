@@ -13,9 +13,12 @@ function Set-AzureContainerInstancesToStopped {
     )
     
     $containerGroups | ForEach-Object {
-        Write-Log "Stopping $_"
+        $name = $_.Name
+        $rg = $_.ResourceGroup
+        
+        Write-Log "Stopping $name in resource group $rg"
 
-        az container stop --resource-group $containerGroupResourceGroup --name $_
+        az container stop --resource-group $rg --name $name
         Confirm-LastExitCode
     }
 

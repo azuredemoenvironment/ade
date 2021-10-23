@@ -2,43 +2,14 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "azureRegion": {
-            "value": "@@azureRegion@@"
-        },
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
+        "azureRegion": {
+            "value": "@@azureRegion@@"
+        },
         "rootDomainName": {
             "value": "@@rootDomainName@@"
-        },
-        "appConfigResourceGroupName": {
-            "value": "@@appConfigResourceGroupName@@"
-        },
-        "monitorResourceGroupName": {
-            "value": "@@monitorResourceGroupName@@"
-        },
-        "networkingResourceGroupName": {
-            "value": "@@networkingResourceGroupName@@"
-        },
-        "identityResourceGroupName": {
-            "value": "@@identityResourceGroupName@@"
-        },
-        "adeAppVmResourceGroupName": {
-            "value": "@@adeAppVmResourceGroupName@@"
-        },
-        "sslCertificateName":{
-            "value": "@@sslCertificateName@@"
-        },
-        "sslCertificateData":{
-            "reference": {
-                "keyVault": {
-                    "id": "@@keyVaultResourceID@@"
-                },
-                "secretName": "certificate"
-            }
-        },
-        "sslCertificateDataPassword":{
-            "value": ""
         }
     }
 }
