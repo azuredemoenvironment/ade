@@ -484,7 +484,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
         name: adeAppFrontend.configuration.healthProbeName
         properties: {
           interval: 30
-          path: '/swagger'
+          path: '/'
           protocol: 'Http'
           timeout: 30
           unhealthyThreshold: 3
@@ -495,7 +495,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
         name: adeAppFrontendAppService.configuration.healthProbeName
         properties: {
           interval: 30
-          path: '/swagger'
+          path: '/'
           protocol: 'Http'
           timeout: 30
           unhealthyThreshold: 3
@@ -506,7 +506,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
         name: adeAppFrontendVm.configuration.healthProbeName
         properties: {
           interval: 30
-          path: '/swagger'
+          path: '/'
           protocol: 'Http'
           timeout: 30
           unhealthyThreshold: 3
@@ -517,7 +517,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
         name: adeAppFrontendVmss.configuration.healthProbeName
         properties: {
           interval: 30
-          path: '/swagger'
+          path: '/'
           protocol: 'Http'
           timeout: 30
           unhealthyThreshold: 3

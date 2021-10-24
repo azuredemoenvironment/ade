@@ -38,12 +38,14 @@ function Deploy-AzureDns {
 
     Write-Log 'Configuring Application Gateway DNS Entries'
     $apps = @(
-        'ade-apigateway-as',
+        'ade-apigateway',    
+        'ade-apigateway-app',
         'ade-apigateway-vm',
-        'ade-apigateway',
-        'ade-frontend-as',
-        'ade-frontend-vm',
+        'ade-apigateway-vmss',
         'ade-frontend',
+        'ade-frontend-app',
+        'ade-frontend-vm',
+        'ade-frontend-vmss',
         'inspectorgadget'
     )
 

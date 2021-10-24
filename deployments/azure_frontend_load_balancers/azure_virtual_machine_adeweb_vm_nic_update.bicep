@@ -33,7 +33,7 @@ var tags = {
 // Resource - Network Interface - ADE Web Vm
 //////////////////////////////////////////////////
 resource adeWebVmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
-  name: adeWebVirtualMachine
+  name: adeWebVirtualMachine.nicName
   location: location
   tags: tags
   properties: {

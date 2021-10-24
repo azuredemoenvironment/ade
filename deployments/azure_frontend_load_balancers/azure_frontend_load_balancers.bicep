@@ -13,6 +13,9 @@ param aliasRegion string
 @description('The value for Root Domain Name.')
 param rootDomainName string
 
+@description('The name of the SSL Certificate.')
+param sslCertificateName string
+
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
@@ -38,9 +41,15 @@ var adeAppFrontendVmssHostName = 'ade-frontend-vmss.${rootDomainName}'
 var adeAppVmssLoadBalancerPrivateIpAddress = '10.102.12.4'
 var adeWebModuleName = 'frontend'
 var adeWebVirtualMachines = [
-  adeWebVm01NICName
-  adeWebVm02NICName
-  adeWebVm03NICName
+  {
+    nicName: adeWebVm01NICName
+  }
+  {
+    nicName: adeWebVm02NICName
+  }
+  {
+    nicName: adeWebVm03NICName
+  }
 ]
 var adeWebVm01NICName = 'nic-ade-${aliasRegion}-adeweb01'
 var adeWebVm02NICName = 'nic-ade-${aliasRegion}-adeweb02'
@@ -50,7 +59,7 @@ var adeWebVmssNICName = 'nic-ade-${aliasRegion}-adeweb-vmss'
 var adeWebVmssSubnetName = 'snet-ade-${aliasRegion}-adeapp-vmss'
 var adeWebVmSubnetName = 'snet-ade-${aliasRegion}-adeapp-vm'
 var appConfigName = 'appcs-ade-${aliasRegion}-001'
-var applicationGatewayManagedIdentityName = 'id-ade-${aliasRegion}-agw'
+var applicationGatewayManagedIdentityName = 'id-ade-${aliasRegion}-applicationgateway'
 var applicationGatewayName = 'appgw-ade-${aliasRegion}-001'
 var applicationGatewayPublicIpAddressName = 'pip-ade-${aliasRegion}-appgw001'
 var applicationGatewaySubnetName = 'snet-ade-${aliasRegion}-applicationGateway'
@@ -62,7 +71,6 @@ var inspectorGadgetAppServiceWafPolicyRuleName = 'waf-policy-ade-${aliasRegion}-
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 var sslCertificateDataPassword = ''
-var sslCertificateName = '{rootDomainName}'
 var virtualNetwork001Name = 'vnet-ade-${aliasRegion}-001'
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
 
@@ -135,23 +143,19 @@ module applicationGatewayModule 'azure_application_gateway.bicep' = {
     adeAppApiGatewayHostName: adeAppApiGatewayHostName
     adeAppApiGatewayVmHostName: adeAppApiGatewayVmHostName
     adeAppApiGatewayVmssHostName: adeAppApiGatewayVmssHostName
-
     adeAppFrontendAppServiceFqdn: adeAppFrontendAppServiceFqdn
     adeAppFrontendAppServiceHostName: adeAppFrontendAppServiceHostName
     adeAppFrontendHostName: adeAppFrontendHostName
     adeAppFrontendVmHostName: adeAppFrontendVmHostName
     adeAppFrontendVmssHostName: adeAppFrontendVmssHostName
-
     applicationGatewayManagedIdentityId: applicationGatewayManagedIdentity.id
     applicationGatewayName: applicationGatewayName
     applicationGatewayPublicIpAddressName: applicationGatewayPublicIpAddressName
     applicationGatewaySubnetId: virtualNetwork001::applicationGatewaySubnet.id
-
     inspectorGadgetAppServiceFqdn: inspectorGadgetAppServiceFqdn
     inspectorGadgetAppServiceHostName: inspectorGadgetAppServiceHostName
     inspectorGadgetAppServiceWafPolicyName: inspectorGadgetAppServiceWafPolicyName
     inspectorGadgetAppServiceWafPolicyRuleName: inspectorGadgetAppServiceWafPolicyRuleName
-
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     sslCertificateData: keyVault.getSecret('certificate')
     sslCertificateDataPassword: sslCertificateDataPassword
