@@ -566,7 +566,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
       {
         name: adeAppApiGatewayVm.configuration.httpSettingName
         properties: {
-          port: 80
+          port: 8080
           protocol: 'Http'
           cookieBasedAffinity: 'Disabled'
           requestTimeout: 30
@@ -579,7 +579,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2020-11-01' =
       {
         name: adeAppApiGatewayVmss.configuration.httpSettingName
         properties: {
-          port: 80
+          port: 8080
           protocol: 'Http'
           cookieBasedAffinity: 'Disabled'
           requestTimeout: 30

@@ -52,7 +52,7 @@ function Deploy-AzureDemoEnvironment {
 
     # Frontend Load Balancers
     ###################################
-    # Deploy-AzureFrontendLoadBalancers $armParameters
+    Deploy-AzureFrontendLoadBalancers $armParameters
     
     # Service Cleanup
     ###################################
