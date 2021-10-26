@@ -32,10 +32,11 @@ param listOfAllowedSKUs array = [
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
-var appConfigResourceGroupName = 'rg-ade-${aliasRegion}-appconfiguration'
+var appConfigResourceGroupName = 'rg-ade-${aliasRegion}-appconfig'
 var identityResourceGroupName = 'rg-ade-${aliasRegion}-identity'
 var keyVaultResourceGroupName = 'rg-ade-${aliasRegion}-keyvault'
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
+var networkWatcherResourceGroupName = 'NetworkWatcherRG'
 // Resources
 var activityLogDiagnosticSettingsName = 'subscriptionactivitylog'
 var appConfigName = 'appcs-ade-${aliasRegion}-001'
@@ -75,6 +76,23 @@ resource monitorResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = 
   location: azureRegion
 }
 
+// Resource Group - Network Watcher
+//////////////////////////////////////////////////
+resource networkWatcherResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+  name: networkWatcherResourceGroupName
+  location: azureRegion
+}
+
+// Module - Network Watcher
+//////////////////////////////////////////////////
+module networkWatcherModule 'azure_network_watcher.bicep' = {
+  scope: resourceGroup(networkWatcherResourceGroupName)
+  name: 'networkWatcherDeployment'
+  dependsOn: [
+    networkWatcherResourceGroup
+  ]
+}
+
 // Module - Log Analytics Workspace
 //////////////////////////////////////////////////
 module logAnalyticsModule './azure_log_analytics.bicep' = {
@@ -90,7 +108,7 @@ module logAnalyticsModule './azure_log_analytics.bicep' = {
 
 // Module - App Configuration
 //////////////////////////////////////////////////
-module appConfigModule './azure_app_configuration.bicep' = {
+module appConfigModule './azure_app_config.bicep' = {
   scope: resourceGroup(appConfigResourceGroupName)
   name: 'appConfigDeployment'
   dependsOn: [
@@ -118,7 +136,7 @@ module applicationInsightsModule './azure_application_insights.bicep' = {
 
 // Module - App Configuration - Application Insights
 //////////////////////////////////////////////////
-module appConfigApplicationInsightsModule './azure_app_configuration_application_insights.bicep' = {
+module appConfigApplicationInsightsModule './azure_app_config_application_insights.bicep' = {
   scope: resourceGroup(appConfigResourceGroupName)
   name: 'appConfigApplicationInsightsDeployment'
   params: {

@@ -1,0 +1,19 @@
+// Parameters
+//////////////////////////////////////////////////
+@description('The value for Root Domain Name.')
+param rootDomainName string
+
+// Variables
+//////////////////////////////////////////////////
+var location = 'global'
+
+// Resource - DNS Zone
+//////////////////////////////////////////////////
+resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' = {
+  name: rootDomainName
+  location: location
+}
+
+// Outputs
+//////////////////////////////////////////////////
+output dnsZoneName string = dnsZone.name

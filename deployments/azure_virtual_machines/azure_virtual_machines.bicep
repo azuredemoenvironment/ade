@@ -18,7 +18,7 @@ param azureRegion string
 // Resource Groups
 var adeAppVmResourceGroupName = 'rg-ade-${aliasRegion}-adeappvm'
 var adeAppVmssResourceGroupName = 'rg-ade-${aliasRegion}-adeappvmss'
-var appConfigResourceGroupName = 'rg-ade-${aliasRegion}-appconfiguration'
+var appConfigResourceGroupName = 'rg-ade-${aliasRegion}-appconfig'
 var containerRegistryResourceGroupName = 'rg-ade-${aliasRegion}-containerregistry'
 var jumpboxResourceGroupName = 'rg-ade-${aliasRegion}-jumpbox'
 var keyVaultResourceGroupName = 'rg-ade-${aliasRegion}-keyvault'

@@ -34,7 +34,6 @@ function Deploy-AzureDemoEnvironment {
     
     # Core Services
     ###################################
-    # Deploy-AzureResourceGroups $armParameters
     # Deploy-AzureGovernance $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
     # Deploy-AzureNetworking $armParameters
     # Deploy-AzureContainerRegistry $armParameters
@@ -53,7 +52,7 @@ function Deploy-AzureDemoEnvironment {
 
     # Frontend Load Balancers
     ###################################
-    Deploy-AzureFrontendLoadBalancers $armParameters
+    # Deploy-AzureFrontendLoadBalancers $armParameters
     
     # Service Cleanup
     ###################################
@@ -62,7 +61,7 @@ function Deploy-AzureDemoEnvironment {
     # Additional Core Services
     ###################################
     # Deploy-AzureAlerts $armParameters
-    # Deploy-AzureDns $armParameters
+    # Deploy-AzurePublicDns $armParameters
 
     $stopwatch.Stop()
     $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)

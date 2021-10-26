@@ -18,7 +18,7 @@ param azureRegion string
 // Resource Groups
 var adeAppAppServicesResourceGroupName = 'rg-ade-${aliasRegion}-adeappweb'
 var adeAppSqlResourceGroupName = 'rg-ade-${aliasRegion}-adeappdb'
-var appConfigResourceGroupName = 'rg-ade-${aliasRegion}-appconfiguration'
+var appConfigResourceGroupName = 'rg-ade-${aliasRegion}-appconfig'
 var appServicePlanResourceGroupName = 'rg-ade-${aliasRegion}-appserviceplan'
 var containerRegistryResourceGroupName = 'rg-ade-${aliasRegion}-containerregistry'
 var inspectorGadgetResourceGroupName = 'rg-ade-${aliasRegion}-inspectorgadget'
@@ -182,6 +182,9 @@ resource adeAppAppServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-
 module appServicePlanModule 'azure_app_service_plan.bicep' = {
   scope: resourceGroup(appServicePlanResourceGroupName)
   name: 'appServicePlanDeployment'
+  dependsOn: [
+    appServicePlanResourceGroup
+  ]
   params: {
     appServicePlanName: appServicePlanName
   }

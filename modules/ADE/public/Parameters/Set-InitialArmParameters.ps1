@@ -42,39 +42,46 @@ function Set-InitialArmParameters {
         'rootDomainName'                           = $rootDomainName
         'skipConfirmation'                         = $skipConfirmation
 
-        # Generated Parameters
-        'aciStorageAccountName'                    = "sa-$aliasRegion-aciwp".replace('-', '')              
+        # Generated Parameters        
         'adminUserName'                            = $resourceUserName
-        'aksClusterDNSName'                        = "aks-$aliasRegion-01-dns"
-        'aksClusterName'                           = "aks-$aliasRegion-01"
         'azureActiveDirectoryUserID'               = $adSignedInUser.objectId              
         'localNetworkGatewayAddressPrefix'         = $localNetworkRange
-        'logAnalyticsWorkspaceName'                = "log-ade-$aliasRegion-001"        
-        'nTierHostName'                            = "ntier.$rootDomainName"               
+        'logAnalyticsWorkspaceName'                = "log-ade-$aliasRegion-001"                  
         'sourceAddressPrefix'                      = $sourceAddressPrefix        
-        'sslCertificateName'                       = $rootDomainName    
+        'sslCertificateName'                       = $rootDomainName
 
         # Required for Deploy-AzureAppServicePlanScaleDown.ps1
         'appServicePlanName'                       = "plan-ade-$aliasRegion-001"
-
-        # Required for Deploy-AzureDns.ps1
-        'applicationGatewayPublicIPAddressName'    = "pip-ade-$aliasRegion-appgw001"
-
-        # Required for Deploy-AzureGovernance.ps1
-        'activityLogDiagnosticsName'               = "subscriptionActivityLog"
-        'adeInitiativeDefinition'                  = "policy-ade-$aliasRegion-adeinitiative"
-        'keyVaultName'                             = "kv-ade-$aliasRegion-001"
 
         # Required for Deploy-AzureContainerRegistry.ps1
         'acrName'                                  = $acrName
         'containerRegistryLoginServer'             = "$acrName.azurecr.io"
 
-        # Required for Deploy-AzureDatabases.ps1        
+        # Required for Deploy-AzureGovernance.ps1               
+        'keyVaultKeyName'                          = "containerRegistry"
+        'keyVaultName'                             = "kv-ade-$aliasRegion-001"
 
-        # Required for Deploy-AzureNetworking.ps1        
+        # Required for Remove-AzureActivityLogDiagnostics.ps1
+        'activityLogDiagnosticsName'               = "subscriptionActivityLog" 
 
-        # Required for Deploy-AzureVirtualMachines.ps1
+        # Required for Remove-AzurePolicyAssignmentsAndDefinitions.ps1
+        'adeInitiativeDefinition'                  = "policy-ade-$aliasRegion-adeinitiative"
+
+        # Required for Set-AzureContainerInstancesToStarted.ps1 and Set-AzureContainerInstancesToStopped.ps1
+        'adeLoadTestingGatlingContainerGroupName'  = "ci-ade-$aliasRegion-adeloadtesting-gatling"
+        'adeLoadTestingGrafanaContainerGroupName'  = "ci-ade-$aliasRegion-adeloadtesting-grafana"
+        'adeLoadTestingInfluxDbContainerGroupName' = "ci-ade-$aliasRegion-adeloadtesting-influxdb"
+        'adeLoadTestingRedisContainerGroupName'    = "ci-ade-$aliasRegion-adeloadtesting-redis"
         
+        # Required for Set-AzureFirewallToAllocated.ps1 and Set-AzureFirewallToDeallocated.ps1
+        'azureFirewallPublicIpAddressName'         = "pip-ade-$aliasRegion-fw001"
+        'azureFirewallName'                        = "fw-ade-$aliasRegion-001"        
+        'virtualNetwork001Name'                    = "vnet-ade-$aliasRegion-001"
+
+        # Required for Set-AzureVmssToAllocated.ps1 and Set-AzureVmssToAllocated.ps1
+        'adeAppVmssName'                           = "vmss-ade-$aliasRegion-adeapp-vmss"
+        'adeWebVmssName'                           = "vmss-ade-$aliasRegion-adeweb-vmss"
+
         # Required for Set-AzureVirtualMachinesToAllocated.ps1 and Set-AzureVirtualMachinesToDellocated.ps1
         'jumpboxName'                              = "vm-jumpbox01"
         'adeWebVm01Name'                           = "vm-ade-$aliasRegion-adeweb01"
@@ -83,31 +90,14 @@ function Set-InitialArmParameters {
         'adeAppVm01Name'                           = "vm-ade-$aliasRegion-adeapp01"
         'adeAppVm02Name'                           = "vm-ade-$aliasRegion-adeapp02"
         'adeAppVm03Name'                           = "vm-ade-$aliasRegion-adeapp03"
-
-        # Required for Set-AzureVmssToAllocated.ps1 and Set-AzureVmssToAllocated.ps1
-        'adeAppVmssName'                           = "vmss-ade-$aliasRegion-adeapp-vmss"
-        'adeWebVmssName'                           = "vmss-ade-$aliasRegion-adeweb-vmss"
-
-        # Required for Set-AzureFirewallToAllocated.ps1 and Set-AzureFirewallToDeallocated.ps1
-        'azureFirewallPublicIpAddressName'         = "pip-ade-$aliasRegion-fw001"
-        'azureFirewallName'                        = "fw-ade-$aliasRegion-001"        
-        'virtualNetwork001Name'                    = "vnet-ade-$aliasRegion-001"
-
-        # Required for Set-AzureContainerInstancesToStarted.ps1 and Set-AzureContainerInstancesToStopped.ps1
-        'adeLoadTestingGatlingContainerGroupName'  = "ci-ade-$aliasRegion-adeloadtesting-gatling"
-        'adeLoadTestingGrafanaContainerGroupName'  = "ci-ade-$aliasRegion-adeloadtesting-grafana"
-        'adeLoadTestingInfluxDbContainerGroupName' = "ci-ade-$aliasRegion-adeloadtesting-influxdb"
-        'adeLoadTestingRedisContainerGroupName'    = "ci-ade-$aliasRegion-adeloadtesting-redis"
-        
+  
         # Resource Group Names
         'adeAppAppServicesResourceGroupName'       = "$azureRegionResourceGroupNamePrefix-adeappweb"
         'adeAppLoadTestingResourceGroupName'       = "$azureRegionResourceGroupNamePrefix-adeapploadtesting"
         'adeAppSqlResourceGroupName'               = "$azureRegionResourceGroupNamePrefix-adeappdb"
         'adeAppVmResourceGroupName'                = "$azureRegionResourceGroupNamePrefix-adeappvm"
-        'adeAppVmssResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-adeappvmss"
-        'aksNodeResourceGroupName'                 = "$azureRegionResourceGroupNamePrefix-aks-node"
-        'aksResourceGroupName'                     = "$azureRegionResourceGroupNamePrefix-aks"        
-        'appConfigResourceGroupName'               = "$azureRegionResourceGroupNamePrefix-appconfiguration"
+        'adeAppVmssResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-adeappvmss"    
+        'appConfigResourceGroupName'               = "$azureRegionResourceGroupNamePrefix-appconfig"
         'applicationGatewayResourceGroupName'      = "$azureRegionResourceGroupNamePrefix-applicationgateway"
         'appServicePlanResourceGroupName'          = "$azureRegionResourceGroupNamePrefix-appserviceplan"     
         'containerRegistryResourceGroupName'       = "$azureRegionResourceGroupNamePrefix-containerregistry"
@@ -118,6 +108,7 @@ function Set-InitialArmParameters {
         'keyVaultResourceGroupName'                = "$azureRegionResourceGroupNamePrefix-keyvault"
         'monitorResourceGroupName'                 = "$azureRegionResourceGroupNamePrefix-monitor"
         'networkingResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-networking"
+        'networkWatcherResourceGroupName'          = "NetworkWatcherRG"
         'proximityPlacementGroupResourceGroupName' = "$azureRegionResourceGroupNamePrefix-proximityplacementgroup"
     }
 

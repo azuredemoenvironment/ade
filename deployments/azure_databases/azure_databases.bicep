@@ -17,7 +17,7 @@ param azureRegion string
 //////////////////////////////////////////////////
 // Resource Groups
 var adeAppSqlResourceGroupName = 'rg-ade-${aliasRegion}-adeappdb'
-var appConfigResourceGroupName = 'rg-ade-${aliasRegion}-appconfiguration'
+var appConfigResourceGroupName = 'rg-ade-${aliasRegion}-appconfig'
 var inspectorGadgetResourceGroupName = 'rg-ade-${aliasRegion}-inspectorgadget'
 var keyVaultResourceGroupName = 'rg-ade-${aliasRegion}-keyvault'
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'

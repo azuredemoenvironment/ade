@@ -5,11 +5,18 @@ function Deploy-AzureGovernance {
 
     # Parameters
     ##################################################
+    $keyVaultKeyName = $armParameters.keyVaultKeyName
     $keyVaultName = $armParameters.keyVaultName
+
+    # Deploy Azure Governance
+    ##################################################
+    Write-ScriptSection "Initializing Azure Governance Deployment"
 
     # Deploy the Azure Governance Bicep template at the subscription scope.
     ##################################################
     Deploy-ArmTemplate 'Azure Governance' $armParameters -resourceLevel 'sub' -bicep
+
+    Write-Status "Finished Azure Governance Deployment"
 
     # Configure Azure KeyVault
     ##################################################
@@ -22,7 +29,7 @@ function Deploy-AzureGovernance {
     Deploy-WildcardCertificateToAzureKeyVault $keyVaultName $secureCertificatePassword $wildcardCertificatePath
 
     # Create the Container Registry encryption key.
-    New-AzureKeyVaultKey $keyVaultName 'containerRegistry'
+    New-AzureKeyVaultKey $keyVaultName $keyVaultKeyName
     
     # Set the Azure KeyVault resource id for future deployments.
     Set-AzureKeyVaultResourceId $armParameters
