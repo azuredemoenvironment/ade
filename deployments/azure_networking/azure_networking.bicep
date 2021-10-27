@@ -29,8 +29,8 @@ var keyVaultResourceGroupName = 'rg-ade-${aliasRegion}-keyvault'
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 var networkingResourceGroupName = 'rg-ade-${aliasRegion}-networking'
 // Resources
-var adeAksSubnetName = 'snet-ade-${aliasRegion}-ade-aks'
-var adeAksSubnetPrefix = '10.102.101.0/24'
+var adeAppAksSubnetName = 'snet-ade-${aliasRegion}-adeapp-aks'
+var adeAppAksSubnetPrefix = '10.102.101.0/24'
 var adeAppVmssSubnetName = 'snet-ade-${aliasRegion}-adeapp-vmss'
 var adeAppVmssSubnetNSGName = 'nsg-ade-${aliasRegion}-adeapp-vmss'
 var adeAppVmssSubnetPrefix = '10.102.12.0/24'
@@ -192,8 +192,8 @@ module virtualNetwork002Module './azure_virtual_network_002.bicep' = {
     networkingResourceGroup
   ]
   params: {
-    adeAksSubnetName: adeAksSubnetName
-    adeAksSubnetPrefix: adeAksSubnetPrefix
+    adeAppAksSubnetName: adeAppAksSubnetName
+    adeAppAksSubnetPrefix: adeAppAksSubnetPrefix
     adeAppVmssSubnetName: adeAppVmssSubnetName
     adeAppVmssSubnetNSGId: networkSecurityGroupsModule.outputs.adeAppVmssSubnetNSGId
     adeAppVmssSubnetPrefix: adeAppVmssSubnetPrefix

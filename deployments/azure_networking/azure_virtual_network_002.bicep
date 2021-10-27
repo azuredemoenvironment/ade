@@ -1,10 +1,10 @@
 // Parameters
 //////////////////////////////////////////////////
 @description('The name of the ADE AKS Subnet.')
-param adeAksSubnetName string
+param adeAppAksSubnetName string
 
 @description('The address prefix of the ADE AKS Subnet.')
-param adeAksSubnetPrefix string
+param adeAppAksSubnetPrefix string
 
 @description('The name of the ADE App Vmss Subnet.')
 param adeAppVmssSubnetName string
@@ -141,9 +141,9 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         }
       }
       {
-        name: adeAksSubnetName
+        name: adeAppAksSubnetName
         properties: {
-          addressPrefix: adeAksSubnetPrefix
+          addressPrefix: adeAppAksSubnetPrefix
           serviceEndpoints: [
             {
               service: 'Microsoft.ContainerRegistry'

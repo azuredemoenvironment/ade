@@ -92,6 +92,8 @@ function Set-InitialArmParameters {
         'adeAppVm03Name'                           = "vm-ade-$aliasRegion-adeapp03"
   
         # Resource Group Names
+        'adeAppAksNodeResourceGroupName'           = "$azureRegionResourceGroupNamePrefix-adeappaks-node"
+        'adeAppAksResourceGroupName'               = "$azureRegionResourceGroupNamePrefix-adeappaks"
         'adeAppAppServicesResourceGroupName'       = "$azureRegionResourceGroupNamePrefix-adeappweb"
         'adeAppLoadTestingResourceGroupName'       = "$azureRegionResourceGroupNamePrefix-adeapploadtesting"
         'adeAppSqlResourceGroupName'               = "$azureRegionResourceGroupNamePrefix-adeappdb"
