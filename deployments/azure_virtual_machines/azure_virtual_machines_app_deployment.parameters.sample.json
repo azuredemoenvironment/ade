@@ -4,12 +4,9 @@
     "parameters": {
         "adminUserName": {
             "value": "@@adminUsername@@"
-        },        
+        },
         "aliasRegion": {
             "value": "@@aliasRegion@@"
-        },
-        "azureRegion": {
-            "value": "@@azureRegion@@"
         }
     }
 }

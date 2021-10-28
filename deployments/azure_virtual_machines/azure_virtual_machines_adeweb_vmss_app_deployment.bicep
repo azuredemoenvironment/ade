@@ -1,16 +1,19 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The ID of the ADE App Vmss Load Balancer Backend Pool.')
-param adeAppVmssLoadBalancerBackendPoolId string
+@description('The private Ip address of the ADE App Vmss Load Balancer.')
+param adeAppVmssLoadBalancerPrivateIpAddress string
 
-@description('The name of the ADE App VMSS.')
-param adeAppVmssName string
+@description('The name of the ADE Web Module.')
+param adeWebModuleName string
 
-@description('The name of the ADE App VMSS NIC.')
-param adeAppVmssNICName string
+@description('The name of the ADE Web VMSS.')
+param adeWebVmssName string
 
-@description('The ID of the ADE App Subnet.')
-param adeAppVmssSubnetId string
+@description('The name of the ADE Web VMSS NIC.')
+param adeWebVmssNICName string
+
+@description('The ID of the ADE Web Subnet.')
+param adeWebVmssSubnetId string
 
 @description('The password of the admin user.')
 @secure()
@@ -18,6 +21,18 @@ param adminPassword string
 
 @description('The name of the admin user.')
 param adminUserName string
+
+@description('The connection string from the App Configuration instance.')
+param appConfigConnectionString string
+
+@description('The name of the admin user of the Azure Container Registry.')
+param containerRegistryName string
+
+@description('The password of the admin user of the Azure Container Registry.')
+param containerRegistryPassword string
+
+@description('Function to generate the current time.')
+param currentTime string = utcNow()
 
 @description('The customer Id of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceCustomerId string
@@ -28,16 +43,20 @@ param logAnalyticsWorkspaceKey string
 // Variables
 //////////////////////////////////////////////////
 var location = resourceGroup().location
+var sanitizeCurrentTime = replace(replace(currentTime, 'Z', ''), 'T', '')
+var scriptLocation = 'https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/dev/deployments/azure_virtual_machines/adeappinstall.sh'
+var scriptName = 'adeappinstall.sh'
 var tags = {
   environment: 'production'
-  function: 'adeAppVmss'
+  function: 'adeWebVmss'
   costCenter: 'it'
 }
+var timeStamp = int('${substring(sanitizeCurrentTime, 1, 2)}${substring(sanitizeCurrentTime, 3, 2)}${substring(sanitizeCurrentTime, 5, 2)}${substring(sanitizeCurrentTime, 7, 4)}')
 
-// Resource - Virtual Machine Scale Set - ADE App
+// Resource - Virtual Machine Scale Set - ADE Web
 //////////////////////////////////////////////////
-resource adeAppVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
-  name: adeAppVmssName
+resource adeWebVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
+  name: adeWebVmssName
   location: location
   zones: [
     '1'
@@ -59,7 +78,7 @@ resource adeAppVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
     zoneBalance: true
     virtualMachineProfile: {
       osProfile: {
-        computerNamePrefix: adeAppVmssName
+        computerNamePrefix: adeWebVmssName
         adminUsername: adminUserName
         adminPassword: adminPassword
       }
@@ -78,7 +97,7 @@ resource adeAppVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
       networkProfile: {
         networkInterfaceConfigurations: [
           {
-            name: adeAppVmssNICName
+            name: adeWebVmssNICName
             properties: {
               primary: true
               ipConfigurations: [
@@ -86,13 +105,8 @@ resource adeAppVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
                   name: 'ipconfig1'
                   properties: {
                     subnet: {
-                      id: adeAppVmssSubnetId
+                      id: adeWebVmssSubnetId
                     }
-                    loadBalancerBackendAddressPools: [
-                      {
-                        id: adeAppVmssLoadBalancerBackendPoolId
-                      }
-                    ]
                   }
                 }
               ]
@@ -126,6 +140,25 @@ resource adeAppVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
               }
             }
           }
+          {
+            name: 'lapextension'
+            properties: {
+              publisher: 'Microsoft.Azure.Extensions'
+              type: 'CustomScript'
+              typeHandlerVersion: '2.1'
+              autoUpgradeMinorVersion: true
+              settings: {
+                skipDos2Unix: true
+                timestamp: timeStamp
+              }
+              protectedSettings: {
+                fileUris: [
+                  scriptLocation
+                ]
+                commandToExecute: './${scriptName} "${containerRegistryName}" "${containerRegistryPassword}" "${appConfigConnectionString}" "${adeWebModuleName}" "${adeAppVmssLoadBalancerPrivateIpAddress}"'
+              }
+            }
+          }
         ]
       }
     }
@@ -134,12 +167,12 @@ resource adeAppVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
 
 // Resource - Auto Scale Setting
 //////////////////////////////////////////////////
-resource adeAppVmssAutoScaleSettings 'microsoft.insights/autoscalesettings@2015-04-01' = {
-  name: '${adeAppVmss.name}-autoscale'
+resource adeWebVmssAutoScaleSettings 'microsoft.insights/autoscalesettings@2015-04-01' = {
+  name: '${adeWebVmss.name}-autoscale'
   location: location
   properties: {
-    name: '${adeAppVmss.name}-autoscale'
-    targetResourceUri: adeAppVmss.id
+    name: '${adeWebVmss.name}-autoscale'
+    targetResourceUri: adeWebVmss.id
     enabled: true
     profiles: [
       {
@@ -154,7 +187,7 @@ resource adeAppVmssAutoScaleSettings 'microsoft.insights/autoscalesettings@2015-
             metricTrigger: {
               metricName: 'Percentage CPU'
               metricNamespace: ''
-              metricResourceUri: adeAppVmss.id
+              metricResourceUri: adeWebVmss.id
               timeGrain: 'PT1M'
               timeWindow: 'PT5M'
               timeAggregation: 'Average'
@@ -173,7 +206,7 @@ resource adeAppVmssAutoScaleSettings 'microsoft.insights/autoscalesettings@2015-
             metricTrigger: {
               metricName: 'Percentage CPU'
               metricNamespace: ''
-              metricResourceUri: adeAppVmss.id
+              metricResourceUri: adeWebVmss.id
               timeGrain: 'PT1M'
               timeWindow: 'PT5M'
               timeAggregation: 'Average'

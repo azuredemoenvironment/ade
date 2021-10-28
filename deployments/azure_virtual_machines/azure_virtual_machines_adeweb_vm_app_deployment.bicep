@@ -1,5 +1,8 @@
 // Parameters
 //////////////////////////////////////////////////
+@description('The private Ip address of the ADE App Vm Load Balancer.')
+param adeAppVmLoadBalancerPrivateIpAddress string
+
 @description('The array of properties for the ADE Web Virtual Machines.')
 param adeWebVirtualMachines array
 
@@ -13,6 +16,18 @@ param adminPassword string
 @description('The name of the admin user.')
 param adminUserName string
 
+@description('The connection string from the App Configuration instance.')
+param appConfigConnectionString string
+
+@description('The name of the admin user of the Azure Container Registry.')
+param containerRegistryName string
+
+@description('The password of the admin user of the Azure Container Registry.')
+param containerRegistryPassword string
+
+@description('Function to generate the current time.')
+param currentTime string = utcNow()
+
 @description('The customer Id of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceCustomerId string
 
@@ -25,11 +40,15 @@ param logAnalyticsWorkspaceKey string
 // Variables
 //////////////////////////////////////////////////
 var location = resourceGroup().location
+var sanitizeCurrentTime = replace(replace(currentTime, 'Z', ''), 'T', '')
+var scriptLocation = 'https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/dev/deployments/azure_virtual_machines/adeappinstall.sh'
+var scriptName = 'adeappinstall.sh'
 var tags = {
   environment: 'production'
   function: 'adeWebVm'
   costCenter: 'it'
 }
+var timeStamp = int('${substring(sanitizeCurrentTime, 1, 2)}${substring(sanitizeCurrentTime, 3, 2)}${substring(sanitizeCurrentTime, 5, 2)}${substring(sanitizeCurrentTime, 7, 4)}')
 
 // Resource - Network Interface - ADE Web Vm
 //////////////////////////////////////////////////
@@ -153,6 +172,29 @@ resource adeWebVmMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/ext
     }
     protectedSettings: {
       workspaceKey: logAnalyticsWorkspaceKey
+    }
+  }
+}]
+
+// Resource - Custom Script Extension - ADE Web Vmss
+//////////////////////////////////////////////////
+resource adeWebVmCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
+  name: '${adeWebVm[i].name}/CustomScriptextension'
+  location: location
+  properties: {
+    publisher: 'Microsoft.Azure.Extensions'
+    type: 'CustomScript'
+    typeHandlerVersion: '2.1'
+    autoUpgradeMinorVersion: true
+    settings: {
+      skipDos2Unix: true
+      timestamp: timeStamp
+    }
+    protectedSettings: {
+      fileUris: [
+        scriptLocation
+      ]
+      commandToExecute: './${scriptName} "${containerRegistryName}" "${containerRegistryPassword}" "${appConfigConnectionString}" "${adeWebVirtualMachine.adeModule}" "${adeAppVmLoadBalancerPrivateIpAddress}"'
     }
   }
 }]

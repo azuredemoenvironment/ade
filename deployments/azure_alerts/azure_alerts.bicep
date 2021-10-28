@@ -18,6 +18,15 @@ param contactEmailAddress string
 // Resource Groups
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 // Resources
+var adeBudgetAmount = 1500
+var adeBudgetFirstThreshold = 100
+var adeBudgetName = 'budget-ade-${aliasRegion}-monthly'
+var adeBudgetSecondThreshold = 500
+var adeBudgetStartDate = '2021-01-01'
+var adeBudgetThirdThreshold = 1000
+var adeBudgetTimeGrain = 'Monthly'
+var budgetActionGroupName = 'ag-ade-${aliasRegion}-budget'
+var budgetActionGroupShortName = 'ag-budget'
 var serviceHealthActionGroupName = 'ag-ade-${aliasRegion}-servicehealth'
 var serviceHealthActionGroupShortName = 'ag-svchealth'
 var serviceHealthAlertName = 'service health'
@@ -36,6 +45,8 @@ module actionGroupModule 'azure_alerts_action_groups.bicep' = {
   name: 'actionGroupDeployment'
   params: {
     contactEmailAddress: contactEmailAddress
+    budgetActionGroupName: budgetActionGroupName
+    budgetActionGroupShortName: budgetActionGroupShortName
     serviceHealthActionGroupName: serviceHealthActionGroupName
     serviceHealthActionGroupShortName: serviceHealthActionGroupShortName
     virtualMachineActionGroupName: virtualMachineActionGroupName
@@ -59,5 +70,23 @@ module alertsModule 'azure_alerts_alerts.bicep' = {
     virtualMachineCpuAlertName: virtualMachineCpuAlertName
     virtualNetworkActionGroupId: actionGroupModule.outputs.virtualNetworkActionGroupId
     virtualNetworkAlertName: virtualNetworkAlertName
+  }
+}
+
+// Module - Budget
+//////////////////////////////////////////////////
+module budgetModule 'azure_alerts_budget.bicep' = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: 'budgetDeployment'
+  params: {
+    adeBudgetAmount: adeBudgetAmount
+    adeBudgetFirstThreshold: adeBudgetFirstThreshold
+    adeBudgetName: adeBudgetName
+    adeBudgetSecondThreshold: adeBudgetSecondThreshold
+    adeBudgetStartDate: adeBudgetStartDate
+    adeBudgetThirdThreshold: adeBudgetThirdThreshold
+    adeBudgetTimeGrain: adeBudgetTimeGrain
+    budgetActionGroupId: actionGroupModule.outputs.budgetActionGroupId
+    contactEmailAddress: contactEmailAddress
   }
 }
