@@ -1,16 +1,13 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The ID of the ADE App Vmss Load Balancer Backend Pool.')
-param adeAppVmLoadBalancerBackendPoolId string
-
 @description('The private Ip address of the ADE App Vm Load Balancer.')
 param adeAppVmLoadBalancerPrivateIpAddress string
 
-@description('The array of properties for the ADE App Virtual Machines.')
-param adeAppVirtualMachines array
+@description('The array of properties for the ADE Web Virtual Machines.')
+param adeWebVirtualMachines array
 
-@description('The ID of the ADE App Virtual Machine subnet.')
-param adeAppVmSubnetId string
+@description('The ID of the ADE Web Virtual Machine subnet.')
+param adeWebVmSubnetId string
 
 @description('The password of the admin user.')
 @secure()
@@ -44,19 +41,19 @@ param logAnalyticsWorkspaceKey string
 //////////////////////////////////////////////////
 var location = resourceGroup().location
 var sanitizeCurrentTime = replace(replace(currentTime, 'Z', ''), 'T', '')
-var scriptLocation = 'https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/dev/deployments/azure_virtual_machines/adeappinstall.sh'
+var scriptLocation = 'https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/dev/deployments/azure_virtual_machines_app_deployment/adeappinstall.sh'
 var scriptName = 'adeappinstall.sh'
 var tags = {
   environment: 'production'
-  function: 'adeAppVm'
+  function: 'adeWebVm'
   costCenter: 'it'
 }
 var timeStamp = int('${substring(sanitizeCurrentTime, 1, 2)}${substring(sanitizeCurrentTime, 3, 2)}${substring(sanitizeCurrentTime, 5, 2)}${substring(sanitizeCurrentTime, 7, 4)}')
 
-// Resource - Network Interface - ADE App Vm
+// Resource - Network Interface - ADE Web Vm
 //////////////////////////////////////////////////
-resource adeAppVmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (adeAppVirtualMachine, i) in adeAppVirtualMachines: {
-  name: adeAppVirtualMachine.nicName
+resource adeWebVmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
+  name: adeWebVirtualMachine.nicName
   location: location
   tags: tags
   properties: {
@@ -66,13 +63,8 @@ resource adeAppVmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (ad
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           subnet: {
-            id: adeAppVmSubnetId
+            id: adeWebVmSubnetId
           }
-          loadBalancerBackendAddressPools: [
-            {
-              id: adeAppVmLoadBalancerBackendPoolId
-            }
-          ]
         }
       }
     ]
@@ -81,9 +73,9 @@ resource adeAppVmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (ad
 
 // Resource - Network Interface - Diagnostic Settings
 //////////////////////////////////////////////////
-resource adeAppVmNicDiagnosticSetting 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (adeAppVirtualMachine, i) in adeAppVirtualMachines: {
-  scope: adeAppVmNic[i]
-  name: '${adeAppVirtualMachine.nicName}-diagnostics'
+resource adeWebVmNicDiagnosticSetting 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
+  scope: adeWebVmNic[i]
+  name: '${adeWebVirtualMachine.nicName}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
@@ -102,16 +94,16 @@ resource adeAppVmNicDiagnosticSetting 'microsoft.insights/diagnosticSettings@202
 
 // Resource - Virtual Machine
 //////////////////////////////////////////////////
-resource adeAppVm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for (adeAppVirtualMachine, i) in adeAppVirtualMachines: {
-  name: adeAppVirtualMachine.name
+resource adeWebVm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
+  name: adeWebVirtualMachine.name
   location: location
   zones: [
-    adeAppVirtualMachine.availabilityZone
+    adeWebVirtualMachine.availabilityZone
   ]
   tags: tags
   properties: {
     proximityPlacementGroup: {
-      id: adeAppVirtualMachine.proximityPlacementGroupId
+      id: adeWebVirtualMachine.proximityPlacementGroupId
     }
     hardwareProfile: {
       vmSize: 'Standard_B1s'
@@ -125,7 +117,7 @@ resource adeAppVm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for (adeAppV
       }
       osDisk: {
         osType: 'Linux'
-        name: adeAppVirtualMachine.osDiskName
+        name: adeWebVirtualMachine.osDiskName
         createOption: 'FromImage'
         managedDisk: {
           storageAccountType: 'Standard_LRS'
@@ -133,14 +125,14 @@ resource adeAppVm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for (adeAppV
       }
     }
     osProfile: {
-      computerName: adeAppVirtualMachine.name
+      computerName: adeWebVirtualMachine.name
       adminUsername: adminUserName
       adminPassword: adminPassword
     }
     networkProfile: {
       networkInterfaces: [
         {
-          id: adeAppVmNic[i].id
+          id: adeWebVmNic[i].id
         }
       ]
     }
@@ -154,8 +146,8 @@ resource adeAppVm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for (adeAppV
 
 // Resource - Dependency Agent Linux
 //////////////////////////////////////////////////
-resource adeAppVmDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeAppVirtualMachine, i) in adeAppVirtualMachines: {
-  name: '${adeAppVm[i].name}/DependencyAgentLinux'
+resource adeWebVmDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
+  name: '${adeWebVm[i].name}/DependencyAgentLinux'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
@@ -167,8 +159,8 @@ resource adeAppVmDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2
 
 // Resource - Microsoft Monitoring Agent
 //////////////////////////////////////////////////
-resource adeAppVmMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeAppVirtualMachine, i) in adeAppVirtualMachines: {
-  name: '${adeAppVm[i].name}/OMSExtension'
+resource adeWebVmMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
+  name: '${adeWebVm[i].name}/OMSExtension'
   location: location
   properties: {
     publisher: 'Microsoft.EnterpriseCloud.Monitoring'
@@ -184,10 +176,10 @@ resource adeAppVmMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/ext
   }
 }]
 
-// Resource - Custom Script Extension - ADE App Vm
+// Resource - Custom Script Extension - ADE Web Vmss
 //////////////////////////////////////////////////
-resource adeAppVmCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeAppVirtualMachine, i) in adeAppVirtualMachines: {
-  name: '${adeAppVm[i].name}/CustomScriptextension'
+resource adeWebVmCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
+  name: '${adeWebVm[i].name}/CustomScriptextension'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -202,7 +194,7 @@ resource adeAppVmCustomScriptExtension 'Microsoft.Compute/virtualMachines/extens
       fileUris: [
         scriptLocation
       ]
-      commandToExecute: './${scriptName} "${containerRegistryName}" "${containerRegistryPassword}" "${appConfigConnectionString}" "${adeAppVirtualMachine.adeModule}" "${adeAppVmLoadBalancerPrivateIpAddress}"'
+      commandToExecute: './${scriptName} "${containerRegistryName}" "${containerRegistryPassword}" "${appConfigConnectionString}" "${adeWebVirtualMachine.adeModule}" "${adeAppVmLoadBalancerPrivateIpAddress}"'
     }
   }
 }]
