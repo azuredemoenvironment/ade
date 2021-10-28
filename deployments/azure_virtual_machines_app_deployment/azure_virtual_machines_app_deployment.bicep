@@ -20,7 +20,7 @@ var containerRegistryResourceGroupName = 'rg-ade-${aliasRegion}-containerregistr
 var keyVaultResourceGroupName = 'rg-ade-${aliasRegion}-keyvault'
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 var networkingResourceGroupName = 'rg-ade-${aliasRegion}-networking'
-var proximityPlacementGroupResourceGroupName = 'rg-ade-${aliasRegion}-proximityplacementgroup'
+var proximityPlacementGroupResourceGroupName = 'rg-ade-${aliasRegion}-ppg'
 // Resources
 var adeAppModuleName = 'backend'
 var adeAppVirtualMachines = [
