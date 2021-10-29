@@ -1,28 +1,38 @@
-// parameters
-param defaultPrimaryRegion string
-param containerRegistryLoginServer string
-@secure()
-param containerRegistryLoginUserName string
-@secure()
-param containerRegistryLoginPassword string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the Grafana Container Group.')
 param adeLoadTestingGrafanaContainerGroupName string
+
+@description('The name of the Grafana Container Image.')
 param adeLoadTestingGrafanaContainerImageName string
-param adeLoadTestingInfluxDBDNSNameLabal string
 
-// variables
-var environmentName = 'production'
-var functionName = 'aci'
-var costCenterName = 'it'
+@description('The DNS Name Labl of the Influx Db Container Group.')
+param adeLoadTestingInfluxDbDNSNameLabal string
 
-// resource - azure container instance - container group - adeLoadTestingGrafana
+@description('The name of the admin user of the Azure Container Registry.')
+param containerRegistryName string
+
+@description('The password of the admin user of the Azure Container Registry.')
+param containerRegistryPassword string
+
+@description('The URL of the Azure Container Registry.')
+param containerRegistryURL string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'aci'
+  costCenter: 'it'
+}
+
+// Resource - Azure Container Instance - Container Group - Grafana
+//////////////////////////////////////////////////
 resource adeLoadTestingGrafanaContainerGroup 'Microsoft.ContainerInstance/containerGroups@2021-03-01' = {
   name: adeLoadTestingGrafanaContainerGroupName
-  location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  location: location
+  tags: tags
   properties: {
     containers: [
       {
@@ -38,7 +48,7 @@ resource adeLoadTestingGrafanaContainerGroup 'Microsoft.ContainerInstance/contai
           environmentVariables: [
             {
               name: 'INFLUXDB_HOSTNAME'
-              value: adeLoadTestingInfluxDBDNSNameLabal
+              value: adeLoadTestingInfluxDbDNSNameLabal
             }
             {
               name: 'INFLUXDB_PORT'
@@ -68,9 +78,9 @@ resource adeLoadTestingGrafanaContainerGroup 'Microsoft.ContainerInstance/contai
     }
     imageRegistryCredentials: [
       {
-        server: containerRegistryLoginServer
-        username: containerRegistryLoginUserName
-        password: containerRegistryLoginPassword
+        server: containerRegistryURL
+        username: containerRegistryName
+        password: containerRegistryPassword
       }
     ]
   }

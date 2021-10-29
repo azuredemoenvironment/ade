@@ -15,7 +15,7 @@ function UserDataPointReport() {
 		const body = JSON.stringify(dataPoint);
 		console.log(body);
 
-		fetch(process.env.REACT_APP_APIGATEWAYURI + '/datapoints/', {
+		fetch(window._env_.ADE__APIGATEWAYURI + '/datapoints/', {
 			method: 'POST',
 			body,
 			headers: { 'Content-Type': 'application/json' }

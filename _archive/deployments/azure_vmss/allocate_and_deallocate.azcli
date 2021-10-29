@@ -1,9 +1,0 @@
-# allocate vmss
-$resourceGroup='rg-alias-region-vmss'
-$vmssName='ENTER NAME OF YOUR SCALE SET HERE'
-az vmss start -g $resourceGroup -n $vmssName
-
-# deallocate vmss
-$resourceGroup='rg-alias-region-vmss'
-$vmssName='ENTER NAME OF YOUR SCALE SET HERE'
-az vmss deallocate -g $resourceGroup -n $vmssName

@@ -110,59 +110,48 @@ try {
     # Configuring ARM Parameters Parameters
     ###################################################################################################
     Write-Status 'Configuring Parameters'
-    $defaultPrimaryRegion = 'EastUS'
-    $defaultSecondaryRegion = 'WestUS'
+    $defaultPrimaryRegion = $(az configure -l --query "[?name == 'location'].value | [0]" --output tsv)
+    $defaultSecondaryRegion = $(az configure -l --query "[?name == 'locationpair'].value | [0]" --output tsv)
     $armParameters = Set-InitialArmParameters $alias $email $resourceUserName $rootDomainName $localNetworkRange $defaultPrimaryRegion $defaultSecondaryRegion $module $overwriteParameterFiles $skipConfirmation
 
     ###################################################################################################
-    # Configuring AZ CLI
-    ###################################################################################################
-
-    # Setting the default location for services
-    Write-Status "Setting the Default Resource Location to $defaultPrimaryRegion"
-    az configure --defaults location=$defaultPrimaryRegion group=
-    Confirm-LastExitCode
-
-    ###################################################################################################
-    # Start the Requested Action
-    ###################################################################################################
-    # TODO: only one of these steps should be allowed
-    if ($deploy) {
-        # $isInteractive = $PSCmdlet.ParameterSetName -eq 'interactive'
-        if ($secureCertificatePassword -eq $null) {
-            $secureCertificatePassword = ConvertTo-SecureString $certificatePassword -AsPlainText -Force
-            $certificatePassword = $null
-        }
+}
     
-        if ($secureResourcePassword -eq $null) {
-            $secureResourcePassword = ConvertTo-SecureString $resourcePassword -AsPlainText -Force
-            $resourcePassword = $null
-        }
+if ($secureResourcePassword -eq $null) {
+    $secureResourcePassword = ConvertTo-SecureString $resourcePassword -AsPlainText -Force
+    $resourcePassword = $null
+}
 
-        Deploy-AzureDemoEnvironment $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
-    }
+Deploy-AzureDemoEnvironment $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
+}
 
-    if ($deallocate) {
-        Disable-HighCostAzureServices $armParameters
-    }
+if ($deallocate) {
+    Disable-HighCostAzureServices $armParameters
+}
 
-    if ($allocate) {
-        Enable-HighCostAzureServices $armParameters
-    }
+if ($allocate) {
+    Enable-HighCostAzureServices $armParameters
+}
 
-    if ($remove) {
-        Remove-AzureDemoEnvironment $armParameters $includeKeyVault
-    }
+if ($remove) {
+    Remove-AzureDemoEnvironment $armParameters $includeKeyVault
+}
 }
 catch {
     $ErrorMessage = $_.Exception.Message
     Write-Log "An error occurred: $ErrorMessage"
+    Write-Debug ($ErrorMessage | Format-Table | Out-String)
 }
 finally {
     # Clearing the default location
     Write-Log "Clearing the Default Resource Location"
     az configure --defaults location=''
 
+    # Always set our location back to our script root to make it easier to re-execute
+    Set-Location -Path $PSScriptRoot
+
+    Set-PSDebug -Off
+}inally {
     # Always set our location back to our script root to make it easier to re-execute
     Set-Location -Path $PSScriptRoot
 

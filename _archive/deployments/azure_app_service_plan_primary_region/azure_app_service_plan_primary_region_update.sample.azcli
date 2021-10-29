@@ -1,4 +1,0 @@
-#scale down app service plan from premium 1 v3 to premium 1 v2
-TODO: $primaryRegionAppServicePlanResourceGroupName='rg-alias-region-asp' (THIS IS THE PRIMARY REGION ASP)
-TODO: $primaryRegionAppServicePlanName='rg-alias-region-01'  (THIS IS THE PRIMARY REGION ASP)
-az appservice plan update -g $primaryRegionAppServicePlanResourceGroupName -n $primaryRegionAppServicePlanName --sku P1V2

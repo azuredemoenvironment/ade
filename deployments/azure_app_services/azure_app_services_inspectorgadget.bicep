@@ -1,29 +1,48 @@
-// parameters
-param defaultPrimaryRegion string
-param adminUserName string
+// Parameters
+//////////////////////////////////////////////////
+@description('The password of the admin user.')
+@secure()
 param adminPassword string
-param logAnalyticsWorkspaceId string
-param vnetIntegrationSubnetId string
-param inspectorGadgetSqlServerFQDN string
-param inspectorGadgetSqlDatabaseName string
-param inspectorGadgetAppServiceName string
-param inspectorGadgetDockerImage string
+
+@description('The name of the admin user.')
+param adminUserName string
+
+@description('The ID of the App Service Plan.')
 param appServicePlanId string
 
-// variables
-var environmentName = 'production'
-var functionName = 'sql'
-var costCenterName = 'it'
+@description('The name of the Inspector Gadget App Service.')
+param inspectorGadgetAppServiceName string
 
-// resource - web app - inspectorGadgetAppService
+@description('The Docker Image of the Inspector Gadget App Service.')
+param inspectorGadgetDockerImage string
+
+@description('The name of the Inspector Gadget Sql Database.')
+param inspectorGadgetSqlDatabaseName string
+
+@description('The FQDN of the Inspector Gadget Sql Server.')
+param inspectorGadgetSqlServerFQDN string
+
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
+
+@description('The ID of the Virtual Network Integration Subnet.')
+param vnetIntegrationSubnetId string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'inspectorGadget'
+  costCenter: 'it'
+}
+
+// Resource - App Service - Inspector Gadget
+//////////////////////////////////////////////////
 resource inspectorGadgetAppService 'Microsoft.Web/sites@2020-12-01' = {
   name: inspectorGadgetAppServiceName
-  location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  location: location
+  tags: tags
   kind: 'app,linux,container'
   properties: {
     serverFarmId: appServicePlanId
@@ -49,7 +68,8 @@ resource inspectorGadgetAppService 'Microsoft.Web/sites@2020-12-01' = {
   }
 }
 
-// resource - web app networking - inspectorGadgetAppService
+// Resource - App Service - Networking - Inspector Gadget
+//////////////////////////////////////////////////
 resource inspectorGadgetAppServiceNetworking 'Microsoft.Web/sites/config@2020-12-01' = {
   name: '${inspectorGadgetAppService.name}/virtualNetwork'
   properties: {
@@ -58,8 +78,9 @@ resource inspectorGadgetAppServiceNetworking 'Microsoft.Web/sites/config@2020-12
   }
 }
 
-// resource - web app - diagnostics settings - inspectorGadgetAppService
-resource inspectorGadgetAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+// Resource - App Service - Diagnostic Settings - Inspector Gadget
+//////////////////////////////////////////////////
+resource inspectorGadgetAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: inspectorGadgetAppService
   name: '${inspectorGadgetAppService.name}-diagnostics'
   properties: {

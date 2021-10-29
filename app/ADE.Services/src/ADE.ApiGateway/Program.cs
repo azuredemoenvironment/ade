@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Hosting;
+using ADE.ServiceBase;
 using Microsoft.Extensions.Hosting;
 
 namespace ADE.ApiGateway
@@ -7,10 +7,7 @@ namespace ADE.ApiGateway
     {
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+                .ConfigureAdeWebHostDefaults<Startup>();
 
         public static void Main(string[] args)
         {

@@ -1,227 +1,89 @@
-// parameters
+// Target Scope
+//////////////////////////////////////////////////
+targetScope = 'subscription'
+
+// Parameters
+//////////////////////////////////////////////////
+@description('The user alias and Azure region defined from user input.')
 param aliasRegion string
-param defaultPrimaryRegion string
+
+@description('The selected Azure region for deployment.')
+param azureRegion string
+
+@description('The Email Address used for Alerts and Notifications.')
 param contactEmailAddress string
 
-// variables
+// Global Variables
+//////////////////////////////////////////////////
+// Resource Groups
+var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
+// Resources
+var adeBudgetAmount = 1500
+var adeBudgetFirstThreshold = 100
+var adeBudgetName = 'budget-ade-${aliasRegion}-monthly'
+var adeBudgetSecondThreshold = 500
+var adeBudgetThirdThreshold = 1000
+var adeBudgetTimeGrain = 'Monthly'
+var budgetActionGroupName = 'ag-ade-${aliasRegion}-budget'
+var budgetActionGroupShortName = 'ag-budget'
 var serviceHealthActionGroupName = 'ag-ade-${aliasRegion}-servicehealth'
 var serviceHealthActionGroupShortName = 'ag-svchealth'
+var serviceHealthAlertName = 'service health'
 var virtualMachineActionGroupName = 'ag-ade-${aliasRegion}-virtualmachine'
 var virtualMachineActionGroupShortName = 'ag-vm'
+var virtualMachineAlertName = 'virtual machines - all administrative operations'
+var virtualMachineCpuAlertName = 'virtual machines - cpu utilization'
 var virtualNetworkActionGroupName = 'ag-ade-${aliasRegion}-virtualnetwork'
 var virtualNetworkActionGroupShortName = 'ag-vnet'
-var serviceHealthAlertName = 'service health'
-var virtualMachineAlertName = 'virtual machines - all administrative operations'
 var virtualNetworkAlertName = 'virtual networks - all administrative operations'
-var virtualMachineCpuAlertName = 'virtual machines - cpu utilization'
-var environmentName = 'production'
-var functionName = 'monitoring and diagnostics'
-var costCenterName = 'it'
 
-// resource - action group - service health
-resource serviceHealthActionGroup 'microsoft.insights/actionGroups@2019-06-01' = {
-  name: serviceHealthActionGroupName
-  location: 'global'
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    enabled: true
-    groupShortName: serviceHealthActionGroupShortName
-    emailReceivers: [
-      {
-        name: 'email'
-        emailAddress: contactEmailAddress
-        useCommonAlertSchema: true
-      }
-    ]
+// Module - Action Groups
+//////////////////////////////////////////////////
+module actionGroupModule 'azure_alerts_action_groups.bicep' = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: 'actionGroupDeployment'
+  params: {
+    contactEmailAddress: contactEmailAddress
+    budgetActionGroupName: budgetActionGroupName
+    budgetActionGroupShortName: budgetActionGroupShortName
+    serviceHealthActionGroupName: serviceHealthActionGroupName
+    serviceHealthActionGroupShortName: serviceHealthActionGroupShortName
+    virtualMachineActionGroupName: virtualMachineActionGroupName
+    virtualMachineActionGroupShortName: virtualMachineActionGroupShortName
+    virtualNetworkActionGroupName: virtualNetworkActionGroupName
+    virtualNetworkActionGroupShortName: virtualNetworkActionGroupShortName
   }
 }
 
-// resource - action group - virtual machine
-resource virtualMachineActionGroup 'microsoft.insights/actionGroups@2019-06-01' = {
-  name: virtualMachineActionGroupName
-  location: 'global'
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    enabled: true
-    groupShortName: virtualMachineActionGroupShortName
-    emailReceivers: [
-      {
-        name: 'email'
-        emailAddress: contactEmailAddress
-        useCommonAlertSchema: true
-      }
-    ]
+// Module - Alerts
+//////////////////////////////////////////////////
+module alertsModule 'azure_alerts_alerts.bicep' = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: 'alertsDeployment'
+  params: {
+    azureRegion: azureRegion
+    serviceHealthActionGroupId: actionGroupModule.outputs.serviceHealthActionGroupId
+    serviceHealthAlertName: serviceHealthAlertName
+    virtualMachineActionGroupId: actionGroupModule.outputs.virtualMachineActionGroupId
+    virtualMachineAlertName: virtualMachineAlertName
+    virtualMachineCpuAlertName: virtualMachineCpuAlertName
+    virtualNetworkActionGroupId: actionGroupModule.outputs.virtualNetworkActionGroupId
+    virtualNetworkAlertName: virtualNetworkAlertName
   }
 }
 
-// resource - action group - virtual network
-resource virtualNetworkActionGroup 'microsoft.insights/actionGroups@2019-06-01' = {
-  name: virtualNetworkActionGroupName
-  location: 'global'
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    enabled: true
-    groupShortName: virtualNetworkActionGroupShortName
-    emailReceivers: [
-      {
-        name: 'email'
-        emailAddress: contactEmailAddress
-        useCommonAlertSchema: true
-      }
-    ]
-  }
-}
-
-// resource - alert - service health
-resource serviceHealthAlert 'Microsoft.Insights/activityLogAlerts@2020-10-01' = {
-  name: serviceHealthAlertName
-  location: 'global'
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    description: serviceHealthAlertName
-    enabled: false
-    scopes: [
-      subscription().id
-    ]
-    condition: {
-      allOf: [
-        {
-          field: 'category'
-          equals: 'ServiceHealth'
-        }
-      ]
-    }
-    actions: {
-      actionGroups: [
-        {
-          actionGroupId: serviceHealthActionGroup.id
-        }
-      ]
-    }
-  }
-}
-
-// resource - alert - virtual machine
-resource virtualMachineAlert 'Microsoft.Insights/activityLogAlerts@2020-10-01' = {
-  name: virtualMachineAlertName
-  location: 'global'
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    description: virtualMachineAlertName
-    enabled: false
-    scopes: [
-      subscription().id
-    ]
-    condition: {
-      allOf: [
-        {
-          field: 'category'
-          equals: 'ServiceHealth'
-        }
-      ]
-    }
-    actions: {
-      actionGroups: [
-        {
-          actionGroupId: virtualMachineActionGroup.id
-        }
-      ]
-    }
-  }
-}
-
-// resource - alert - virtual network
-resource virtualNetworkAlert 'Microsoft.Insights/activityLogAlerts@2020-10-01' = {
-  name: virtualNetworkAlertName
-  location: 'global'
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    description: virtualNetworkAlertName
-    enabled: false
-    scopes: [
-      subscription().id
-    ]
-    condition: {
-      allOf: [
-        {
-          field: 'category'
-          equals: 'ServiceHealth'
-        }
-      ]
-    }
-    actions: {
-      actionGroups: [
-        {
-          actionGroupId: virtualNetworkActionGroup.id
-        }
-      ]
-    }
-  }
-}
-
-// resource - alert - virtual machine cpu
-resource virtualMachineCpuAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
-  name: virtualMachineCpuAlertName
-  location: 'global'
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    description: virtualMachineCpuAlertName
-    enabled: false
-    scopes: [
-      subscription().id
-    ]
-    severity: 2
-    evaluationFrequency: 'PT1M'
-    windowSize: 'PT5M'
-    targetResourceType: 'microsoft.compute/virtualmachines'
-    targetResourceRegion: defaultPrimaryRegion
-    criteria: {
-      'odata.type': 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria'
-      allOf: [
-        {
-          name: 'Metric1'
-          criterionType: 'StaticThresholdCriterion'
-          metricName: 'Percentage CPU'
-          metricNamespace: 'microsoft.compute/virtualmachines'
-          dimensions: []
-          operator: 'GreaterThan'
-          threshold: 75
-          timeAggregation: 'Average'
-        }
-      ]
-    }
-    actions: [
-      {
-        actionGroupId: virtualMachineActionGroup.id
-      }
-    ]
+// Module - Budget
+//////////////////////////////////////////////////
+module budgetModule 'azure_alerts_budget.bicep' = {
+  name: 'budgetDeployment'
+  params: {
+    adeBudgetAmount: adeBudgetAmount
+    adeBudgetFirstThreshold: adeBudgetFirstThreshold
+    adeBudgetName: adeBudgetName
+    adeBudgetSecondThreshold: adeBudgetSecondThreshold
+    adeBudgetThirdThreshold: adeBudgetThirdThreshold
+    adeBudgetTimeGrain: adeBudgetTimeGrain
+    budgetActionGroupId: actionGroupModule.outputs.budgetActionGroupId
+    contactEmailAddress: contactEmailAddress
   }
 }

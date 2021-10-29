@@ -6,7 +6,11 @@ FROM node:15-buster-slim AS base
 # Install prerequisites
 RUN npm install -g http-server
 
+# Create App directory
 WORKDIR /app
+
+# Server Dependencies
+RUN npm install @azure/app-configuration
 
 EXPOSE 80
 EXPOSE 443
@@ -15,13 +19,6 @@ EXPOSE 443
 # Stage 1: Build the Node App
 ##################################################################
 FROM base as publish
-
-# Environment Variables that Affect the Build
-ARG ADE__APIGATEWAYURI
-ARG APPINSIGHTS_CONNECTIONSTRING
-
-ENV REACT_APP_APIGATEWAYURI $ADE__APIGATEWAYURI
-ENV REACT_APP_APPINSIGHTS $APPINSIGHTS_CONNECTIONSTRING
 
 # Copy package files and npm install
 COPY ./package*.json ./
@@ -36,10 +33,13 @@ RUN npm run build
 ##################################################################
 FROM base AS final
 
+# Setup Server Entry PointZ
+COPY configuration.js ./
+COPY env.sh ./
+COPY server.sh ./
+
 # Copy artifacts from the previous stage into this stage
 COPY --from=publish /app/build ./
 
-# TODO: add a script that starts the http server, but first updates the configured connection endpoints
-
 # Setting the executable that will run in the lifetime of this container
-ENTRYPOINT ["http-server", "./", "-p", "80"]
+ENTRYPOINT ["/app/server.sh"]

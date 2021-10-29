@@ -1,28 +1,44 @@
-// parameters
-param location string
-param sourceAddressPrefix string
-param logAnalyticsWorkspaceId string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the ADE App Vmss Subnet NSG.')
+param adeAppVmssSubnetNSGName string
+
+@description('The name of the ADE App Vm Subnet NSG.')
+param adeAppVmSubnetNSGName string
+
+@description('The name of the ADE Web Vmss Subnet NSG.')
+param adeWebVmssSubnetNSGName string
+
+@description('The name of the ADE Web Vm Subnet NSG.')
+param adeWebVmSubnetNSGName string
+
+@description('The name of the Azure Bastion Subnet NSG.')
 param azureBastionSubnetNSGName string
+
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
+
+@description('The name of the Management Subnet NSG.')
 param managementSubnetNSGName string
-param nTierWebSubnetNSGName string
-param nTierAppSubnetNSGName string
-param vmssSubnetNSGName string
-param clientServicesSubnetNSGName string
 
-// variables
-var environmentName = 'production'
-var functionName = 'networking'
-var costCenterName = 'it'
+@description('The public IP address of the on-premises network.')
+param sourceAddressPrefix string
 
-// resource - network security group - azure bastion subnet
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'networking'
+  costCenter: 'it'
+}
+
+// Resource - Network Security Group - Azure Bastion Subnet
+//////////////////////////////////////////////////
 resource azureBastionSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: azureBastionSubnetNSGName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     securityRules: [
       {
@@ -88,8 +104,9 @@ resource azureBastionSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-
   }
 }
 
-// resource - network security group - diagnostic settings - azure bastion subnet 
-resource azureBastionSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+// Resource - Network Security Group - Diagnostic Settings - Azure Bastion Subnet
+//////////////////////////////////////////////////
+resource azureBastionSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: azureBastionSubnetNSG
   name: '${azureBastionSubnetNSG.name}-diagnostics'
   properties: {
@@ -116,15 +133,12 @@ resource azureBastionSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings
   }
 }
 
-// resource - network security group - management subnet
+// Resource - Network Security Group - Management Subnet
+//////////////////////////////////////////////////
 resource managementSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
   name: managementSubnetNSGName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     securityRules: [
       {
@@ -145,8 +159,9 @@ resource managementSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01
   }
 }
 
-// resource - network security group - diagnostic settings - azure bastion subnet
-resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+// Resource - Network Security Group - Diagnostic Settings - Management Subnet
+//////////////////////////////////////////////////
+resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: managementSubnetNSG
   name: '${managementSubnetNSG.name}-diagnostics'
   properties: {
@@ -173,24 +188,22 @@ resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2
   }
 }
 
-// resource - network security group - ntier web subnet
-resource nTierWebSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
-  name: nTierWebSubnetNSGName
+// Resource - Network Security Group - ADE Web Vm Subnet
+//////////////////////////////////////////////////
+resource adeWebVmSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
+  name: adeWebVmSubnetNSGName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     securityRules: []
   }
 }
 
-// resource - network security group - diagnostic settings - ntier web subnet
-resource nTierWebSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: nTierWebSubnetNSG
-  name: '${nTierWebSubnetNSG.name}-diagnostics'
+// Resource - Network Security Group - Diagnostic Settings - ADE Web Vm Subnet
+//////////////////////////////////////////////////
+resource adeWebVmSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: adeWebVmSubnetNSG
+  name: '${adeWebVmSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
@@ -215,24 +228,22 @@ resource nTierWebSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@201
   }
 }
 
-// resource - network security group - ntier app subnet
-resource nTierAppSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
-  name: nTierAppSubnetNSGName
+// Resource - Network Security Group - ADE App Vm Subnet
+//////////////////////////////////////////////////
+resource adeAppVmSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
+  name: adeAppVmSubnetNSGName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     securityRules: []
   }
 }
 
-// resource - network security group - diagnostic settings - ntier app subnet
-resource nTierAppSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: nTierAppSubnetNSG
-  name: '${nTierAppSubnetNSG.name}-diagnostics'
+// Resource - Network Security Group - Diagnostic Settings - ADE App Vm Subnet
+//////////////////////////////////////////////////
+resource adeAppVmSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: adeAppVmSubnetNSG
+  name: '${adeAppVmSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
@@ -257,81 +268,22 @@ resource nTierAppSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@201
   }
 }
 
-// resource - network security group - vmss subnet
-resource vmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
-  name: vmssSubnetNSGName
+// Resource - Network Security Group - ADE Web Vmss Subnet
+//////////////////////////////////////////////////
+resource adeWebVmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
+  name: adeWebVmssSubnetNSGName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  properties: {
-    securityRules: [
-      {
-        name: 'HTTP_Inbound'
-        properties: {
-          description: 'Allow HTTP Inbound Over Port 9000'
-          protocol: 'Tcp'
-          sourcePortRange: '*'
-          destinationPortRange: '9000'
-          sourceAddressPrefix: sourceAddressPrefix
-          destinationAddressPrefix: '*'
-          access: 'Allow'
-          priority: 100
-          direction: 'Inbound'
-        }
-      }
-    ]
-  }
-}
-
-// resource - network security group - diagnostic settings - vmss subnet
-resource vmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: vmssSubnetNSG
-  name: '${vmssSubnetNSG.name}-diagnostics'
-  properties: {
-    workspaceId: logAnalyticsWorkspaceId
-    logAnalyticsDestinationType: 'Dedicated'
-    logs: [
-      {
-        category: 'NetworkSecurityGroupEvent'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'NetworkSecurityGroupRuleCounter'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-  }
-}
-
-// resource - network security group - client services subnet
-resource clientServicesSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
-  name: clientServicesSubnetNSGName
-  location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     securityRules: []
   }
 }
 
-// resource - network security group - diagnostic settings - client services subnet
-resource clientServicesSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: clientServicesSubnetNSG
-  name: '${clientServicesSubnetNSG.name}-diagnostics'
+// Resource - Network Security Group - Diagnostic Settings - ADE Web Vmss Subnet
+//////////////////////////////////////////////////
+resource adeWebVmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: adeWebVmssSubnetNSG
+  name: '${adeWebVmssSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
@@ -356,10 +308,77 @@ resource clientServicesSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettin
   }
 }
 
-// outputs
+// Resource - Network Security Group - ADE App Vmss Subnet
+//////////////////////////////////////////////////
+resource adeAppVmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2020-07-01' = {
+  name: adeAppVmssSubnetNSGName
+  location: location
+  tags: tags
+  properties: {
+    securityRules: []
+  }
+}
+
+// Resource - Network Security Group - Diagnostic Settings - ADE App Vmss Subnet
+//////////////////////////////////////////////////
+resource adeAppVmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: adeAppVmssSubnetNSG
+  name: '${adeAppVmssSubnetNSG.name}-diagnostics'
+  properties: {
+    workspaceId: logAnalyticsWorkspaceId
+    logAnalyticsDestinationType: 'Dedicated'
+    logs: [
+      {
+        category: 'NetworkSecurityGroupEvent'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
+      {
+        category: 'NetworkSecurityGroupRuleCounter'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
+    ]
+  }
+}
+
+// Outputs
+//////////////////////////////////////////////////
 output azureBastionSubnetNSGId string = azureBastionSubnetNSG.id
 output managementSubnetNSGId string = managementSubnetNSG.id
-output nTierWebSubnetNSGId string = nTierWebSubnetNSG.id
-output nTierAppSubnetNSGId string = nTierAppSubnetNSG.id
-output vmssSubnetNSGId string = vmssSubnetNSG.id
-output clientServicesSubnetNSGId string = clientServicesSubnetNSG.id
+output adeWebVmSubnetNSGId string = adeWebVmSubnetNSG.id
+output adeAppVmSubnetNSGId string = adeAppVmSubnetNSG.id
+output adeWebVmssSubnetNSGId string = adeWebVmssSubnetNSG.id
+output adeAppVmssSubnetNSGId string = adeAppVmssSubnetNSG.id
+output nsgConfigurations array = [
+  {
+    name: 'azureBastionSubnet'
+    id: azureBastionSubnetNSG.id
+  }
+  {
+    name: 'managementSubnet'
+    id: managementSubnetNSG.id
+  }
+  {
+    name: 'adeWebVmSubnet'
+    id: adeWebVmSubnetNSG.id
+  }
+  {
+    name: 'adeAppVmSubnet'
+    id: adeAppVmSubnetNSG.id
+  }
+  {
+    name: 'adeWebVmssSubnet'
+    id: adeWebVmssSubnetNSG.id
+  }
+  {
+    name: 'adeAppVmssSubnet'
+    id: adeAppVmssSubnetNSG.id
+  }
+]

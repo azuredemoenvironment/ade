@@ -26,9 +26,7 @@ function Remove-AzureDemoEnvironment {
     # Configuring Variables
     Write-ScriptSection "Starting Removal Process"
 
-    Remove-AzureDnsEntries $armParameters
     Remove-AzureResourceGroups $armParameters
-    Remove-AzureServicePrincipals $armParameters
     Remove-AzureNsgFlowLogs $armParameters
 
     if ($includeKeyVault) {

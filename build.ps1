@@ -25,16 +25,17 @@ Confirm-LastExitCode
 Write-ScriptSection "Tagging and Pushing Docker Images to Docker Hub"
 
 $imagesToTagAndPush = @(
-    'ade'
     'ade-apigateway'
-    'ade-frontend'
     'ade-dataingestorservice'
-    'ade-userservice'
     'ade-datareporterservice'
-    'ade-loadtesting-grafana'
+    'ade-eventingestorservice'
+    'ade-frontend'
     'ade-loadtesting-gatling'
+    'ade-loadtesting-grafana'
     'ade-loadtesting-influxdb'
     'ade-loadtesting-redis'
+    'ade-userservice'
+    'ade'
 )
 
 $imagesToTagAndPush | ForEach-Object { 

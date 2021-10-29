@@ -3,5 +3,5 @@ function Deploy-AzureAlerts {
         [object] $armParameters
     )
 
-    Deploy-ArmTemplate 'Azure Alerts' $armParameters -resourceGroupName $armParameters.monitorResourceGroupName -bicep
+    Deploy-ArmTemplate 'Azure Alerts' $armParameters -resourceLevel 'sub' -bicep
 }

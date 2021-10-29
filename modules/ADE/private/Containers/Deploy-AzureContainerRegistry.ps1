@@ -3,7 +3,7 @@ function Deploy-AzureContainerRegistry {
         [object] $armParameters
     )
 
-    Deploy-ArmTemplate 'Azure Container Registry' $armParameters -resourceGroupName $armParameters.containerRegistryResourceGroupName -bicep
+    Deploy-ArmTemplate 'Azure Container Registry' $armParameters -resourceLevel 'sub' -bicep
 
     $stopwatch = [system.diagnostics.stopwatch]::StartNew()
     $containerRegistryName = $armParameters.acrName
@@ -35,6 +35,8 @@ function Deploy-AzureContainerRegistry {
         Write-Log "Requesting ACR to Pull Docker Hub Image $dockerHubImageName to $containerRegistryLoginServer"
         az acr import --name "$containerRegistryName" --source "docker.io/$dockerHubImageName" --image "$($containerImageName):latest" --force
         Confirm-LastExitCode
+
+        # TODO: Create an ACR Task to Poll Docker Hub for updates: https://docs.microsoft.com/en-us/azure/container-registry/container-registry-tasks-overview#automate-os-and-framework-patching
     }
 
     $stopwatch.Stop()

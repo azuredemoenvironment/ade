@@ -3,7 +3,7 @@ function Remove-AzureNsgFlowLogs {
         [object] $armParameters
     )
 
-    $location = $armParameters.defaultPrimaryRegion
+    $location = $armParameters.azureRegion
     $nsgFlowLogEntries = @(
         'bastion'
         'management'

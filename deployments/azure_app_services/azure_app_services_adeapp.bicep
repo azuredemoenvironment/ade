@@ -1,57 +1,67 @@
-// parameters
-param defaultPrimaryRegion string
-param adminUserName string
-param adminPassword string
-param logAnalyticsWorkspaceId string
-param applicationInsightsConnectionString string
-param vnetIntegrationSubnetId string
-param privateEndpointSubnetId string
-param azureContainerRegistryName string
-param azureContainerRegistryURL string
-param azureContainerRegistryCredentials string
-param adeAppSqlServerFQDN string
-param adeAppSqlDatabaseName string
-param azureAppServicePrivateDnsZoneId string
+// Parameters
+//////////////////////////////////////////////////
+@description('The array of properties for the ADE App App Services.')
+param adeAppAppServices array
+
+@description('The connection string from the App Configuration instance.')
+param appConfigConnectionString string
+
+@description('The ID of the App Service Plan.')
 param appServicePlanId string
-param adeAppFrontEndAppServiceName string
-param adeAppApiGatewayAppServiceName string
-param adeAppUserServiceAppServiceName string
-param adeAppDataIngestorServiceAppServiceName string
-param adeAppDataReporterServiceAppServiceName string
-param adeAppApiGatewayAppServiceHostName string
-param adeAppFrontEndAppServiceImageName string
-param adeAppApiGatewayAppServiceImageName string
-param adeAppUserServiceAppServiceImageName string
-param adeAppUserServiceAppServicePrivateEndpointName string
-param adeAppDataIngestorServiceAppServicePrivateEndpointName string
-param adeAppDataReporterServiceAppServicePrivateEndpointName string
-param adeAppDataIngestorServiceAppServiceImageName string
-param adeAppDataReporterServiceAppServiceImageName string
 
-// variables
-var environmentName = 'production'
-var functionName = 'appApp'
-var costCenterName = 'it'
+@description('The ID of the Azure App Service Private DNS Zone.')
+param azureAppServicePrivateDnsZoneId string
 
-// resource - app service - adeAppFrontendAppService
-resource adeAppFrontEndAppService 'Microsoft.Web/sites@2020-12-01' = {
-  name: adeAppFrontEndAppServiceName
-  location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+@description('The name of the admin user of the Azure Container Registry.')
+param containerRegistryName string
+
+@description('The password of the admin user of the Azure Container Registry.')
+param containerRegistryPassword string
+
+@description('The URL of the Azure Container Registry.')
+param containerRegistryURL string
+
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
+
+@description('The ID of the Private Endpoint Subnet.')
+param privateEndpointSubnetId string
+
+@description('The ID of the Virtual Network Integration Subnet.')
+param vnetIntegrationSubnetId string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'adeApp'
+  costCenter: 'it'
+}
+
+// Resource - App Service - ADE App(s)
+//////////////////////////////////////////////////
+resource adeAppService 'Microsoft.Web/sites@2020-12-01' = [for (adeAppAppService, i) in adeAppAppServices: {
+  name: adeAppAppService.adeAppAppServiceName
+  location: location
+  tags: tags
   kind: 'container'
   properties: {
     serverFarmId: appServicePlanId
     httpsOnly: false
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${azureContainerRegistryURL}/${adeAppFrontEndAppServiceImageName}'
+      linuxFxVersion: 'DOCKER|${containerRegistryURL}/${adeAppAppService.containerImageName}'
+      alwaysOn: true
+      http20Enabled: true
+      httpLoggingEnabled: true
       appSettings: [
         {
-          name: 'APPINSIGHTS_CONNECTIONSTRING'
-          value: applicationInsightsConnectionString
+          name: 'CONNECTIONSTRINGS__APPCONFIG'
+          value: appConfigConnectionString
+        }
+        {
+          name: 'ADE__ENVIRONMENT'
+          value: 'appservices'
         }
         {
           name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
@@ -75,23 +85,19 @@ resource adeAppFrontEndAppService 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_URL'
-          value: 'https://${azureContainerRegistryURL}'
+          value: 'https://${containerRegistryURL}'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-          value: azureContainerRegistryName
+          value: containerRegistryName
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-          value: azureContainerRegistryCredentials
+          value: containerRegistryPassword
         }
         {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
           value: 'false'
-        }
-        {
-          name: 'ADE__APIGATEWAYURI'
-          value: 'https://${adeAppApiGatewayAppServiceHostName}'
         }
         {
           name: 'WEBSITE_VNET_ROUTE_ALL'
@@ -104,21 +110,23 @@ resource adeAppFrontEndAppService 'Microsoft.Web/sites@2020-12-01' = {
       ]
     }
   }
-}
+}]
 
-// resource - app service networking - adeAppFrontendAppService
-resource adeAppFrontendAppServiceNetworking 'Microsoft.Web/sites/config@2020-12-01' = {
-  name: '${adeAppFrontEndAppService.name}/virtualNetwork'
+// Resource - App Service - Networking - ADE App(s)
+//////////////////////////////////////////////////
+resource adeAppServiceNetworking 'Microsoft.Web/sites/config@2020-12-01' = [for (adeAppAppService, i) in adeAppAppServices: {
+  name: '${adeAppService[i].name}/virtualNetwork'
   properties: {
     subnetResourceId: vnetIntegrationSubnetId
     swiftSupported: true
   }
-}
+}]
 
-// resource - app service - diagnostics settings - adeAppFrontendAppService
-resource adeAppFrontendAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: adeAppFrontEndAppService
-  name: '${adeAppFrontEndAppService.name}-diagnostics'
+// Resource - App Service - Diagnostic Settings - ADE App(s)
+//////////////////////////////////////////////////
+resource adeAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (adeAppAppService, i) in adeAppAppServices: {
+  scope: adeAppService[i]
+  name: '${adeAppAppService.adeAppAppServiceName}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logs: [
@@ -190,351 +198,22 @@ resource adeAppFrontendAppServiceDiagnostics 'Microsoft.insights/diagnosticSetti
       }
     ]
   }
-}
+}]
 
-// resource - app service - adeAppApiGatewayAppService
-resource adeAppApiGatewayAppService 'Microsoft.Web/sites@2020-12-01' = {
-  name: adeAppApiGatewayAppServiceName
-  location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  kind: 'container'
-  properties: {
-    serverFarmId: appServicePlanId
-    httpsOnly: false
-    siteConfig: {
-      linuxFxVersion: 'DOCKER|${azureContainerRegistryURL}/${adeAppApiGatewayAppServiceImageName}'
-      appSettings: [
-        {
-          name: 'APPINSIGHTS_CONNECTIONSTRING'
-          value: applicationInsightsConnectionString
-        }
-        {
-          name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
-          value: '~2'
-        }
-        {
-          name: 'XDT_MicrosoftApplicationInsights_Mode'
-          value: 'recommended'
-        }
-        {
-          name: 'InstrumentationEngine_EXTENSION_VERSION'
-          value: '~1'
-        }
-        {
-          name: 'XDT_MicrosoftApplicationInsights_BaseExtensions'
-          value: '~1'
-        }
-        {
-          name: 'DOCKER_ENABLE_CI'
-          value: 'true'
-        }
-        {
-          name: 'DOCKER_REGISTRY_SERVER_URL'
-          value: 'https://${azureContainerRegistryURL}'
-        }
-        {
-          name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-          value: azureContainerRegistryName
-        }
-        {
-          name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-          value: azureContainerRegistryCredentials
-        }
-        {
-          name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
-          value: 'false'
-        }
-        {
-          name: 'ASPNETCORE_ENVIRONMENT'
-          value: 'Development'
-        }
-        {
-          name: 'ADE__USERSERVICEURI'
-          value: 'http://${adeAppUserServiceAppServiceName}.azurewebsites.net'
-        }
-        {
-          name: 'ADE__DATAINGESTORSERVICEURI'
-          value: 'http://${adeAppDataIngestorServiceAppServiceName}.azurewebsites.net'
-        }
-        {
-          name: 'ADE__DATAREPORTERSERVICEURI'
-          value: 'http://${adeAppDataReporterServiceAppServiceName}.azurewebsites.net'
-        }
-        {
-          name: 'WEBSITE_VNET_ROUTE_ALL'
-          value: '1'
-        }
-        {
-          name: 'WEBSITE_DNS_SERVER'
-          value: '168.63.129.16'
-        }
-      ]
-    }
-  }
-}
-
-// resource - app service networking - adeAppApiGatewayAppService
-resource adeAppApiGatewayAppServiceNetworking 'Microsoft.Web/sites/config@2020-12-01' = {
-  name: '${adeAppApiGatewayAppService.name}/virtualNetwork'
-  properties: {
-    subnetResourceId: vnetIntegrationSubnetId
-    swiftSupported: true
-  }
-}
-
-// resource - app service - diagnostics settings - adeAppApiGatewayAppService
-resource adeAppApiGatewayAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: adeAppApiGatewayAppService
-  name: '${adeAppApiGatewayAppService.name}-diagnostics'
-  properties: {
-    workspaceId: logAnalyticsWorkspaceId
-    logs: [
-      {
-        category: 'AppServiceHTTPLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceConsoleLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceAppLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceFileAuditLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceAuditLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceIPSecAuditLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServicePlatformLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-  }
-}
-
-// resource - app service - adeAppUserServiceAppService
-resource adeAppUserServiceAppService 'Microsoft.Web/sites@2020-12-01' = {
-  name: adeAppUserServiceAppServiceName
-  location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  kind: 'container'
-  properties: {
-    serverFarmId: appServicePlanId
-    httpsOnly: false
-    siteConfig: {
-      linuxFxVersion: 'DOCKER|${azureContainerRegistryURL}/${adeAppUserServiceAppServiceImageName}'
-      appSettings: [
-        {
-          name: 'APPINSIGHTS_CONNECTIONSTRING'
-          value: applicationInsightsConnectionString
-        }
-        {
-          name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
-          value: '~2'
-        }
-        {
-          name: 'XDT_MicrosoftApplicationInsights_Mode'
-          value: 'recommended'
-        }
-        {
-          name: 'InstrumentationEngine_EXTENSION_VERSION'
-          value: '~1'
-        }
-        {
-          name: 'XDT_MicrosoftApplicationInsights_BaseExtensions'
-          value: '~1'
-        }
-        {
-          name: 'DOCKER_ENABLE_CI'
-          value: 'true'
-        }
-        {
-          name: 'DOCKER_REGISTRY_SERVER_URL'
-          value: 'https://${azureContainerRegistryURL}'
-        }
-        {
-          name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-          value: azureContainerRegistryName
-        }
-        {
-          name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-          value: azureContainerRegistryCredentials
-        }
-        {
-          name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
-          value: 'false'
-        }
-        {
-          name: 'ADE__SQLSERVERCONNECTIONSTRING'
-          value: 'Data Source=tcp:${adeAppSqlServerFQDN},1433;Initial Catalog=${adeAppSqlDatabaseName};User Id=${adminUserName}@${adeAppSqlServerFQDN};Password=${adminPassword};'
-        }
-        {
-          name: 'WEBSITE_VNET_ROUTE_ALL'
-          value: '1'
-        }
-        {
-          name: 'WEBSITE_DNS_SERVER'
-          value: '168.63.129.16'
-        }
-      ]
-    }
-  }
-}
-
-// resource - app service networking - adeAppUserServiceAppService
-resource adeAppUserServiceAppServiceNetworking 'Microsoft.Web/sites/config@2020-12-01' = {
-  name: '${adeAppUserServiceAppService.name}/virtualNetwork'
-  properties: {
-    subnetResourceId: vnetIntegrationSubnetId
-    swiftSupported: true
-  }
-}
-
-// resource - app service - diagnostics settings - adeAppUserServiceAppService
-resource adeAppUserServiceAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: adeAppUserServiceAppService
-  name: '${adeAppUserServiceAppService.name}-diagnostics'
-  properties: {
-    workspaceId: logAnalyticsWorkspaceId
-    logs: [
-      {
-        category: 'AppServiceHTTPLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceConsoleLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceAppLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceFileAuditLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceAuditLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceIPSecAuditLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServicePlatformLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-  }
-}
-
-// resource - private endpoint - app service - adeAppUserServiceAppService
-resource adeAppUserServiceAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = {
-  name: adeAppUserServiceAppServicePrivateEndpointName
-  location: defaultPrimaryRegion
+// Resource - Private Endpoint - App Service - ADE App(s)
+//////////////////////////////////////////////////
+resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = [for (adeAppAppService, i) in adeAppAppServices: if (adeAppAppService.usePrivateEndpoint) {
+  name: adeAppAppService.privateEndpointName
+  location: location
   properties: {
     subnet: {
       id: privateEndpointSubnetId
     }
     privateLinkServiceConnections: [
       {
-        name: adeAppUserServiceAppServicePrivateEndpointName
+        name: adeAppAppService.privateEndpointName
         properties: {
-          privateLinkServiceId: adeAppUserServiceAppService.id
+          privateLinkServiceId: adeAppService[i].id
           groupIds: [
             'sites'
           ]
@@ -542,13 +221,14 @@ resource adeAppUserServiceAppServicePrivateEndpoint 'Microsoft.Network/privateEn
       }
     ]
   }
-}
+}]
 
-// resource - prviate endpoint dns group - private endpoint - app service - adeAppUserServiceAppService
-resource adeAppUserServiceAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
-  name: '${adeAppUserServiceAppServicePrivateEndpoint.name}/dnsgroupname'
+// Resource - Prviate Endpoint Dns Group - Private Endpoint - App Service - ADE App(s)
+//////////////////////////////////////////////////
+resource adeAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = [for (adeAppAppService, i) in adeAppAppServices: if (adeAppAppService.usePrivateEndpoint) {
+  name: '${adeAppAppService.privateEndpointName}/dnsgroupname'
   dependsOn: [
-    adeAppUserServiceAppServicePrivateEndpoint
+    adeAppServicePrivateEndpoint
   ]
   properties: {
     privateDnsZoneConfigs: [
@@ -560,409 +240,10 @@ resource adeAppUserServiceAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Netwo
       }
     ]
   }
-}
+}]
 
-// resource - app service - adeAppDataIngestorServiceAppService
-resource adeAppDataIngestorServiceAppService 'Microsoft.Web/sites@2020-12-01' = {
-  name: adeAppDataIngestorServiceAppServiceName
-  location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  kind: 'container'
-  properties: {
-    serverFarmId: appServicePlanId
-    httpsOnly: false
-    siteConfig: {
-      linuxFxVersion: 'DOCKER|${azureContainerRegistryURL}/${adeAppDataIngestorServiceAppServiceImageName}'
-      appSettings: [
-        {
-          name: 'APPINSIGHTS_CONNECTIONSTRING'
-          value: applicationInsightsConnectionString
-        }
-        {
-          name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
-          value: '~2'
-        }
-        {
-          name: 'XDT_MicrosoftApplicationInsights_Mode'
-          value: 'recommended'
-        }
-        {
-          name: 'InstrumentationEngine_EXTENSION_VERSION'
-          value: '~1'
-        }
-        {
-          name: 'XDT_MicrosoftApplicationInsights_BaseExtensions'
-          value: '~1'
-        }
-        {
-          name: 'DOCKER_ENABLE_CI'
-          value: 'true'
-        }
-        {
-          name: 'DOCKER_REGISTRY_SERVER_URL'
-          value: 'https://${azureContainerRegistryURL}'
-        }
-        {
-          name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-          value: azureContainerRegistryName
-        }
-        {
-          name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-          value: azureContainerRegistryCredentials
-        }
-        {
-          name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
-          value: 'false'
-        }
-        {
-          name: 'ADE__SQLSERVERCONNECTIONSTRING'
-          value: 'Data Source=tcp:${adeAppSqlServerFQDN},1433;Initial Catalog=${adeAppSqlDatabaseName};User Id=${adminUserName}@${adeAppSqlServerFQDN};Password=${adminPassword};'
-        }
-        {
-          name: 'WEBSITE_VNET_ROUTE_ALL'
-          value: '1'
-        }
-        {
-          name: 'WEBSITE_DNS_SERVER'
-          value: '168.63.129.16'
-        }
-      ]
-    }
-  }
-}
-
-// resource - app service networking - adeAppDataIngestorServiceAppService
-resource adeAppDataIngestorServiceAppServiceNetworking 'Microsoft.Web/sites/config@2020-12-01' = {
-  name: '${adeAppDataIngestorServiceAppService.name}/virtualNetwork'
-  properties: {
-    subnetResourceId: vnetIntegrationSubnetId
-    swiftSupported: true
-  }
-}
-
-// resource - app service - diagnostics settings - adeAppDataIngestorServiceAppService
-resource adeAppDataIngestorServiceAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: adeAppDataIngestorServiceAppService
-  name: '${adeAppDataIngestorServiceAppService.name}-diagnostics'
-  properties: {
-    workspaceId: logAnalyticsWorkspaceId
-    logs: [
-      {
-        category: 'AppServiceHTTPLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceConsoleLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceAppLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceFileAuditLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceAuditLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceIPSecAuditLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServicePlatformLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-  }
-}
-
-// resource - private endpoint - app service - adeAppDataIngestorServiceAppService
-resource adeAppDataIngestorServiceAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = {
-  name: adeAppDataIngestorServiceAppServicePrivateEndpointName
-  location: defaultPrimaryRegion
-  properties: {
-    subnet: {
-      id: privateEndpointSubnetId
-    }
-    privateLinkServiceConnections: [
-      {
-        name: adeAppDataIngestorServiceAppServicePrivateEndpointName
-        properties: {
-          privateLinkServiceId: adeAppDataIngestorServiceAppService.id
-          groupIds: [
-            'sites'
-          ]
-        }
-      }
-    ]
-  }
-}
-
-// resource - prviate endpoint dns group - private endpoint - app service - adeAppDataIngestorServiceAppService
-resource adeAppDataIngestorServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
-  name: '${adeAppDataIngestorServiceAppServicePrivateEndpoint.name}/dnsgroupname'
-  dependsOn: [
-    adeAppDataIngestorServiceAppServicePrivateEndpoint
-  ]
-  properties: {
-    privateDnsZoneConfigs: [
-      {
-        name: 'config1'
-        properties: {
-          privateDnsZoneId: azureAppServicePrivateDnsZoneId
-        }
-      }
-    ]
-  }
-}
-
-// resource - app service - adeAppDataReporterServiceAppService
-resource adeAppDataReporterServiceAppService 'Microsoft.Web/sites@2020-12-01' = {
-  name: adeAppDataReporterServiceAppServiceName
-  location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
-  kind: 'container'
-  properties: {
-    serverFarmId: appServicePlanId
-    httpsOnly: false
-    siteConfig: {
-      linuxFxVersion: 'DOCKER|${azureContainerRegistryURL}/${adeAppDataReporterServiceAppServiceImageName}'
-      appSettings: [
-        {
-          name: 'APPINSIGHTS_CONNECTIONSTRING'
-          value: applicationInsightsConnectionString
-        }
-        {
-          name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
-          value: '~2'
-        }
-        {
-          name: 'XDT_MicrosoftApplicationInsights_Mode'
-          value: 'recommended'
-        }
-        {
-          name: 'InstrumentationEngine_EXTENSION_VERSION'
-          value: '~1'
-        }
-        {
-          name: 'XDT_MicrosoftApplicationInsights_BaseExtensions'
-          value: '~1'
-        }
-        {
-          name: 'DOCKER_ENABLE_CI'
-          value: 'true'
-        }
-        {
-          name: 'DOCKER_REGISTRY_SERVER_URL'
-          value: 'https://${azureContainerRegistryURL}'
-        }
-        {
-          name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-          value: azureContainerRegistryName
-        }
-        {
-          name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-          value: azureContainerRegistryCredentials
-        }
-        {
-          name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
-          value: 'false'
-        }
-        {
-          name: 'ADE__SQLSERVERCONNECTIONSTRING'
-          value: 'Data Source=tcp:${adeAppSqlServerFQDN},1433;Initial Catalog=${adeAppSqlDatabaseName};User Id=${adminUserName}@${adeAppSqlServerFQDN};Password=${adminPassword};'
-        }
-        {
-          name: 'WEBSITE_VNET_ROUTE_ALL'
-          value: '1'
-        }
-        {
-          name: 'WEBSITE_DNS_SERVER'
-          value: '168.63.129.16'
-        }
-      ]
-    }
-  }
-}
-
-// resource - app service networking - adeAppDataReporterServiceAppService
-resource adeAppDataReporterServiceAppServiceNetworking 'Microsoft.Web/sites/config@2020-12-01' = {
-  name: '${adeAppDataReporterServiceAppService.name}/virtualNetwork'
-  properties: {
-    subnetResourceId: vnetIntegrationSubnetId
-    swiftSupported: true
-  }
-}
-
-// resource - app service - diagnostics settings - adeAppDataReporterServiceAppService
-resource adeAppDataReporterServiceAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: adeAppDataReporterServiceAppService
-  name: '${adeAppDataReporterServiceAppService.name}-diagnostics'
-  properties: {
-    workspaceId: logAnalyticsWorkspaceId
-    logs: [
-      {
-        category: 'AppServiceHTTPLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceConsoleLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceAppLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceFileAuditLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceAuditLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServiceIPSecAuditLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-      {
-        category: 'AppServicePlatformLogs'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
-  }
-}
-
-// resource - private endpoint - app service - adeAppDataReporterServiceAppService
-resource adeAppDataReporterServiceAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = {
-  name: adeAppDataReporterServiceAppServicePrivateEndpointName
-  location: defaultPrimaryRegion
-  properties: {
-    subnet: {
-      id: privateEndpointSubnetId
-    }
-    privateLinkServiceConnections: [
-      {
-        name: adeAppDataReporterServiceAppServicePrivateEndpointName
-        properties: {
-          privateLinkServiceId: adeAppDataReporterServiceAppService.id
-          groupIds: [
-            'sites'
-          ]
-        }
-      }
-    ]
-  }
-}
-
-// resource - prviate endpoint dns group - private endpoint - app service - adeAppDataReporterServiceAppService
-resource adeAppDataReporterServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
-  name: '${adeAppDataReporterServiceAppServicePrivateEndpoint.name}/dnsgroupname'
-  dependsOn: [
-    adeAppDataReporterServiceAppServicePrivateEndpoint
-  ]
-  properties: {
-    privateDnsZoneConfigs: [
-      {
-        name: 'config1'
-        properties: {
-          privateDnsZoneId: azureAppServicePrivateDnsZoneId
-        }
-      }
-    ]
-  }
-}
-
-// outputs
-output adeAppFrontEndAppServiceUri string = '${list(resourceId('Microsoft.Web/sites/config', adeAppFrontEndAppService.name, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
-output adeAppApiGatewayAppServiceUri string = '${list(resourceId('Microsoft.Web/sites/config', adeAppApiGatewayAppService.name, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
-output adeAppUserServiceAppServiceUri string = '${list(resourceId('Microsoft.Web/sites/config', adeAppUserServiceAppService.name, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
-output adeAppDataIngestorServiceAppServiceUri string = '${list(resourceId('Microsoft.Web/sites/config', adeAppDataIngestorServiceAppService.name, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
-output adeAppDataReporterServiceAppServiceUri string = '${list(resourceId('Microsoft.Web/sites/config', adeAppDataReporterServiceAppService.name, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
+// Outputs
+//////////////////////////////////////////////////
+output adeAppDockerWebHookUris array = [for (adeAppAppService, i) in adeAppAppServices: {
+  adeAppDockerWebHookUri: '${list(resourceId('Microsoft.Web/sites/config', adeAppAppService.adeAppAppServiceName, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
+}]
