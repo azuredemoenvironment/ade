@@ -34,30 +34,30 @@ function Deploy-AzureDemoEnvironment {
     
     # Core Services
     ###################################
-    Deploy-AzureGovernance $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
-    Deploy-AzureNetworking $armParameters
-    Deploy-AzureContainerRegistry $armParameters
+    # Deploy-AzureGovernance $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
+    # Deploy-AzureNetworking $armParameters
+    # Deploy-AzureContainerRegistry $armParameters
     
     # Data Services
     ###################################
-    Deploy-AzureDatabases $armParameters
+    # Deploy-AzureDatabases $armParameters
 
     # Compute Infrastructure
     ###################################
-    Deploy-AzureVirtualMachines $armParameters
-    Deploy-AzureAppServices $armParameters
+    # Deploy-AzureVirtualMachines $armParameters
+    # Deploy-AzureAppServices $armParameters
     # Deploy-AzureKubernetesService $armParameters
-    Deploy-AzureContainerInstances $armParameters
-    Deploy-AdeApplicationToVirtualMachines $armParameters
+    # Deploy-AzureContainerInstances $armParameters
+    # Deploy-AdeApplicationToVirtualMachines $armParameters
 
     # Frontend Load Balancers
     ###################################
-    Deploy-AzureFrontendLoadBalancers $armParameters
+    # Deploy-AzureFrontendLoadBalancers $armParameters
     
     # Service Cleanup
     ###################################
-    Deploy-AzureAppServicePlanScaleDown $armParameters
-    Set-AzureContainerInstancesToStopped $armParameters
+    # Deploy-AzureAppServicePlanScaleDown $armParameters
+    # Set-AzureContainerInstancesToStopped $armParameters
 
     # Additional Core Services
     ###################################

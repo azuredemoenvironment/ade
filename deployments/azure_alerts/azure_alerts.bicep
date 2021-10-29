@@ -22,7 +22,6 @@ var adeBudgetAmount = 1500
 var adeBudgetFirstThreshold = 100
 var adeBudgetName = 'budget-ade-${aliasRegion}-monthly'
 var adeBudgetSecondThreshold = 500
-var adeBudgetStartDate = '2021-01-01'
 var adeBudgetThirdThreshold = 1000
 var adeBudgetTimeGrain = 'Monthly'
 var budgetActionGroupName = 'ag-ade-${aliasRegion}-budget'
@@ -76,14 +75,12 @@ module alertsModule 'azure_alerts_alerts.bicep' = {
 // Module - Budget
 //////////////////////////////////////////////////
 module budgetModule 'azure_alerts_budget.bicep' = {
-  scope: resourceGroup(monitorResourceGroupName)
   name: 'budgetDeployment'
   params: {
     adeBudgetAmount: adeBudgetAmount
     adeBudgetFirstThreshold: adeBudgetFirstThreshold
     adeBudgetName: adeBudgetName
     adeBudgetSecondThreshold: adeBudgetSecondThreshold
-    adeBudgetStartDate: adeBudgetStartDate
     adeBudgetThirdThreshold: adeBudgetThirdThreshold
     adeBudgetTimeGrain: adeBudgetTimeGrain
     budgetActionGroupId: actionGroupModule.outputs.budgetActionGroupId

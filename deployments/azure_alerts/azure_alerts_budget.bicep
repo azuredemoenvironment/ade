@@ -1,3 +1,7 @@
+// Target Scope
+//////////////////////////////////////////////////
+targetScope = 'subscription'
+
 // Parameters
 //////////////////////////////////////////////////
 @description('The amount of the ADE Budget.')
@@ -12,9 +16,6 @@ param adeBudgetName string
 @description('The second threshold of the ADE Budget.')
 param adeBudgetSecondThreshold int
 
-@description('The start date of the ADE Budget.')
-param adeBudgetStartDate string
-
 @description('The third threshold of the ADE Budget.')
 param adeBudgetThirdThreshold int
 
@@ -26,6 +27,13 @@ param budgetActionGroupId string
 
 @description('The Email Address used for Alerts and Notifications.')
 param contactEmailAddress string
+
+@description('Function to generate the current time.')
+param currentTime string = utcNow('yyyy-MM-01')
+
+// Variables
+//////////////////////////////////////////////////
+var adeBudgetStartDate = currentTime
 
 // Resource - Budget Alert
 //////////////////////////////////////////////////
