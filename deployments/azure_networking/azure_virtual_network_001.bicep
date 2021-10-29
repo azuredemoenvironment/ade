@@ -1,35 +1,65 @@
-// parameters
-param location string
-param logAnalyticsWorkspaceId string
-param virtualNetwork001Name string
-param virtualnetwork001Prefix string
-param azureFirewallSubnetName string
-param azureFirewallSubnetPrefix string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the Application Gateway Subnet.')
 param applicationGatewaySubnetName string
+
+@description('The address prefix of the Application Gateway Subnet.')
 param applicationGatewaySubnetPrefix string
+
+@description('The name of the Azure Bastion Subnet.')
 param azureBastionSubnetName string
-param azureBastionSubnetPrefix string
-param managementSubnetName string
-param managementSubnetPrefix string
-param gatewaySubnetName string
-param gatewaySubnetPrefix string
+
+@description('The ID of the Azure Bastion Subnet NSG.')
 param azureBastionSubnetNSGId string
+
+@description('The address prefix of the Azure Bastion Subnet.')
+param azureBastionSubnetPrefix string
+
+@description('The name of the Azure Firewall Subnet.')
+param azureFirewallSubnetName string
+
+@description('The address prefix of the Azure Firewall Subnet.')
+param azureFirewallSubnetPrefix string
+
+@description('The name of the Gateway Subnet.')
+param gatewaySubnetName string
+
+@description('The address prefix of the Gateway Subnet.')
+param gatewaySubnetPrefix string
+
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
+
+@description('The name of the Management Subnet.')
+param managementSubnetName string
+
+@description('The ID of the Management Subnet NSG.')
 param managementSubnetNSGId string
 
-// variables
-var environmentName = 'production'
-var functionName = 'networking'
-var costCenterName = 'it'
+@description('The address prefix of the Management Subnet.')
+param managementSubnetPrefix string
 
-// resource - virtual network - virtual network 001
+@description('The name of the Virtual Network.')
+param virtualNetwork001Name string
+
+@description('The address prefix of the Virtual Network.')
+param virtualnetwork001Prefix string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'networking'
+  costCenter: 'it'
+}
+
+// Resource - Virtual Network
+//////////////////////////////////////////////////
 resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
   name: virtualNetwork001Name
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -82,8 +112,9 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
   }
 }
 
-// resource - virtual network - diagnostic settings - virtual network 001
-resource virtualNetwork001Diagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+// Resource - Virtual Network - Diagnostic Settings
+//////////////////////////////////////////////////
+resource virtualNetwork001Diagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: virtualNetwork001
   name: '${virtualNetwork001.name}-diagnostics'
   properties: {
@@ -112,6 +143,8 @@ resource virtualNetwork001Diagnostics 'microsoft.insights/diagnosticSettings@201
   }
 }
 
+// Outputs
+//////////////////////////////////////////////////
 output virtualNetwork001Id string = virtualNetwork001.id
 output azureFirewallSubnetId string = virtualNetwork001.properties.subnets[0].id
 output azureBastionSubnetId string = virtualNetwork001.properties.subnets[2].id

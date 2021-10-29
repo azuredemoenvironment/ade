@@ -5,13 +5,8 @@
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
-        "containerRegistrySPNObjectID": {
-            "reference": {
-                "keyVault": {
-                    "id": "@@keyVaultResourceID@@"
-                },
-                "secretName": "containerRegistryObjectId"
-            }
+        "azureRegion": {
+            "value": "@@azureRegion@@"
         }
     }
 }

@@ -1,22 +1,26 @@
-// parameters
-param location string
-param natGatewayPublicIPPrefixName string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the Nat Gateway.')
 param natGatewayName string
 
-// variables
-var environmentName = 'production'
-var functionName = 'networking'
-var costCenterName = 'it'
+@description('The name of the Nat Gateway Public IP Prefix.')
+param natGatewayPublicIPPrefixName string
 
-// resource - public ip prefix
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'networking'
+  costCenter: 'it'
+}
+
+// Resource - Public Ip Prefix
+//////////////////////////////////////////////////
 resource natGatewaypublicIPPrefix 'Microsoft.Network/publicIPPrefixes@2020-07-01' = {
   name: natGatewayPublicIPPrefixName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   sku: {
     name: 'Standard'
   }
@@ -26,15 +30,12 @@ resource natGatewaypublicIPPrefix 'Microsoft.Network/publicIPPrefixes@2020-07-01
   }
 }
 
-// resource - nat gateway
+// Resource - Nat Gateway
+//////////////////////////////////////////////////
 resource natGateway 'Microsoft.Network/natGateways@2020-07-01' = {
   name: natGatewayName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   sku: {
     name: 'Standard'
   }
@@ -48,5 +49,6 @@ resource natGateway 'Microsoft.Network/natGateways@2020-07-01' = {
   }
 }
 
-// outputs
+// Outputs
+//////////////////////////////////////////////////
 output natGatewayId string = natGateway.id

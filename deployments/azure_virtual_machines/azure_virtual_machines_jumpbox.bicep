@@ -1,33 +1,53 @@
-// parameters
-param location string
-param adminUserName string
+// Parameters
+//////////////////////////////////////////////////
+@description('The password of the admin user.')
+@secure()
 param adminPassword string
-param logAnalyticsWorkspaceId string
-param logAnalyticsWorkspaceCustomerId string
-param logAnalyticsWorkspaceKey string
-param managementSubnetId string
-param jumpboxPublicIpAddressName string
-param jumpboxNICName string
-param jumpboxPrivateIpAddress string
+
+@description('The name of the admin user.')
+param adminUserName string
+
+@description('The name of the Jumpbox Virtual Machine.')
 param jumpboxName string
+
+@description('The name of the Jumpbox NIC.')
+param jumpboxNICName string
+
+@description('The name of the Jumpbox operating system disk.')
 param jumpboxOSDiskName string
 
-// variables
+@description('The name of the Jumpbox Public Ip Address')
+param jumpboxPublicIpAddressName string
+
+@description('The customer Id of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceCustomerId string
+
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
+
+@description('The Workspace Key of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceKey string
+
+@description('The ID of the Management Subnet.')
+param managementSubnetId string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
 var scriptLocation = 'https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/main/deployments/azure_virtual_machine_jumpbox/jumpboxvm.ps1'
 var scriptName = 'jumpboxvm.ps1'
-var environmentName = 'production'
-var functionName = 'jumpbox'
-var costCenterName = 'it'
+var tags = {
+  environment: 'production'
+  function: 'jumpbox'
+  costCenter: 'it'
+}
 
-// resource - public ip address - jumpbox
+// Resource - Public Ip Address - Jumpbox
+//////////////////////////////////////////////////
 resource jumpboxPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
   name: jumpboxPublicIpAddressName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     publicIPAllocationMethod: 'Static'
   }
@@ -36,8 +56,9 @@ resource jumpboxPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01'
   }
 }
 
-// resource - public ip address - diagnostic settings - jumpbox
-resource jumpboxPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+// Resource - Public Ip Address - Diagnostic Settings - Jumpbox
+//////////////////////////////////////////////////
+resource jumpboxPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: jumpboxPublicIpAddress
   name: '${jumpboxPublicIpAddress.name}-diagnostics'
   properties: {
@@ -82,22 +103,18 @@ resource jumpboxPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSetting
   }
 }
 
-// resource - network interface - jumpbox
+// Resource - Network Interface - Jumpbox
+//////////////////////////////////////////////////
 resource jumpboxNIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   name: jumpboxNICName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     ipConfigurations: [
       {
         name: 'ipconfig1'
         properties: {
-          privateIPAddress: jumpboxPrivateIpAddress
-          privateIPAllocationMethod: 'Static'
+          privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
             id: jumpboxPublicIpAddress.id
           }
@@ -110,8 +127,9 @@ resource jumpboxNIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// resource - network interface - diagnostic settings - jumpbox
-resource jumpboxNICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+// Resource - Network Interface - Diagnostic Settings - Jumpbox
+//////////////////////////////////////////////////
+resource jumpboxNICDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: jumpboxNIC
   name: '${jumpboxNIC.name}-diagnostics'
   properties: {
@@ -130,15 +148,12 @@ resource jumpboxNICDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01
   }
 }
 
-// resource - virtual machine - jumpbox
+// Resource - Virtual Machine - Jumpbox
+//////////////////////////////////////////////////
 resource jumpbox 'Microsoft.Compute/virtualMachines@2020-12-01' = {
   name: jumpboxName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   properties: {
     hardwareProfile: {
       vmSize: 'Standard_B2ms'
@@ -180,7 +195,8 @@ resource jumpbox 'Microsoft.Compute/virtualMachines@2020-12-01' = {
   }
 }
 
-// resource - custom script extension - jumpbox
+// Resource - Custom Script Extension - Jumpbox
+//////////////////////////////////////////////////
 resource jumpboxCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
   name: '${jumpbox.name}/CustomScriptextension'
   location: location
@@ -200,7 +216,8 @@ resource jumpboxCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensi
   }
 }
 
-// resource - dependency agent windows - jumpbox
+// Resource - Dependency Agent Windows - Jumpbox
+//////////////////////////////////////////////////
 resource jumpboxDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
   name: '${jumpbox.name}/DependencyAgentWindows'
   location: location
@@ -212,7 +229,8 @@ resource jumpboxDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@20
   }
 }
 
-// resource - microsoft monitoring agent - jumpbox
+// Resource - Microsoft Monitoring Agent - Jumpbox
+//////////////////////////////////////////////////
 resource jumpboxMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
   name: '${jumpbox.name}/MMAExtension'
   location: location

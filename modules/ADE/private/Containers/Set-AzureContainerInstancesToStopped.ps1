@@ -5,20 +5,20 @@ function Set-AzureContainerInstancesToStopped {
 
     Write-ScriptSection "Setting Azure Container Instances to Stopped (for Cost Savings)"
 
-    $aliasRegion = $armParameters.aliasRegion
-    $containerGroupResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName
-
     $containerGroups = @(
-        "ci-ade-$aliasRegion-adeloadtesting-redis",
-        "ci-ade-$aliasRegion-adeloadtesting-influxdb",
-        "ci-ade-$aliasRegion-adeloadtesting-grafana",
-        "ci-ade-$aliasRegion-adeloadtesting-gatling"
+        @{ Name = $armParameters.adeLoadTestingGatlingContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName },
+        @{ Name = $armParameters.adeLoadTestingGrafanaContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName },
+        @{ Name = $armParameters.adeLoadTestingInfluxDbContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName },
+        @{ Name = $armParameters.adeLoadTestingRedisContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName }
     )
     
     $containerGroups | ForEach-Object {
-        Write-Log "Stopping $_"
+        $name = $_.Name
+        $rg = $_.ResourceGroup
+        
+        Write-Log "Stopping $name in resource group $rg"
 
-        az container stop --resource-group $containerGroupResourceGroup --name $_
+        az container stop --resource-group $rg --name $name
         Confirm-LastExitCode
     }
 

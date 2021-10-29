@@ -34,9 +34,7 @@ function Deploy-AzureDemoEnvironment {
     
     # Core Services
     ###################################
-    Deploy-AzureResourceGroups $armParameters
-    Deploy-AzureGovernance $armParameters
-    Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
+    Deploy-AzureGovernance $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
     Deploy-AzureNetworking $armParameters
     Deploy-AzureContainerRegistry $armParameters
     
@@ -50,7 +48,7 @@ function Deploy-AzureDemoEnvironment {
     Deploy-AzureAppServices $armParameters
     # Deploy-AzureKubernetesService $armParameters
     Deploy-AzureContainerInstances $armParameters
-    Set-AzureContainerInstancesToStopped $armParameters
+    Deploy-AdeApplicationToVirtualMachines $armParameters
 
     # Frontend Load Balancers
     ###################################
@@ -58,12 +56,13 @@ function Deploy-AzureDemoEnvironment {
     
     # Service Cleanup
     ###################################
-    Deploy-AzureAppServicePlanScaleDown $armParameters 
+    Deploy-AzureAppServicePlanScaleDown $armParameters
+    Set-AzureContainerInstancesToStopped $armParameters
 
     # Additional Core Services
     ###################################
     Deploy-AzureAlerts $armParameters
-    Deploy-AzureDns $armParameters
+    Deploy-AzurePublicDns $armParameters
 
     $stopwatch.Stop()
     $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)

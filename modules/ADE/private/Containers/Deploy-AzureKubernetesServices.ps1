@@ -3,5 +3,5 @@ function Deploy-AzureKubernetesServices {
         [object] $armParameters
     )
 
-    Deploy-ArmTemplate 'Azure Kubernetes Services' $armParameters -resourceGroupName $armParameters.aksResourceGroupName
+    Deploy-ArmTemplate 'Azure Kubernetes Services' $armParameters -resourceGroupName $armParameters.adeAppAksResourceGroupName
 }

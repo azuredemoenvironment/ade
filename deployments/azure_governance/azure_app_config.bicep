@@ -1,30 +1,34 @@
-// parameters
-param location string = resourceGroup().location
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the App Configuration.')
 param appConfigName string
+
+@description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-// variables
-var environmentName = 'production'
-var functionName = 'app config'
-var costCenterName = 'it'
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'app config'
+  costCenter: 'it'
+}
 
-// new resources
-// resource - app configuration service
+// Resource - App Configuration
+//////////////////////////////////////////////////
 resource appConfig 'Microsoft.AppConfiguration/configurationStores@2020-07-01-preview' = {
   name: appConfigName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   sku: {
     name: 'Standard'
   }
 }
 
-// resource - app config - diagnostic settings
-resource appConfigDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+// Resource - App Configuration - Diagnostic Settings
+//////////////////////////////////////////////////
+resource appConfigDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: appConfig
   name: '${appConfig.name}-diagnostics'
   properties: {
@@ -61,6 +65,8 @@ resource appConfigDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-
   }
 }
 
+// Resource - App Configuration - ASP.NET Core Environment
+//////////////////////////////////////////////////
 resource appConfigKeyAspNetCoreEnvironment 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = {
   name: '${appConfig.name}/ASPNETCORE_ENVIRONMENT'
   properties: {
@@ -68,4 +74,6 @@ resource appConfigKeyAspNetCoreEnvironment 'Microsoft.AppConfiguration/configura
   }
 }
 
+// Outpus
+//////////////////////////////////////////////////
 output appConfigName string = appConfig.name

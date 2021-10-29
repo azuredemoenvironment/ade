@@ -1,22 +1,26 @@
-// parameters
-param location string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the Application Insights instance.')
 param applicationInsightsName string
+
+@description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-// variables
-var environmentName = 'production'
-var functionName = 'monitoring and diagnostics'
-var costCenterName = 'it'
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'monitoring and diagnostics'
+  costCenter: 'it'
+}
 
-// resource - application insights
+// Resource - Application Insights
+//////////////////////////////////////////////////
 resource applicationInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
   name: applicationInsightsName
   location: location
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
   kind: 'web'
   properties: {
     Application_Type: 'web'
@@ -24,8 +28,9 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02-preview' 
   }
 }
 
-// resource - application insights - diagnostic settings
-resource applicationInsightsDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+// Resource - Application Insights - Diagnostic Settings
+//////////////////////////////////////////////////
+resource applicationInsightsDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: applicationInsights
   name: '${applicationInsights.name}-diagnostics'
   properties: {
@@ -134,5 +139,7 @@ resource applicationInsightsDiagnostics 'microsoft.insights/diagnosticSettings@2
   }
 }
 
+// Outputs
+//////////////////////////////////////////////////
 output applicationInsightsConnectionString string = applicationInsights.properties.ConnectionString
 output applicationInsightsInstrumentationKey string = applicationInsights.properties.InstrumentationKey

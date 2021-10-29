@@ -1,33 +1,41 @@
-// parameters
-param defaultPrimaryRegion string
-param containerRegistryLoginServer string
-@secure()
-param containerRegistryLoginUserName string
-@secure()
-param containerRegistryLoginPassword string
-param adeLoadTestingInfluxDBContainerGroupName string
-param adeLoadTestingInfluxDBContainerImageName string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the InfluxDb Container Group.')
+param adeLoadTestingInfluxDbContainerGroupName string
 
-// variables
-var environmentName = 'production'
-var functionName = 'aci'
-var costCenterName = 'it'
+@description('The name of the InfluxDb Container Image.')
+param adeLoadTestingInfluxDbContainerImageName string
 
-// resource - azure container instance - container group - adeLoadTestingInfluxDB
-resource adeLoadTestingInfluxDBContainerGroup 'Microsoft.ContainerInstance/containerGroups@2021-03-01' = {
-  name: adeLoadTestingInfluxDBContainerGroupName
-  location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+@description('The name of the admin user of the Azure Container Registry.')
+param containerRegistryName string
+
+@description('The password of the admin user of the Azure Container Registry.')
+param containerRegistryPassword string
+
+@description('The URL of the Azure Container Registry.')
+param containerRegistryURL string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'aci'
+  costCenter: 'it'
+}
+
+// Resource - Azure Container Instance - Container Group - Influx Db
+//////////////////////////////////////////////////
+resource adeLoadTestingInfluxDbContainerGroup 'Microsoft.ContainerInstance/containerGroups@2021-03-01' = {
+  name: adeLoadTestingInfluxDbContainerGroupName
+  location: location
+  tags: tags
   properties: {
     containers: [
       {
-        name: adeLoadTestingInfluxDBContainerGroupName
+        name: adeLoadTestingInfluxDbContainerGroupName
         properties: {
-          image: adeLoadTestingInfluxDBContainerImageName
+          image: adeLoadTestingInfluxDbContainerImageName
           ports: [
             {
               protocol: 'TCP'
@@ -55,7 +63,7 @@ resource adeLoadTestingInfluxDBContainerGroup 'Microsoft.ContainerInstance/conta
     osType: 'Linux'
     restartPolicy: 'Never'
     ipAddress: {
-      dnsNameLabel: adeLoadTestingInfluxDBContainerGroupName
+      dnsNameLabel: adeLoadTestingInfluxDbContainerGroupName
       type: 'Public'
       ports: [
         {
@@ -74,13 +82,14 @@ resource adeLoadTestingInfluxDBContainerGroup 'Microsoft.ContainerInstance/conta
     }
     imageRegistryCredentials: [
       {
-        server: containerRegistryLoginServer
-        username: containerRegistryLoginUserName
-        password: containerRegistryLoginPassword
+        server: containerRegistryURL
+        username: containerRegistryName
+        password: containerRegistryPassword
       }
     ]
   }
 }
 
-// outputs
-output influxFqdn string = adeLoadTestingInfluxDBContainerGroup.properties.ipAddress.fqdn
+// Outputs
+//////////////////////////////////////////////////
+output influxFqdn string = adeLoadTestingInfluxDbContainerGroup.properties.ipAddress.fqdn
