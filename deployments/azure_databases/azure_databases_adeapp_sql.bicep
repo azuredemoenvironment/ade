@@ -1,30 +1,51 @@
-// parameters
-param defaultPrimaryRegion string
-param adminUserName string
-param adminPassword string
-param logAnalyticsWorkspaceId string
-param appConfigResourceGroupName string
-param appConfigName string
-param privateEndpointSubnetId string
-param azureSQLPrivateDnsZoneId string
-param adeAppSqlServerName string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the ADE App Sql Database.')
 param adeAppSqlDatabaseName string
+
+@description('The name of the ADE App Sql Server.')
+param adeAppSqlServerName string
+
+@description('The name of the ADE App Sql Server Private Endpoint.')
 param adeAppSqlServerPrivateEndpointName string
 
-// variables
-var environmentName = 'production'
-var functionName = 'sql'
-var costCenterName = 'it'
+@description('The password of the admin user.')
+@secure()
+param adminPassword string
 
-// resource - sql server - adeAppSqlServer
+@description('The name of the admin user.')
+param adminUserName string
+
+@description('The name of the App Config instance.')
+param appConfigName string
+
+@description('The name of the App Config instance Resource Group.')
+param appConfigResourceGroupName string
+
+@description('The ID of the Azure Sql Private Dns Zone.')
+param azureSqlPrivateDnsZoneId string
+
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
+
+@description('The ID of the Private Endpoint Subnet.')
+param privateEndpointSubnetId string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'sql'
+  costCenter: 'it'
+}
+
+// Resource - Sql Server - ADE App
+//////////////////////////////////////////////////
 resource adeAppSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
   name: adeAppSqlServerName
-  location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  location: location
+  tags: tags
   properties: {
     publicNetworkAccess: 'Disabled'
     administratorLogin: adminUserName
@@ -33,16 +54,13 @@ resource adeAppSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
   }
 }
 
-// resource - sql database - adeAppSqlDatabase
+// Resource - Sql Database - ADE App
+//////////////////////////////////////////////////
 resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' = {
   parent: adeAppSqlServer
   name: adeAppSqlDatabaseName
-  location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  location: location
+  tags: tags
   sku: {
     name: 'GP_S_Gen5'
     tier: 'GeneralPurpose'
@@ -50,7 +68,7 @@ resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' 
     capacity: 40
   }
   properties: {
-    collation: 'SQL_Latin1_General_CP1_CI_AS'
+    collation: 'Sql_Latin1_General_CP1_CI_AS'
     maxSizeBytes: 2147483648
     zoneRedundant: true
     autoPauseDelay: 60
@@ -58,7 +76,8 @@ resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' 
   }
 }
 
-// module - app config - sql database
+// Module - App Config - ADE App Sql Database
+//////////////////////////////////////////////////
 module azureDatabasesAdeAppSqlAppConfigModule './azure_databases_adeapp_sql_app_config.bicep' = {
   scope: resourceGroup(appConfigResourceGroupName)
   name: 'azureDatabasesAdeAppSqlAppConfigDeployment'
@@ -68,7 +87,8 @@ module azureDatabasesAdeAppSqlAppConfigModule './azure_databases_adeapp_sql_app_
   }
 }
 
-// resource - sql database - diagnostic settings - adeAppSqlServerDatabase
+// Resource - Sql Database - Diagnostic Settings - ADE App
+//////////////////////////////////////////////////
 resource adeAppSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: adeAppSqlDatabase
   name: '${adeAppSqlDatabase.name}-diagnostics'
@@ -77,7 +97,7 @@ resource adeAppSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@202
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
-        category: 'SQLInsights'
+        category: 'SqlInsights'
         enabled: true
         retentionPolicy: {
           days: 7
@@ -178,10 +198,11 @@ resource adeAppSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@202
   }
 }
 
-// resource - private endpoint - adeAppSqlServer
+// Resource - Private Endpoint - ADE App Sql Server
+//////////////////////////////////////////////////
 resource adeAppSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = {
   name: adeAppSqlServerPrivateEndpointName
-  location: defaultPrimaryRegion
+  location: location
   properties: {
     subnet: {
       id: privateEndpointSubnetId
@@ -200,8 +221,9 @@ resource adeAppSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2020
   }
 }
 
-// resource - private endpoint dns group - private endpoint - sql server - adeAppSqlServer
-resource azureSQLprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
+// Resource - Private Endpoint Dns Group - Private Endpoint - ADE App Sql Server
+//////////////////////////////////////////////////
+resource azureSqlprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
   name: '${adeAppSqlServerPrivateEndpoint.name}/dnsgroupname'
   dependsOn: [
     adeAppSqlServerPrivateEndpoint
@@ -211,7 +233,7 @@ resource azureSQLprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints
       {
         name: 'config1'
         properties: {
-          privateDnsZoneId: azureSQLPrivateDnsZoneId
+          privateDnsZoneId: azureSqlPrivateDnsZoneId
         }
       }
     ]

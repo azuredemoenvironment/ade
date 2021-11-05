@@ -1,39 +1,49 @@
-// parameters
-param virtualNetwork001Name string
-param virtualNetwork002Name string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the Azure App Service Private DNS Zone.')
 param appServicePrivateDnsZoneName string
+
+@description('The name of the Azure SQL Private DNS Zone.')
 param azureSQLPrivateDnsZoneName string
+
+@description('The ID of Virtual Network 001.')
 param virtualNetwork001Id string
+
+@description('The name of Virtual Network 001.')
+param virtualNetwork001Name string
+
+@description('The ID of Virtual Network 002.')
 param virtualNetwork002Id string
 
-// variables
-var environmentName = 'production'
-var functionName = 'networking'
-var costCenterName = 'it'
+@description('The name of Virtual Network 002.')
+param virtualNetwork002Name string
 
-// resource - private dns zone - privatelink.azurewebsites.net
+// Variables
+//////////////////////////////////////////////////
+var tags = {
+  environment: 'production'
+  function: 'networking'
+  costCenter: 'it'
+}
+
+// Resource - Private Dns Zone - Privatelink.Azurewebsites.Net
+//////////////////////////////////////////////////
 resource appServicePrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: appServicePrivateDnsZoneName
   location: 'global'
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
 }
 
-// resource - private dns zone - privatelink.database.windows.net
+// Resource - Private Dns Zone - Privatelink.Database.Windows.Net
+//////////////////////////////////////////////////
 resource azureSQLPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: azureSQLPrivateDnsZoneName
   location: 'global'
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  tags: tags
 }
 
-// resource virtual network link - privatelink.azurewebsites.net to virtual network 001
+// Resource Virtual Network Link - Privatelink.Azurewebsites.Net To Virtual Network 001
+//////////////////////////////////////////////////
 resource vnetLink01 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
   name: '${appServicePrivateDnsZone.name}/${virtualNetwork001Name}-link'
   location: 'global'
@@ -45,7 +55,8 @@ resource vnetLink01 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-
   }
 }
 
-// resource virtual network link - privatelink.azurewebsites.net to virtual network 002
+// Resource Virtual Network Link - Privatelink.Azurewebsites.Net To Virtual Network 002
+//////////////////////////////////////////////////
 resource vnetLink02 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
   name: '${appServicePrivateDnsZone.name}/${virtualNetwork002Name}-link'
   location: 'global'
@@ -57,7 +68,8 @@ resource vnetLink02 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-
   }
 }
 
-// resource virtual network link - privatelink.database.windows.net to virtual network 001
+// Resource Virtual Network Link - Privatelink.Database.Windows.Net To Virtual Network 001
+//////////////////////////////////////////////////
 resource vnetLink11 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
   name: '${azureSQLPrivateDnsZone.name}/${virtualNetwork001Name}-link'
   location: 'global'
@@ -69,7 +81,8 @@ resource vnetLink11 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-
   }
 }
 
-// resource virtual network link - privatelink.database.windows.net to virtual network 002
+// Resource Virtual Network Link - Privatelink.Database.Windows.Net To Virtual Network 002
+//////////////////////////////////////////////////
 resource vnetLink12 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
   name: '${azureSQLPrivateDnsZone.name}/${virtualNetwork002Name}-link'
   location: 'global'

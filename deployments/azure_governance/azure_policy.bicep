@@ -1,14 +1,26 @@
-// target scope
+// Target Scope
+//////////////////////////////////////////////////
 targetScope = 'subscription'
 
-// parameters
-param defaultPrimaryRegion string
-param listOfAllowedLocations array
-param listOfAllowedSKUs array
-param logAnalyticsWorkspaceId string
+// Parameters
+//////////////////////////////////////////////////
+@description('The selected Azure region for deployment.')
+param azureRegion string
+
+@description('The name of the Azure Policy Initiative Definition.')
 param initiativeDefinitionName string
 
-// resource - policy initiative definition
+@description('The list of allowed locations for resource deployment. Used in Azure Policy module.')
+param listOfAllowedLocations array
+
+@description('The list of allowed virtual machine SKUs. Used in Azure Policy module.')
+param listOfAllowedSKUs array
+
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
+
+// Resource - Initiative Definition
+//////////////////////////////////////////////////
 resource initiativeDefinition 'Microsoft.Authorization/policySetDefinitions@2019-09-01' = {
   name: initiativeDefinitionName
   properties: {
@@ -69,7 +81,8 @@ resource initiativeDefinition 'Microsoft.Authorization/policySetDefinitions@2019
   }
 }
 
-// resource - policy assignment
+// Resource - Policy Assignment - Initiative Definition
+//////////////////////////////////////////////////
 resource initiativeDefinitionPolicyAssignment 'Microsoft.Authorization/policyAssignments@2019-09-01' = {
   name: initiativeDefinitionName
   properties: {
@@ -87,10 +100,11 @@ resource initiativeDefinitionPolicyAssignment 'Microsoft.Authorization/policyAss
   }
 }
 
-// resource - policy assignment
+// Resource - Policy Assignment - Azure Monitor for VMs
+//////////////////////////////////////////////////
 resource azureMonitorVMsPolicyAssignment 'Microsoft.Authorization/policyAssignments@2019-09-01' = {
   name: 'Enable Azure Monitor for VMs'
-  location: defaultPrimaryRegion
+  location: azureRegion
   identity: {
     type: 'SystemAssigned'
   }
@@ -106,10 +120,11 @@ resource azureMonitorVMsPolicyAssignment 'Microsoft.Authorization/policyAssignme
   }
 }
 
-// resource - policy assignment
+// Resource - Policy Assignment - Azure Monitor for VMSS
+//////////////////////////////////////////////////
 resource azureMonitorVMSSPolicyAssignment 'Microsoft.Authorization/policyAssignments@2019-09-01' = {
   name: 'Enable Azure Monitor for Virtual Machine Scale Sets'
-  location: defaultPrimaryRegion
+  location: azureRegion
   identity: {
     type: 'SystemAssigned'
   }

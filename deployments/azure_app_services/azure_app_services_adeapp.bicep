@@ -1,40 +1,56 @@
-// parameters
-param defaultPrimaryRegion string
-param aliasRegion string
-param logAnalyticsWorkspaceId string
-param appConfigConnectionString string
-param vnetIntegrationSubnetId string
-param privateEndpointSubnetId string
-param azureContainerRegistryName string
-param azureContainerRegistryURL string
-param azureContainerRegistryCredentials string
-param azureAppServicePrivateDnsZoneId string
-param appServicePlanId string
-param adeAppName string
-param usePrivateEndpoint bool
+// Parameters
+//////////////////////////////////////////////////
+@description('The array of properties for the ADE App App Services.')
+param adeAppAppServices array
 
-// variables
+@description('The connection string from the App Configuration instance.')
+param appConfigConnectionString string
+
+@description('The ID of the App Service Plan.')
+param appServicePlanId string
+
+@description('The ID of the Azure App Service Private DNS Zone.')
+param azureAppServicePrivateDnsZoneId string
+
+@description('The name of the admin user of the Azure Container Registry.')
+param containerRegistryName string
+
+@description('The password of the admin user of the Azure Container Registry.')
+param containerRegistryPassword string
+
+@description('The URL of the Azure Container Registry.')
+param containerRegistryURL string
+
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
+
+@description('The ID of the Private Endpoint Subnet.')
+param privateEndpointSubnetId string
+
+@description('The ID of the Virtual Network Integration Subnet.')
+param vnetIntegrationSubnetId string
+
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
 var tags = {
   environment: 'production'
-  function: 'App'
+  function: 'adeApp'
   costCenter: 'it'
 }
 
-var adeAppServiceName = replace('app-ade-${aliasRegion}-ade-${adeAppName}', '-', '')
-var adeAppContainerImageName = 'ade-${adeAppName}'
-var adeAppPrivateEndpointName = 'pl-ade-${aliasRegion}-ade-${adeAppName}'
-
-// resource - app service
-resource adeAppService 'Microsoft.Web/sites@2020-12-01' = {
-  name: adeAppServiceName
-  location: defaultPrimaryRegion
+// Resource - App Service - ADE App(s)
+//////////////////////////////////////////////////
+resource adeAppService 'Microsoft.Web/sites@2020-12-01' = [for (adeAppAppService, i) in adeAppAppServices: {
+  name: adeAppAppService.adeAppAppServiceName
+  location: location
   tags: tags
   kind: 'container'
   properties: {
     serverFarmId: appServicePlanId
     httpsOnly: false
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${azureContainerRegistryURL}/${adeAppContainerImageName}'
+      linuxFxVersion: 'DOCKER|${containerRegistryURL}/${adeAppAppService.containerImageName}'
       alwaysOn: true
       http20Enabled: true
       httpLoggingEnabled: true
@@ -69,15 +85,15 @@ resource adeAppService 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_URL'
-          value: 'https://${azureContainerRegistryURL}'
+          value: 'https://${containerRegistryURL}'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-          value: azureContainerRegistryName
+          value: containerRegistryName
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-          value: azureContainerRegistryCredentials
+          value: containerRegistryPassword
         }
         {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
@@ -94,21 +110,23 @@ resource adeAppService 'Microsoft.Web/sites@2020-12-01' = {
       ]
     }
   }
-}
+}]
 
-// resource - app service networking
-resource adeAppServiceNetworking 'Microsoft.Web/sites/config@2020-12-01' = {
-  name: '${adeAppService.name}/virtualNetwork'
+// Resource - App Service - Networking - ADE App(s)
+//////////////////////////////////////////////////
+resource adeAppServiceNetworking 'Microsoft.Web/sites/config@2020-12-01' = [for (adeAppAppService, i) in adeAppAppServices: {
+  name: '${adeAppService[i].name}/virtualNetwork'
   properties: {
     subnetResourceId: vnetIntegrationSubnetId
     swiftSupported: true
   }
-}
+}]
 
-// resource - app service - diagnostics settings
-resource adeAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: adeAppService
-  name: '${adeAppService.name}-diagnostics'
+// Resource - App Service - Diagnostic Settings - ADE App(s)
+//////////////////////////////////////////////////
+resource adeAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (adeAppAppService, i) in adeAppAppServices: {
+  scope: adeAppService[i]
+  name: '${adeAppAppService.adeAppAppServiceName}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logs: [
@@ -180,21 +198,22 @@ resource adeAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2017-05
       }
     ]
   }
-}
+}]
 
-// resource - private endpoint - app service
-resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = if (usePrivateEndpoint) {
-  name: adeAppPrivateEndpointName
-  location: defaultPrimaryRegion
+// Resource - Private Endpoint - App Service - ADE App(s)
+//////////////////////////////////////////////////
+resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = [for (adeAppAppService, i) in adeAppAppServices: if (adeAppAppService.usePrivateEndpoint) {
+  name: adeAppAppService.privateEndpointName
+  location: location
   properties: {
     subnet: {
       id: privateEndpointSubnetId
     }
     privateLinkServiceConnections: [
       {
-        name: adeAppPrivateEndpointName
+        name: adeAppAppService.privateEndpointName
         properties: {
-          privateLinkServiceId: adeAppService.id
+          privateLinkServiceId: adeAppService[i].id
           groupIds: [
             'sites'
           ]
@@ -202,11 +221,12 @@ resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-1
       }
     ]
   }
-}
+}]
 
-// resource - prviate endpoint dns group - private endpoint - app service
-resource adeAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = if (usePrivateEndpoint) {
-  name: '${adeAppServicePrivateEndpoint.name}/dnsgroupname'
+// Resource - Prviate Endpoint Dns Group - Private Endpoint - App Service - ADE App(s)
+//////////////////////////////////////////////////
+resource adeAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = [for (adeAppAppService, i) in adeAppAppServices: if (adeAppAppService.usePrivateEndpoint) {
+  name: '${adeAppAppService.privateEndpointName}/dnsgroupname'
   dependsOn: [
     adeAppServicePrivateEndpoint
   ]
@@ -220,10 +240,10 @@ resource adeAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndp
       }
     ]
   }
-}
+}]
 
-// outputs
-output adeAppServiceName string = adeAppService.name
-output adeAppContainerImageName string = adeAppContainerImageName
-output adeAppPrivateEndpointName string = adeAppServicePrivateEndpoint.name
-output adeAppDockerWebHookUri string = '${list(resourceId('Microsoft.Web/sites/config', adeAppService.name, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
+// Outputs
+//////////////////////////////////////////////////
+output adeAppDockerWebHookUris array = [for (adeAppAppService, i) in adeAppAppServices: {
+  adeAppDockerWebHookUri: '${list(resourceId('Microsoft.Web/sites/config', adeAppAppService.adeAppAppServiceName, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
+}]

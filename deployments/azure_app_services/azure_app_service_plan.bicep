@@ -1,21 +1,23 @@
-// parameters
-param defaultPrimaryRegion string
+// Parameters
+//////////////////////////////////////////////////
+@description('The name of the App Service Plan.')
 param appServicePlanName string
 
-// variables
-var environmentName = 'production'
-var functionName = 'appServicePlan'
-var costCenterName = 'it'
+// Variables
+//////////////////////////////////////////////////
+var location = resourceGroup().location
+var tags = {
+  environment: 'production'
+  function: 'appServicePlan'
+  costCenter: 'it'
+}
 
-// resource - app service plan
+// Resource - App Service Plan
+//////////////////////////////////////////////////
 resource appServicePlan 'Microsoft.Web/serverfarms@2020-10-01' = {
   name: appServicePlanName
-  location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  location: location
+  tags: tags
   kind: 'linux'
   sku: {
     name: 'P1v3'
@@ -25,15 +27,12 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2020-10-01' = {
   }
 }
 
-// resource - app service plan - autoscale setting
+// Resource - App Service Plan - Autoscale Setting
+//////////////////////////////////////////////////
 resource autoscaleSetting 'Microsoft.insights/autoscalesettings@2015-04-01' = {
   name: '${appServicePlan.name}-autoscale'
-  location: defaultPrimaryRegion
-  tags: {
-    environment: environmentName
-    function: functionName
-    costCenter: costCenterName
-  }
+  location: location
+  tags: tags
   properties: {
     name: '${appServicePlan.name}-autoscale'
     enabled: true
@@ -91,5 +90,6 @@ resource autoscaleSetting 'Microsoft.insights/autoscalesettings@2015-04-01' = {
   }
 }
 
-//outputs
+// Outputs
+//////////////////////////////////////////////////
 output appServicePlanId string = appServicePlan.id
