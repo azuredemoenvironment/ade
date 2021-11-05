@@ -110,18 +110,9 @@ try {
     # Configuring ARM Parameters Parameters
     ###################################################################################################
     Write-Status 'Configuring Parameters'
-    $defaultPrimaryRegion = 'EastUS'
-    $defaultSecondaryRegion = 'WestUS'
+    $defaultPrimaryRegion = $(az configure -l --query "[?name == 'location'].value | [0]" --output tsv)
+    $defaultSecondaryRegion = $(az configure -l --query "[?name == 'locationpair'].value | [0]" --output tsv)
     $armParameters = Set-InitialArmParameters $alias $email $resourceUserName $rootDomainName $localNetworkRange $defaultPrimaryRegion $defaultSecondaryRegion $module $overwriteParameterFiles $skipConfirmation
-
-    ###################################################################################################
-    # Configuring AZ CLI
-    ###################################################################################################
-
-    # Setting the default location for services
-    Write-Status "Setting the Default Resource Location to $defaultPrimaryRegion"
-    az configure --defaults location=$defaultPrimaryRegion group=
-    Confirm-LastExitCode
 
     ###################################################################################################
     # Start the Requested Action
@@ -156,14 +147,11 @@ try {
 }
 catch {
     $ErrorMessage = $_.Exception.Message
+    Resolve-AdeError $_
     Write-Log "An error occurred: $ErrorMessage"
     Write-Debug ($ErrorMessage | Format-Table | Out-String)
 }
 finally {
-    # Clearing the default location
-    Write-Log "Clearing the Default Resource Location"
-    az configure --defaults location=''
-
     # Always set our location back to our script root to make it easier to re-execute
     Set-Location -Path $PSScriptRoot
 

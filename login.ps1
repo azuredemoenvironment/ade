@@ -1,8 +1,8 @@
 #!/usr/bin/env pwsh
 
 param (
-    [Parameter(Position = 0, mandatory = $false)]
-    [string]$subscriptionName
+  [Parameter(Position = 0, mandatory = $false)]
+  [string]$subscriptionName
 )
 
 Write-Header "Logging in to az CLI"
@@ -12,51 +12,31 @@ az login
 $subscriptions = $(az account list --query "[].{Name:name,subscriptionId:id}" --output json) | ConvertFrom-Json
 [int]$subscriptionCount = $subscriptions.count
 [int]$subscriptionChoice = $null;
+
+if (1 -eq $subscriptionCount) {
+    $subscriptionName = $subscriptions[0].Name
+}
+
 if ($subscriptionName -eq $null -or $subscriptionName -eq "") {
-    # get all subscriptions and save into variable
-    #$subscriptions = $(az account list --query "[].{Name:name,subscriptionId:id}" --output json) | ConvertFrom-Json
+  Write-Host ($subscriptions | Format-Table | Out-String)
 
-    # get a count of subscriptions for loop
-    #[int]$subscriptionCount = $subscriptions.count
-    # if (1 -eq $subscriptionCount) {
-    #     $subscriptionName = $subscriptions[0].Name
-    #     return
-    # }
+  Write-Header "Select a Subscription; found $subscriptionCount"
+  
+  for ($i = 0; $i -lt $subscriptionCount; $i++) {
+    $subscription = $subscriptions[$i]
+    Write-Host "$i`: $($subscription.Name) ($($subscription.SubscriptionId))"
+  }
+  
+  do {
+    [int]$subscriptionChoice = Read-Host -prompt "Select number & press enter"
+  }
+  until ($subscriptionChoice -le $subscriptionCount)
 
-    Write-Header "Select a Subscription; found $subscriptionCount"
-    
-    # starting value for array for loop
-    $i = 0
-    foreach ($subscription in $subscriptions) {
-
-        
-        # start of menu - value = 0
-        $subValue = $i
-
-        # print out all subscriptions
-        Write-Host $subValue ":" $subscription.Name "("$subscription.SubscriptionId")"
-
-        # increment value
-        $i++
-    }
+  Write-Host "You selected" $subscriptions[$subscriptionChoice].Name
+  $subscriptionName = $subscriptions[$subscriptionChoice].Name
+} else {
+  Write-Host "Using $subscriptionName subscription."
 }
-
-Do {
-    # repeat loop until valid number is chosen
-     if (1 -eq $subscriptionCount) {
-        $subscriptionName = $subscriptions[0].Name
-        $subscriptionChoice -le $subscriptionCount
-        break
-    }
-    $subscriptionChoice = read-host -prompt "Select number & press enter"
-}
-
-
-# exit criteria for loop
-until ($subscriptionChoice -le $subscriptionCount)
-
-Write-Host "You selected" $subscriptions[$subscriptionChoice].Name
-$subscriptionName = $subscriptions[$subscriptionChoice].Name
 
 Write-Header "Setting az CLI Subscription to $subscriptionName"
 
@@ -77,6 +57,27 @@ Write-Header "Setting Az PowerShell Subscription to $subscriptionName"
 
 Get-AzSubscription -SubscriptionName $subscriptionName | Set-AzContext
 
-Write-Header 'Logging in to Docker'
+# Write-Header 'Logging in to Docker'
+# docker login
 
-docker login
+Write-Header "Setting Region To Deploy"
+$regions = $(az account list-locations --query "[].{RegionName:name,SecondaryRegionName:metadata.pairedRegion[0].name}" --output json) | ConvertFrom-Json
+$regionCount = $regions.Count
+
+Write-Header "Select a Region; found $regionCount"
+
+for ($i = 0; $i -lt $regionCount; $i++) {
+  $region = $regions[$i]
+  Write-Host "$i`: $($region.regionName)"
+}
+
+do {
+  [int]$regionChoice = Read-Host -prompt "Select number & press enter"
+} 
+until ($regionChoice -le $regionCount)
+
+$selectedRegion = $regions[$regionChoice].regionName
+$selectedSecondaryRegion = $regions[$regionChoice].secondaryRegionName
+
+Write-Host "Setting the Default Resource Location to $selectedRegion"
+az configure --defaults location=$selectedRegion locationPair=$selectedSecondaryRegion group=

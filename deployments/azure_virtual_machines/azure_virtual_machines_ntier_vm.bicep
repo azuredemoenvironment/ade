@@ -26,7 +26,7 @@ var sanitizedNow = replace(replace(now, 'Z', ''), 'T', '')
 var timestamp = int('${substring(sanitizedNow, 1, 2)}${substring(sanitizedNow, 3, 2)}${substring(sanitizedNow, 5, 2)}${substring(sanitizedNow, 7, 4)}')
 
 // TODO: this will need to be updated to dev/main/whatever as the file merges
-var scriptLocation = 'https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/brandonmartinez/issue/130-Deploy-ADE-App-to-N-Tier-Virtual-Machines/deployments/azure_virtual_machines/adeappinstall.sh'
+var scriptLocation = 'https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/dev/deployments/azure_virtual_machines/adeappinstall.sh'
 var scriptName = 'adeappinstall.sh'
 
 // resource - network interfaces
