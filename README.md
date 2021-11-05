@@ -44,67 +44,17 @@ ensure that Docker is **running**.
 
 ### DNS
 
-- The Azure Demo Environment utilizes Azure DNS for publicly accessible A and
-  CNAME records for access to Azure Resources including Virtual Machines,
-  Virtual Machine Scale Sets, and App Services. ADE requires that an Azure DNS
-  Zone is created prior to deployment of the demo environment. **Note: Prior to
-  configuration of an Azure DNS Zone, it is necessary to have ownership and
-  access to a custom domain.**
-
-- To create and configure an Azure DNS Zone for use with ADE, complete the
-  following steps.
-
-  - Create the Azure DNS Zone Resource Group
-
-    - When creating the Azure DNS Zone Resource Group, it is necessary to follow
-      the naming convention for ADE:
-
-      `rg-ade-ALIAS-REGION_SHORTCODE-dns`
-
-    - In this example `ALIAS` represents an unique name associated with
-      resources used globally within the Azure Demo Environment and
-      `REGION_SHORTCODE` is the shortened form of the primary region (e.g. `eus`
-      for the _East US_ region). For example:
-
-      `rg-ade-dvader-eus-dns`
-
-      **Note: At this time, it is necessary to utilize `eus` as the
-      `REGION_SHORTCODE`, due to the current configuration of ADE. In a future
-      update, other regions will be supported.**
-
-    - To create the Azure DNS Zone Resource Group using `az`, run the following
-      command:
-
-      ```sh
-      az group create -n RESOURCE_GROUP_NAME -l REGION SHORTCODE
-      ```
-
-      For example:
-
-      ```sh
-      az group create -n rg-dvader-eus-dns -l eus
-      ```
-
-  - Create the Azure DNS Zone
-
-    - To create the Azure DNS Zone using `az`, run the following command:
-
-      ```sh
-      az network dns zone create -g RESOURCE_GROUP_NAME -n DOMAIN_NAME
-      ```
-
-      For example:
-
-      ```sh
-      az network dns zone create -g rg-dvader-eus-dns -n darthvader.com
-      ```
+- The Azure Demo Environment utilizes Azure DNS for publicly accessible A records
+  for access to Azure App Services. ADE creates an Azure Public DNS Zone based on
+  the domain name entered at the time of deployment. It is assumed that the user
+  has ownership and access to this custom domain. After the creation of the Azure
+  Public DNS Zone, it is necessary to update the DNS Name Servers with the Domain
+  Registrar as documented here:
 
   - Update Domain Registrar with Azure
     [Name Servers](https://docs.microsoft.com/en-us/azure/dns/dns-delegate-domain-azure-dns#retrieve-name-servers).
 
-    - After the creation of the Azure DNS Zone, it is necessary to update the
-      DNS Name Servers with the Domain Registrar. To retrieve the Azure DNS Zone
-      Name Servers using `az`, run the following command:
+    - To retrieve the Azure DNS Zone Name Servers using `az`, run the following command:
 
       ```sh
       az network dns zone show -g RESOURCE_GROUP_NAME -n DOMAIN_NAME --query nameServers
