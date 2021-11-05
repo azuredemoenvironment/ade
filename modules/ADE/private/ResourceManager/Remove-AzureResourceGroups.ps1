@@ -19,8 +19,10 @@ function Remove-AzureResourceGroups {
         $armParameters.adeAppSqlResourceGroupName
         $armParameters.containerRegistryResourceGroupName
         $armParameters.networkingResourceGroupName
+        $armParameters.keyVaultResourceGroupName
         $armParameters.appConfigResourceGroupName
         $armParameters.identityResourceGroupName
+        $armParameters.monitorResourceGroupName
     )
 
     $resourceGroupsToRemove | ForEach-Object {
