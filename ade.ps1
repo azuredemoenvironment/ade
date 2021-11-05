@@ -115,27 +115,35 @@ try {
     $armParameters = Set-InitialArmParameters $alias $email $resourceUserName $rootDomainName $localNetworkRange $defaultPrimaryRegion $defaultSecondaryRegion $module $overwriteParameterFiles $skipConfirmation
 
     ###################################################################################################
-}
+    # Start the Requested Action
+    ###################################################################################################
+    # TODO: only one of these steps should be allowed
+    if ($deploy) {
+        # $isInteractive = $PSCmdlet.ParameterSetName -eq 'interactive'
+        if ($secureCertificatePassword -eq $null) {
+            $secureCertificatePassword = ConvertTo-SecureString $certificatePassword -AsPlainText -Force
+            $certificatePassword = $null
+        }
     
-if ($secureResourcePassword -eq $null) {
-    $secureResourcePassword = ConvertTo-SecureString $resourcePassword -AsPlainText -Force
-    $resourcePassword = $null
-}
+        if ($secureResourcePassword -eq $null) {
+            $secureResourcePassword = ConvertTo-SecureString $resourcePassword -AsPlainText -Force
+            $resourcePassword = $null
+        }
 
-Deploy-AzureDemoEnvironment $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
-}
+        Deploy-AzureDemoEnvironment $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
+    }
 
-if ($deallocate) {
-    Disable-HighCostAzureServices $armParameters
-}
+    if ($deallocate) {
+        Disable-HighCostAzureServices $armParameters
+    }
 
-if ($allocate) {
-    Enable-HighCostAzureServices $armParameters
-}
+    if ($allocate) {
+        Enable-HighCostAzureServices $armParameters
+    }
 
-if ($remove) {
-    Remove-AzureDemoEnvironment $armParameters $includeKeyVault
-}
+    if ($remove) {
+        Remove-AzureDemoEnvironment $armParameters $includeKeyVault
+    }
 }
 catch {
     $ErrorMessage = $_.Exception.Message
@@ -143,15 +151,6 @@ catch {
     Write-Debug ($ErrorMessage | Format-Table | Out-String)
 }
 finally {
-    # Clearing the default location
-    Write-Log "Clearing the Default Resource Location"
-    az configure --defaults location=''
-
-    # Always set our location back to our script root to make it easier to re-execute
-    Set-Location -Path $PSScriptRoot
-
-    Set-PSDebug -Off
-}inally {
     # Always set our location back to our script root to make it easier to re-execute
     Set-Location -Path $PSScriptRoot
 
