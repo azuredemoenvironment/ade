@@ -27,6 +27,7 @@ function Remove-AzureDemoEnvironment {
     Write-ScriptSection "Starting Removal Process"
 
     Remove-AzureResourceGroups $armParameters
+    Remove-AzureCostManagementBudget $armParameters
     Remove-AzureNsgFlowLogs $armParameters
     Remove-AzureActivityLogDiagnostics $armParameters
     Remove-AzurePolicyAssignmentsAndDefinitions $armParameters
