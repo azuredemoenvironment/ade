@@ -5,8 +5,8 @@ function Remove-AzureCostManagementBudget {
 
     Write-ScriptSection "Removing Azure Cost Management Budget"
     
-    $consumptionBudgetName = $armParameters.activityLogDiagnosticsName
-    az consumption budget delete -n $consumptionBudgetName -y
+    $consumptionBudgetName = $armParameters.adeBudgetName
+    az consumption budget delete --budget-name $consumptionBudgetName
     Confirm-LastExitCode
 
     Write-ScriptSection "Finished Removing Azure Cost Management Budget"
