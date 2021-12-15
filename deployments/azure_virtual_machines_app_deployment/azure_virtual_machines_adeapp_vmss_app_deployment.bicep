@@ -47,7 +47,7 @@ param logAnalyticsWorkspaceKey string
 //////////////////////////////////////////////////
 var location = resourceGroup().location
 var sanitizeCurrentTime = replace(replace(currentTime, 'Z', ''), 'T', '')
-var scriptLocation = 'https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/dev/deployments/azure_virtual_machines/adeappinstall.sh'
+var scriptLocation = 'https://raw.githubusercontent.com/azuredemoenvironment/ade/dev/scripts/azure_virtual_machines/adeappinstall.sh'
 var scriptName = 'adeappinstall.sh'
 var tags = {
   environment: 'production'

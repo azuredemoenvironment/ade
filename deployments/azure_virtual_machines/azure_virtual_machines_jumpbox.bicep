@@ -34,7 +34,7 @@ param managementSubnetId string
 // Variables
 //////////////////////////////////////////////////
 var location = resourceGroup().location
-var scriptLocation = 'https://raw.githubusercontent.com/joshuawaddell/azure-demo-environment/main/deployments/azure_virtual_machine_jumpbox/jumpboxvm.ps1'
+var scriptLocation = 'https://raw.githubusercontent.com/azuredemoenvironment/ade/dev/deployments/azure_virtual_machines/jumpboxvm.ps1'
 var scriptName = 'jumpboxvm.ps1'
 var tags = {
   environment: 'production'

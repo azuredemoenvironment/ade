@@ -132,6 +132,9 @@ var proximityPlacementGroupAz1Name = 'ppg-ade-${aliasRegion}-adeApp-az1'
 var proximityPlacementGroupAz2Name = 'ppg-ade-${aliasRegion}-adeApp-az2'
 var proximityPlacementGroupAz3Name = 'ppg-ade-${aliasRegion}-adeApp-az3'
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
+// Other variables
+var scriptLocation = 'https://raw.githubusercontent.com/azuredemoenvironment/ade/dev/deployments/azure_virtual_machines_app_deployment/adeappinstall.sh'
+var scriptName = 'adeappinstall.sh'
 
 // Existing Resource - App Config
 //////////////////////////////////////////////////
