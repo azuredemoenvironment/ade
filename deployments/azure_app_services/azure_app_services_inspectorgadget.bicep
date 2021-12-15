@@ -43,7 +43,7 @@ resource inspectorGadgetAppService 'Microsoft.Web/sites@2020-12-01' = {
   name: inspectorGadgetAppServiceName
   location: location
   tags: tags
-  kind: 'app,linux,container'
+  kind: 'container'
   properties: {
     serverFarmId: appServicePlanId
     httpsOnly: false
