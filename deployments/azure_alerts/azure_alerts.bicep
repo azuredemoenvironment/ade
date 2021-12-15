@@ -19,10 +19,10 @@ param contactEmailAddress string
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 // Resources
 var adeBudgetAmount = 1500
-var adeBudgetFirstThreshold = 100
+var adeBudgetFirstThreshold = 10
 var adeBudgetName = 'budget-ade-${aliasRegion}-monthly'
-var adeBudgetSecondThreshold = 500
-var adeBudgetThirdThreshold = 1000
+var adeBudgetSecondThreshold = 50
+var adeBudgetThirdThreshold = 100
 var adeBudgetTimeGrain = 'Monthly'
 var budgetActionGroupName = 'ag-ade-${aliasRegion}-budget'
 var budgetActionGroupShortName = 'ag-budget'

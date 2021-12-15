@@ -9,9 +9,15 @@ Write-Header "Logging in to az CLI"
 
 az login
 
+$subscriptions = $(az account list --query "[].{Name:name,subscriptionId:id}" --output json) | ConvertFrom-Json
+[int]$subscriptionCount = $subscriptions.count
+[int]$subscriptionChoice = $null;
+
+if (1 -eq $subscriptionCount) {
+    $subscriptionName = $subscriptions[0].Name
+}
+
 if ($subscriptionName -eq $null -or $subscriptionName -eq "") {
-  $subscriptions = $(az account list --query "[].{Name:name,subscriptionId:id}" --output json) | ConvertFrom-Json
-  $subscriptionCount = $subscriptions.Count
   Write-Host ($subscriptions | Format-Table | Out-String)
 
   Write-Header "Select a Subscription; found $subscriptionCount"
@@ -28,6 +34,8 @@ if ($subscriptionName -eq $null -or $subscriptionName -eq "") {
 
   Write-Host "You selected" $subscriptions[$subscriptionChoice].Name
   $subscriptionName = $subscriptions[$subscriptionChoice].Name
+} else {
+  Write-Host "Using $subscriptionName subscription."
 }
 
 Write-Header "Setting az CLI Subscription to $subscriptionName"

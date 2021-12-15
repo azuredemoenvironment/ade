@@ -62,7 +62,10 @@ function Set-InitialArmParameters {
         'keyVaultName'                             = "kv-ade-$aliasRegion-001"
 
         # Required for Remove-AzureActivityLogDiagnostics.ps1
-        'activityLogDiagnosticsName'               = "subscriptionActivityLog" 
+        'activityLogDiagnosticsName'               = "subscriptionActivityLog"
+
+        # Required for Remove-AzureCostManagementBudget.ps1
+        'adeBudgetName'                            = "budget-ade-$aliasRegion-monthly"
 
         # Required for Remove-AzurePolicyAssignmentsAndDefinitions.ps1
         'adeInitiativeDefinition'                  = "policy-ade-$aliasRegion-adeinitiative"
@@ -111,7 +114,7 @@ function Set-InitialArmParameters {
         'monitorResourceGroupName'                 = "$azureRegionResourceGroupNamePrefix-monitor"
         'networkingResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-networking"
         'networkWatcherResourceGroupName'          = "NetworkWatcherRG"
-        'proximityPlacementGroupResourceGroupName' = "$azureRegionResourceGroupNamePrefix-proximityplacementgroup"
+        'proximityPlacementGroupResourceGroupName' = "$azureRegionResourceGroupNamePrefix-ppg"
     }
 
     if (Confirm-AzureResourceExists 'keyvault' $armParameters.keyVaultResourceGroupName $armParameters.keyVaultName) {
