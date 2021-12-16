@@ -13,6 +13,7 @@ ACR_PASSWORD="$2"
 APPCONFIG_CONNECTIONSTRING="$3"
 ADE_PACKAGE="$4"
 ADE_BACKEND_IPADDRESS="$5"
+ADE_NGINX_CONF_URI="$6"
 
 # These are for consistency
 STARTUP_SCRIPT_PATH="/etc/systemd/system/ade.sh"
@@ -105,7 +106,11 @@ sudo docker run --name "ade-apigateway" -d --restart unless-stopped -p 5001:80 \
     -e ADE__USERSERVICEURI="http://$ADE_BACKEND_IPADDRESS:5003" \\
     $ACR_SERVER.azurecr.io/ade-apigateway:latest
 
-sudo docker run --name "ade-reverseproxy" -d --restart unless-stopped -p 80:80 -v /some/path:/etc/nginx/nginx.conf
+echo "Configuring Reverse Proxy"
+mkdir -p /app/ade/nginx/logs
+curl -o /app/ade/nginx/nginx.conf $ADE_NGINX_CONF_URI
+
+sudo docker run --name "ade-reverseproxy" -d --restart unless-stopped -p 80:80 -v /app/ade/nginx/nginx.conf:/etc/nginx/nginx.conf -v /app/ade/nginx/logs/:/etc/nginx/logs/ nginx:latest
 EOF
 fi
 

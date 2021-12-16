@@ -31,6 +31,9 @@ param containerRegistryPassword string
 @description('Function to generate the current time.')
 param currentTime string = utcNow()
 
+@description('The base URI for deployment scripts.')
+param deploymentScriptsBaseUri string
+
 @description('The customer Id of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceCustomerId string
 
@@ -44,7 +47,7 @@ param logAnalyticsWorkspaceKey string
 //////////////////////////////////////////////////
 var location = resourceGroup().location
 var sanitizeCurrentTime = replace(replace(currentTime, 'Z', ''), 'T', '')
-var scriptLocation = 'https://raw.githubusercontent.com/azuredemoenvironment/ade/dev/scripts/azure_virtual_machines/adeappinstall.sh'
+var scriptLocation = '${deploymentScriptsBaseUri}/azure_virtual_machines/adeappinstall.sh'
 var scriptName = 'adeappinstall.sh'
 var tags = {
   environment: 'production'
@@ -202,7 +205,7 @@ resource adeAppVmCustomScriptExtension 'Microsoft.Compute/virtualMachines/extens
       fileUris: [
         scriptLocation
       ]
-      commandToExecute: './${scriptName} "${containerRegistryName}" "${containerRegistryPassword}" "${appConfigConnectionString}" "${adeAppVirtualMachine.adeModule}" "${adeAppVmLoadBalancerPrivateIpAddress}"'
+      commandToExecute: './${scriptName} "${containerRegistryName}" "${containerRegistryPassword}" "${appConfigConnectionString}" "${adeAppVirtualMachine.adeModule}" "${adeAppVmLoadBalancerPrivateIpAddress}" "${deploymentScriptsBaseUri}/azure_virtual_machines/nginx.conf"'
     }
   }
 }]

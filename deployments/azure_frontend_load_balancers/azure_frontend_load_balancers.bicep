@@ -16,6 +16,9 @@ param rootDomainName string
 @description('The name of the SSL Certificate.')
 param sslCertificateName string
 
+@description('The base URI for deployment scripts.')
+param deploymentScriptsBaseUri string
+
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
@@ -199,8 +202,9 @@ module adeWebVmssNICUpdateModule './azure_virtual_machine_adeweb_vmss_nic_update
     appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
+    deploymentScriptsBaseUri: deploymentScriptsBaseUri
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
-    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey,
   }
 }
 
