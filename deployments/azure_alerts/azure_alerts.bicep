@@ -19,10 +19,13 @@ param contactEmailAddress string
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 // Resources
 var adeBudgetAmount = 1500
-var adeBudgetFirstThreshold = 10
 var adeBudgetName = 'budget-ade-${aliasRegion}-monthly'
+var adeBudgetFirstThreshold = 10
 var adeBudgetSecondThreshold = 50
 var adeBudgetThirdThreshold = 100
+var adeBudgetFirstForecastedThreshold = 100
+var adeBudgetSecondForecastedThreshold = 125
+var adeBudgetThirdForecastedThreshold = 150
 var adeBudgetTimeGrain = 'Monthly'
 var budgetActionGroupName = 'ag-ade-${aliasRegion}-budget'
 var budgetActionGroupShortName = 'ag-budget'
@@ -78,10 +81,13 @@ module budgetModule 'azure_alerts_budget.bicep' = {
   name: 'budgetDeployment'
   params: {
     adeBudgetAmount: adeBudgetAmount
-    adeBudgetFirstThreshold: adeBudgetFirstThreshold
     adeBudgetName: adeBudgetName
+    adeBudgetFirstThreshold: adeBudgetFirstThreshold
     adeBudgetSecondThreshold: adeBudgetSecondThreshold
     adeBudgetThirdThreshold: adeBudgetThirdThreshold
+    adeBudgetFirstForecastedThreshold: adeBudgetFirstForecastedThreshold
+    adeBudgetSecondForecastedThreshold: adeBudgetSecondForecastedThreshold
+    adeBudgetThirdForecastedThreshold: adeBudgetThirdForecastedThreshold
     adeBudgetTimeGrain: adeBudgetTimeGrain
     budgetActionGroupId: actionGroupModule.outputs.budgetActionGroupId
     contactEmailAddress: contactEmailAddress
