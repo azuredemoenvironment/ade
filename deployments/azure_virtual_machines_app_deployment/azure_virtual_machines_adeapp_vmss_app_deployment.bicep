@@ -38,7 +38,7 @@ param containerRegistryPassword string
 param currentTime string = utcNow()
 
 @description('The base URI for deployment scripts.')
-param deploymentScriptsBaseUri string
+param scriptsBaseUri string
 
 @description('The customer Id of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceCustomerId string
@@ -50,7 +50,7 @@ param logAnalyticsWorkspaceKey string
 //////////////////////////////////////////////////
 var location = resourceGroup().location
 var sanitizeCurrentTime = replace(replace(currentTime, 'Z', ''), 'T', '')
-var scriptLocation = '${deploymentScriptsBaseUri}/azure_virtual_machines/adeappinstall.sh'
+var scriptLocation = '${scriptsBaseUri}/azure_virtual_machines/adeappinstall.sh'
 var scriptName = 'adeappinstall.sh'
 var tags = {
   environment: 'production'
@@ -166,7 +166,7 @@ resource adeAppVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
                 fileUris: [
                   scriptLocation
                 ]
-                commandToExecute: './${scriptName} "${containerRegistryName}" "${containerRegistryPassword}" "${appConfigConnectionString}" "${adeAppModuleName}" "${adeAppVmssLoadBalancerPrivateIpAddress}" "${deploymentScriptsBaseUri}/azure_virtual_machines/nginx.conf"'
+                commandToExecute: './${scriptName} "${containerRegistryName}" "${containerRegistryPassword}" "${appConfigConnectionString}" "${adeAppModuleName}" "${adeAppVmssLoadBalancerPrivateIpAddress}" "${scriptsBaseUri}/azure_virtual_machines/nginx.conf"'
               }
             }
           }

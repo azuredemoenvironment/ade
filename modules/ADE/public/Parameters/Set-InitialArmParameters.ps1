@@ -8,6 +8,7 @@ function Set-InitialArmParameters {
         [string] $azureRegion,
         [string] $azurePairedRegion,
         [string] $module,
+        [string] $scriptsBaseUri,
         [bool] $overwriteParameterFiles,
         [bool] $skipConfirmation
     )
@@ -17,9 +18,6 @@ function Set-InitialArmParameters {
     $azurePairedRegionShortName = Get-RegionShortName $azurePairedRegion
     $aliasRegion = "$alias-$azureRegionShortName".ToLowerInvariant()
     $aliasPairedRegion = "$alias-$azurePairedRegionShortName".ToLowerInvariant()
-    # TODO: this should either be a parameter or at least set it to the main branch when the merge happens
-    # $deploymentScriptsBaseUri = "https://raw.githubusercontent.com/azuredemoenvironment/ade/dev/scripts"
-    $deploymentScriptsBaseUri = "https://raw.githubusercontent.com/azuredemoenvironment/ade/brandonmartinez/issue/160-Add-a-Reverse-Proxy-to-the-Frontend-VMs-to-Consistently-Use-Port-80/Host-Names/scripts"
 
     $azureRegionResourceGroupNamePrefix = "rg-ade-$aliasRegion"
     $PairedRegionResourceGroupNamePrefix = "rg-ade-$aliasPairedRegion"
@@ -36,7 +34,7 @@ function Set-InitialArmParameters {
         'aliasRegion'                              = $aliasRegion
         'aliasPairedRegion'                        = $aliasPairedRegion
         'contactEmailAddress'                      = $email
-        'deploymentScriptsBaseUri'                 = $deploymentScriptsBaseUri
+        'scriptsBaseUri'                 = $scriptsBaseUri
         'azureRegion'                              = $azureRegion
         'azurePairedRegion'                        = $azurePairedRegion
         'deployAzureFirewall'                      = 'false'

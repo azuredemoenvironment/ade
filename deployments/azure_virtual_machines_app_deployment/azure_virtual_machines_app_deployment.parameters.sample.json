@@ -8,8 +8,8 @@
         "aliasRegion": {
             "value": "@@aliasRegion@@"
         },
-        "deploymentScriptsBaseUri": {
-            "value": "@@deploymentScriptsBaseUri@@"
+        "scriptsBaseUri": {
+            "value": "@@scriptsBaseUri@@"
         }
     }
 }

@@ -14,8 +14,8 @@
         "sslCertificateName": {
             "value": "@@sslCertificateName@@"
         },
-        "deploymentScriptsBaseUri": {
-            "value": "@@deploymentScriptsBaseUri@@"
+        "scriptsBaseUri": {
+            "value": "@@scriptsBaseUri@@"
         }
     }
 }

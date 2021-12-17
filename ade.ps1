@@ -52,9 +52,15 @@ param (
     [Parameter(Position = 7, mandatory = $true, ParameterSetName = 'deploy-interactive')]
     [Parameter(Position = 7, mandatory = $true, ParameterSetName = 'deploy-cli')]
     [string]$localNetworkRange,
-    [Parameter(Position = 8, mandatory = $false, ParameterSetName = 'deploy-interactive')]
-    [Parameter(Position = 8, mandatory = $false, ParameterSetName = 'deploy-cli')]
+
+    [Parameter(Position = 3, mandatory = $true, ParameterSetName = 'deploy-interactive')]
+    [Parameter(Position = 3, mandatory = $true, ParameterSetName = 'deploy-cli')]
+    [string]$scriptsBaseUri,
+
+    [Parameter(Position = 9, mandatory = $false, ParameterSetName = 'deploy-interactive')]
+    [Parameter(Position = 9, mandatory = $false, ParameterSetName = 'deploy-cli')]
     [string]$module,
+
     [Parameter(Position = 10, mandatory = $false, ParameterSetName = 'deploy-interactive')]
     [Parameter(Position = 10, mandatory = $false, ParameterSetName = 'deploy-cli')]
     [switch]$overwriteParameterFiles,
@@ -112,7 +118,7 @@ try {
     Write-Status 'Configuring Parameters'
     $defaultPrimaryRegion = $(az configure -l --query "[?name == 'location'].value | [0]" --output tsv)
     $defaultSecondaryRegion = $(az configure -l --query "[?name == 'locationpair'].value | [0]" --output tsv)
-    $armParameters = Set-InitialArmParameters $alias $email $resourceUserName $rootDomainName $localNetworkRange $defaultPrimaryRegion $defaultSecondaryRegion $module $overwriteParameterFiles $skipConfirmation
+    $armParameters = Set-InitialArmParameters $alias $email $resourceUserName $rootDomainName $localNetworkRange $defaultPrimaryRegion $defaultSecondaryRegion $module $scriptsBaseUri $overwriteParameterFiles $skipConfirmation
 
     ###################################################################################################
     # Start the Requested Action
@@ -128,6 +134,10 @@ try {
         if ($secureResourcePassword -eq $null) {
             $secureResourcePassword = ConvertTo-SecureString $resourcePassword -AsPlainText -Force
             $resourcePassword = $null
+        }
+
+        if($scriptsBaseUri -eq $null) {
+            $scriptsBaseUri = "https://raw.githubusercontent.com/azuredemoenvironment/ade/dev/scripts"
         }
 
         Deploy-AzureDemoEnvironment $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
