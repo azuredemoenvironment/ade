@@ -10,7 +10,15 @@ function Deploy-AzureGovernance {
 
     # there's a scenario when debugging just this module that the keyVaultResourceID property
     # doesn't exist; this wouldn't happen in a normal run
-    if ((!$armParameters.keyVaultResourceID) -and (Test-SoftDeleteKeyVault -KeyVaultName $armParameters.keyVaultName)) {
+    $keyVaultResourceIdPropertyExists = $false
+    try {
+        $keyVaultResourceIdPropertyExists = [bool]($armParameters.PSobject.Properties.name -match 'keyVaultResourceID')    
+    }
+    catch {
+        # do nothing
+    }
+
+    if ((-not $keyVaultResourceIdPropertyExists -or (!$armParameters.keyVaultResourceID)) -and (Test-SoftDeleteKeyVault -KeyVaultName $armParameters.keyVaultName)) {
         Restore-SoftDeleteKeyVault -KeyVaultResourceGroupName $armParameters.keyVaultResourceGroupName -KeyVaultName $armParameters.keyVaultName
     }
 
