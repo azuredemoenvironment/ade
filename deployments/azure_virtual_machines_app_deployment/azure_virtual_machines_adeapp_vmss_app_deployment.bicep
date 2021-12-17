@@ -37,14 +37,14 @@ param containerRegistryPassword string
 @description('Function to generate the current time.')
 param currentTime string = utcNow()
 
-@description('The base URI for deployment scripts.')
-param scriptsBaseUri string
-
 @description('The customer Id of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceCustomerId string
 
 @description('The Workspace Key of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceKey string
+
+@description('The base URI for deployment scripts.')
+param scriptsBaseUri string
 
 // Variables
 //////////////////////////////////////////////////

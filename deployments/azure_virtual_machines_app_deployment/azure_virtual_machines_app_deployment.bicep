@@ -135,9 +135,6 @@ var proximityPlacementGroupAz1Name = 'ppg-ade-${aliasRegion}-adeApp-az1'
 var proximityPlacementGroupAz2Name = 'ppg-ade-${aliasRegion}-adeApp-az2'
 var proximityPlacementGroupAz3Name = 'ppg-ade-${aliasRegion}-adeApp-az3'
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
-// Other variables
-var scriptLocation = 'https://raw.githubusercontent.com/azuredemoenvironment/ade/dev/deployments/azure_virtual_machines_app_deployment/adeappinstall.sh'
-var scriptName = 'adeappinstall.sh'
 
 // Existing Resource - App Config
 //////////////////////////////////////////////////
@@ -240,10 +237,10 @@ module adeWebVmModule 'azure_virtual_machines_adeweb_vm_app_deployment.bicep' = 
     appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
-    scriptsBaseUri: scriptsBaseUri
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+    scriptsBaseUri: scriptsBaseUri
   }
 }
 
@@ -262,10 +259,10 @@ module adeAppVmModule 'azure_virtual_machines_adeapp_vm_app_deployment.bicep' = 
     appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
-    scriptsBaseUri: scriptsBaseUri
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+    scriptsBaseUri: scriptsBaseUri
   }
 }
 
@@ -285,9 +282,9 @@ module adeWebVmssModule 'azure_virtual_machines_adeweb_vmss_app_deployment.bicep
     appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
-    scriptsBaseUri: scriptsBaseUri
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+    scriptsBaseUri: scriptsBaseUri
   }
 }
 
@@ -308,9 +305,9 @@ module adeAppVmssModule 'azure_virtual_machines_adeapp_vmss_app_deployment.bicep
     appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
-    scriptsBaseUri: scriptsBaseUri
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+    scriptsBaseUri: scriptsBaseUri
   }
 }
 

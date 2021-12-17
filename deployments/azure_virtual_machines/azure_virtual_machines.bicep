@@ -13,6 +13,9 @@ param aliasRegion string
 @description('The selected Azure region for deployment.')
 param azureRegion string
 
+@description('The base URI for deployment scripts.')
+param scriptsBaseUri string
+
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
@@ -221,6 +224,7 @@ module jumpBoxModule './azure_virtual_machines_jumpbox.bicep' = {
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
     managementSubnetId: virtualNetwork001::managementSubnet.id
+    scriptsBaseUri: scriptsBaseUri
   }
 }
 
