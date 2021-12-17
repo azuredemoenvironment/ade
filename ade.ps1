@@ -137,7 +137,7 @@ try {
         }
 
         if($scriptsBaseUri -eq $null) {
-            $scriptsBaseUri = "https://raw.githubusercontent.com/azuredemoenvironment/ade/dev/scripts"
+            $scriptsBaseUri = "https://raw.githubusercontent.com/azuredemoenvironment/ade/main/scripts"
         }
 
         Deploy-AzureDemoEnvironment $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
