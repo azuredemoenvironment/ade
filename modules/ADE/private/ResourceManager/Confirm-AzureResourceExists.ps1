@@ -28,6 +28,7 @@ function Confirm-AzureResourceExists {
         'dns zone' { "az network dns zone show -g $resourceNamePartOne -n $resourceNamePartTwo" }
         'keyvault' { "az keyvault show -g $resourceNamePartOne -n $resourceNamePartTwo" }
         'service principal' { "az ad sp show --id http://$resourceNamePartOne" }
+        'consumption budget' { "az consumption budget show --budget-name $resourceNamePartOne"}
         
         # TODO: add other az types
 

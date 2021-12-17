@@ -8,6 +8,13 @@ function Deploy-AzureGovernance {
     $keyVaultKeyName = $armParameters.keyVaultKeyName
     $keyVaultName = $armParameters.keyVaultName
 
+    # there's a scenario when debugging just this module that the keyVaultResourceID property
+    # doesn't exist; this wouldn't happen in a normal run
+    $keyVaultResourceIdPropertyExists = [bool]($armParameters.PSobject.Properties.name -match 'keyVaultResourceID')
+    if ((-not $keyVaultResourceIdPropertyExists -or (!$armParameters.keyVaultResourceID)) -and (Test-SoftDeleteKeyVault -KeyVaultName $armParameters.keyVaultName)) {
+        Restore-SoftDeleteKeyVault -KeyVaultResourceGroupName $armParameters.keyVaultResourceGroupName -KeyVaultName $armParameters.keyVaultName
+    }
+
     # Deploy Azure Governance
     ##################################################
     Write-ScriptSection "Initializing Azure Governance Deployment"
