@@ -53,8 +53,8 @@ param (
     [Parameter(Position = 7, mandatory = $true, ParameterSetName = 'deploy-cli')]
     [string]$localNetworkRange,
 
-    [Parameter(Position = 3, mandatory = $true, ParameterSetName = 'deploy-interactive')]
-    [Parameter(Position = 3, mandatory = $true, ParameterSetName = 'deploy-cli')]
+    [Parameter(Position = 3, mandatory = $false, ParameterSetName = 'deploy-interactive')]
+    [Parameter(Position = 3, mandatory = $false, ParameterSetName = 'deploy-cli')]
     [string]$scriptsBaseUri,
 
     [Parameter(Position = 9, mandatory = $false, ParameterSetName = 'deploy-interactive')]
