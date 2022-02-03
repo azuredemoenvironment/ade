@@ -3,6 +3,10 @@ function Deploy-AzureGovernance {
         [object] $armParameters
     )
 
+    # Deploy Azure Governance
+    ##################################################
+    Write-ScriptSection "Initializing Azure Governance Deployment"
+
     # Parameters
     ##################################################
     $keyVaultKeyName = $armParameters.keyVaultKeyName
@@ -16,15 +20,12 @@ function Deploy-AzureGovernance {
     }
     catch {
         # do nothing
+        Write-Status "Could not find keyVaultResourceID on armParameters"
     }
 
     if ((-not $keyVaultResourceIdPropertyExists -or (!$armParameters.keyVaultResourceID)) -and (Test-SoftDeleteKeyVault -KeyVaultName $armParameters.keyVaultName)) {
         Restore-SoftDeleteKeyVault -KeyVaultResourceGroupName $armParameters.keyVaultResourceGroupName -KeyVaultName $armParameters.keyVaultName
     }
-
-    # Deploy Azure Governance
-    ##################################################
-    Write-ScriptSection "Initializing Azure Governance Deployment"
 
     # Deploy the Azure Governance Bicep template at the subscription scope.
     ##################################################
