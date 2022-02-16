@@ -43,7 +43,7 @@ namespace ADE.DataReporterService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAdeConfiguration(Configuration);
-            services.AddApplicationInsightsTelemetry();
+            services.AddApplicationInsightsTelemetry(Configuration);
             services.AddControllers();
             services.AddDataServices();
             services.AddSwaggerGen(c =>

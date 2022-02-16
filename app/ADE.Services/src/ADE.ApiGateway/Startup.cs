@@ -51,7 +51,7 @@ namespace ADE.ApiGateway
         {
             services.AddAdeConfiguration(Configuration);
 
-            services.AddApplicationInsightsTelemetry();
+            services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddCors(options =>
             {
