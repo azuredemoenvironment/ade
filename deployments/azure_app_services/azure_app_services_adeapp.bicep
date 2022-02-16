@@ -64,10 +64,6 @@ resource adeAppService 'Microsoft.Web/sites@2020-12-01' = [for (adeAppAppService
           value: 'appservices'
         }
         {
-          name: 'InstrumentationEngine_EXTENSION_VERSION'
-          value: '~1'
-        }
-        {
           name: 'DOCKER_ENABLE_CI'
           value: 'true'
         }

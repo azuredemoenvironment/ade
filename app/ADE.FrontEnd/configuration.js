@@ -10,8 +10,7 @@ const client = new AppConfigurationClient(connectionString);
 // Manually specify keys to retrieve, we don't want protected configuration to be written to a publicly accessible file
 const keysToRetrieve = [
 	'ADE:ApiGatewayUri',
-	'AppInsights:ConnectionString',
-	'AppInsights:InstrumentationKey'
+	'ApplicationInsights:ConnectionString'
 ];
 const outputFileName = '.env';
 const outputFileStream = fs.createWriteStream(outputFileName, { flags: 'w' });
