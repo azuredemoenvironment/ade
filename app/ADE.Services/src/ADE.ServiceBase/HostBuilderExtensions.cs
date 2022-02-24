@@ -29,7 +29,8 @@ namespace ADE.ServiceBase
                                 {
                                     refresh.Register("ADE:Sentinel", true)
                                         .SetCacheExpiration(new TimeSpan(0, 5, 0));
-                                }).Select(KeyFilter.Any)
+                                })
+                                .Select(KeyFilter.Any, LabelFilter.Null)
                                 .Select(KeyFilter.Any, adeEnvironment);
                         }, true);
                     }

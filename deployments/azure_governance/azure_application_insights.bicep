@@ -142,4 +142,3 @@ resource applicationInsightsDiagnostics 'microsoft.insights/diagnosticSettings@2
 // Outputs
 //////////////////////////////////////////////////
 output applicationInsightsConnectionString string = applicationInsights.properties.ConnectionString
-output applicationInsightsInstrumentationKey string = applicationInsights.properties.InstrumentationKey

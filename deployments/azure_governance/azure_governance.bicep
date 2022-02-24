@@ -142,7 +142,6 @@ module appConfigApplicationInsightsModule './azure_app_config_application_insigh
   params: {
     appConfigName: appConfigModule.outputs.appConfigName
     applicationInsightsConnectionString: applicationInsightsModule.outputs.applicationInsightsConnectionString
-    applicationInsightsInstrumentationKey: applicationInsightsModule.outputs.applicationInsightsInstrumentationKey
   }
 }
 
