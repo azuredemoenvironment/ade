@@ -42,4 +42,9 @@
             "front_matter_title": ""
         }
     },
+    "azureFunctions.deploySubpath": "app\\ADE.Services\\src\\ADE.EventDispatcher/bin/Release/net5.0/publish",
+    "azureFunctions.projectLanguage": "C#",
+    "azureFunctions.projectRuntime": "~3",
+    "debug.internalConsoleOptions": "neverOpen",
+    "azureFunctions.preDeployTask": "publish (functions)",
 }
