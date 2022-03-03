@@ -31,10 +31,13 @@ param logAnalyticsWorkspaceKey string
 @description('The ID of the Management Subnet.')
 param managementSubnetId string
 
+@description('The base URI for deployment scripts.')
+param scriptsBaseUri string
+
 // Variables
 //////////////////////////////////////////////////
 var location = resourceGroup().location
-var scriptLocation = 'https://raw.githubusercontent.com/azuredemoenvironment/ade/dev/deployments/azure_virtual_machines/jumpboxvm.ps1'
+var scriptLocation = '${scriptsBaseUri}/azure_virtual_machines/jumpboxvm.ps1'
 var scriptName = 'jumpboxvm.ps1'
 var tags = {
   environment: 'production'

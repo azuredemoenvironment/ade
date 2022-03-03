@@ -11,6 +11,8 @@ namespace ADE.ServiceBase
         {
             var adeConfiguration = new AdeConfiguration();
             configuration.GetSection(AdeConfiguration.APPSETTINGS_ROOT_KEY).Bind(adeConfiguration);
+            adeConfiguration.AppConfig = configuration.GetConnectionString("AppConfig");
+            adeConfiguration.ApplicationInsights = configuration.GetValue<string>("ApplicationInsights:ConnectionString");
 
             services.AddSingleton(adeConfiguration);
             return services;

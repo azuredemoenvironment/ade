@@ -13,6 +13,7 @@ ACR_PASSWORD="$2"
 APPCONFIG_CONNECTIONSTRING="$3"
 ADE_PACKAGE="$4"
 ADE_BACKEND_IPADDRESS="$5"
+ADE_NGINX_CONF_URI="$6"
 
 # These are for consistency
 STARTUP_SCRIPT_PATH="/etc/systemd/system/ade.sh"
@@ -88,12 +89,15 @@ echo "Pulling Latest ADE Images"
 sudo docker pull $ACR_SERVER.azurecr.io/ade-frontend:latest
 sudo docker pull $ACR_SERVER.azurecr.io/ade-apigateway:latest
 
+echo "Pulling nginx"
+sudo docker pull nginx:latest
+
 echo "Starting Frontend ADE Service"
 
-sudo docker run --name "ade-frontend" -d --restart unless-stopped -p 80:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" -e ADE__ENVIRONMENT="virtualmachines" $ACR_SERVER.azurecr.io/ade-frontend:latest
+sudo docker run --name "ade-frontend" -d --restart unless-stopped -p 5000:80 -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" -e ADE__ENVIRONMENT="virtualmachines" $ACR_SERVER.azurecr.io/ade-frontend:latest
 
 # external api gateway - note, we override the connection info to our local docker instances
-sudo docker run --name "ade-apigateway" -d --restart unless-stopped -p 8080:80 \\
+sudo docker run --name "ade-apigateway" -d --restart unless-stopped -p 5001:80 \\
     -e CONNECTIONSTRINGS__APPCONFIG="$APPCONFIG_CONNECTIONSTRING" \\
     -e ADE__ENVIRONMENT="virtualmachines" \\
     -e ADE__DATAINGESTORSERVICEURI="http://$ADE_BACKEND_IPADDRESS:5000" \\
@@ -101,6 +105,12 @@ sudo docker run --name "ade-apigateway" -d --restart unless-stopped -p 8080:80 \
     -e ADE__EVENTINGESTORSERVICEURI="http://$ADE_BACKEND_IPADDRESS:5002" \\
     -e ADE__USERSERVICEURI="http://$ADE_BACKEND_IPADDRESS:5003" \\
     $ACR_SERVER.azurecr.io/ade-apigateway:latest
+
+echo "Configuring Reverse Proxy"
+mkdir -p /app/ade/nginx/logs
+curl -o /app/ade/nginx/nginx.conf $ADE_NGINX_CONF_URI
+
+sudo docker run --name "ade-reverseproxy" -d --restart unless-stopped -p 80:80 -v /app/ade/nginx/nginx.conf:/etc/nginx/nginx.conf -v /app/ade/nginx/logs/:/etc/nginx/logs/ nginx:latest
 EOF
 fi
 

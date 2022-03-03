@@ -10,6 +10,9 @@ param adminUserName string
 @description('The user alias and Azure region defined from user input.')
 param aliasRegion string
 
+@description('The base URI for deployment scripts.')
+param scriptsBaseUri string
+
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
@@ -237,6 +240,7 @@ module adeWebVmModule 'azure_virtual_machines_adeweb_vm_app_deployment.bicep' = 
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+    scriptsBaseUri: scriptsBaseUri
   }
 }
 
@@ -258,6 +262,7 @@ module adeAppVmModule 'azure_virtual_machines_adeapp_vm_app_deployment.bicep' = 
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+    scriptsBaseUri: scriptsBaseUri
   }
 }
 
@@ -279,6 +284,7 @@ module adeWebVmssModule 'azure_virtual_machines_adeweb_vmss_app_deployment.bicep
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+    scriptsBaseUri: scriptsBaseUri
   }
 }
 
@@ -301,6 +307,7 @@ module adeAppVmssModule 'azure_virtual_machines_adeapp_vmss_app_deployment.bicep
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
+    scriptsBaseUri: scriptsBaseUri
   }
 }
 

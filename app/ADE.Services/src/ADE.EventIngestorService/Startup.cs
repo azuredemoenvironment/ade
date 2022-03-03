@@ -35,7 +35,7 @@ namespace ADE.EventIngestorService
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ADE.EventIngestorService", Version = "v1" });
             });
             services.AddAdeConfiguration(Configuration);
-            services.AddApplicationInsightsTelemetry();
+            services.AddApplicationInsightsTelemetry(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -7,6 +7,9 @@
         },
         "aliasRegion": {
             "value": "@@aliasRegion@@"
+        },
+        "scriptsBaseUri": {
+            "value": "@@scriptsBaseUri@@"
         }
     }
 }

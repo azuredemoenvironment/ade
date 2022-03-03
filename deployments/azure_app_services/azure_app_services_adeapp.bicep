@@ -64,22 +64,6 @@ resource adeAppService 'Microsoft.Web/sites@2020-12-01' = [for (adeAppAppService
           value: 'appservices'
         }
         {
-          name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
-          value: '~2'
-        }
-        {
-          name: 'XDT_MicrosoftApplicationInsights_Mode'
-          value: 'recommended'
-        }
-        {
-          name: 'InstrumentationEngine_EXTENSION_VERSION'
-          value: '~1'
-        }
-        {
-          name: 'XDT_MicrosoftApplicationInsights_BaseExtensions'
-          value: '~1'
-        }
-        {
           name: 'DOCKER_ENABLE_CI'
           value: 'true'
         }

@@ -9,4 +9,3 @@ data/**
 test/ADE.LoadTests/gatling/results
 .DS_Store
 Thumbs.db
-.temp

@@ -8,6 +8,7 @@ function Set-InitialArmParameters {
         [string] $azureRegion,
         [string] $azurePairedRegion,
         [string] $module,
+        [string] $scriptsBaseUri,
         [bool] $overwriteParameterFiles,
         [bool] $skipConfirmation
     )
@@ -33,6 +34,7 @@ function Set-InitialArmParameters {
         'aliasRegion'                              = $aliasRegion
         'aliasPairedRegion'                        = $aliasPairedRegion
         'contactEmailAddress'                      = $email
+        'scriptsBaseUri'                 = $scriptsBaseUri
         'azureRegion'                              = $azureRegion
         'azurePairedRegion'                        = $azurePairedRegion
         'deployAzureFirewall'                      = 'false'

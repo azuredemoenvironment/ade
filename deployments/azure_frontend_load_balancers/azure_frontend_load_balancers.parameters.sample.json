@@ -11,8 +11,11 @@
         "rootDomainName": {
             "value": "@@rootDomainName@@"
         },
-        "sslCertificateName":{
+        "sslCertificateName": {
             "value": "@@sslCertificateName@@"
+        },
+        "scriptsBaseUri": {
+            "value": "@@scriptsBaseUri@@"
         }
     }
 }

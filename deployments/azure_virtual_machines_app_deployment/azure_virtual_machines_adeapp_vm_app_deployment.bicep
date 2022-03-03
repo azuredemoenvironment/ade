@@ -40,11 +40,14 @@ param logAnalyticsWorkspaceId string
 @description('The Workspace Key of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceKey string
 
+@description('The base URI for deployment scripts.')
+param scriptsBaseUri string
+
 // Variables
 //////////////////////////////////////////////////
 var location = resourceGroup().location
 var sanitizeCurrentTime = replace(replace(currentTime, 'Z', ''), 'T', '')
-var scriptLocation = 'https://raw.githubusercontent.com/azuredemoenvironment/ade/dev/deployments/azure_virtual_machines_app_deployment/adeappinstall.sh'
+var scriptLocation = '${scriptsBaseUri}/azure_virtual_machines/adeappinstall.sh'
 var scriptName = 'adeappinstall.sh'
 var tags = {
   environment: 'production'
@@ -202,7 +205,7 @@ resource adeAppVmCustomScriptExtension 'Microsoft.Compute/virtualMachines/extens
       fileUris: [
         scriptLocation
       ]
-      commandToExecute: './${scriptName} "${containerRegistryName}" "${containerRegistryPassword}" "${appConfigConnectionString}" "${adeAppVirtualMachine.adeModule}" "${adeAppVmLoadBalancerPrivateIpAddress}"'
+      commandToExecute: './${scriptName} "${containerRegistryName}" "${containerRegistryPassword}" "${appConfigConnectionString}" "${adeAppVirtualMachine.adeModule}" "${adeAppVmLoadBalancerPrivateIpAddress}" "${scriptsBaseUri}/azure_virtual_machines/nginx.conf"'
     }
   }
 }]

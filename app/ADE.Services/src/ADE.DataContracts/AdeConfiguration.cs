@@ -6,6 +6,10 @@ namespace ADE.DataContracts
 
         public string ApiGatewayUri { get; set; }
 
+        public string AppConfig { get; set; }
+
+        public string ApplicationInsights { get; set; }
+
         public string BlobStorageConnectionString { get; set; }
 
         public string CosmosDbConnectionString { get; set; }
