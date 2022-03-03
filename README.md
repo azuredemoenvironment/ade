@@ -44,17 +44,18 @@ ensure that Docker is **running**.
 
 ### DNS
 
-- The Azure Demo Environment utilizes Azure DNS for publicly accessible A records
-  for access to Azure App Services. ADE creates an Azure Public DNS Zone based on
-  the domain name entered at the time of deployment. It is assumed that the user
-  has ownership and access to this custom domain. After the creation of the Azure
-  Public DNS Zone, it is necessary to update the DNS Name Servers with the Domain
-  Registrar as documented here:
+- The Azure Demo Environment utilizes Azure DNS for publicly accessible A
+  records for access to Azure App Services. ADE creates an Azure Public DNS Zone
+  based on the domain name entered at the time of deployment. It is assumed that
+  the user has ownership and access to this custom domain. After the creation of
+  the Azure Public DNS Zone, it is necessary to update the DNS Name Servers with
+  the Domain Registrar as documented here:
 
   - Update Domain Registrar with Azure
     [Name Servers](https://docs.microsoft.com/en-us/azure/dns/dns-delegate-domain-azure-dns#retrieve-name-servers).
 
-    - To retrieve the Azure DNS Zone Name Servers using `az`, run the following command:
+    - To retrieve the Azure DNS Zone Name Servers using `az`, run the following
+      command:
 
       ```sh
       az network dns zone show -g RESOURCE_GROUP_NAME -n DOMAIN_NAME --query nameServers
@@ -85,7 +86,9 @@ docker run \
 ```
 
 _Note: replace `/path/to/certificate/data/folder/yourcert.pfx` with an absolute
-path to your wildcard certificate._
+path to your wildcard certificate. E.g., in Windows, it would be like
+`C:/Users/username/documents/certificates/yourcert.pfx`, or on macOS it would be
+`/users/username/Documents/certificates/yourcert.pfx`._
 
 You now have the ADE Shell Environment! The Azure Demo Environment is deployed
 via PowerShell, ARM Templates, and Azure CLI commands, all conveniently wrapped
