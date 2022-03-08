@@ -9,6 +9,9 @@ param budgetActionGroupName string
 @description('The short name of the Budget Action Group.')
 param budgetActionGroupShortName string
 
+@description('The region location of deployment.')
+param location string = 'global'
+
 @description('The name of the Service Health Action Group.')
 param serviceHealthActionGroupName string
 
@@ -29,7 +32,6 @@ param virtualNetworkActionGroupShortName string
 
 // Variables
 //////////////////////////////////////////////////
-var location = 'global'
 var tags = {
   environment: 'production'
   function: 'monitoring and diagnostics'
