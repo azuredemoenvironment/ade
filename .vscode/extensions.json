@@ -4,6 +4,7 @@
     "ms-dotnettools.csharp",
     "ms-azuretools.vscode-bicep",
     "ms-vscode.vscode-node-azure-pack",
-    "GitHub.vscode-pull-request-github"
+    "github.vscode-pull-request-github",
+    "eamodio.gitlens"
   ]
 }
