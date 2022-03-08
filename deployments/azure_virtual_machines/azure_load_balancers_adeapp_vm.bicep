@@ -12,12 +12,14 @@ param adeAppVmSubnetId string
 @description('Array of backend services for ADE App.')
 param backendServices array
 
+@description('The region location of deployment.')
+param location string = resourceGroup().location
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'networking'

@@ -1,5 +1,8 @@
 // Parameters
 //////////////////////////////////////////////////
+@description('The region location of deployment.')
+param location string = resourceGroup().location
+
 @description('The name of the Nat Gateway.')
 param natGatewayName string
 
@@ -8,7 +11,6 @@ param natGatewayPublicIPPrefixName string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'networking'

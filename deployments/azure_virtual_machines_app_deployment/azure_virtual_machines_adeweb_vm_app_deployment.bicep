@@ -28,6 +28,9 @@ param containerRegistryPassword string
 @description('Function to generate the current time.')
 param currentTime string = utcNow()
 
+@description('The region location of deployment.')
+param location string = resourceGroup().location
+
 @description('The customer Id of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceCustomerId string
 
@@ -42,7 +45,6 @@ param scriptsBaseUri string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var sanitizeCurrentTime = replace(replace(currentTime, 'Z', ''), 'T', '')
 var scriptLocation = '${scriptsBaseUri}/azure_virtual_machines/adeappinstall.sh'
 var scriptName = 'adeappinstall.sh'

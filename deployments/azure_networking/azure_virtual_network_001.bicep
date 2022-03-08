@@ -27,6 +27,9 @@ param gatewaySubnetName string
 @description('The address prefix of the Gateway Subnet.')
 param gatewaySubnetPrefix string
 
+@description('The region location of deployment.')
+param location string = resourceGroup().location
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
@@ -47,7 +50,6 @@ param virtualnetwork001Prefix string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'networking'
