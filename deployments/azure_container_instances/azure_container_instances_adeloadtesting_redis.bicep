@@ -15,9 +15,11 @@ param containerRegistryPassword string
 @description('The URL of the Azure Container Registry.')
 param containerRegistryURL string
 
+@description('The region location of deployment.')
+param location string = resourceGroup().location
+
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'aci'

@@ -3,6 +3,9 @@
 @description('The selected Azure region for deployment.')
 param azureRegion string
 
+@description('The region location of deployment.')
+param location string = 'global'
+
 @description('The ID of the Service Health Action Group.')
 param serviceHealthActionGroupId string
 
@@ -26,7 +29,6 @@ param virtualNetworkAlertName string
 
 // Variables
 //////////////////////////////////////////////////
-var location = 'global'
 var tags = {
   environment: 'production'
   function: 'monitoring and diagnostics'

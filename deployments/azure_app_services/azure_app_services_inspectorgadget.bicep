@@ -22,6 +22,9 @@ param inspectorGadgetSqlDatabaseName string
 @description('The FQDN of the Inspector Gadget Sql Server.')
 param inspectorGadgetSqlServerFQDN string
 
+@description('The region location of deployment.')
+param location string = resourceGroup().location
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
@@ -30,7 +33,6 @@ param vnetIntegrationSubnetId string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'inspectorGadget'

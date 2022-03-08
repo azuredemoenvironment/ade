@@ -19,6 +19,9 @@ param inspectorGadgetSqlServerName string
 @description('The name of the Inspector Gadget Sql Server Private Endpoint.')
 param inspectorGadgetSqlServerPrivateEndpointName string
 
+@description('The region location of deployment.')
+param location string = resourceGroup().location
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
@@ -27,7 +30,6 @@ param privateEndpointSubnetId string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'sql'

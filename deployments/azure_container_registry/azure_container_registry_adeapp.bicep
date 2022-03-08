@@ -7,12 +7,14 @@ param containerRegistryName string
 // @secure()
 // param containerRegistryManagedIdentityPrincipalID string
 
+@description('The region location of deployment.')
+param location string = resourceGroup().location
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 // var acrPullRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d') // Role Assignment Definition for ACR Pull - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#acrpull
 var tags = {
   environment: 'production'

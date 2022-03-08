@@ -1,5 +1,8 @@
 // Parameters
 //////////////////////////////////////////////////
+@description('The region location of deployment.')
+param location string = resourceGroup().location
+
 @description('The name of the Log Analytics Workspace')
 param logAnalyticsWorkspaceName string
 
@@ -13,7 +16,6 @@ var keyVaultAnalytics = {
   name: 'KeyVaultAnalytics(${logAnalyticsWorkspaceName})'
   galleryName: 'KeyVaultAnalytics'
 }
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'monitoring and diagnostics'

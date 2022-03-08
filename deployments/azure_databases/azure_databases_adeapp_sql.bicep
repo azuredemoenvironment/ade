@@ -25,6 +25,9 @@ param appConfigResourceGroupName string
 @description('The ID of the Azure Sql Private Dns Zone.')
 param azureSqlPrivateDnsZoneId string
 
+@description('The region location of deployment.')
+param location string = resourceGroup().location
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
@@ -33,7 +36,6 @@ param privateEndpointSubnetId string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'sql'
