@@ -15,6 +15,9 @@ param adeWebVmSubnetNSGName string
 @description('The name of the Azure Bastion Subnet NSG.')
 param azureBastionSubnetNSGName string
 
+@description('The region location of deployment.')
+param location string = resourceGroup().location
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
@@ -26,7 +29,6 @@ param sourceAddressPrefix string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'networking'

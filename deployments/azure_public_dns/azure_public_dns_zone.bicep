@@ -3,9 +3,11 @@
 @description('The value for Root Domain Name.')
 param rootDomainName string
 
+@description('The region location of deployment.')
+param location string = 'global'
+
 // Variables
 //////////////////////////////////////////////////
-var location = 'global'
 
 // Resource - DNS Zone
 //////////////////////////////////////////////////

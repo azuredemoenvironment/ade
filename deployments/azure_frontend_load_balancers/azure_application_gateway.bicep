@@ -54,6 +54,9 @@ param inspectorGadgetAppServiceWafPolicyName string
 @description('The Waf Policy Rule Name of the Inspector Gadget App Service.')
 param inspectorGadgetAppServiceWafPolicyRuleName string
 
+@description('The region location of deployment.')
+param location string = resourceGroup().location
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
@@ -193,7 +196,6 @@ var inspectorGadgetAppService = {
     wafPolicyRuleName: inspectorGadgetAppServiceWafPolicyRuleName
   }
 }
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'networking'
