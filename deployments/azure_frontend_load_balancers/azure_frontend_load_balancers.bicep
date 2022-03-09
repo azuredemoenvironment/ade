@@ -26,6 +26,8 @@ var adeAppVmResourceGroupName = 'rg-ade-${aliasRegion}-adeappvm'
 var adeAppVmssResourceGroupName = 'rg-ade-${aliasRegion}-adeappvmss'
 var appConfigResourceGroupName = 'rg-ade-${aliasRegion}-appconfig'
 var containerRegistryResourceGroupName = 'rg-ade-${aliasRegion}-containerregistry'
+var eventHubNamespaceAuthorizationRuleName = 'evh-ade-${aliasRegion}-diagnostics/RootManageSharedAccessKey'
+var diagnosticsStorageAccountName = replace('sa-ade-${aliasRegion}-diags', '-', '')
 var identityResourceGroupName = 'rg-ade-${aliasRegion}-identity'
 var keyVaultResourceGroupName = 'rg-ade-${aliasRegion}-keyvault'
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
@@ -105,6 +107,20 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
   name: logAnalyticsWorkspaceName
 }
 
+// Existing Resource - Storage Account - Diagnostics
+//////////////////////////////////////////////////
+resource diagnosticsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: diagnosticsStorageAccountName
+}
+
+// Existing Resource - Event Hub Authorization Rule
+//////////////////////////////////////////////////
+resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2021-11-01' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: eventHubNamespaceAuthorizationRuleName
+}
+
 // Existing Resource - Managed Identity
 //////////////////////////////////////////////////
 resource applicationGatewayManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
@@ -155,6 +171,8 @@ module applicationGatewayModule 'azure_application_gateway.bicep' = {
     applicationGatewayName: applicationGatewayName
     applicationGatewayPublicIpAddressName: applicationGatewayPublicIpAddressName
     applicationGatewaySubnetId: virtualNetwork001::applicationGatewaySubnet.id
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     inspectorGadgetAppServiceFqdn: inspectorGadgetAppServiceFqdn
     inspectorGadgetAppServiceHostName: inspectorGadgetAppServiceHostName
     inspectorGadgetAppServiceWafPolicyName: inspectorGadgetAppServiceWafPolicyName
@@ -178,6 +196,8 @@ module adeWebVmNICUpdateModule './azure_virtual_machine_adeweb_vm_nic_update.bic
     adeAppFrontendVmBackendPoolId: applicationGatewayModule.outputs.adeAppFrontendVmBackendPoolId
     adeWebVirtualMachines: adeWebVirtualMachines
     adeWebVmSubnetId: virtualNetwork002::adeWebVmSubnet.id
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }

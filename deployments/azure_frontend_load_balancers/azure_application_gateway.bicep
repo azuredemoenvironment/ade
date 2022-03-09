@@ -42,6 +42,12 @@ param applicationGatewayPublicIpAddressName string
 @description('The ID of the Application Gateway Subnet')
 param applicationGatewaySubnetId string
 
+@description('The ID of the Diagnostics Storage Account.')
+param diagnosticsStorageAccountId string
+
+@description('The ID of the Event Hub Namespace Authorization Rule.')
+param eventHubNamespaceAuthorizationRuleId string
+
 @description('The Fqdn of the Inspector Gadget App Service.')
 param inspectorGadgetAppServiceFqdn string
 
@@ -221,41 +227,27 @@ resource applicationGatewayPublicIpAddressDiagnostics 'Microsoft.insights/diagno
   name: '${applicationGatewayPublicIpAddress.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'DDoSProtectionNotifications'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'DDoSMitigationFlowLogs'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'DDoSMitigationReports'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }
@@ -302,7 +294,7 @@ resource inspectorGadgetWafPolicy 'Microsoft.Network/ApplicationGatewayWebApplic
       managedRuleSets: [
         {
           ruleSetType: 'OWASP'
-          ruleSetVersion: '3.0'
+          ruleSetVersion: '3.1'
           ruleGroupOverrides: []
         }
       ]
@@ -1292,41 +1284,27 @@ resource applicationGatewayDiagnostics 'Microsoft.insights/diagnosticSettings@20
   name: '${applicationGateway.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'ApplicationGatewayAccessLog'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'ApplicationGatewayPerformanceLog'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'ApplicationGatewayFirewallLog'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }

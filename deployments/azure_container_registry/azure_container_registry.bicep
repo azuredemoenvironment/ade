@@ -20,6 +20,8 @@ var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 // Resources
 var containerRegistryManagedIdentityName = 'id-ade-${aliasRegion}-containerregistry'
 var containerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
+var eventHubNamespaceAuthorizationRuleName = 'evh-ade-${aliasRegion}-diagnostics/RootManageSharedAccessKey'
+var diagnosticsStorageAccountName = replace('sa-ade-${aliasRegion}-diags', '-', '')
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 
@@ -44,6 +46,20 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
   name: logAnalyticsWorkspaceName
 }
 
+// Existing Resource - Storage Account - Diagnostics
+//////////////////////////////////////////////////
+resource diagnosticsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: diagnosticsStorageAccountName
+}
+
+// Existing Resource - Event Hub Authorization Rule
+//////////////////////////////////////////////////
+resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2021-11-01' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: eventHubNamespaceAuthorizationRuleName
+}
+
 // Resource Group - Container Registry
 //////////////////////////////////////////////////
 resource containerRegistryResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
@@ -61,6 +77,8 @@ module containerRegistryModule './azure_container_registry_adeapp.bicep' = {
   ]
   params: {
     containerRegistryName: containerRegistryName
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     // containerRegistryManagedIdentityPrincipalID: containerRegistryManagedIdentity.properties
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }

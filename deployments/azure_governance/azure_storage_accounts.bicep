@@ -3,8 +3,17 @@
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The name of the NSG Flow Logs Storage Account.')
-param nsgFlowLogsStorageAccountName string
+@description('The Access Tier of the Storage Account.')
+param storageAccountAccessTier string
+
+@description('The Kind of the Storage Account.')
+param storageAccountKind string
+
+@description('The name of the Storage Account.')
+param storageAccountName string
+
+@description('The SKU of the Storage Account.')
+param storageAccountSku string
 
 // Variables
 //////////////////////////////////////////////////
@@ -15,18 +24,18 @@ var tags = {
   costCenter: 'it'
 }
 
-// Resource - Storage Account - Nsg Flow Logs
+// Resource - Storage Account
 //////////////////////////////////////////////////
-resource nsgFlowLogsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01' = {
-  name: nsgFlowLogsStorageAccountName
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-01-01' = {
+  name: storageAccountName
   location: location
   tags: tags
-  kind: 'StorageV2'
+  kind: storageAccountKind
   sku: {
-    name: 'Standard_RAGRS'
+    name: storageAccountSku
   }
   properties: {
-    accessTier: 'Hot'
+    accessTier: storageAccountAccessTier
     supportsHttpsTrafficOnly: true
   }
   resource blobServices 'blobServices@2021-01-01' = {
@@ -46,20 +55,17 @@ resource nsgFlowLogsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01
 // Resource - Storage Account - Diagnostic Settings
 //////////////////////////////////////////////////
 resource nsgFlowLogsStorageAccountDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: nsgFlowLogsStorageAccount
-  name: '${nsgFlowLogsStorageAccount.name}-diagnostics'
+  scope: storageAccount
+  name: '${storageAccount.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
-
     metrics: [
       {
         category: 'Transaction'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }
@@ -68,45 +74,31 @@ resource nsgFlowLogsStorageAccountDiagnostics 'microsoft.insights/diagnosticSett
 // Resource - Storage Account - Blob - Diagnostic Settings
 //////////////////////////////////////////////////
 resource nsgFlowLogsStorageAccountBlobDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: nsgFlowLogsStorageAccount::blobServices
-  name: '${nsgFlowLogsStorageAccount.name}-blob-diagnostics'
+  scope: storageAccount::blobServices
+  name: '${storageAccount.name}-blob-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'StorageRead'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'StorageWrite'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'StorageDelete'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
     metrics: [
       {
         category: 'Transaction'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }
@@ -115,45 +107,31 @@ resource nsgFlowLogsStorageAccountBlobDiagnostics 'microsoft.insights/diagnostic
 // Resource - Storage Account - Table - Diagnostic Settings
 //////////////////////////////////////////////////
 resource nsgFlowLogsStorageAccountTableDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: nsgFlowLogsStorageAccount::tableServices
-  name: '${nsgFlowLogsStorageAccount.name}-table-diagnostics'
+  scope: storageAccount::tableServices
+  name: '${storageAccount.name}-table-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'StorageRead'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'StorageWrite'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'StorageDelete'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
     metrics: [
       {
         category: 'Transaction'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }
@@ -162,45 +140,31 @@ resource nsgFlowLogsStorageAccountTableDiagnostics 'microsoft.insights/diagnosti
 // Resource - Storage Account - File - Diagnostic Settings
 //////////////////////////////////////////////////
 resource nsgFlowLogsStorageAccountFileDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: nsgFlowLogsStorageAccount::fileServices
-  name: '${nsgFlowLogsStorageAccount.name}-file-diagnostics'
+  scope: storageAccount::fileServices
+  name: '${storageAccount.name}-file-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'StorageRead'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'StorageWrite'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'StorageDelete'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
     metrics: [
       {
         category: 'Transaction'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }
@@ -209,46 +173,36 @@ resource nsgFlowLogsStorageAccountFileDiagnostics 'microsoft.insights/diagnostic
 // Resource - Storage Account - Queue - Diagnostic Settings
 //////////////////////////////////////////////////
 resource nsgFlowLogsStorageAccountQueueDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: nsgFlowLogsStorageAccount::queueServices
-  name: '${nsgFlowLogsStorageAccount.name}-queue-diagnostics'
+  scope: storageAccount::queueServices
+  name: '${storageAccount.name}-queue-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'StorageRead'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'StorageWrite'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'StorageDelete'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
     metrics: [
       {
         category: 'Transaction'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }
 }
+
+// Outputs
+//////////////////////////////////////////////////
+output diagnosticsStorageAccountId string = storageAccount.id
