@@ -19,8 +19,8 @@ param jumpboxOSDiskName string
 @description('The name of the Jumpbox Public Ip Address')
 param jumpboxPublicIpAddressName string
 
-@description('The region location of deployment.')
-param location string = resourceGroup().location
+@description('The location for all resources.')
+param location string
 
 @description('The customer Id of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceCustomerId string

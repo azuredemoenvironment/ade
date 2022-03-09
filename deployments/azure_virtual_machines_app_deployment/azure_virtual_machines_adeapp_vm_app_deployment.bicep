@@ -31,8 +31,8 @@ param containerRegistryPassword string
 @description('Function to generate the current time.')
 param currentTime string = utcNow()
 
-@description('The region location of deployment.')
-param location string = resourceGroup().location
+@description('The location for all resources.')
+param location string
 
 @description('The customer Id of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceCustomerId string

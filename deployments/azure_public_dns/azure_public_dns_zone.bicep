@@ -3,9 +3,6 @@
 @description('The value for Root Domain Name.')
 param rootDomainName string
 
-@description('The region location of deployment.')
-param location string = 'global'
-
 // Variables
 //////////////////////////////////////////////////
 
@@ -13,7 +10,7 @@ param location string = 'global'
 //////////////////////////////////////////////////
 resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' = {
   name: rootDomainName
-  location: location
+  location: 'global'
 }
 
 // Outputs

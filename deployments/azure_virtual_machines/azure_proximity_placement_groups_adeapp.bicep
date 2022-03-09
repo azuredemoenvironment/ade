@@ -1,7 +1,7 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The region location of deployment.')
-param location string = resourceGroup().location
+@description('The location for all resources.')
+param location string
 
 @description('The name of the Proximity Placement Group for Availability Zone 1.')
 param proximityPlacementGroupAz1Name string

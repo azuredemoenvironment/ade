@@ -42,8 +42,8 @@ param adeWebVmSubnetNSGId string
 @description('The address prefix of the ADE Web Vm Subnet.')
 param adeWebVmSubnetPrefix string
 
-@description('The region location of deployment.')
-param location string = resourceGroup().location
+@description('The location for all resources.')
+param location string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
