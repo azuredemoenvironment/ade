@@ -19,8 +19,8 @@ param inspectorGadgetSqlServerName string
 @description('The name of the Inspector Gadget Sql Server Private Endpoint.')
 param inspectorGadgetSqlServerPrivateEndpointName string
 
-@description('The region location of deployment.')
-param location string = resourceGroup().location
+@description('The location for all resources.')
+param location string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string

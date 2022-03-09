@@ -29,6 +29,9 @@ param listOfAllowedSKUs array = [
   'Standard_D4s_v3'
 ]
 
+@description('The location for all resources.')
+param location string = deployment().location
+
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
@@ -91,6 +94,9 @@ module networkWatcherModule 'azure_network_watcher.bicep' = {
   dependsOn: [
     networkWatcherResourceGroup
   ]
+  params: {
+    location: location
+  }
 }
 
 // Module - Log Analytics Workspace
@@ -102,6 +108,7 @@ module logAnalyticsModule './azure_log_analytics.bicep' = {
     monitorResourceGroup
   ]
   params: {
+    location: location
     logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
   }
 }
@@ -116,6 +123,7 @@ module appConfigModule './azure_app_config.bicep' = {
   ]
   params: {
     appConfigName: appConfigName
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
   }
 }
@@ -130,6 +138,7 @@ module applicationInsightsModule './azure_application_insights.bicep' = {
   ]
   params: {
     applicationInsightsName: applicationInsightsName
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
   }
 }
@@ -154,6 +163,7 @@ module storageAccountDiagnosticsModule './azure_storage_account_diagnostics.bice
     monitorResourceGroup
   ]
   params: {
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
     nsgFlowLogsStorageAccountName: nsgFlowLogsStorageAccountName
   }
@@ -195,6 +205,7 @@ module identityModule 'azure_identity.bicep' = {
   params: {
     applicationGatewayManagedIdentityName: applicationGatewayManagedIdentityName
     containerRegistryManagedIdentityName: containerRegistryManagedIdentityName
+    location: location
   }
 }
 
@@ -211,6 +222,7 @@ module keyVaultModule './azure_key_vault.bicep' = {
     azureActiveDirectoryUserID: azureActiveDirectoryUserID
     containerRegistryManagedIdentityPrincipalID: identityModule.outputs.containerRegistryManagedIdentityPrincipalId
     keyVaultName: keyVaultName
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
   }
 }

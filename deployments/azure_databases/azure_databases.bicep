@@ -13,6 +13,9 @@ param aliasRegion string
 @description('The selected Azure region for deployment.')
 param azureRegion string
 
+@description('The location for all resources.')
+param location string = deployment().location
+
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
@@ -104,6 +107,7 @@ module adeAppSqlModule './azure_databases_adeapp_sql.bicep' = {
     appConfigName: appConfig.name
     appConfigResourceGroupName: appConfigResourceGroupName
     azureSqlPrivateDnsZoneId: azureSqlPrivateDnsZone.id
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     privateEndpointSubnetId: virtualNetwork002::privateEndpointSubnet.id
   }
@@ -124,6 +128,7 @@ module inspectorGadgetSqlModule './azure_databases_inspectorgadget_sql.bicep' = 
     inspectorGadgetSqlDatabaseName: inspectorGadgetSqlDatabaseName
     inspectorGadgetSqlServerName: inspectorGadgetSqlServerName
     inspectorGadgetSqlServerPrivateEndpointName: inspectorGadgetSqlServerPrivateEndpointName
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     privateEndpointSubnetId: virtualNetwork002::privateEndpointSubnet.id
   }

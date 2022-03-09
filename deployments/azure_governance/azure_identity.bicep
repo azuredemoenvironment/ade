@@ -6,8 +6,8 @@ param applicationGatewayManagedIdentityName string
 @description('The name of the Container Registry Managed Identity.')
 param containerRegistryManagedIdentityName string
 
-@description('The region location of deployment.')
-param location string = resourceGroup().location
+@description('The location for all resources.')
+param location string
 
 // Variables
 //////////////////////////////////////////////////

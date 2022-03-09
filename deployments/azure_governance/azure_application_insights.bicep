@@ -3,8 +3,8 @@
 @description('The name of the Application Insights instance.')
 param applicationInsightsName string
 
-@description('The region location of deployment.')
-param location string = resourceGroup().location
+@description('The location for all resources.')
+param location string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
