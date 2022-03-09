@@ -46,7 +46,7 @@ var containerRegistryManagedIdentityName = 'id-ade-${aliasRegion}-containerregis
 var diagnosticsEventHubName = 'diagnostics'
 var diagnosticsEventHubNamespaceName = 'evh-ade-${aliasRegion}-diagnostics'
 var diagnosticsStorageAccount = {
-  accessTier: 'Archive'
+  accessTier: 'Cool'
   kind: 'StorageV2'
   name: replace('sa-ade-${aliasRegion}-diags', '-', '')
   sku: 'Standard_LRS'
@@ -55,7 +55,7 @@ var initiativeDefinitionName = 'policy-ade-${aliasRegion}-adeinitiative'
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 var nsgFlowLogsStorageAccount = {
-  accessTier: 'Archive'
+  accessTier: 'Hot'
   kind: 'StorageV2'
   name: replace('sa-ade-${aliasRegion}-nsgflow', '-', '')
   sku: 'Standard_LRS'

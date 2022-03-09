@@ -41,8 +41,8 @@ resource eventHubNamespace 'Microsoft.EventHub/namespaces@2021-11-01' = {
 resource eventHub 'Microsoft.EventHub/namespaces/eventhubs@2017-04-01' = {
   name: '${eventHubNamespace.name}/${eventHubName}'
   properties: {
-    messageRetentionInDays: 7
-    partitionCount: 1
+    messageRetentionInDays: 1
+    partitionCount: 2
   }
 }
 
