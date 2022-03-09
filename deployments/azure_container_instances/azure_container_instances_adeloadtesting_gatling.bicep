@@ -27,8 +27,8 @@ param containerRegistryPassword string
 @description('The URL of the Azure Container Registry.')
 param containerRegistryURL string
 
-@description('The region location of deployment.')
-param location string = resourceGroup().location
+@description('The location for all resources.')
+param location string
 
 // Variables
 //////////////////////////////////////////////////

@@ -10,6 +10,9 @@ param aliasRegion string
 @description('The selected Azure region for deployment.')
 param azureRegion string
 
+@description('The location for all resources.')
+param location string = deployment().location
+
 @description('The value for Root Domain Name.')
 param rootDomainName string
 
@@ -68,6 +71,7 @@ module azureContainerInstancesADELoadTestingRedisModule 'azure_container_instanc
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     containerRegistryURL: containerRegistry.properties.loginServer
+    location: location
   }
 }
 
@@ -85,6 +89,7 @@ module azureContainerInstancesADELoadTestingInfluxDbModule 'azure_container_inst
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     containerRegistryURL: containerRegistry.properties.loginServer
+    location: location
   }
 }
 
@@ -103,6 +108,7 @@ module azureContainerInstancesADELoadTestingGrafanaModule 'azure_container_insta
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     containerRegistryURL: containerRegistry.properties.loginServer
+    location: location
   }
 }
 
@@ -124,5 +130,6 @@ module azureContainerInstancesADELoadTestingGatlingModule 'azure_container_insta
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     containerRegistryURL: containerRegistry.properties.loginServer
+    location: location
   }
 }
