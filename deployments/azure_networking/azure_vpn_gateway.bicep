@@ -63,8 +63,6 @@ resource vpnGatewayPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSett
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -141,8 +139,6 @@ resource vpnGatewayDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01
   name: '${vpnGateway.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     storageAccountId: diagnosticsStorageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'

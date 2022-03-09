@@ -43,8 +43,6 @@ resource applicationInsightsDiagnostics 'microsoft.insights/diagnosticSettings@2
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {

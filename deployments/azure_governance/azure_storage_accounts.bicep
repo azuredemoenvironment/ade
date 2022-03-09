@@ -59,8 +59,6 @@ resource nsgFlowLogsStorageAccountDiagnostics 'microsoft.insights/diagnosticSett
   name: '${storageAccount.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     metrics: [
       {
@@ -78,8 +76,6 @@ resource nsgFlowLogsStorageAccountBlobDiagnostics 'microsoft.insights/diagnostic
   name: '${storageAccount.name}-blob-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -111,8 +107,6 @@ resource nsgFlowLogsStorageAccountTableDiagnostics 'microsoft.insights/diagnosti
   name: '${storageAccount.name}-table-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -144,8 +138,6 @@ resource nsgFlowLogsStorageAccountFileDiagnostics 'microsoft.insights/diagnostic
   name: '${storageAccount.name}-file-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -177,8 +169,6 @@ resource nsgFlowLogsStorageAccountQueueDiagnostics 'microsoft.insights/diagnosti
   name: '${storageAccount.name}-queue-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {

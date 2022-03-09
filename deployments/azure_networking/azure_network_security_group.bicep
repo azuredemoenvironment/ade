@@ -119,8 +119,6 @@ resource azureBastionSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -170,8 +168,6 @@ resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -204,8 +200,6 @@ resource adeWebVmSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@202
   name: '${adeWebVmSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     storageAccountId: diagnosticsStorageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
@@ -242,8 +236,6 @@ resource adeAppVmSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@202
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -278,8 +270,6 @@ resource adeWebVmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -312,8 +302,6 @@ resource adeAppVmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2
   name: '${adeAppVmssSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     storageAccountId: diagnosticsStorageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'

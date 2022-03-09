@@ -50,8 +50,6 @@ resource azureBastionPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSe
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -106,8 +104,6 @@ resource azureBastionDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-
   name: '${azureBastion.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     storageAccountId: diagnosticsStorageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'

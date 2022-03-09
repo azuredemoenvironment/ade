@@ -66,8 +66,6 @@ resource eventHubNamespaceDiagnostics 'microsoft.insights/diagnosticSettings@202
   name: '${eventHubNamespace.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {

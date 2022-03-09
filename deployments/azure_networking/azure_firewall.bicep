@@ -50,8 +50,6 @@ resource azureFirewallPublicIpAddressDiagnostics 'Microsoft.Insights/diagnosticS
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
@@ -154,8 +152,6 @@ resource azureFirewallDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05
   name: '${azureFirewall.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
-    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     storageAccountId: diagnosticsStorageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
