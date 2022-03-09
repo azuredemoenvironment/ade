@@ -13,9 +13,6 @@ param azureRegion string
 @description('The Email Address used for Alerts and Notifications.')
 param contactEmailAddress string
 
-@description('The location for all resources.')
-param location string = deployment().location
-
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
@@ -52,7 +49,6 @@ module actionGroupModule 'azure_alerts_action_groups.bicep' = {
     contactEmailAddress: contactEmailAddress
     budgetActionGroupName: budgetActionGroupName
     budgetActionGroupShortName: budgetActionGroupShortName
-    location: location
     serviceHealthActionGroupName: serviceHealthActionGroupName
     serviceHealthActionGroupShortName: serviceHealthActionGroupShortName
     virtualMachineActionGroupName: virtualMachineActionGroupName

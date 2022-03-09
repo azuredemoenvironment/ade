@@ -9,9 +9,6 @@ param budgetActionGroupName string
 @description('The short name of the Budget Action Group.')
 param budgetActionGroupShortName string
 
-@description('The region location of deployment.')
-param location string = 'global'
-
 @description('The name of the Service Health Action Group.')
 param serviceHealthActionGroupName string
 
@@ -42,7 +39,7 @@ var tags = {
 //////////////////////////////////////////////////
 resource budgetActionGroup 'microsoft.insights/actionGroups@2019-06-01' = {
   name: budgetActionGroupName
-  location: location
+  location: 'global'
   tags: tags
   properties: {
     enabled: true
@@ -61,7 +58,7 @@ resource budgetActionGroup 'microsoft.insights/actionGroups@2019-06-01' = {
 //////////////////////////////////////////////////
 resource serviceHealthActionGroup 'microsoft.insights/actionGroups@2019-06-01' = {
   name: serviceHealthActionGroupName
-  location: location
+  location: 'global'
   tags: tags
   properties: {
     enabled: true
@@ -80,7 +77,7 @@ resource serviceHealthActionGroup 'microsoft.insights/actionGroups@2019-06-01' =
 //////////////////////////////////////////////////
 resource virtualMachineActionGroup 'microsoft.insights/actionGroups@2019-06-01' = {
   name: virtualMachineActionGroupName
-  location: location
+  location: 'global'
   tags: tags
   properties: {
     enabled: true
@@ -99,7 +96,7 @@ resource virtualMachineActionGroup 'microsoft.insights/actionGroups@2019-06-01' 
 //////////////////////////////////////////////////
 resource virtualNetworkActionGroup 'microsoft.insights/actionGroups@2019-06-01' = {
   name: virtualNetworkActionGroupName
-  location: location
+  location: 'global'
   tags: tags
   properties: {
     enabled: true
