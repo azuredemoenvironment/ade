@@ -10,7 +10,7 @@ param containerRegistryName string
 param adeAppDockerWebHookUris array
 
 @description('The region location of deployment.')
-param location string = resourceGroup().location
+param location string
 
 // Variables
 //////////////////////////////////////////////////

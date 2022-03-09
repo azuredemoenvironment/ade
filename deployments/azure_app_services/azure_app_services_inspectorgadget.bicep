@@ -23,7 +23,7 @@ param inspectorGadgetSqlDatabaseName string
 param inspectorGadgetSqlServerFQDN string
 
 @description('The region location of deployment.')
-param location string = resourceGroup().location
+param location string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string

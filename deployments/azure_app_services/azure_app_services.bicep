@@ -13,6 +13,9 @@ param aliasRegion string
 @description('The selected Azure region for deployment.')
 param azureRegion string
 
+@description('The location for all resources.')
+param location string = deployment().location
+
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
@@ -187,6 +190,7 @@ module appServicePlanModule 'azure_app_service_plan.bicep' = {
   ]
   params: {
     appServicePlanName: appServicePlanName
+    location:location
   }
 }
 
@@ -203,6 +207,7 @@ module inspectorGadgetAppServiceModule 'azure_app_services_inspectorgadget.bicep
     inspectorGadgetDockerImage: inspectorGadgetDockerImage
     inspectorGadgetSqlDatabaseName: inspectorGadgetSqlDatabase.name
     inspectorGadgetSqlServerFQDN: inspectorGadgetSqlServer.properties.fullyQualifiedDomainName
+    location:location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     vnetIntegrationSubnetId: virtualNetwork002::vnetIntegrationSubnet.id
   }
@@ -224,6 +229,7 @@ module adeAppServicesModule 'azure_app_services_adeapp.bicep' = {
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     containerRegistryURL: containerRegistry.properties.loginServer
+    location:location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     privateEndpointSubnetId: virtualNetwork002::privateEndpointSubnet.id
     vnetIntegrationSubnetId: virtualNetwork002::vnetIntegrationSubnet.id
@@ -239,6 +245,7 @@ module adeAppWebHooksModule 'azure_app_service_adeapp_webhooks.bicep' = {
     adeAppAppServices: adeAppAppServices
     containerRegistryName: containerRegistryName
     adeAppDockerWebHookUris: adeAppServicesModule.outputs.adeAppDockerWebHookUris
+    location:location
   }
 }
 
