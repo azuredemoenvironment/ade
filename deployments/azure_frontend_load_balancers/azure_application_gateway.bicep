@@ -302,7 +302,7 @@ resource inspectorGadgetWafPolicy 'Microsoft.Network/ApplicationGatewayWebApplic
       managedRuleSets: [
         {
           ruleSetType: 'OWASP'
-          ruleSetVersion: '3.0'
+          ruleSetVersion: '3.1'
           ruleGroupOverrides: []
         }
       ]
