@@ -77,6 +77,8 @@ var appConfigName = 'appcs-ade-${aliasRegion}-001'
 var appServicePlanName = 'plan-ade-${aliasRegion}-001'
 var azureAppServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
 var containerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
+var eventHubNamespaceAuthorizationRuleName = 'evh-ade-${aliasRegion}-diagnostics/RootManageSharedAccessKey'
+var diagnosticsStorageAccountName = replace('sa-ade-${aliasRegion}-diags', '-', '')
 var inspectorGadgetAppServiceName = replace('app-ade-${aliasRegion}-inspectorgadget', '-', '')
 var inspectorGadgetDockerImage = 'DOCKER|jelledruyts/inspectorgadget:latest'
 var inspectorGadgetSqlDatabaseName = 'sqldb-ade-${aliasRegion}-inspectorgadget'
@@ -113,6 +115,20 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing = {
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
   scope: resourceGroup(monitorResourceGroupName)
   name: logAnalyticsWorkspaceName
+}
+
+// Existing Resource - Storage Account - Diagnostics
+//////////////////////////////////////////////////
+resource diagnosticsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: diagnosticsStorageAccountName
+}
+
+// Existing Resource - Event Hub Authorization Rule
+//////////////////////////////////////////////////
+resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2021-11-01' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: eventHubNamespaceAuthorizationRuleName
 }
 
 // Existing Resource - Private Dns Zone - App Services
@@ -199,6 +215,8 @@ module inspectorGadgetAppServiceModule 'azure_app_services_inspectorgadget.bicep
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
     appServicePlanId: appServicePlanModule.outputs.appServicePlanId
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     inspectorGadgetAppServiceName: inspectorGadgetAppServiceName
     inspectorGadgetDockerImage: inspectorGadgetDockerImage
     inspectorGadgetSqlDatabaseName: inspectorGadgetSqlDatabase.name
@@ -221,6 +239,8 @@ module adeAppServicesModule 'azure_app_services_adeapp.bicep' = {
     appConfigConnectionString: appConfigConnectionString
     appServicePlanId: appServicePlanModule.outputs.appServicePlanId
     azureAppServicePrivateDnsZoneId: azureAppServicePrivateDnsZone.id
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     containerRegistryURL: containerRegistry.properties.loginServer

@@ -43,10 +43,23 @@ var appConfigName = 'appcs-ade-${aliasRegion}-001'
 var applicationGatewayManagedIdentityName = 'id-ade-${aliasRegion}-applicationgateway'
 var applicationInsightsName = 'appinsights-ade-${aliasRegion}-001'
 var containerRegistryManagedIdentityName = 'id-ade-${aliasRegion}-containerregistry'
+var diagnosticsEventHubName = 'diagnostics'
+var diagnosticsEventHubNamespaceName = 'evh-ade-${aliasRegion}-diagnostics'
+var diagnosticsStorageAccount = {
+  accessTier: 'Cool'
+  kind: 'StorageV2'
+  name: replace('sa-ade-${aliasRegion}-diags', '-', '')
+  sku: 'Standard_LRS'
+}
 var initiativeDefinitionName = 'policy-ade-${aliasRegion}-adeinitiative'
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
-var nsgFlowLogsStorageAccountName = replace('saade${aliasRegion}nsgflow', '-', '')
+var nsgFlowLogsStorageAccount = {
+  accessTier: 'Hot'
+  kind: 'StorageV2'
+  name: replace('sa-ade-${aliasRegion}-nsgflow', '-', '')
+  sku: 'Standard_LRS'
+}
 
 // Resource Group - App Configuration
 //////////////////////////////////////////////////
@@ -106,6 +119,55 @@ module logAnalyticsModule './azure_log_analytics.bicep' = {
   }
 }
 
+// Module - Storage Account - Diagnostics
+//////////////////////////////////////////////////
+module storageAccountDiagnosticsModule './azure_storage_accounts.bicep' = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: 'storageAccountDiagnosticsDeployment'
+  dependsOn: [
+    monitorResourceGroup
+  ]
+  params: {
+    logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
+    storageAccountAccessTier: diagnosticsStorageAccount.accessTier
+    storageAccountKind: diagnosticsStorageAccount.kind
+    storageAccountName: diagnosticsStorageAccount.name
+    storageAccountSku: diagnosticsStorageAccount.sku
+  }
+}
+
+// Module - Storage Account - NSG Flow Logs
+//////////////////////////////////////////////////
+module storageAccountNsgFlowLogsModule './azure_storage_accounts.bicep' = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: 'storageAccountNsgFlowLogsDeployment'
+  dependsOn: [
+    monitorResourceGroup
+  ]
+  params: {
+    logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
+    storageAccountAccessTier: nsgFlowLogsStorageAccount.accessTier
+    storageAccountKind: nsgFlowLogsStorageAccount.kind
+    storageAccountName: nsgFlowLogsStorageAccount.name
+    storageAccountSku: nsgFlowLogsStorageAccount.sku
+  }
+}
+
+// Module - Event Hub
+//////////////////////////////////////////////////
+module eventHubDiagnosticsModule './azure_event_hub.bicep' = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: 'eventHubDiagnosticsDeployment'
+  dependsOn: [
+    monitorResourceGroup
+  ]
+  params: {
+    eventHubName: diagnosticsEventHubName
+    eventHubNamespaceName: diagnosticsEventHubNamespaceName
+    logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId   
+  }
+}
+
 // Module - App Configuration
 //////////////////////////////////////////////////
 module appConfigModule './azure_app_config.bicep' = {
@@ -116,7 +178,9 @@ module appConfigModule './azure_app_config.bicep' = {
   ]
   params: {
     appConfigName: appConfigName
-    logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
+    diagnosticsStorageAccountId: storageAccountDiagnosticsModule.outputs.diagnosticsStorageAccountId
+    eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
+    logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId    
   }
 }
 
@@ -130,6 +194,8 @@ module applicationInsightsModule './azure_application_insights.bicep' = {
   ]
   params: {
     applicationInsightsName: applicationInsightsName
+    diagnosticsStorageAccountId: storageAccountDiagnosticsModule.outputs.diagnosticsStorageAccountId
+    eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
   }
 }
@@ -145,20 +211,6 @@ module appConfigApplicationInsightsModule './azure_app_config_application_insigh
   }
 }
 
-// Module - Storage Account Diagnostics
-//////////////////////////////////////////////////
-module storageAccountDiagnosticsModule './azure_storage_account_diagnostics.bicep' = {
-  scope: resourceGroup(monitorResourceGroupName)
-  name: 'storageAccountDiagnosticsDeployment'
-  dependsOn: [
-    monitorResourceGroup
-  ]
-  params: {
-    logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
-    nsgFlowLogsStorageAccountName: nsgFlowLogsStorageAccountName
-  }
-}
-
 // Module - Activity Log
 //////////////////////////////////////////////////
 module activityLogModule './azure_activity_log.bicep' = {
@@ -166,6 +218,8 @@ module activityLogModule './azure_activity_log.bicep' = {
   name: 'activityLogDeployment'
   params: {
     activityLogDiagnosticSettingsName: activityLogDiagnosticSettingsName
+    diagnosticsStorageAccountId: storageAccountDiagnosticsModule.outputs.diagnosticsStorageAccountId
+    eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
   }
 }
@@ -210,6 +264,8 @@ module keyVaultModule './azure_key_vault.bicep' = {
     applicationGatewayManagedIdentityPrincipalID: identityModule.outputs.applicationGatewayManagedIdentityPrincipalId
     azureActiveDirectoryUserID: azureActiveDirectoryUserID
     containerRegistryManagedIdentityPrincipalID: identityModule.outputs.containerRegistryManagedIdentityPrincipalId
+    diagnosticsStorageAccountId: storageAccountDiagnosticsModule.outputs.diagnosticsStorageAccountId
+    eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
     keyVaultName: keyVaultName
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
   }

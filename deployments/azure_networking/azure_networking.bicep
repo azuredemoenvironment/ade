@@ -57,6 +57,8 @@ var azureFirewallSubnetName = 'AzureFirewallSubnet'
 var azureFirewallSubnetPrefix = '10.101.1.0/24'
 var azureSQLprivateDnsZoneName = 'privatelink${environment().suffixes.sqlServerHostname}'
 var connectionName = 'cn-ade-${aliasRegion}-vgw001'
+var eventHubNamespaceAuthorizationRuleName = 'evh-ade-${aliasRegion}-diagnostics/RootManageSharedAccessKey'
+var diagnosticsStorageAccountName = replace('sa-ade-${aliasRegion}-diags', '-', '')
 var gatewaySubnetName = 'GatewaySubnet'
 var gatewaySubnetPrefix = '10.101.255.0/24'
 var internetRouteTableName = 'route-ade-${aliasRegion}-internet'
@@ -95,11 +97,25 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
   name: logAnalyticsWorkspaceName
 }
 
+// Existing Resource - Storage Account - Diagnostics
+//////////////////////////////////////////////////
+resource diagnosticsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: diagnosticsStorageAccountName
+}
+
 // Existing Resource - Storage Account - NSG Flow Logs
 //////////////////////////////////////////////////
 resource nsgFlowLogsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01' existing = {
   scope: resourceGroup(monitorResourceGroupName)
   name: nsgFlowLogsStorageAccountName
+}
+
+// Existing Resource - Event Hub Authorization Rule
+//////////////////////////////////////////////////
+resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2021-11-01' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: eventHubNamespaceAuthorizationRuleName
 }
 
 // Resource Group - Networking
@@ -137,6 +153,8 @@ module networkSecurityGroupsModule './azure_network_security_group.bicep' = {
     adeWebVmssSubnetNSGName: adeWebVmssSubnetNSGName
     adeWebVmSubnetNSGName: adeWebVmSubnetNSGName
     azureBastionSubnetNSGName: azureBastionSubnetNSGName
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     managementSubnetNSGName: managementSubnetNSGName
     sourceAddressPrefix: sourceAddressPrefix
@@ -172,6 +190,8 @@ module virtualNetwork001Module './azure_virtual_network_001.bicep' = {
     azureBastionSubnetPrefix: azureBastionSubnetPrefix
     azureFirewallSubnetName: azureFirewallSubnetName
     azureFirewallSubnetPrefix: azureFirewallSubnetPrefix
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     gatewaySubnetName: gatewaySubnetName
     gatewaySubnetPrefix: gatewaySubnetPrefix
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
@@ -206,6 +226,8 @@ module virtualNetwork002Module './azure_virtual_network_002.bicep' = {
     adeWebVmSubnetName: adeWebVmSubnetName
     adeWebVmSubnetNSGId: networkSecurityGroupsModule.outputs.adeWebVmSubnetNSGId
     adeWebVmSubnetPrefix: adeWebVmSubnetPrefix
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     natGatewayId: natGatewayModule.outputs.natGatewayId
     privateEndpointSubnetName: privateEndpointSubnetName
@@ -229,6 +251,8 @@ module azureFirewallModule './azure_firewall.bicep' = if (deployAzureFirewall ==
     azureFirewallName: azureFirewallName
     azureFirewallPublicIpAddressName: azureFirewallPublicIpAddressName
     azureFirewallSubnetId: virtualNetwork001Module.outputs.azureFirewallSubnetId
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }
@@ -245,6 +269,8 @@ module azureBastionModule './azure_bastion.bicep' = {
     azureBastionName: azureBastionName
     azureBastionPublicIpAddressName: azureBastionPublicIpAddressName
     azureBastionSubnetId: virtualNetwork001Module.outputs.azureBastionSubnetId
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }
@@ -260,6 +286,8 @@ module azureVpnGatewayModule './azure_vpn_gateway.bicep' = if (deployVpnGateway 
   params: {
     connectionName: connectionName
     connectionSharedKey: keyVault.getSecret('resourcePassword')
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     gatewaySubnetId: virtualNetwork001Module.outputs.gatewaySubnetId
     localNetworkGatewayAddressPrefix: localNetworkGatewayAddressPrefix
     localNetworkGatewayName: localNetworkGatewayName

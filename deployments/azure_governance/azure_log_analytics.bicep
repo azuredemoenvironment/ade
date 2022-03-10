@@ -43,9 +43,6 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
 resource solutionsContainerInsights 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
   name: '${containerInsights.name}'
   location: location
-  dependsOn: [
-    logAnalyticsWorkspace
-  ]
   properties: {
     workspaceResourceId: logAnalyticsWorkspace.id
   }
@@ -62,9 +59,6 @@ resource solutionsContainerInsights 'Microsoft.OperationsManagement/solutions@20
 resource solutionsKeyVaultAnalytics 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
   name: '${keyVaultAnalytics.name}'
   location: location
-  dependsOn: [
-    logAnalyticsWorkspace
-  ]
   properties: {
     workspaceResourceId: logAnalyticsWorkspace.id
   }
@@ -81,9 +75,6 @@ resource solutionsKeyVaultAnalytics 'Microsoft.OperationsManagement/solutions@20
 resource solutionsVMInsights 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
   name: '${vmInsights.name}'
   location: location
-  dependsOn: [
-    logAnalyticsWorkspace
-  ]
   properties: {
     workspaceResourceId: logAnalyticsWorkspace.id
   }
@@ -107,20 +98,12 @@ resource logAnalyticsWorkspaceDiagnostics 'microsoft.insights/diagnosticSettings
       {
         category: 'Audit'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }
