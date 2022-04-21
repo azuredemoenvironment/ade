@@ -15,6 +15,12 @@ param adeWebVmSubnetNSGName string
 @description('The name of the Azure Bastion Subnet NSG.')
 param azureBastionSubnetNSGName string
 
+@description('The ID of the Diagnostics Storage Account.')
+param diagnosticsStorageAccountId string
+
+@description('The ID of the Event Hub Namespace Authorization Rule.')
+param eventHubNamespaceAuthorizationRuleId string
+
 @description('The location for all resources.')
 param location string
 
@@ -113,23 +119,17 @@ resource azureBastionSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings
   name: '${azureBastionSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'NetworkSecurityGroupEvent'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'NetworkSecurityGroupRuleCounter'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }
@@ -168,23 +168,17 @@ resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2
   name: '${managementSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'NetworkSecurityGroupEvent'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'NetworkSecurityGroupRuleCounter'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }
@@ -208,23 +202,17 @@ resource adeWebVmSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@202
   name: '${adeWebVmSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'NetworkSecurityGroupEvent'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'NetworkSecurityGroupRuleCounter'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }
@@ -248,23 +236,17 @@ resource adeAppVmSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@202
   name: '${adeAppVmSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'NetworkSecurityGroupEvent'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'NetworkSecurityGroupRuleCounter'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }
@@ -288,23 +270,17 @@ resource adeWebVmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2
   name: '${adeWebVmssSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'NetworkSecurityGroupEvent'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'NetworkSecurityGroupRuleCounter'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }
@@ -328,23 +304,17 @@ resource adeAppVmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2
   name: '${adeAppVmssSubnetNSG.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'NetworkSecurityGroupEvent'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'NetworkSecurityGroupRuleCounter'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }

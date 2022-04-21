@@ -10,6 +10,12 @@ param adminUserName string
 @description('The ID of the App Service Plan.')
 param appServicePlanId string
 
+@description('The ID of the Diagnostics Storage Account.')
+param diagnosticsStorageAccountId string
+
+@description('The ID of the Event Hub Namespace Authorization Rule.')
+param eventHubNamespaceAuthorizationRuleId string
+
 @description('The name of the Inspector Gadget App Service.')
 param inspectorGadgetAppServiceName string
 
@@ -87,72 +93,42 @@ resource inspectorGadgetAppServiceDiagnostics 'Microsoft.insights/diagnosticSett
   name: '${inspectorGadgetAppService.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logs: [
       {
         category: 'AppServiceHTTPLogs'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'AppServiceConsoleLogs'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'AppServiceAppLogs'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'AppServiceFileAuditLogs'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'AppServiceAuditLogs'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'AppServiceIPSecAuditLogs'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'AppServicePlatformLogs'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }

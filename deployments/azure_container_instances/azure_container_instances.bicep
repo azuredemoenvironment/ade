@@ -21,7 +21,6 @@ param rootDomainName string
 // Resource Groups
 var adeAppLoadTestingResourceGroupName = 'rg-ade-${aliasRegion}-adeapploadtesting'
 var containerRegistryResourceGroupName = 'rg-ade-${aliasRegion}-containerregistry'
-var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 // Resources
 var adeAppApiGatewayHostName = 'ade-apigateway.${rootDomainName}'
 var adeAppFrontEndHostName = 'ade-frontend.${rootDomainName}'
@@ -34,20 +33,12 @@ var adeLoadTestingInfluxDbContainerImageName = '${containerRegistry.properties.l
 var adeLoadTestingRedisContainerGroupName = 'ci-ade-${aliasRegion}-adeloadtesting-redis'
 var adeLoadTestingRedisContainerImageName = '${containerRegistry.properties.loginServer}/ade-loadtesting-redis:latest'
 var containerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
-var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 
 // Existing Resource - Container Registry
 //////////////////////////////////////////////////
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-01' existing = {
   scope: resourceGroup(containerRegistryResourceGroupName)
   name: containerRegistryName
-}
-
-// Existing Resource - Log Analytics Workspace
-//////////////////////////////////////////////////
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
-  scope: resourceGroup(monitorResourceGroupName)
-  name: logAnalyticsWorkspaceName
 }
 
 // Resource Group - App Service Plan

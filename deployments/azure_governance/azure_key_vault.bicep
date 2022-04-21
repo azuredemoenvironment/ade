@@ -9,6 +9,12 @@ param applicationGatewayManagedIdentityPrincipalID string
 @description('The Service Principal Name ID of the Container Registry Managed Identity.')
 param containerRegistryManagedIdentityPrincipalID string
 
+@description('The ID of the Diagnostics Storage Account.')
+param diagnosticsStorageAccountId string
+
+@description('The ID of the Event Hub Namespace Authorization Rule.')
+param eventHubNamespaceAuthorizationRuleId string
+
 @description('The name of the Key Vault.')
 param keyVaultName string
 
@@ -113,25 +119,19 @@ resource keyVaultDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-p
   name: '${keyVault.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'AuditEvent'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }

@@ -21,6 +21,12 @@ param azureFirewallSubnetName string
 @description('The address prefix of the Azure Firewall Subnet.')
 param azureFirewallSubnetPrefix string
 
+@description('The ID of the Diagnostics Storage Account.')
+param diagnosticsStorageAccountId string
+
+@description('The ID of the Event Hub Namespace Authorization Rule.')
+param eventHubNamespaceAuthorizationRuleId string
+
 @description('The name of the Gateway Subnet.')
 param gatewaySubnetName string
 
@@ -121,25 +127,19 @@ resource virtualNetwork001Diagnostics 'microsoft.insights/diagnosticSettings@202
   name: '${virtualNetwork001.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'VMProtectionAlerts'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }

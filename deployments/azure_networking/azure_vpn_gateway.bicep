@@ -7,6 +7,12 @@ param connectionName string
 @secure()
 param connectionSharedKey string
 
+@description('The ID of the Diagnostics Storage Account.')
+param diagnosticsStorageAccountId string
+
+@description('The ID of the Event Hub Namespace Authorization Rule.')
+param eventHubNamespaceAuthorizationRuleId string
+
 @description('The ID of the Gateway Subnet.')
 param gatewaySubnetId string
 
@@ -57,41 +63,27 @@ resource vpnGatewayPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSett
   name: '${vpnGatewayPublicIpAddress.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'DDoSProtectionNotifications'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'DDoSMitigationFlowLogs'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'DDoSMitigationReports'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }
@@ -149,57 +141,35 @@ resource vpnGatewayDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01
   name: '${vpnGateway.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
         category: 'GatewayDiagnosticLog'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'TunnelDiagnosticLog'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'RouteDiagnosticLog'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'IKEDiagnosticLog'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
       {
         category: 'P2SDiagnosticLog'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
       }
     ]
   }

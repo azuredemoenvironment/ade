@@ -31,6 +31,8 @@ var adeAppSqlServerName = 'sql-ade-${aliasRegion}-adeapp'
 var adeAppSqlServerPrivateEndpointName = 'pl-ade-${aliasRegion}-adeappsql'
 var appConfigName = 'appcs-ade-${aliasRegion}-001'
 var azureSqlPrivateDnsZoneName = 'privatelink${environment().suffixes.sqlServerHostname}'
+var eventHubNamespaceAuthorizationRuleName = 'evh-ade-${aliasRegion}-diagnostics/RootManageSharedAccessKey'
+var diagnosticsStorageAccountName = replace('sa-ade-${aliasRegion}-diags', '-', '')
 var inspectorGadgetSqlDatabaseName = 'sqldb-ade-${aliasRegion}-inspectorgadget'
 var inspectorGadgetSqlServerName = 'sql-ade-${aliasRegion}-inspectorgadget'
 var inspectorGadgetSqlServerPrivateEndpointName = 'pl-ade-${aliasRegion}-inspectorgadgetsql'
@@ -58,6 +60,20 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing = {
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
   scope: resourceGroup(monitorResourceGroupName)
   name: logAnalyticsWorkspaceName
+}
+
+// Existing Resource - Storage Account - Diagnostics
+//////////////////////////////////////////////////
+resource diagnosticsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: diagnosticsStorageAccountName
+}
+
+// Existing Resource - Event Hub Authorization Rule
+//////////////////////////////////////////////////
+resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2021-11-01' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: eventHubNamespaceAuthorizationRuleName
 }
 
 // Existing Resource - Private Dns Zone - Azure Sql
@@ -107,7 +123,9 @@ module adeAppSqlModule './azure_databases_adeapp_sql.bicep' = {
     appConfigName: appConfig.name
     appConfigResourceGroupName: appConfigResourceGroupName
     azureSqlPrivateDnsZoneId: azureSqlPrivateDnsZone.id
-    location: location
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
+    location: location    
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     privateEndpointSubnetId: virtualNetwork002::privateEndpointSubnet.id
   }
@@ -125,10 +143,12 @@ module inspectorGadgetSqlModule './azure_databases_inspectorgadget_sql.bicep' = 
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
     azureSqlPrivateDnsZoneId: azureSqlPrivateDnsZone.id
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     inspectorGadgetSqlDatabaseName: inspectorGadgetSqlDatabaseName
     inspectorGadgetSqlServerName: inspectorGadgetSqlServerName
     inspectorGadgetSqlServerPrivateEndpointName: inspectorGadgetSqlServerPrivateEndpointName
-    location: location
+    location: location    
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     privateEndpointSubnetId: virtualNetwork002::privateEndpointSubnet.id
   }

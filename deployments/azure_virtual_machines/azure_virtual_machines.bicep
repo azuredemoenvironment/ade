@@ -124,6 +124,8 @@ var backendServices = [
     port: 5003
   }
 ]
+var eventHubNamespaceAuthorizationRuleName = 'evh-ade-${aliasRegion}-diagnostics/RootManageSharedAccessKey'
+var diagnosticsStorageAccountName = replace('sa-ade-${aliasRegion}-diags', '-', '')
 var jumpboxName = 'vm-jumpbox01'
 var jumpboxNICName = 'nic-ade-${aliasRegion}-jumpbox01'
 var jumpboxOSDiskName = 'osdisk-ade-${aliasRegion}-jumpbox01'
@@ -149,6 +151,20 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing = {
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' existing = {
   scope: resourceGroup(monitorResourceGroupName)
   name: logAnalyticsWorkspaceName
+}
+
+// Existing Resource - Storage Account - Diagnostics
+//////////////////////////////////////////////////
+resource diagnosticsStorageAccount 'Microsoft.Storage/storageAccounts@2021-01-01' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: diagnosticsStorageAccountName
+}
+
+// Existing Resource - Event Hub Authorization Rule
+//////////////////////////////////////////////////
+resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2021-11-01' existing = {
+  scope: resourceGroup(monitorResourceGroupName)
+  name: eventHubNamespaceAuthorizationRuleName
 }
 
 // Existing Resource - Virtual Network - Virtual Network 001
@@ -219,6 +235,8 @@ module jumpBoxModule './azure_virtual_machines_jumpbox.bicep' = {
   params: {
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     jumpboxName: jumpboxName
     jumpboxNICName: jumpboxNICName
     jumpboxOSDiskName: jumpboxOSDiskName
@@ -261,6 +279,8 @@ module adeAppVmLoadBalancerModule 'azure_load_balancers_adeapp_vm.bicep' = {
     adeAppVmLoadBalancerPrivateIpAddress: adeAppVmLoadBalancerPrivateIpAddress
     adeAppVmSubnetId: virtualNetwork002::adeAppVmSubnet.id
     backendServices: backendServices
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
@@ -279,6 +299,8 @@ module adeAppVmssLoadBalancerModule 'azure_load_balancers_adeapp_vmss.bicep' = {
     adeAppVmssLoadBalancerPrivateIpAddress: adeAppVmssLoadBalancerPrivateIpAddress
     adeAppVmssSubnetId: virtualNetwork002::adeAppVmssSubnet.id
     backendServices: backendServices
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
@@ -297,6 +319,8 @@ module adeWebVmModule 'azure_virtual_machines_adeweb_vm.bicep' = {
     adeWebVmSubnetId: virtualNetwork002::adeWebVmSubnet.id
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location: location
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
@@ -318,6 +342,8 @@ module adeAppVmModule 'azure_virtual_machines_adeapp_vm.bicep' = {
     adeAppVmSubnetId: virtualNetwork002::adeAppVmSubnet.id
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location: location
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
