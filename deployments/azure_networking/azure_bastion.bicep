@@ -9,8 +9,8 @@ param azureBastionPublicIpAddressName string
 @description('The ID of the Azure Bastion Subnet.')
 param azureBastionSubnetId string
 
-@description('The region location of deployment.')
-param location string = resourceGroup().location
+@description('The location for all resources.')
+param location string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string

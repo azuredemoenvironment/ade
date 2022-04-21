@@ -3,8 +3,8 @@
 @description('The name of the Route Table.')
 param internetRouteTableName string
 
-@description('The region location of deployment.')
-param location string = resourceGroup().location
+@description('The location for all resources.')
+param location string
 
 // Variables
 //////////////////////////////////////////////////
