@@ -10,6 +10,9 @@ param adminUserName string
 @description('The user alias and Azure region defined from user input.')
 param aliasRegion string
 
+@description('The location for all resources.')
+param location string = deployment().location
+
 @description('The base URI for deployment scripts.')
 param scriptsBaseUri string
 
@@ -189,6 +192,7 @@ module proximityPlacementGroupModule 'azure_proximity_placement_groups_adeapp.bi
   scope: resourceGroup(proximityPlacementGroupResourceGroupName)
   name: 'proximityPlacementGroupDeployment'
   params: {
+    location: location
     proximityPlacementGroupAz1Name: proximityPlacementGroupAz1Name
     proximityPlacementGroupAz2Name: proximityPlacementGroupAz2Name
     proximityPlacementGroupAz3Name: proximityPlacementGroupAz3Name
@@ -205,6 +209,7 @@ module adeAppVmLoadBalancerModule 'azure_load_balancers_adeapp_vm.bicep' = {
     adeAppVmLoadBalancerPrivateIpAddress: adeAppVmLoadBalancerPrivateIpAddress
     adeAppVmSubnetId: virtualNetwork002::adeAppVmSubnet.id
     backendServices: backendServices
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }
@@ -219,6 +224,7 @@ module adeAppVmssLoadBalancerModule 'azure_load_balancers_adeapp_vmss.bicep' = {
     adeAppVmssLoadBalancerPrivateIpAddress: adeAppVmssLoadBalancerPrivateIpAddress
     adeAppVmssSubnetId: virtualNetwork002::adeAppVmssSubnet.id
     backendServices: backendServices
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }
@@ -237,6 +243,7 @@ module adeWebVmModule 'azure_virtual_machines_adeweb_vm_app_deployment.bicep' = 
     appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
+    location: location
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
@@ -259,6 +266,7 @@ module adeAppVmModule 'azure_virtual_machines_adeapp_vm_app_deployment.bicep' = 
     appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
+    location: location
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
@@ -282,6 +290,7 @@ module adeWebVmssModule 'azure_virtual_machines_adeweb_vmss_app_deployment.bicep
     appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
+    location: location
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
     scriptsBaseUri: scriptsBaseUri
@@ -305,6 +314,7 @@ module adeAppVmssModule 'azure_virtual_machines_adeapp_vmss_app_deployment.bicep
     appConfigConnectionString: first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
+    location: location
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
     scriptsBaseUri: scriptsBaseUri

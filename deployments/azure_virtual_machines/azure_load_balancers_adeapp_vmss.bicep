@@ -12,8 +12,8 @@ param adeAppVmssSubnetId string
 @description('Array of backend services for ADE App.')
 param backendServices array
 
-@description('The region location of deployment.')
-param location string = resourceGroup().location
+@description('The location for all resources.')
+param location string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string

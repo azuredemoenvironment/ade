@@ -13,6 +13,9 @@ param aliasRegion string
 @description('The selected Azure region for deployment.')
 param azureRegion string
 
+@description('The location for all resources.')
+param location string = deployment().location
+
 @description('The base URI for deployment scripts.')
 param scriptsBaseUri string
 
@@ -220,6 +223,7 @@ module jumpBoxModule './azure_virtual_machines_jumpbox.bicep' = {
     jumpboxNICName: jumpboxNICName
     jumpboxOSDiskName: jumpboxOSDiskName
     jumpboxPublicIpAddressName: jumpboxPublicIpAddressName
+    location: location
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
@@ -237,6 +241,7 @@ module proximityPlacementGroupModule 'azure_proximity_placement_groups_adeapp.bi
     proximityPlacementGroupResourceGroup
   ]
   params: {
+    location: location
     proximityPlacementGroupAz1Name: proximityPlacementGroupAz1Name
     proximityPlacementGroupAz2Name: proximityPlacementGroupAz2Name
     proximityPlacementGroupAz3Name: proximityPlacementGroupAz3Name
@@ -256,6 +261,7 @@ module adeAppVmLoadBalancerModule 'azure_load_balancers_adeapp_vm.bicep' = {
     adeAppVmLoadBalancerPrivateIpAddress: adeAppVmLoadBalancerPrivateIpAddress
     adeAppVmSubnetId: virtualNetwork002::adeAppVmSubnet.id
     backendServices: backendServices
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }
@@ -273,6 +279,7 @@ module adeAppVmssLoadBalancerModule 'azure_load_balancers_adeapp_vmss.bicep' = {
     adeAppVmssLoadBalancerPrivateIpAddress: adeAppVmssLoadBalancerPrivateIpAddress
     adeAppVmssSubnetId: virtualNetwork002::adeAppVmssSubnet.id
     backendServices: backendServices
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }
@@ -290,6 +297,7 @@ module adeWebVmModule 'azure_virtual_machines_adeweb_vm.bicep' = {
     adeWebVmSubnetId: virtualNetwork002::adeWebVmSubnet.id
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
+    location: location
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
@@ -310,6 +318,7 @@ module adeAppVmModule 'azure_virtual_machines_adeapp_vm.bicep' = {
     adeAppVmSubnetId: virtualNetwork002::adeAppVmSubnet.id
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
+    location: location
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
@@ -330,6 +339,7 @@ module adeWebVmssModule 'azure_virtual_machines_adeweb_vmss.bicep' = {
     adeWebVmssSubnetId: virtualNetwork002::adeWebVmssSubnet.id
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
+    location: location
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
   }
@@ -350,6 +360,7 @@ module adeAppVmssModule 'azure_virtual_machines_adeapp_vmss.bicep' = {
     adeAppVmssSubnetId: virtualNetwork002::adeAppVmssSubnet.id
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
+    location: location
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
   }
