@@ -52,9 +52,15 @@ param (
     [Parameter(Position = 7, mandatory = $true, ParameterSetName = 'deploy-interactive')]
     [Parameter(Position = 7, mandatory = $true, ParameterSetName = 'deploy-cli')]
     [string]$localNetworkRange,
-    [Parameter(Position = 8, mandatory = $false, ParameterSetName = 'deploy-interactive')]
-    [Parameter(Position = 8, mandatory = $false, ParameterSetName = 'deploy-cli')]
+
+    [Parameter(Position = 3, mandatory = $false, ParameterSetName = 'deploy-interactive')]
+    [Parameter(Position = 3, mandatory = $false, ParameterSetName = 'deploy-cli')]
+    [string]$scriptsBaseUri,
+
+    [Parameter(Position = 9, mandatory = $false, ParameterSetName = 'deploy-interactive')]
+    [Parameter(Position = 9, mandatory = $false, ParameterSetName = 'deploy-cli')]
     [string]$module,
+
     [Parameter(Position = 10, mandatory = $false, ParameterSetName = 'deploy-interactive')]
     [Parameter(Position = 10, mandatory = $false, ParameterSetName = 'deploy-cli')]
     [switch]$overwriteParameterFiles,
@@ -110,18 +116,9 @@ try {
     # Configuring ARM Parameters Parameters
     ###################################################################################################
     Write-Status 'Configuring Parameters'
-    $defaultPrimaryRegion = 'EastUS'
-    $defaultSecondaryRegion = 'WestUS'
-    $armParameters = Set-InitialArmParameters $alias $email $resourceUserName $rootDomainName $localNetworkRange $defaultPrimaryRegion $defaultSecondaryRegion $module $overwriteParameterFiles $skipConfirmation
-
-    ###################################################################################################
-    # Configuring AZ CLI
-    ###################################################################################################
-
-    # Setting the default location for services
-    Write-Status "Setting the Default Resource Location to $defaultPrimaryRegion"
-    az configure --defaults location=$defaultPrimaryRegion group=
-    Confirm-LastExitCode
+    $defaultPrimaryRegion = $(az configure -l --query "[?name == 'location'].value | [0]" --output tsv)
+    $defaultSecondaryRegion = $(az configure -l --query "[?name == 'locationpair'].value | [0]" --output tsv)
+    $armParameters = Set-InitialArmParameters $alias $email $resourceUserName $rootDomainName $localNetworkRange $defaultPrimaryRegion $defaultSecondaryRegion $module $scriptsBaseUri $overwriteParameterFiles $skipConfirmation
 
     ###################################################################################################
     # Start the Requested Action
@@ -139,6 +136,10 @@ try {
             $resourcePassword = $null
         }
 
+        if($scriptsBaseUri -eq $null) {
+            $scriptsBaseUri = "https://raw.githubusercontent.com/azuredemoenvironment/ade/main/scripts"
+        }
+
         Deploy-AzureDemoEnvironment $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
     }
 
@@ -153,23 +154,13 @@ try {
     if ($remove) {
         Remove-AzureDemoEnvironment $armParameters $includeKeyVault
     }
-
-    Write-Status "The following parameters have been set:"
-
-    $armParameters.GetEnumerator() | Sort-Object -Property Name | ForEach-Object {
-        # TODO: skip anything that is a secure value
-        Write-Log "$($_.Key): $($_.Value)"
-    }
 }
 catch {
     $ErrorMessage = $_.Exception.Message
     Write-Log "An error occurred: $ErrorMessage"
+    Write-Debug ($ErrorMessage | Format-Table | Out-String)
 }
 finally {
-    # Clearing the default location
-    Write-Log "Clearing the Default Resource Location"
-    az configure --defaults location=''
-
     # Always set our location back to our script root to make it easier to re-execute
     Set-Location -Path $PSScriptRoot
 

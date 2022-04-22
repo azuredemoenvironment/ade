@@ -6,13 +6,13 @@ function Set-AzureVirtualMachinesToAllocated {
     Write-ScriptSection "Setting Azure Virtual Machines to Allocated"
 
     $virtualMachines = @(
-        @{ Name = $armParameters.developerName; ResourceGroup = $armParameters.developerResourceGroupName },
         @{ Name = $armParameters.jumpboxName; ResourceGroup = $armParameters.jumpboxResourceGroupName },
-        @{ Name = 'vm-ntierdb01'; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = 'vm-ntierdb02'; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = 'vm-ntierweb01'; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = 'vm-ntierweb02'; ResourceGroup = $armParameters.ntierResourceGroupName },
-        @{ Name = $armParameters.w10clientName; ResourceGroup = $armParameters.w10clientResourceGroupName }
+        @{ Name = $armParameters.adeWebVm01Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.adeWebVm02Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.adeWebVm03Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.adeAppVm01Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.adeAppVm02Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName },
+        @{ Name = $armParameters.adeAppVm03Name; ResourceGroup = $armParameters.adeAppVmResourceGroupName }
     )
     
     $virtualMachines | ForEach-Object {
@@ -21,7 +21,7 @@ function Set-AzureVirtualMachinesToAllocated {
 
         Write-Log "Allocating $name in resource group $rg"
 
-        az vm start --resource-group $rg --name $name
+        az vm start --resource-group $rg --name $name --no-wait
         Confirm-LastExitCode
     }
 

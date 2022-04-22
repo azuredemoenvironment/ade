@@ -5,195 +5,118 @@ function Set-InitialArmParameters {
         [string] $resourceUserName,
         [string] $rootDomainName,
         [string] $localNetworkRange,
-        [string] $defaultPrimaryRegion,
-        [string] $defaultSecondaryRegion,
+        [string] $azureRegion,
+        [string] $azurePairedRegion,
         [string] $module,
+        [string] $scriptsBaseUri,
         [bool] $overwriteParameterFiles,
         [bool] $skipConfirmation
     )
     
     # Initial Parameter Setup
-    $defaultPrimaryRegionShortName = Get-RegionShortName $defaultPrimaryRegion
-    $defaultSecondaryRegionShortName = Get-RegionShortName $defaultSecondaryRegion
-    $aliasRegion = "$alias-$defaultPrimaryRegionShortName".ToLowerInvariant()
-    $aliasSecondaryRegion = "$alias-$defaultSecondaryRegionShortName".ToLowerInvariant()
+    $azureRegionShortName = Get-RegionShortName $azureRegion
+    $azurePairedRegionShortName = Get-RegionShortName $azurePairedRegion
+    $aliasRegion = "$alias-$azureRegionShortName".ToLowerInvariant()
+    $aliasPairedRegion = "$alias-$azurePairedRegionShortName".ToLowerInvariant()
 
-    $primaryRegionResourceGroupNamePrefix = "rg-$aliasRegion"
-    $secondaryRegionResourceGroupNamePrefix = "rg-$aliasSecondaryRegion"
+    $azureRegionResourceGroupNamePrefix = "rg-ade-$aliasRegion"
+    $PairedRegionResourceGroupNamePrefix = "rg-ade-$aliasPairedRegion"
     $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
-    $acrName = "acr-$aliasRegion-01".replace('-', '')
+    $acrName = "acr-ade-$aliasRegion-001".replace('-', '')
 
     Write-Log 'Gathering User Information from az'
-    $currentAccount = az account show | ConvertFrom-Json
     $adSignedInUser = az ad signed-in-user show | ConvertFrom-Json
 
     Write-Log 'Generating ARM Parameters'
 
     $armParameters = @{
         # Standard Parameters
-        'aliasRegion'                                       = $aliasRegion
-        'aliasSecondaryRegion'                              = $aliasSecondaryRegion
-        'contactEmailAddress'                               = $email
-        'defaultPrimaryRegion'                              = $defaultPrimaryRegion
-        'defaultSecondaryRegion'                            = $defaultSecondaryRegion
-        'module'                                            = $module
-        'overwriteParameterFiles'                           = $overwriteParameterFiles
-        'rootDomainName'                                    = $rootDomainName
-        'skipConfirmation'                                  = $skipConfirmation
+        'aliasRegion'                              = $aliasRegion
+        'aliasPairedRegion'                        = $aliasPairedRegion
+        'contactEmailAddress'                      = $email
+        'scriptsBaseUri'                 = $scriptsBaseUri
+        'azureRegion'                              = $azureRegion
+        'azurePairedRegion'                        = $azurePairedRegion
+        'deployAzureFirewall'                      = 'false'
+        'deployVpnGateway'                         = 'false'
+        'module'                                   = $module
+        'overwriteParameterFiles'                  = $overwriteParameterFiles
+        'rootDomainName'                           = $rootDomainName
+        'skipConfirmation'                         = $skipConfirmation
 
-        # Generated Parameters
-        'aciStorageAccountName'                             = "sa-$aliasRegion-aciwp".replace('-', '')
-        'acrName'                                           = $acrName
-        'activityLogDiagnosticsName'                        = 'GlobalActivityLog'
-        'adminUsername'                                     = $resourceUserName
-        'aksClusterDNSName'                                 = "aks-$aliasRegion-01-dns"
-        'aksClusterName'                                    = "aks-$aliasRegion-01"
-        'appGWManagedIdentityName'                          = "uami-$aliasRegion-appgw"
-        'applicationGatewayName'                            = "appgw-$aliasRegion-01"
-        'applicationGatewayPublicIPAddressName'             = "pip-$aliasRegion-appgw01"
-        'automationAccountName'                             = "aa-$aliasRegion-01"
-        'azureActiveDirectoryTenantID'                      = $currentAccount.tenantId
-        'azureActiveDirectoryUserID'                        = $adSignedInUser.objectId
-        'azureBastionName'                                  = "bastion-$aliasRegion-01"
-        'azureBastionPublicIPAddressName'                   = "pip-$aliasRegion-bastion01"
-        'azureBastionSubnetNetworkSecurityGroupName'        = "nsg-$aliasRegion-azurebastion"
-        'clientServicesSubnetNetworkSecurityGroupName'      = "nsg-$aliasRegion-clientservices"
-        'computerVisionAccountName'                         = "computervision"
-        'connectionName'                                    = "cn-$aliasRegion-01"
-        'containerGroupMySQLImage'                          = "$acrName.azurecr.io/mysql:latest"
-        'containerGroupShareImage'                          = "$acrName.azurecr.io/azure-cli:latest"
-        'containerGroupWordPressImage'                      = "$acrName.azurecr.io/wordpress:latest"
-        'containerRegistryLoginServer'                      = "$acrName.azurecr.io"
-        'crManagedIdentityName'                             = "uami-$aliasRegion-cr"
-        'crSPNName'                                         = "spn-$aliasRegion-cr"
-        'developerName'                                     = "vm-developer01"
-        'developerNICName'                                  = "nic-$aliasRegion-developer01"
-        'developerOSDiskName'                               = "disk-$aliasRegion-developer01-os"
-        'developerPublicIPAddressName'                      = "pip-$aliasRegion-developer01"
-        'developerSubnetNetworkSecurityGroupName'           = "nsg-$aliasRegion-developer"
-        'directoryServicesSubnetNetworkSecurityGroupName'   = "nsg-$aliasRegion-directoryservices"
-        'firewallName'                                      = "fw-$aliasRegion-01"
-        'firewallPublicIPAddressName'                       = "pip-$aliasRegion-fw01"
-        'ghaSPNName'                                        = "spn-$aliasRegion-gha"
-        'imageResizerAppInsightsName'                       = "appin-$aliasRegion-imageresizer"
-        'imageResizerFQDN'                                  = "as-$aliasRegion-imgreszr.azurewebsites.net".Replace('-', '')
-        'imageResizerFunctionAppName'                       = "fa-$aliasRegion-imgreszr".replace('-', '')
-        'imageResizerFunctionAppStorageAccountName'         = "sa-$aliasRegion-faimgreszr".Replace('-', '')
-        'imageResizerHostName'                              = "imageresizer.$rootDomainName".replace('-', '')
-        'imageResizerpBackupStorageAccountName'             = "sa-$aliasRegion-bkpimgreszr".Replace('-', '')
-        'imageResizerWebAppName'                            = "as-$aliasRegion-imgreszr".Replace('-', '')
-        'imageResizerWebAppStorageAccountName'              = "sa-$aliasRegion-asimgreszr".Replace('-', '')
-        "inspectorGadgetAppInsightsName"                    = "appin-$aliasRegion-inspectorgadget"
-        "inspectorGadgetAppServicePrivateEndpointName"      = "pe-$aliasRegion-inspectorgadgetappservice"
-        "inspectorGadgetAzureSQLPrivateEndpointName"        = "pe-$aliasRegion-inspectorgadgetazuresql"
-        'inspectorGadgetFQDN'                               = "as-$aliasRegion-inspectorgadget.azurewebsites.net".Replace('-', '')
-        'inspectorGadgetHostName'                           = "inspectorgadget.$rootDomainName".replace('-', '')
-        "inspectorGadgetSqlAdminUserName"                   = $resourceUserName
-        "inspectorGadgetSqlDatabaseName"                    = "sqldb-$aliasRegion-inspectorgadget".replace('-', '')
-        "inspectorGadgetSqlServerName"                      = "sql-$aliasRegion-inspectorgadget".replace('-', '')
-        "inspectorGadgetWafPolicyName"                      = "wafp-$aliasRegion-inspectorgadget"
-        "inspectorGadgetWebAppName"                         = "as-$aliasRegion-inspectorgadget".replace('-', '')
-        'internetRouteTableName'                            = "rt-$aliasRegion-internet"
-        'jumpboxName'                                       = "vm-jumpbox01"
-        'jumpboxNICName'                                    = "nic-$aliasRegion-jumpbox01"
-        'jumpboxOSDiskName'                                 = "disk-$aliasRegion-jumpbox01-os"
-        'jumpboxPublicIPAddressName'                        = "pip-$aliasRegion-jumpbox01"
-        'keyVaultName'                                      = "kv-$aliasRegion-01"
-        'localNetworkGatewayAddressPrefix'                  = $localNetworkRange
-        'localNetworkGatewayName'                           = "lng-$aliasRegion-01"
-        'logAnalyticsWorkspaceName'                         = "la-$aliasRegion-01"
-        'managementSubnetNetworkSecurityGroupName'          = "nsg-$aliasRegion-management"
-        'natGatewayName'                                    = "natgw-$aliasRegion-01"
-        'natGatewayPublicIPAddressName'                     = "pip-$aliasRegion-natgw01"
-        'natGatewayPublicIPPrefixName'                      = "pipp-$aliasRegion-natgw01"
-        'nsgFlowLogsStorageAccountName'                     = "sa-$aliasRegion-nsgflow".replace('-', '')
-        'nTierDB01NICName'                                  = "nic-$aliasRegion-ntierdb01"
-        'nTierDB01OSDiskName'                               = "disk-$aliasRegion-ntierdb01-os"
-        'nTierDB02NICName'                                  = "nic-$aliasRegion-ntierdb02"
-        'nTierDB02OSDiskName'                               = "disk-$aliasRegion-ntierdb02-os"
-        'nTierDBAvailabilitySetName'                        = "avset-$aliasRegion-ntierdb"
-        'nTierDBLoadBalancerName'                           = "lb-$aliasRegion-ntierdb"
-        'nTierDBSubnetNetworkSecurityGroupName'             = "nsg-$aliasRegion-ntierdb"
-        'nTierHostName'                                     = "ntier.$rootDomainName"
-        'nTierWeb01NICName'                                 = "nic-$aliasRegion-ntierweb01"
-        'nTierWeb01OSDiskName'                              = "disk-$aliasRegion-ntierweb01-os"
-        'nTierWeb02NICName'                                 = "nic-$aliasRegion-ntierweb02"
-        'nTierWeb02OSDiskName'                              = "disk-$aliasRegion-ntierweb02-os"
-        'nTierWebAvailabilitySetName'                       = "avset-$aliasRegion-ntierweb"
-        'nTierWebSubnetNetworkSecurityGroupName'            = "nsg-$aliasRegion-ntierweb"
-        'peering01'                                         = "vnet-$aliasRegion-01-to-vnet-$aliasRegion-02"
-        'peering02'                                         = "vnet-$aliasRegion-02-to-vnet-$aliasRegion-01"
-        'peering03'                                         = "vnet-$aliasRegion-01-to-vnet-$aliasRegion-03"
-        'peering04'                                         = "vnet-$aliasRegion-03-to-vnet-$aliasRegion-01"
-        'primaryRegionAppServicePlanName'                   = "asp-$aliasRegion-01"
-        'primaryRegionHelloWorldAppInsightsName'            = "appin-$aliasRegion-helloworld"
-        'primaryRegionHelloWorldEndpointName'               = "helloworld-$defaultPrimaryRegionShortName".replace('-', '')
-        'primaryRegionHelloWorldWebAppName'                 = "as-$aliasRegion-helloworld".replace('-', '')
-        'primaryRegionHelloWorldWebAppStorageAccountName'   = "sa-$aliasRegion-bkphello".replace('-', '')
-        'restAPISPNName'                                    = "spn-$aliasRegion-restapi"
-        'secondaryRegionAppServicePlanName'                 = "asp-$aliasSecondaryRegion-01"
-        'secondaryRegionHelloWorldAppInsightsName'          = "appin-$aliasSecondaryRegion-helloworld"
-        'secondaryRegionHelloWorldEndpointName'             = "helloworld-$defaultSecondaryRegionShortName".replace('-', '')
-        'secondaryRegionHelloWorldWebAppName'               = "as-$aliasSecondaryRegion-helloworld".replace('-', '')
-        'secondaryRegionHelloWorldWebAppStorageAccountName' = "sa-$aliasSecondaryRegion-bkphello".replace('-', '')
-        'sourceAddressPrefix'                               = $sourceAddressPrefix
-        'sqlToDoAppInsightsName'                            = "appin-$aliasRegion-sqltodo"
-        'sqlToDoFQDN'                                       = "as-$aliasRegion-sqltodo.azurewebsites.net".replace('-', '')
-        'sqlToDoHostName'                                   = "sqltodo.$rootDomainName"
-        'sqlToDoSqlAdminUserName'                           = $resourceUserName
-        'sqlToDoSqlDatabaseName'                            = "sqldb-$aliasRegion-todo".replace('-', '')
-        'sqlToDoSqlServerName'                              = "sql-$aliasRegion-todo".replace('-', '')
-        'sqlToDoWebAppBackupStorageAccountName'             = "sa-$aliasRegion-bkpsqltodo".replace('-', '')
-        'sqlToDoWebAppName'                                 = "as-$aliasRegion-sqltodo".replace('-', '')
-        'sslCertificateName'                                = $rootDomainName
-        'texAnalyticsAccountName'                           = "textanalytics"
-        'trafficManagerProfileDNSName'                      = "tmp-$aliasRegion-helloworld".replace('-', '')
-        'trafficManagerProfileName'                         = "tmp-$aliasRegion-helloworld"
-        'virtualNetwork01Name'                              = "vnet-$aliasRegion-01"
-        'virtualNetwork02Name'                              = "vnet-$aliasRegion-02"
-        'virtualNetwork03Name'                              = "vnet-$aliasRegion-03"
-        'virtualNetworkGatewayName'                         = "vng-$aliasRegion-01"
-        'virtualNetworkGatewayPublicIPAddressName'          = "pip-$aliasRegion-vng01"
-        'vmDiagnosticsStorageAccountName'                   = "sa-$aliasRegion-vmdiags".replace('-', '')
-        'vmssLoadBalancerName'                              = "lb-$aliasRegion-vmss01"
-        'vmssLoadBalancerPublicIPAddressName'               = "pip-$aliasRegion-lb-vmss01"
-        'vmssName'                                          = "vmss01"
-        'vmssNICName'                                       = "nic-$aliasRegion-vmss01"
-        'vmssSubnetNetworkSecurityGroupName'                = "nsg-$aliasRegion-vmss"
-        'w10clientName'                                     = "vm-w10client01"
-        'w10clientNICName'                                  = "nic-$aliasRegion-w10client01"
-        'w10clientOSDiskName'                               = "disk-$aliasRegion-w10client01-os"
-        'wordPressHostName'                                 = "wordpress.$rootDomainName"
+        # Generated Parameters        
+        'adminUserName'                            = $resourceUserName
+        'azureActiveDirectoryUserID'               = $adSignedInUser.objectId              
+        'localNetworkGatewayAddressPrefix'         = $localNetworkRange
+        'logAnalyticsWorkspaceName'                = "log-ade-$aliasRegion-001"                  
+        'sourceAddressPrefix'                      = $sourceAddressPrefix        
+        'sslCertificateName'                       = $rootDomainName
 
+        # Required for Deploy-AzureAppServicePlanScaleDown.ps1
+        'appServicePlanName'                       = "plan-ade-$aliasRegion-001"
+
+        # Required for Deploy-AzureContainerRegistry.ps1
+        'acrName'                                  = $acrName
+        'containerRegistryLoginServer'             = "$acrName.azurecr.io"
+
+        # Required for Deploy-AzureGovernance.ps1               
+        'keyVaultKeyName'                          = "containerRegistry"
+        'keyVaultName'                             = "kv-ade-$aliasRegion-001"
+
+        # Required for Remove-AzureActivityLogDiagnostics.ps1
+        'activityLogDiagnosticsName'               = "subscriptionActivityLog"
+
+        # Required for Remove-AzureCostManagementBudget.ps1
+        'adeBudgetName'                            = "budget-ade-$aliasRegion-monthly"
+
+        # Required for Remove-AzurePolicyAssignmentsAndDefinitions.ps1
+        'adeInitiativeDefinition'                  = "policy-ade-$aliasRegion-adeinitiative"
+
+        # Required for Set-AzureContainerInstancesToStarted.ps1 and Set-AzureContainerInstancesToStopped.ps1
+        'adeLoadTestingGatlingContainerGroupName'  = "ci-ade-$aliasRegion-adeloadtesting-gatling"
+        'adeLoadTestingGrafanaContainerGroupName'  = "ci-ade-$aliasRegion-adeloadtesting-grafana"
+        'adeLoadTestingInfluxDbContainerGroupName' = "ci-ade-$aliasRegion-adeloadtesting-influxdb"
+        'adeLoadTestingRedisContainerGroupName'    = "ci-ade-$aliasRegion-adeloadtesting-redis"
+        
+        # Required for Set-AzureFirewallToAllocated.ps1 and Set-AzureFirewallToDeallocated.ps1
+        'azureFirewallPublicIpAddressName'         = "pip-ade-$aliasRegion-fw001"
+        'azureFirewallName'                        = "fw-ade-$aliasRegion-001"        
+        'virtualNetwork001Name'                    = "vnet-ade-$aliasRegion-001"
+
+        # Required for Set-AzureVmssToAllocated.ps1 and Set-AzureVmssToAllocated.ps1
+        'adeAppVmssName'                           = "vmss-ade-$aliasRegion-adeapp-vmss"
+        'adeWebVmssName'                           = "vmss-ade-$aliasRegion-adeweb-vmss"
+
+        # Required for Set-AzureVirtualMachinesToAllocated.ps1 and Set-AzureVirtualMachinesToDellocated.ps1
+        'jumpboxName'                              = "vm-jumpbox01"
+        'adeWebVm01Name'                           = "vm-ade-$aliasRegion-adeweb01"
+        'adeWebVm02Name'                           = "vm-ade-$aliasRegion-adeweb02"
+        'adeWebVm03Name'                           = "vm-ade-$aliasRegion-adeweb03"
+        'adeAppVm01Name'                           = "vm-ade-$aliasRegion-adeapp01"
+        'adeAppVm02Name'                           = "vm-ade-$aliasRegion-adeapp02"
+        'adeAppVm03Name'                           = "vm-ade-$aliasRegion-adeapp03"
+  
         # Resource Group Names
-        'aksNodeResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-aks-node"
-        'aksResourceGroupName'                              = "$primaryRegionResourceGroupNamePrefix-aks"
-        'alertsResourceGroupName'                           = "$primaryRegionResourceGroupNamePrefix-alerts"
-        'applicationGatewayResourceGroupName'               = "$primaryRegionResourceGroupNamePrefix-applicationgateway"
-        'bastionResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-bastion"
-        'cognitiveServicesResourceGroupName'                = "$primaryRegionResourceGroupNamePrefix-cognitiveservices"
-        'containerRegistryResourceGroupName'                = "$primaryRegionResourceGroupNamePrefix-containerregistry"
-        'developerResourceGroupName'                        = "$primaryRegionResourceGroupNamePrefix-developer"
-        'dnsResourceGroupName'                              = "$primaryRegionResourceGroupNamePrefix-dns"
-        'imageResizerResourceGroupName'                     = "$primaryRegionResourceGroupNamePrefix-imageresizer"
-        'inspectorGadgetResourceGroupName'                  = "$primaryRegionResourceGroupNamePrefix-inspectorgadget"
-        'jumpboxResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-jumpbox"
-        'keyVaultResourceGroupName'                         = "$primaryRegionResourceGroupNamePrefix-keyvault"
-        'logAnalyticsWorkspaceResourceGroupName'            = "$primaryRegionResourceGroupNamePrefix-loganalytics"
-        'managedIdentityResourceGroupName'                  = "$primaryRegionResourceGroupNamePrefix-managedidentity"
-        'networkingResourceGroupName'                       = "$primaryRegionResourceGroupNamePrefix-networking"
-        'ntierResourceGroupName'                            = "$primaryRegionResourceGroupNamePrefix-ntier"
-        'primaryRegionAppServicePlanResourceGroupName'      = "$primaryRegionResourceGroupNamePrefix-asp"
-        'primaryRegionHelloWorldWebAppResourceGroupName'    = "$primaryRegionResourceGroupNamePrefix-helloworld"
-        'privateDnsZoneResourceGroupName'                   = "$primaryRegionResourceGroupNamePrefix-privatedns"
-        'secondaryRegionAppServicePlanResourceGroupName'    = "$secondaryRegionResourceGroupNamePrefix-asp"
-        'secondaryRegionHelloWorldWebAppResourceGroupName'  = "$secondaryRegionResourceGroupNamePrefix-helloworld"
-        'sqlTodoResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-sqltodo"
-        'storageResourceGroupName'                          = "$primaryRegionResourceGroupNamePrefix-diagnostics"
-        'trafficManagerResourceGroupName'                   = "$primaryRegionResourceGroupNamePrefix-trafficmanager"
-        'vmssResourceGroupName'                             = "$primaryRegionResourceGroupNamePrefix-vmss"
-        'w10clientResourceGroupName'                        = "$primaryRegionResourceGroupNamePrefix-w10client"
-        'wordpressResourceGroupName'                        = "$primaryRegionResourceGroupNamePrefix-wordpress"
+        'adeAppAksNodeResourceGroupName'           = "$azureRegionResourceGroupNamePrefix-adeappaks-node"
+        'adeAppAksResourceGroupName'               = "$azureRegionResourceGroupNamePrefix-adeappaks"
+        'adeAppAppServicesResourceGroupName'       = "$azureRegionResourceGroupNamePrefix-adeappweb"
+        'adeAppLoadTestingResourceGroupName'       = "$azureRegionResourceGroupNamePrefix-adeapploadtesting"
+        'adeAppSqlResourceGroupName'               = "$azureRegionResourceGroupNamePrefix-adeappdb"
+        'adeAppVmResourceGroupName'                = "$azureRegionResourceGroupNamePrefix-adeappvm"
+        'adeAppVmssResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-adeappvmss"    
+        'appConfigResourceGroupName'               = "$azureRegionResourceGroupNamePrefix-appconfig"
+        'applicationGatewayResourceGroupName'      = "$azureRegionResourceGroupNamePrefix-applicationgateway"
+        'appServicePlanResourceGroupName'          = "$azureRegionResourceGroupNamePrefix-appserviceplan"     
+        'containerRegistryResourceGroupName'       = "$azureRegionResourceGroupNamePrefix-containerregistry"
+        'dnsResourceGroupName'                     = "$azureRegionResourceGroupNamePrefix-dns"
+        'identityResourceGroupName'                = "$azureRegionResourceGroupNamePrefix-identity"     
+        'inspectorGadgetResourceGroupName'         = "$azureRegionResourceGroupNamePrefix-inspectorgadget"
+        'jumpboxResourceGroupName'                 = "$azureRegionResourceGroupNamePrefix-jumpbox"   
+        'keyVaultResourceGroupName'                = "$azureRegionResourceGroupNamePrefix-keyvault"
+        'monitorResourceGroupName'                 = "$azureRegionResourceGroupNamePrefix-monitor"
+        'networkingResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-networking"
+        'networkWatcherResourceGroupName'          = "NetworkWatcherRG"
+        'proximityPlacementGroupResourceGroupName' = "$azureRegionResourceGroupNamePrefix-ppg"
     }
 
     if (Confirm-AzureResourceExists 'keyvault' $armParameters.keyVaultResourceGroupName $armParameters.keyVaultName) {

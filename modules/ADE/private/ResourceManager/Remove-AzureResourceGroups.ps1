@@ -7,30 +7,22 @@ function Remove-AzureResourceGroups {
 
     # ORDER MATTERS!!!
     $resourceGroupsToRemove = @(
-        $armParameters.cognitiveServicesResourceGroupName
-        $armParameters.applicationGatewayResourceGroupName
-        $armParameters.trafficManagerResourceGroupName
-        $armParameters.sqlTodoResourceGroupName
-        $armParameters.secondaryRegionHelloWorldWebAppResourceGroupName
-        $armParameters.primaryRegionHelloWorldWebAppResourceGroupName
+        $armParameters.dnsResourceGroupName
         $armParameters.inspectorGadgetResourceGroupName
-        $armParameters.imageResizerResourceGroupName
-        $armParameters.secondaryRegionAppServicePlanResourceGroupName
-        $armParameters.primaryRegionAppServicePlanResourceGroupName
-        $armParameters.aksResourceGroupName
-        $armParameters.wordpressResourceGroupName
-        $armParameters.containerRegistryResourceGroupName
-        $armParameters.alertsResourceGroupName
-        $armParameters.vmssResourceGroupName
-        $armParameters.ntierResourceGroupName
-        $armParameters.w10clientResourceGroupName
-        $armParameters.developerResourceGroupName
+        $armParameters.adeAppAppServicesResourceGroupName
+        $armParameters.appServicePlanResourceGroupName         
+        $armParameters.adeAppLoadTestingResourceGroupName
+        $armParameters.adeAppVmssResourceGroupName
+        $armParameters.adeAppVmResourceGroupName
         $armParameters.jumpboxResourceGroupName
-        $armParameters.bastionResourceGroupName
-        $armParameters.storageResourceGroupName
-        $armParameters.privateDnsZoneResourceGroupName
+        $armParameters.proximityPlacementGroupResourceGroupName
+        $armParameters.adeAppSqlResourceGroupName
+        $armParameters.containerRegistryResourceGroupName
         $armParameters.networkingResourceGroupName
-        $armParameters.managedIdentityResourceGroupName
+        $armParameters.keyVaultResourceGroupName
+        $armParameters.appConfigResourceGroupName
+        $armParameters.identityResourceGroupName
+        $armParameters.monitorResourceGroupName
     )
 
     $resourceGroupsToRemove | ForEach-Object {

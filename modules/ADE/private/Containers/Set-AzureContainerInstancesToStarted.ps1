@@ -5,18 +5,20 @@ function Set-AzureContainerInstancesToStarted {
 
     Write-ScriptSection "Setting Azure Container Instances to Started"
 
-    $containerGroupResourceGroup = $armParameters.wordpressResourceGroupName
-
     $containerGroups = @(
-        'containerGroup-mysql',
-        'containerGroup-share',
-        'containerGroup-wordpress'
+        @{ Name = $armParameters.adeLoadTestingGatlingContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName },
+        @{ Name = $armParameters.adeLoadTestingGrafanaContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName },
+        @{ Name = $armParameters.adeLoadTestingInfluxDbContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName },
+        @{ Name = $armParameters.adeLoadTestingRedisContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName }
     )
     
     $containerGroups | ForEach-Object {
-        Write-Log "Starting $_"
+        $name = $_.Name
+        $rg = $_.ResourceGroup
 
-        az container start --resource-group $containerGroupResourceGroup --name $_
+        Write-Log "Starting $name in resource group $rg"
+
+        az container start --resource-group $rg --name $name
         Confirm-LastExitCode
     }
 

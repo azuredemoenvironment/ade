@@ -1,28 +1,30 @@
 # Azure Demo Environment
 
 The Azure Demo Environment, aka ADE, is a series of PowerShell Scripts, CLI
-Script, and ARM Templates that automatically generates an environment of Azure
-Resources and Services to an Azure Subscription. While not every Azure Service
-is deployed as a part of ADE, it does showcase many of the common, and more
-often complex, scenarios withing Azure, and it can be used as an example when
-designing a solution. The Azure Demo Environment is built to be deployed,
-deallocated, allocated, removed and re-deployed. The deployment and removal
-processes take approximate two hours. Instructions are provided below. The Azure
-Demo Environment is an Open Source Project. Contributions are welcome and
-encouraged!
+Script, and Bicep ARM Templates that automatically generates an environment of
+Azure Resources and Services to an Azure Subscription. While not every Azure
+Service is deployed as a part of ADE, it does showcase many of the common, and
+more often complex, scenarios withing Azure, and it can be used as an example
+when designing a solution. The Azure Demo Environment is built to be deployed,
+deallocated, allocated, removed, and re-deployed. The deployment and removal
+processes take approximate two hours. The Azure Demo Environment is an Open
+Source Project. Contributions are welcome and encouraged – please visit our
+[GitHub Issues](https://github.com/joshuawaddell/azure-demo-environment/issues)
+or
+[Product Backlog](https://github.com/joshuawaddell/azure-demo-environment/projects/1)
+to learn more!
 
 ## Prerequisites
 
-To deploy, manage, and remove the Azure Demo Environment, the following
-prerequisites are required. The prerequisites include and Azure Subscription,
-software installations as well as additional service setups such as DNS and
-Certificate Services.
+To deploy and manage the Azure Demo Environment, the following services and
+software must be setup and configured.
 
 ### Azure Subscription
 
 - An Azure Subscription is required to deploy the Azure Demo Environment. ADE
-  supports Pay As You Go, Enterprise, and MSDN Subscriptions. The resources in
-  ADE do incur charges, but many resources can be deallocated to save on cost.
+  supports Pay-As-You-Go, Enterprise, and MSDN/Visual Studio Subscriptions. The
+  resources in ADE do incur charges, but many resources can be deallocated to
+  save on costs.
 
   - For MSDN Subscriptions or other Subscriptions that have more restrictive
     resource quotas, open a support ticket and request a quota increase for the
@@ -36,142 +38,24 @@ Certificate Services.
 
 ### Software Installations
 
-- [PowerShell Core](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7)
-- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
-
-  The Azure CLI is available to install in Windows, macOS and Linux
-  environments.
-
-  - [AZ AKS Preview Extension](https://docs.microsoft.com/en-us/azure/aks/start-stop-cluster)
-
-    To install the AZ AKS Preview Extension, run the following command from a
-    terminal:
-
-    ```sh
-    az extension add --name aks-preview
-    ```
-
-    To update to the latest version of the AZ AKS Preview Extension, run the
-    following command from a terminal:
-
-    ```sh
-    az extension update --name aks-preview
-    ```
-
-  - [AZ AKS StartStopPreview feature](https://docs.microsoft.com/en-us/azure/aks/start-stop-cluster#register-the-startstoppreview-preview-feature)
-
-    To install the AZ AKS "StartStopPreview" Feature, run the following command
-    from a terminal:
-
-    ```sh
-    az feature register --namespace "Microsoft.ContainerService" --name "StartStopPreview"
-    ```
-
-    After registration has finished, enable the "StartStopPreview" feature
-    functionality by running the following command from a terminal:
-
-    ```sh
-    az provider register --namespace Microsoft.ContainerService
-    ```
-
-  - [az aks kubectl](https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az_aks_install_cli)
-
-    To install the AZ AKS Kubectl CLI, run the following command from a
-    terminal:
-
-    ```sh
-    az aks install-cli
-    ```
-
-- [Azure PowerShell Cmdlets](https://docs.microsoft.com/en-us/powershell/azure/install-az-ps)
-
-  Azure PowerShell works with PowerShell 6.2.4 and later on all platforms. It is
-  also supported with PowerShell 5.1 on Windows
-
-  To install the Azure PowerShell Cmdlets, run the following from an elevated
-  PowerShell terminal:
-
-  ```ps
-  Install-Module -Name Az -AllowClobber -Scope CurrentUser
-  ```
-
-  If the following error occurs, "execution of scripts is disabled on this
-  system", it is necessary to change the execution policy to allow the running
-  of scripts. To modify the PowerShell execution policy, run the following from
-  an elevated PowerShell terminal:
-
-  ```ps
-  Set-ExecutionPolicy -executionpolicy unrestricted
-  ```
-
-- [Docker](https://docs.docker.com/get-docker/)
-
-  A system restart is required after the Docker installation. Prior to the
-  deployment of ADE, ensure that Docker is **running**.
+The only software prerequisite is a local installation of
+[Docker](https://docs.docker.com/get-docker/). Prior to the deployment of ADE,
+ensure that Docker is **running**.
 
 ### DNS
 
-- The Azure Demo Environment utilizes Azure DNS for publicly accessible A and
-  CNAME records for access to Azure Resources including Virtual Machines,
-  Virtual Machine Scale Sets, App Services. ADE requires that an Azure DNS Zone
-  is created prior to deployment of the demo environment. **Note: Prior to
-  configuration of an Azure DNS Zone, it is necessary to have ownership and
-  access to a custom domain.**
-
-- To create and configure an Azure DNS Zone for use with ADE, complete the
-  following steps.
-
-  - Create the Azure DNS Zone Resource Group
-
-    - When creating the Azure DNS Zone Resource Group, it is necessary to follow
-      the naming convention for ADE:
-
-      `rg-ALIAS-REGION_SHORTCODE-dns`
-
-    - In this example `ALIAS` represents an unique name associated with
-      resources used globally within the Azure Demo Environment and
-      `REGION_SHORTCODE` is the shortened form of the primary region (e.g. `eus`
-      for the _East US_ region). For example:
-
-      `rg-dvader-eus-dns`
-
-      **Note: At this time, it is necessary to utilize `eus` as the
-      `REGION_SHORTCODE`, due to the current configuration of ADE. In a future
-      update, other regions will be supported.**
-
-    - To create the Azure DNS Zone Resource Group using `az`, run the following
-      command:
-
-      ```sh
-      az group create -n RESOURCE_GROUP_NAME -l REGION SHORTCODE
-      ```
-
-      For example:
-
-      ```sh
-      az group create -n rg-dvader-eus-dns -l eus
-      ```
-
-  - Create the Azure DNS Zone
-
-    - To create the Azure DNS Zone using `az`, run the following command:
-
-      ```sh
-      az network dns zone create -g RESOURCE_GROUP_NAME -n DOMAIN_NAME
-      ```
-
-      For example:
-
-      ```sh
-      az network dns zone create -g rg-dvader-eus-dns -n darthvader.com
-      ```
+- The Azure Demo Environment utilizes Azure DNS for publicly accessible A
+  records for access to Azure App Services. ADE creates an Azure Public DNS Zone
+  based on the domain name entered at the time of deployment. It is assumed that
+  the user has ownership and access to this custom domain. After the creation of
+  the Azure Public DNS Zone, it is necessary to update the DNS Name Servers with
+  the Domain Registrar as documented here:
 
   - Update Domain Registrar with Azure
     [Name Servers](https://docs.microsoft.com/en-us/azure/dns/dns-delegate-domain-azure-dns#retrieve-name-servers).
 
-    - After the creation of the Azure DNS Zone, it is necessary to update the
-      DNS Name Servers with the Domain Registrar. To retrieve the Azure DNS Zone
-      Name Servers using `az`, run the following command:
+    - To retrieve the Azure DNS Zone Name Servers using `az`, run the following
+      command:
 
       ```sh
       az network dns zone show -g RESOURCE_GROUP_NAME -n DOMAIN_NAME --query nameServers
@@ -180,207 +64,121 @@ Certificate Services.
 ### Certificate Services
 
 - The Azure Demo Environment utilizes a Wildcard SSL Certificate to secure
-  multiple services including App Services and Application Gateway. There are
-  multiple online services, such as
+  multiple services including App Services and Application Gateway. The Wildcard
+  PFX must have a password set. There are multiple online services, such as
   [Let's Encrypt](https://letsencrypt.org/getting-started/), that provide free
-  to low cost SSL Certificates.
+  and low-cost SSL Certificates.
 
 - **Prior to deploying ADE, it is necessary to store the PFX Wildcard
-  Certificate in the `data` folder in the repository, with the name
-  `wildcard.pfx`.**
+  Certificate in a dedicated folder locally with the name `wildcard.pfx`.**
 
 ## Using the Azure Demo Environment
 
-### Deploying the Azure Demo Environment
+The Azure Demo Environment is designed to run within a Docker container. To
+start ADE, open a terminal and run the following command:
 
-The Azure Demo Environment is deployed via a PowerShell Script and a series of
-ARM Templates and Azure CLI commands. There are two methods of utilizing the
-script, a pipeline friendly CLI Script, and a CLI Script Wizard. To deploy the
-Azure Demo Environment, execute the following steps:
+```sh
+docker run \
+  -it --rm --name ade \
+  -v /var/run/docker.sock:/var/run/docker.sock:rw \
+  -v /path/to/certificate/data/folder/yourcert.pfx:/opt/ade/data/wildcard.pfx \
+  azuredemoenvironment/ade
+```
 
-- Login to Azure
+_Note: replace `/path/to/certificate/data/folder/yourcert.pfx` with an absolute
+path to your wildcard certificate. E.g., in Windows, it would be like
+`C:/Users/username/documents/certificates/yourcert.pfx`, or on macOS it would be
+`/users/username/Documents/certificates/yourcert.pfx`._
 
-  - Open a Terminal, Command Prompt, or PowerShell session, and navigate to the
-    root of the cloned repository.
-  - To login to Azure using `az`, run the following command:
+You now have the ADE Shell Environment! The Azure Demo Environment is deployed
+via PowerShell, ARM Templates, and Azure CLI commands, all conveniently wrapped
+up in a few ADE Shell commands for your use. All of the commands can be run
+interactively, where you are prompted for values, or you can specify them as
+parameters to the command.
 
-    ```sh
-    az login
-    ```
+You are automatically prompted to login to both Azure and Docker Hub once first
+entering the container. If you need to login anytime after being in the `ADE`
+shell, you can use the `login` command to run the process again.
 
-    The CLI will open a default browser and redirect to the Azure login page.
-    Enter the appropriate credentials and return to the Terminal, Command
-    Prompt, or PowerShell session.
+### `deploy` Command
 
-  - To retrieve a list of available subscriptions associated with the
-    credentials used in the previous step using `az`, run the following command:
+To deploy ADE, simply run the `deploy` command from the ADE shell. You will then
+be prompted for various parameters that will be used to customize the demo
+environment that is deployed into your subscription.
 
-    ```sh
-    az account list --output table
-    ```
+You can also pass the parameters through the command, for example:
 
-  - To select the subscription to use with ADE using `az`, run the following
-    command:
+```ps
+deploy `
+  -alias 'abcdef' `
+  -email 'abcdef@website.com' `
+  -rootDomainName "website.com" `
+  -resourceUserName 'abcdef' `
+  -resourcePassword 'SampleP@ssword123!' `
+  -certificatePassword 'SampleP@ssword123!' `
+  -localNetworkRange '192.168.0.0/24' `
+  -skipConfirmation `
+  -overwriteParameterFiles
+```
 
-    ```sh
-    az account set --subscription "Subscription Name"
-    ```
+#### `deploy` Command Parameters
 
-- Deploy the Azure Demo Environment Using the CLI Script (Pipeline Friendly)
+| Parameter                 | Type   | Required | Description                                                                                                                                    |
+| ------------------------- | ------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `alias`                   | string | Yes      | Represents an unique name associated with resources used globally within the Azure Demo Environment                                            |
+| `rootDomainName`          | string | Yes      | Domain name to be associated with Azure DNS                                                                                                    |
+| `email`                   | string | Yes      | Email address to be associated with Azure Alerts                                                                                               |
+| `resourceUserName`        | string | Yes      | Username associated with protected Azure Resources (e.g. sqladmin)                                                                             |
+| `resourcePassword`        | string | Yes      | Password associated with all accounts (e.g. sqladmin)                                                                                          |
+| `certificatePassword`     | string | Yes      | The password used to encrypt the wildcard certificate stored in the `data` folder in the repository, with the name `wildcard.pfx`              |
+| `localNetworkRange`       | string | Yes      | [CIDR](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing) formatted address range of the local network (e.g. `192.168.1.0/24`)      |
+| `skipConfirmation`        | string | No       | Skips any confirmations with an answer of `yes`                                                                                                |
+| `overwriteParameterFiles` | string | No       | Overwrites any generated `*.parameters.json` files that were created and restores the default values. **WARNING:** Removes any customizations. |
 
-  - From the Terminal, Command Prompt, or PowerShell session, execute the
-    following (sample) command:
+### `deallocate` Command
 
-    ```ps
-    ./ade.ps1 -deploy \
-      -alias 'abcdef' \
-      -email 'abcdef@website.com' \
-      -rootDomainName "website.com" \
-      -resourceUserName 'abcdef' \
-      -resourcePassword 'SampleP@ssword123!' \
-      -certificatePassword 'SampleP@ssword123!' \
-      -localNetworkRange '192.168.0.0/24' \
-      -skipConfirmation \
-      -overwriteParameterFiles
-    ```
+ADE consists of many different Azure services, some of which can be expensive to
+run long term. To help reduce spend, the `deallocate` command will spin
+resources down that are able to either be in a deallocated state (e.g. Virtual
+Machines) or a reduced sku/tier (e.g. AKS). This allows you to keep ADE deployed
+within your subscription, but with a lower burden of cost.
 
-- Deploy the Azure Demo Environment Using the CLI Script (Wizard)
+#### `deallocate` Command Parameters
 
-  - From the Terminal, Command Prompt, or PowerShell session, execute the
-    following command:
+| Parameter | Type   | Required | Description                                                                                         |
+| --------- | ------ | -------- | --------------------------------------------------------------------------------------------------- |
+| `alias`   | string | Yes      | Represents an unique name associated with resources used globally within the Azure Demo Environment |
 
-    ```ps
-    ./ade.ps1 -deploy
-    ```
+### `allocate` Command
 
-#### Parameters for CLI Script (Pipeline Friendly) and CLI Script (Wizard)
+After you've deallocated ADE, you can use the `reallocate` command to bring
+resources back to their original deployed state.
 
-- Required Parameters:
+#### `allocate` Command Parameters
 
-  | Parameter            | Type   | Description                                                                                                                               |
-  | -------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
-  | `-alias`             | string | Represents an unique name associated with resources used globally within the Azure Demo Environment                                       |
-  | `-rootDomainName`    | string | Domain name to be associated with Azure DNS                                                                                               |
-  | `-email`             | string | Email address to be associated with Azure Alerts                                                                                          |
-  | `-resourceUserName`  | string | Username associated with protected Azure Resources (e.g. sqladmin)                                                                        |
-  | `-localNetworkRange` | string | [CIDR](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing) formatted address range of the local network (e.g. `192.168.1.0/24`) |
+| Parameter | Type   | Required | Description                                                                                         |
+| --------- | ------ | -------- | --------------------------------------------------------------------------------------------------- |
+| `alias`   | string | Yes      | Represents an unique name associated with resources used globally within the Azure Demo Environment |
 
-- Optional Parameters:
+### `remove` Command
 
-  | Parameter                  | Type   | Description                                                                                                                                    |
-  | -------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-  | `-skipConfirmation`        | string | Skips any confirmations with an answer of `yes`                                                                                                |
-  | `-overwriteParameterFiles` | string | Overwrites any generated `*.parameters.json` files that were created and restores the default values. **WARNING:** Removes any customizations. |
+When you no longer want ADE in your Azure subscription, the `remove` command
+will tear down the resources that were created. The default behavior will remove
+all resources, policies, service principals, and settings with the exception of
+Azure Key Vault, due to soft-delete restrictions.
 
-#### Parameters for the CLI Script (Pipeline Friendly)
+#### `remove` Command Parameters
 
-- Additional Required Parameters:
+| Parameter          | Type   | Required | Description                                                                                         |
+| ------------------ | ------ | -------- | --------------------------------------------------------------------------------------------------- |
+| `alias`            | string | Yes      | Represents an unique name associated with resources used globally within the Azure Demo Environment |
+| `rootDomainName`   | string | Yes      | Domain name to be associated with Azure DNS                                                         |
+| `includeKeyVault`  | string | No       | Forces the removal of Azure Key Vault                                                               |
+| `skipConfirmation` | string | No       | Skips any confirmations with an answer of `yes`                                                     |
 
-  | Parameter              | Type   | Description                                                                                                                       |
-  | ---------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------- |
-  | `-resourcePassword`    | string | Password associated with all accounts (e.g. sqladmin)                                                                             |
-  | `-certificatePassword` | string | The password used to encrypt the wildcard certificate stored in the `data` folder in the repository, with the name `wildcard.pfx` |
+### `login` Command
 
-#### Parameters for the CLI Script (Wizard)
-
-- Additional Required Parameters:
-
-  | Parameter                   | Type   | Description                                                                                                                       |
-  | --------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------- |
-  | `secureResourcePassword`    | string | Password associated with all accounts (e.g. sqladmin)                                                                             |
-  | `secureCertificatePassword` | string | The password used to encrypt the wildcard certificate stored in the `data` folder in the repository, with the name `wildcard.pfx` |
-
-### Deallocate or Allocate the Azure Demo Environment
-
-To save money on Resource Costs, an allocate and deallocate function has been
-built into the environment. These commands will allocate / deallocate the Azure
-Firewall, Azure Virtual Machines, Azure Virtual Machine Scale Sets. Azure
-Kubernetes Service clusters, and Azure Container Instances.
-
-- Deallocate the Azure Demo Environment
-
-  - From the Terminal, Command Prompt, or PowerShell session, execute the
-    following command:
-
-    ```ps
-    ./ade.ps1 -deallocate
-    ```
-
-- Allocate the Azure Demo Environment
-
-  - From the Terminal, Command Prompt, or PowerShell session, execute the
-    following command:
-
-    ```ps
-    ./ade.ps1 -allocate
-    ```
-
-  Note: The commands will prompt for the value of `alias` used during the
-  initial deployment of ADE. Additionally, the `alias` parameter can be added to
-  the command at execution.
-
-### Remove the Azure Demo Environment
-
-The Azure Demo Environment can be removed using the same script that creates,
-allocates, and deallocates the environment. The default behavior will will
-remove all resources, policies, service principals, and settings with the
-exception of Azure Key Vault, due to soft-delete restrictions.
-
-- Remove the Azure Demo Environment
-
-  - From the Terminal, Command Prompt, or PowerShell session, execute the
-    following command:
-
-    ```ps
-    ./ade.ps1 -remove
-    ```
-
-  Note: The removal command will prompt for the value of `alias`, and
-  `rootDomainName` in an interactive session. Additionally, the following
-  parameters can be added at execution of the removal command:
-
-  | Parameter           | Type   | Description                                                                                         |
-  | ------------------- | ------ | --------------------------------------------------------------------------------------------------- |
-  | `-alias`            | string | Represents an unique name associated with resources used globally within the Azure Demo Environment |
-  | `-rootDomainName`   | string | Domain name to be associated with Azure DNS                                                         |
-  | `-includeKeyVault`  | string | Forces the removal of Azure Key Vault                                                               |
-  | `-skipConfirmation` | string | Skips any confirmations with an answer of `yes`                                                     |
-
-## Documentation
-
-The links below detail each deployment including all services, and dependencies.
-
-- [Azure Log Analytics](./deployments/azure_log_analytics/azure_log_analytics.md)
-- [Azure Policy](./deployments/azure_policy/azure_policy.md)
-- [Azure Activity Log](./deployments/azure_activity_log/azure_activity_log.md)
-- [Azure Key Vault](./deployments/azure_key_vault/azure_key_vault.md)
-- [Azure Identity](./deployments/azure_identity/azure_identity.md)
-- [Azure Networking](./deployments/azure_networking/azure_networking.md)
-- [Azure VPN Gateway](./deployments/azure_vpn_gateway/azure_vpn_gateway.md)
-- [Azure VNET Peering](./deployments/azure_vnet_peering/azure_vnet_peering.md)
-- [Azure Storage Account VM Diagnostics](./deployments/azure_storage_account_vm_diagnostics/azure_storage_account_vm_diagnostics.md)
-- [Azure NSG FLow Logs](./deployments/azure_nsg_flow_logs/azure_nsg_flow_logs.md)
-- [Azure Firewall](./deployments/azure_firewall/azure_firewall.md)
-- [Azure Private DNS](deployments/azure_private_dns/azure_private_dns.md)
-- [Azure Bastion](./deployments/azure_bastion/azure_bastion/azure_bastion.md)
-- [Azure Virtual Machine Jumpbox](./deployments/azure_virtual_machine_jumpbox/azure_virtual_machine_jumpbox.md)
-- [Azure Virtual Machine Developer](./deployments/azure_virtual_machine_developer/azure_virtual_machine_developer.md)
-- [Azure Virtual Machine Windows 10 Client](./deployments/azure_virtual_machine_windows_10_client/azure_virtual_machine_windows_10_client.md)
-- [Azure Virtual Machine NTier](./deployments/azure_virtual_machine_ntier/azure_virtual_machine_ntier.md)
-- [Azure VMSS](./deployments/azure_vmss/azure_vmss.md)
-- [Azure Alerts](./deployments/azure_alerts/azure_alerts.md)
-- [Azure Container Registry](./deployments/azure_container_registry/azure_container_registry.md)
-- [Azure Container Instances Wordpress](./deployments/azure_container_instances_wordpress/azure_container_instances_wordpress.md)
-- [Azure Kubernetes Services](./deployments/azure_kubernetes_services/azure_kubernetes_services.md)
-- [Azure Kubernetes Services Vote](./deployments/azure_kubernetes_services_vote/azure_kubernetes_services_vote.md)
-- [Azure App Service Plan Primary Region](./deployments/azure_app_service_plan_primary_region/azure_app_service_plan_primary_region.md)
-- [Azure App Service Plan Secondary Region](./deployments/azure_app_service_plan_secondary_region/azure_app_service_plan_secondary_region.md)
-- [Azure App Service Image Resizer](./deployments/azure_app_service_imageresizer/azure_app_service_imageresizer.md)
-- [Azure App Service Inspector Gadget](deployments/azure_private_link_inspectorgadget/azure_private_link_inspectorgadget.md)
-- [Azure App Service Hello World Primary Region](./deployments/azure_app_service_helloworld_primary_region/azure_app_service_helloworld_primary_region.md)
-- [Azure App Service Hello World Secondary Region](./deployments/azure_app_service_helloworld_secondary_region/azure_app_service_helloworld_secondary_region.md)
-- [Azure SQL ToDo](./deployments/azure_sql_todo/azure_sql_todo.md)
-- [Azure Traffic manager](./deployments/azure_traffic_manager/azure_traffic_manager.md)
-- [Azure Application Gateway](./deployments/azure_application_gateway/azure_application_gateway.md)
-- [Azure DNS](./deployments/azure_dns/azure_dns.md)
-- [Azure Cognitive Services](./deployments/azure_cognitive_services/azure_cognitive_services.md)
+If you've had the ADE Shell Environment open for a substantial period of time
+and your Azure or Docker session has timed out, or if you'd like to login with
+another account or change your subscription, you can execute the `login` command
+to re-login and make subscription selection changes.

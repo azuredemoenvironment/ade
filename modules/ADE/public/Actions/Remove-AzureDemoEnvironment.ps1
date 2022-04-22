@@ -16,7 +16,7 @@ function Remove-AzureDemoEnvironment {
         Write-Host "-includeKeyVault flag to also remove that."
         Write-Host ""
 
-        $continueWithSetup = Read-Host -prompt "Would you like to procede with the removal of ADE (y/N)?"
+        $continueWithSetup = Read-Host -prompt "Would you like to proceed with the removal of ADE (y/N)?"
         if ($continueWithSetup -ne 'y') {
             Write-Host "Exiting."
             exit
@@ -26,19 +26,11 @@ function Remove-AzureDemoEnvironment {
     # Configuring Variables
     Write-ScriptSection "Starting Removal Process"
 
-    Remove-LocalDockerImages $armParameters
-    Remove-AzureDnsEntries $armParameters
     Remove-AzureResourceGroups $armParameters
-    Remove-AzureServicePrincipals $armParameters
+    Remove-AzureCostManagementBudget $armParameters
     Remove-AzureNsgFlowLogs $armParameters
-
-    if ($includeKeyVault) {
-        Remove-AzureKeyVaultResourceGroup $armParameters
-    }
-
     Remove-AzureActivityLogDiagnostics $armParameters
     Remove-AzurePolicyAssignmentsAndDefinitions $armParameters
-    Remove-AzureLogAnalyticsResourceGroup $armParameters
 
     Write-ScriptSection "Finished Removal"
 }

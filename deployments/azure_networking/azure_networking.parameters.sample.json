@@ -2,59 +2,23 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "natGatewayPublicIPAddressName": {
-            "value": "@@natGatewayPublicIPAddressName@@"
+        "aliasRegion": {
+            "value": "@@aliasRegion@@"
         },
-        "natGatewayPublicIPPrefixName": {
-            "value": "@@natGatewayPublicIPPrefixName@@"
+        "azureRegion": {
+            "value": "@@azureRegion@@"
         },
-        "natGatewayName": {
-            "value": "@@natGatewayName@@"
+        "deployAzureFirewall": {
+            "value": @@deployAzureFirewall@@
         },
-        "azureBastionSubnetNetworkSecurityGroupName": {
-            "value": "@@azureBastionSubnetNetworkSecurityGroupName@@"
+        "deployVpnGateway": {
+            "value": @@deployAzureFirewall@@
         },
-        "managementSubnetNetworkSecurityGroupName": {
-            "value": "@@managementSubnetNetworkSecurityGroupName@@"
-        },
-        "directoryServicesSubnetNetworkSecurityGroupName": {
-            "value": "@@directoryServicesSubnetNetworkSecurityGroupName@@"
-        },
-        "developerSubnetNetworkSecurityGroupName": {
-            "value": "@@developerSubnetNetworkSecurityGroupName@@"
-        },
-        "nTierWebSubnetNetworkSecurityGroupName": {
-            "value": "@@nTierWebSubnetNetworkSecurityGroupName@@"
-        },
-        "nTierDBSubnetNetworkSecurityGroupName": {
-            "value": "@@nTierDBSubnetNetworkSecurityGroupName@@"
-        },
-        "vmssSubnetNetworkSecurityGroupName": {
-            "value": "@@vmssSubnetNetworkSecurityGroupName@@"
-        },
-        "clientServicesSubnetNetworkSecurityGroupName": {
-            "value": "@@clientServicesSubnetNetworkSecurityGroupName@@"
-        },
-        "internetRouteTableName": {
-            "value": "@@internetRouteTableName@@"
-        },
-        "virtualNetwork01Name": {
-            "value": "@@virtualNetwork01Name@@"
-        },
-        "virtualNetwork02Name": {
-            "value": "@@virtualNetwork02Name@@"
-        },
-        "virtualNetwork03Name": {
-            "value": "@@virtualNetwork03Name@@"
-        },
+        "localNetworkGatewayAddressPrefix": {
+            "value": "@@localNetworkGatewayAddressPrefix@@"
+        }, 
         "sourceAddressPrefix": {
             "value": "@@sourceAddressPrefix@@"
-        },
-        "logAnalyticsWorkspaceResourceGroupName": {
-            "value": "@@logAnalyticsWorkspaceResourceGroupName@@"
-        },
-        "logAnalyticsWorkspaceName": {
-            "value": "@@logAnalyticsWorkspaceName@@"
-        }
+        }              
     }
 }

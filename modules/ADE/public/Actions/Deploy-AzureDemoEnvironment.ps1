@@ -16,15 +16,6 @@ function Deploy-AzureDemoEnvironment {
         Write-Host "There are a few small prerequisites required before creating the resources for the"
         Write-Host "environment. Please ensure the following are done *before* continuing the creation process:"
         Write-Host ""
-        Write-Host "* Azure CLI Configuration:"
-        Write-Host "** You are logged into the az CLI (run az login from a terminal)"
-        Write-Host "** You have selected a subscription to deploy to (run az account set --subscription SUBSCRIPTION_NAME from a terminal)"
-        Write-Host "** You have the latest version of the az CLI"
-        Write-Host "** You have added the application insights az Extensions (az extension add -n application-insights)"
-        Write-Host "* Azure PowerShell Cmdlet Configuration:"
-        Write-Host "** You are logged into the cmdlets (run Connect-AzAccount from a PowerShell session)"
-        Write-Host "** You have selected a subscription to deploy to (run Set-AzContext -Subscription 'Subscription Name' from a PowerShell session)"
-        Write-Host "* You have docker and its CLI tools installed locally"
         Write-Host "* You have access to the relevant Azure Subscription"
         Write-Host "* You have a wildcard PFX certificate stored at $wildcardCertificatePath"
         Write-Host "* You have a custom domain configured in Azure DNS"
@@ -37,48 +28,44 @@ function Deploy-AzureDemoEnvironment {
         }
     }
 
-    Write-ScriptSection "Starting Deployments"
+    $stopwatch = [system.diagnostics.stopwatch]::StartNew()
 
-    # ORDER MATTERS!!
+    Write-ScriptSection "Starting Azure Demo Environment Deployments"
     
-    Deploy-AzureLogAnalytics $armParameters
-    Deploy-AzurePolicy $armParameters
-    Deploy-AzureActivityLog $armParameters
-    Deploy-AzureKeyVault $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
-    Deploy-AzureIdentity $armParameters
-    Deploy-AzureNetworking $armParameters    
-    Deploy-AzureVpnGateway $armParameters
-    Deploy-VnetPeering $armParameters
-    Deploy-AzureStorageAccountVmDiagnostics $armParameters
-    Deploy-AzureNsgFlowLogs $armParameters
-    Deploy-AzureFirewall $armParameters
-    Deploy-AzurePrivateDns $armParameters
-    Deploy-StorageFirewallRules $armParameters
-    Deploy-AzureBastion $armParameters
-    Deploy-AzureVirtualMachineJumpbox $armParameters
-    Deploy-AzureVirtualMachineDeveloper $armParameters
-    Deploy-AzureVirtualMachineWindows10Client $armParameters
-    Deploy-AzureVirtualMachineNTier $armParameters
-    Deploy-AzureVirtualMachineScaleSets $armParameters
-    Deploy-AzureAlerts $armParameters
+    # Core Services
+    ###################################
+    Deploy-AzureGovernance $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
+    Deploy-AzureNetworking $armParameters
     Deploy-AzureContainerRegistry $armParameters
-    Deploy-DockerImagesToAzureContainerRegistry $armParameters
-    Deploy-AzureContainerInstancesWordPress $armParameters
-    Deploy-AzureKubernetesServices $armParameters
-    Deploy-AzureKubernetesServicesVote $armParameters
-    Deploy-AzureAppServicePlanToPrimaryRegion $armParameters
-    Deploy-AzureAppServicePlanToSecondaryRegion $armParameters
-    Deploy-ImageResizerAppService $armParameters
-    Deploy-InspectorGadgetAppService $armParameters
-    Deploy-HelloWorldAppServiceToPrimaryRegion $armParameters
-    Deploy-HelloWorldAppServiceToSecondaryRegion $armParameters
-    Deploy-SqlToDoAppService $armParameters
-    Deploy-AzureTrafficManager $armParameters
-    Deploy-AzureAppServicePlanToPrimaryRegionScaleDown $armParameters
-    Deploy-AzureApplicationGateway $armParameters
-    Deploy-AzureDns $armParameters    
-    Set-HelloWorldCertificateAndHostName $armParameters
-    Deploy-AzureCognitiveServices $armParameters
+    
+    # Data Services
+    ###################################
+    Deploy-AzureDatabases $armParameters
 
-    Write-ScriptSection "Finished Azure Development Environment Deployments"
+    # Compute Infrastructure
+    ###################################
+    Deploy-AzureVirtualMachines $armParameters
+    Deploy-AzureAppServices $armParameters
+    # Deploy-AzureKubernetesService $armParameters
+    Deploy-AzureContainerInstances $armParameters
+    Deploy-AdeApplicationToVirtualMachines $armParameters
+
+    # Frontend Load Balancers
+    ###################################
+    Deploy-AzureFrontendLoadBalancers $armParameters
+    
+    # Service Cleanup
+    ###################################
+    Deploy-AzureAppServicePlanScaleDown $armParameters
+    Set-AzureContainerInstancesToStopped $armParameters
+
+    # Additional Core Services
+    ###################################
+    Deploy-AzureAlerts $armParameters
+    Deploy-AzurePublicDns $armParameters
+
+    $stopwatch.Stop()
+    $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)
+
+    Write-ScriptSection "Finished Azure Demo Environment Deployments in $elapsedSeconds seconds"
 }

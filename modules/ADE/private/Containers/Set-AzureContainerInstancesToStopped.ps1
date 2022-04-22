@@ -5,18 +5,20 @@ function Set-AzureContainerInstancesToStopped {
 
     Write-ScriptSection "Setting Azure Container Instances to Stopped (for Cost Savings)"
 
-    $containerGroupResourceGroup = $armParameters.wordpressResourceGroupName
-
     $containerGroups = @(
-        'containerGroup-mysql',
-        'containerGroup-share',
-        'containerGroup-wordpress'
+        @{ Name = $armParameters.adeLoadTestingGatlingContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName },
+        @{ Name = $armParameters.adeLoadTestingGrafanaContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName },
+        @{ Name = $armParameters.adeLoadTestingInfluxDbContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName },
+        @{ Name = $armParameters.adeLoadTestingRedisContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName }
     )
     
     $containerGroups | ForEach-Object {
-        Write-Log "Stopping $_"
+        $name = $_.Name
+        $rg = $_.ResourceGroup
+        
+        Write-Log "Stopping $name in resource group $rg"
 
-        az container stop --resource-group $containerGroupResourceGroup --name $_
+        az container stop --resource-group $rg --name $name
         Confirm-LastExitCode
     }
 
