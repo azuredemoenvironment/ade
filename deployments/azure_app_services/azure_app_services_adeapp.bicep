@@ -185,7 +185,7 @@ resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-1
   }
 }]
 
-// Resource - Prviate Endpoint Dns Group - Private Endpoint - App Service - ADE App(s)
+// Resource - Private Endpoint Dns Group - Private Endpoint - App Service - ADE App(s)
 //////////////////////////////////////////////////
 resource adeAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = [for (adeAppAppService, i) in adeAppAppServices: if (adeAppAppService.usePrivateEndpoint) {
   name: '${adeAppAppService.privateEndpointName}/dnsgroupname'

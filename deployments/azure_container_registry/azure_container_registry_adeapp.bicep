@@ -71,7 +71,7 @@ resource containerRegistryDiagnostics 'microsoft.insights/diagnosticSettings@202
   }
 }
 
-// Resource - Role Asignment - Acr Pull
+// Resource - Role Assignment - Acr Pull
 //////////////////////////////////////////////////
 // resource containerRegistryRoleAssignments 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
 //   scope: containerRegistry

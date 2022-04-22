@@ -166,7 +166,7 @@ resource inspectorGadgetSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpo
   }
 }
 
-// Resource - Prviate Endpoint Dns Group - Private Endpoint - Inspector Gadget Sql Server
+// Resource - Private Endpoint Dns Group - Private Endpoint - Inspector Gadget Sql Server
 //////////////////////////////////////////////////
 resource azureSqlprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
   name: '${inspectorGadgetSqlServerPrivateEndpoint.name}/dnsgroupname'

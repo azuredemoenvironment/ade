@@ -72,6 +72,6 @@ resource appConfigKeyAspNetCoreEnvironment 'Microsoft.AppConfiguration/configura
   }
 }
 
-// Outpus
+// Outputs
 //////////////////////////////////////////////////
 output appConfigName string = appConfig.name

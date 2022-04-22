@@ -5,6 +5,7 @@
     "ms-azuretools.vscode-bicep",
     "ms-vscode.vscode-node-azure-pack",
     "github.vscode-pull-request-github",
-    "eamodio.gitlens"
+    "eamodio.gitlens",
+    "streetsidesoftware.code-spell-checker"
   ]
 }

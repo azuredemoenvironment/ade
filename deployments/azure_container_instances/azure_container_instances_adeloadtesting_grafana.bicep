@@ -6,8 +6,8 @@ param adeLoadTestingGrafanaContainerGroupName string
 @description('The name of the Grafana Container Image.')
 param adeLoadTestingGrafanaContainerImageName string
 
-@description('The DNS Name Labl of the Influx Db Container Group.')
-param adeLoadTestingInfluxDbDNSNameLabal string
+@description('The DNS Name Label of the Influx Db Container Group.')
+param adeLoadTestingInfluxDbDNSNameLabel string
 
 @description('The name of the admin user of the Azure Container Registry.')
 param containerRegistryName string
@@ -50,7 +50,7 @@ resource adeLoadTestingGrafanaContainerGroup 'Microsoft.ContainerInstance/contai
           environmentVariables: [
             {
               name: 'INFLUXDB_HOSTNAME'
-              value: adeLoadTestingInfluxDbDNSNameLabal
+              value: adeLoadTestingInfluxDbDNSNameLabel
             }
             {
               name: 'INFLUXDB_PORT'

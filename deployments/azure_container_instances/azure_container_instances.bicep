@@ -95,7 +95,7 @@ module azureContainerInstancesADELoadTestingGrafanaModule 'azure_container_insta
   params: {
     adeLoadTestingGrafanaContainerGroupName: adeLoadTestingGrafanaContainerGroupName
     adeLoadTestingGrafanaContainerImageName: adeLoadTestingGrafanaContainerImageName
-    adeLoadTestingInfluxDbDNSNameLabal: azureContainerInstancesADELoadTestingInfluxDbModule.outputs.influxFqdn
+    adeLoadTestingInfluxDbDNSNameLabel: azureContainerInstancesADELoadTestingInfluxDbModule.outputs.influxFqdn
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     containerRegistryURL: containerRegistry.properties.loginServer
@@ -116,8 +116,8 @@ module azureContainerInstancesADELoadTestingGatlingModule 'azure_container_insta
     adeAppFrontEndHostName: adeAppFrontEndHostName
     adeLoadTestingGatlingContainerGroupName: adeLoadTestingGatlingContainerGroupName
     adeLoadTestingGatlingContainerImageName: adeLoadTestingGatlingContainerImageName
-    adeLoadTestingInfluxDbDNSNameLabal: azureContainerInstancesADELoadTestingInfluxDbModule.outputs.influxFqdn
-    adeLoadTestingRedisDNSNameLabal: azureContainerInstancesADELoadTestingRedisModule.outputs.redisFqdn
+    adeLoadTestingInfluxDbDNSNameLabel: azureContainerInstancesADELoadTestingInfluxDbModule.outputs.influxFqdn
+    adeLoadTestingRedisDNSNameLabel: azureContainerInstancesADELoadTestingRedisModule.outputs.redisFqdn
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     containerRegistryURL: containerRegistry.properties.loginServer

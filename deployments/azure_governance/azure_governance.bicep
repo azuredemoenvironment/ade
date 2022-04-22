@@ -250,7 +250,7 @@ module policyModule './azure_policy.bicep' = {
   }
 }
 
-// Module - Indentity
+// Module - Identity
 //////////////////////////////////////////////////
 module identityModule 'azure_identity.bicep' = {
   scope: resourceGroup(identityResourceGroupName)
