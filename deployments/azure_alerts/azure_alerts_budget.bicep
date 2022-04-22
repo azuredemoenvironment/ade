@@ -20,13 +20,7 @@ param adeBudgetSecondThreshold int
 param adeBudgetThirdThreshold int
 
 @description('The first threshold of the Forecasted ADE Budget.')
-param adeBudgetFirstForecastedThreshold int
-
-@description('The second threshold of the Forecasted ADE Budget.')
-param adeBudgetSecondForecastedThreshold int
-
-@description('The third threshold of the Forecasted ADE Budget.')
-param adeBudgetThirdForecastedThreshold int
+param adeBudgetForecastedThreshold int
 
 @description('The time grain of the ADE Budget.')
 param adeBudgetTimeGrain string
@@ -92,29 +86,7 @@ resource adeBudget 'Microsoft.Consumption/budgets@2021-10-01' = {
       notificationForFirstForecastedThreshold: {
         operator: 'GreaterThan'
         enabled: true
-        threshold: adeBudgetFirstForecastedThreshold
-        contactEmails: [
-          contactEmailAddress
-        ]
-        contactGroups: [
-          budgetActionGroupId
-        ]
-      }
-      notificationForSecondForecastedThreshold: {
-        operator: 'GreaterThan'
-        enabled: true
-        threshold: adeBudgetSecondForecastedThreshold
-        contactEmails: [
-          contactEmailAddress
-        ]
-        contactGroups: [
-          budgetActionGroupId
-        ]
-      }
-      notificationForThirdForecastedThreshold: {
-        operator: 'GreaterThan'
-        enabled: true
-        threshold: adeBudgetThirdForecastedThreshold
+        threshold: adeBudgetForecastedThreshold
         contactEmails: [
           contactEmailAddress
         ]
