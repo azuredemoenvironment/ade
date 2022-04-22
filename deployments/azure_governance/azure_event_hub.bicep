@@ -6,12 +6,14 @@ param eventHubName string
 @description('The name of the Event Hub Namespace.')
 param eventHubNamespaceName string
 
+@description('The location for all resources.')
+param location string
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'monitoring and diagnostics'

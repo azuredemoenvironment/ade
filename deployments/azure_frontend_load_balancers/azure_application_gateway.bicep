@@ -60,6 +60,9 @@ param inspectorGadgetAppServiceWafPolicyName string
 @description('The Waf Policy Rule Name of the Inspector Gadget App Service.')
 param inspectorGadgetAppServiceWafPolicyRuleName string
 
+@description('The location for all resources.')
+param location string
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
@@ -199,7 +202,6 @@ var inspectorGadgetAppService = {
     wafPolicyRuleName: inspectorGadgetAppServiceWafPolicyRuleName
   }
 }
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'networking'
@@ -274,6 +276,7 @@ resource inspectorGadgetWafPolicy 'Microsoft.Network/ApplicationGatewayWebApplic
               }
             ]
             operator: 'IPMatch'
+            // cspell: disable-next-line
             negationConditon: false
             matchValues: [
               applicationGatewayPublicIpAddress.properties.ipAddress

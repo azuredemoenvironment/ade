@@ -3,9 +3,11 @@
 @description('The name of the App Service Plan.')
 param appServicePlanName string
 
+@description('The region location of deployment.')
+param location string
+
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'appServicePlan'

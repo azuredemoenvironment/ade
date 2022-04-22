@@ -12,11 +12,11 @@ param adeLoadTestingGatlingContainerGroupName string
 @description('The name of the Gatling Container Image.')
 param adeLoadTestingGatlingContainerImageName string
 
-@description('The DNS Name Labl of the Influx Db Container Group.')
-param adeLoadTestingRedisDNSNameLabal string
+@description('The DNS Name Label of the Influx Db Container Group.')
+param adeLoadTestingRedisDNSNameLabel string
 
-@description('The DNS Name Labl of the Influx Db Container Group.')
-param adeLoadTestingInfluxDbDNSNameLabal string
+@description('The DNS Name Label of the Influx Db Container Group.')
+param adeLoadTestingInfluxDbDNSNameLabel string
 
 @description('The name of the admin user of the Azure Container Registry.')
 param containerRegistryName string
@@ -27,9 +27,11 @@ param containerRegistryPassword string
 @description('The URL of the Azure Container Registry.')
 param containerRegistryURL string
 
+@description('The location for all resources.')
+param location string
+
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'aci'
@@ -57,7 +59,7 @@ resource adeLoadTestingGatlingContainerGroup 'Microsoft.ContainerInstance/contai
           environmentVariables: [
             {
               name: 'JAVA_OPTS'
-              value: '-Dgatling.data.graphite.host=${adeLoadTestingInfluxDbDNSNameLabal} -Dgatling.data.graphite.port=2003 -DwebFrontEndDomain=${adeAppFrontEndHostName} -DwebBackEndDomain=${adeAppApiGatewayHostName} -DredisHost=${adeLoadTestingRedisDNSNameLabal} -DredisPort=6379 -DusersPerSecond=1 -DmaxUsersPerSecond=100 -DoverMinutes=5 -Djsse.enableSNIExtension=false'
+              value: '-Dgatling.data.graphite.host=${adeLoadTestingInfluxDbDNSNameLabel} -Dgatling.data.graphite.port=2003 -DwebFrontEndDomain=${adeAppFrontEndHostName} -DwebBackEndDomain=${adeAppApiGatewayHostName} -DredisHost=${adeLoadTestingRedisDNSNameLabel} -DredisPort=6379 -DusersPerSecond=1 -DmaxUsersPerSecond=100 -DoverMinutes=5 -Djsse.enableSNIExtension=false'
             }
           ]
           resources: {

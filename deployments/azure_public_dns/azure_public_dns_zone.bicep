@@ -5,13 +5,12 @@ param rootDomainName string
 
 // Variables
 //////////////////////////////////////////////////
-var location = 'global'
 
 // Resource - DNS Zone
 //////////////////////////////////////////////////
 resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' = {
   name: rootDomainName
-  location: location
+  location: 'global'
 }
 
 // Outputs

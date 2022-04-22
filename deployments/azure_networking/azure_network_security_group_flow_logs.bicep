@@ -1,5 +1,8 @@
 // Parameters
 //////////////////////////////////////////////////
+@description('The location for all resources.')
+param location string
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
@@ -11,7 +14,6 @@ param nsgFlowLogsStorageAccountId string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 
 // Resource - Network Security Group Flow Logs
 resource nsgFlowLog 'Microsoft.Network/networkWatchers/flowLogs@2020-11-01' = [for nsgConfiguration in nsgConfigurations: {

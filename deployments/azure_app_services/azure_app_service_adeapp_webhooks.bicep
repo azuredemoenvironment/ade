@@ -9,9 +9,11 @@ param containerRegistryName string
 @description('The array of ADE App Docker Web Hook Uris.')
 param adeAppDockerWebHookUris array
 
+@description('The region location of deployment.')
+param location string
+
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 
 @batchSize(1)
 resource adeAppWebHook 'Microsoft.ContainerRegistry/registries/webhooks@2019-05-01' = [for (adeAppAppService, i) in adeAppAppServices: {

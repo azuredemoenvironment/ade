@@ -1,5 +1,8 @@
 // Parameters
 //////////////////////////////////////////////////
+@description('The location for all resources.')
+param location string
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
@@ -17,7 +20,6 @@ param storageAccountSku string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'monitoring and diagnostics'

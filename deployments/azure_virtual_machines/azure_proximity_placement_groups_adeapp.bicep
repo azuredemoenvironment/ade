@@ -1,5 +1,8 @@
 // Parameters
 //////////////////////////////////////////////////
+@description('The location for all resources.')
+param location string
+
 @description('The name of the Proximity Placement Group for Availability Zone 1.')
 param proximityPlacementGroupAz1Name string
 
@@ -11,7 +14,6 @@ param proximityPlacementGroupAz3Name string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'ppg'

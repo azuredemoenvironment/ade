@@ -37,6 +37,9 @@ param diagnosticsStorageAccountId string
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
 
+@description('The location for all resources.')
+param location string
+
 @description('The customer Id of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceCustomerId string
 
@@ -51,7 +54,6 @@ param scriptsBaseUri string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var sanitizeCurrentTime = replace(replace(currentTime, 'Z', ''), 'T', '')
 var scriptLocation = '${scriptsBaseUri}/azure_virtual_machines/adeappinstall.sh'
 var scriptName = 'adeappinstall.sh'

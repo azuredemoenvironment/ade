@@ -19,6 +19,9 @@ param deployVpnGateway bool = false
 @description('The address prefix of the on-premises network.')
 param localNetworkGatewayAddressPrefix string
 
+@description('The location for all resources.')
+param location string = deployment().location
+
 @description('The public IP address of the on-premises network.')
 param sourceAddressPrefix string
 
@@ -134,6 +137,7 @@ module natGatewayModule './azure_nat_gateway.bicep' = {
     networkingResourceGroup
   ]
   params: {
+    location: location
     natGatewayName: natGatewayName
     natGatewayPublicIPPrefixName: natGatewayPublicIPPrefixName
   }
@@ -155,6 +159,7 @@ module networkSecurityGroupsModule './azure_network_security_group.bicep' = {
     azureBastionSubnetNSGName: azureBastionSubnetNSGName
     diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
+    location: location    
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     managementSubnetNSGName: managementSubnetNSGName
     sourceAddressPrefix: sourceAddressPrefix
@@ -171,6 +176,7 @@ module routeTableModule './azure_route_table.bicep' = {
   ]
   params: {
     internetRouteTableName: internetRouteTableName
+    location: location
   }
 }
 
@@ -194,6 +200,7 @@ module virtualNetwork001Module './azure_virtual_network_001.bicep' = {
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     gatewaySubnetName: gatewaySubnetName
     gatewaySubnetPrefix: gatewaySubnetPrefix
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     managementSubnetName: managementSubnetName
     managementSubnetNSGId: networkSecurityGroupsModule.outputs.managementSubnetNSGId
@@ -228,6 +235,7 @@ module virtualNetwork002Module './azure_virtual_network_002.bicep' = {
     adeWebVmSubnetPrefix: adeWebVmSubnetPrefix
     diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     natGatewayId: natGatewayModule.outputs.natGatewayId
     privateEndpointSubnetName: privateEndpointSubnetName
@@ -253,6 +261,7 @@ module azureFirewallModule './azure_firewall.bicep' = if (deployAzureFirewall ==
     azureFirewallSubnetId: virtualNetwork001Module.outputs.azureFirewallSubnetId
     diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }
@@ -271,6 +280,7 @@ module azureBastionModule './azure_bastion.bicep' = {
     azureBastionSubnetId: virtualNetwork001Module.outputs.azureBastionSubnetId
     diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
+    location: location    
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }
@@ -291,6 +301,7 @@ module azureVpnGatewayModule './azure_vpn_gateway.bicep' = if (deployVpnGateway 
     gatewaySubnetId: virtualNetwork001Module.outputs.gatewaySubnetId
     localNetworkGatewayAddressPrefix: localNetworkGatewayAddressPrefix
     localNetworkGatewayName: localNetworkGatewayName
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     sourceAddressPrefix: sourceAddressPrefix
     vpnGatewayName: vpnGatewayName
@@ -357,6 +368,7 @@ module nsgFlowLogsModule './azure_network_security_group_flow_logs.bicep' = {
     networkingResourceGroup
   ]
   params: {
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     nsgConfigurations: networkSecurityGroupsModule.outputs.nsgConfigurations
     nsgFlowLogsStorageAccountId: nsgFlowLogsStorageAccount.id

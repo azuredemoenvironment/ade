@@ -10,6 +10,9 @@ param aliasRegion string
 @description('The selected Azure region for deployment.')
 param azureRegion string
 
+@description('The location for all resources.')
+param location string = deployment().location
+
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
@@ -80,6 +83,7 @@ module containerRegistryModule './azure_container_registry_adeapp.bicep' = {
     diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     // containerRegistryManagedIdentityPrincipalID: containerRegistryManagedIdentity.properties
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }

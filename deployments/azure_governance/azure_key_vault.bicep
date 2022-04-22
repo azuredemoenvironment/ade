@@ -18,12 +18,14 @@ param eventHubNamespaceAuthorizationRuleId string
 @description('The name of the Key Vault.')
 param keyVaultName string
 
+@description('The location for all resources.')
+param location string
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'key vault'

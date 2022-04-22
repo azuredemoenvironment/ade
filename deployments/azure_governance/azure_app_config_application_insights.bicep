@@ -6,7 +6,7 @@ param appConfigName string
 @description('The connection string of the Application Insights instance.')
 param applicationInsightsConnectionString string
 
-// Resource - App Congiruation - Application Insights Connection String
+// Resource - App Configuration - Application Insights Connection String
 //////////////////////////////////////////////////
 resource appConfigKeyAppInsightsConnectionString 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = {
   name: '${appConfigName}/ApplicationInsights:ConnectionString'

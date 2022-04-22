@@ -10,6 +10,9 @@ param adminUserName string
 @description('The user alias and Azure region defined from user input.')
 param aliasRegion string
 
+@description('The location for all resources.')
+param location string = deployment().location
+
 @description('The value for Root Domain Name.')
 param rootDomainName string
 
@@ -177,6 +180,7 @@ module applicationGatewayModule 'azure_application_gateway.bicep' = {
     inspectorGadgetAppServiceHostName: inspectorGadgetAppServiceHostName
     inspectorGadgetAppServiceWafPolicyName: inspectorGadgetAppServiceWafPolicyName
     inspectorGadgetAppServiceWafPolicyRuleName: inspectorGadgetAppServiceWafPolicyRuleName
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     sslCertificateData: keyVault.getSecret('certificate')
     sslCertificateDataPassword: sslCertificateDataPassword
@@ -198,6 +202,7 @@ module adeWebVmNICUpdateModule './azure_virtual_machine_adeweb_vm_nic_update.bic
     adeWebVmSubnetId: virtualNetwork002::adeWebVmSubnet.id
     diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }
@@ -223,6 +228,7 @@ module adeWebVmssNICUpdateModule './azure_virtual_machine_adeweb_vmss_nic_update
     containerRegistryName: containerRegistryName
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     scriptsBaseUri: scriptsBaseUri
+    location: location
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
   }

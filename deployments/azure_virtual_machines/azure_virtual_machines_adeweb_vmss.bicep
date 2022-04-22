@@ -16,6 +16,9 @@ param adminPassword string
 @description('The name of the admin user.')
 param adminUserName string
 
+@description('The location for all resources.')
+param location string
+
 @description('The customer Id of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceCustomerId string
 
@@ -24,7 +27,6 @@ param logAnalyticsWorkspaceKey string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'adeWebVmss'

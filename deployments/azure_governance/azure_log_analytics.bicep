@@ -1,5 +1,8 @@
 // Parameters
 //////////////////////////////////////////////////
+@description('The location for all resources.')
+param location string
+
 @description('The name of the Log Analytics Workspace')
 param logAnalyticsWorkspaceName string
 
@@ -13,7 +16,6 @@ var keyVaultAnalytics = {
   name: 'KeyVaultAnalytics(${logAnalyticsWorkspaceName})'
   galleryName: 'KeyVaultAnalytics'
 }
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'monitoring and diagnostics'
@@ -41,13 +43,13 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10
 // Resource - Log Analytics Workspace - Solution - Container Insights
 //////////////////////////////////////////////////
 resource solutionsContainerInsights 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
-  name: '${containerInsights.name}'
+  name: containerInsights.name
   location: location
   properties: {
     workspaceResourceId: logAnalyticsWorkspace.id
   }
   plan: {
-    name: '${containerInsights.name}'
+    name: containerInsights.name
     publisher: 'Microsoft'
     product: 'OMSGallery/${containerInsights.galleryName}'
     promotionCode: ''
@@ -57,13 +59,13 @@ resource solutionsContainerInsights 'Microsoft.OperationsManagement/solutions@20
 // Resource - Log Analytics Workspace - Solution - Key Vault Analytics
 //////////////////////////////////////////////////
 resource solutionsKeyVaultAnalytics 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
-  name: '${keyVaultAnalytics.name}'
+  name: keyVaultAnalytics.name
   location: location
   properties: {
     workspaceResourceId: logAnalyticsWorkspace.id
   }
   plan: {
-    name: '${keyVaultAnalytics.name}'
+    name: keyVaultAnalytics.name
     publisher: 'Microsoft'
     product: 'OMSGallery/${keyVaultAnalytics.galleryName}'
     promotionCode: ''
@@ -73,13 +75,13 @@ resource solutionsKeyVaultAnalytics 'Microsoft.OperationsManagement/solutions@20
 // Resource - Log Analytics Workspace - Solution - Vm Insights
 //////////////////////////////////////////////////
 resource solutionsVMInsights 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
-  name: '${vmInsights.name}'
+  name: vmInsights.name
   location: location
   properties: {
     workspaceResourceId: logAnalyticsWorkspace.id
   }
   plan: {
-    name: '${vmInsights.name}'
+    name: vmInsights.name
     publisher: 'Microsoft'
     product: 'OMSGallery/${vmInsights.galleryName}'
     promotionCode: ''

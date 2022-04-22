@@ -25,6 +25,9 @@ param jumpboxOSDiskName string
 @description('The name of the Jumpbox Public Ip Address')
 param jumpboxPublicIpAddressName string
 
+@description('The location for all resources.')
+param location string
+
 @description('The customer Id of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceCustomerId string
 
@@ -42,7 +45,6 @@ param scriptsBaseUri string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var scriptLocation = '${scriptsBaseUri}/azure_virtual_machines/jumpboxvm.ps1'
 var scriptName = 'jumpboxvm.ps1'
 var tags = {

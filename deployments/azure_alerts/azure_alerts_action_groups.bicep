@@ -29,7 +29,6 @@ param virtualNetworkActionGroupShortName string
 
 // Variables
 //////////////////////////////////////////////////
-var location = 'global'
 var tags = {
   environment: 'production'
   function: 'monitoring and diagnostics'
@@ -40,7 +39,7 @@ var tags = {
 //////////////////////////////////////////////////
 resource budgetActionGroup 'microsoft.insights/actionGroups@2019-06-01' = {
   name: budgetActionGroupName
-  location: location
+  location: 'global'
   tags: tags
   properties: {
     enabled: true
@@ -59,7 +58,7 @@ resource budgetActionGroup 'microsoft.insights/actionGroups@2019-06-01' = {
 //////////////////////////////////////////////////
 resource serviceHealthActionGroup 'microsoft.insights/actionGroups@2019-06-01' = {
   name: serviceHealthActionGroupName
-  location: location
+  location: 'global'
   tags: tags
   properties: {
     enabled: true
@@ -78,7 +77,7 @@ resource serviceHealthActionGroup 'microsoft.insights/actionGroups@2019-06-01' =
 //////////////////////////////////////////////////
 resource virtualMachineActionGroup 'microsoft.insights/actionGroups@2019-06-01' = {
   name: virtualMachineActionGroupName
-  location: location
+  location: 'global'
   tags: tags
   properties: {
     enabled: true
@@ -97,7 +96,7 @@ resource virtualMachineActionGroup 'microsoft.insights/actionGroups@2019-06-01' 
 //////////////////////////////////////////////////
 resource virtualNetworkActionGroup 'microsoft.insights/actionGroups@2019-06-01' = {
   name: virtualNetworkActionGroupName
-  location: location
+  location: 'global'
   tags: tags
   properties: {
     enabled: true

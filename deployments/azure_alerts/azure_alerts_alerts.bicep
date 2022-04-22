@@ -26,7 +26,6 @@ param virtualNetworkAlertName string
 
 // Variables
 //////////////////////////////////////////////////
-var location = 'global'
 var tags = {
   environment: 'production'
   function: 'monitoring and diagnostics'
@@ -37,7 +36,7 @@ var tags = {
 //////////////////////////////////////////////////
 resource serviceHealthAlert 'Microsoft.Insights/activityLogAlerts@2020-10-01' = {
   name: serviceHealthAlertName
-  location: location
+  location: 'global'
   tags: tags
   properties: {
     description: serviceHealthAlertName
@@ -67,7 +66,7 @@ resource serviceHealthAlert 'Microsoft.Insights/activityLogAlerts@2020-10-01' = 
 //////////////////////////////////////////////////
 resource virtualMachineAlert 'Microsoft.Insights/activityLogAlerts@2020-10-01' = {
   name: virtualMachineAlertName
-  location: location
+  location: 'global'
   tags: tags
   properties: {
     description: virtualMachineAlertName
@@ -101,7 +100,7 @@ resource virtualMachineAlert 'Microsoft.Insights/activityLogAlerts@2020-10-01' =
 //////////////////////////////////////////////////
 resource virtualNetworkAlert 'Microsoft.Insights/activityLogAlerts@2020-10-01' = {
   name: virtualNetworkAlertName
-  location: location
+  location: 'global'
   tags: tags
   properties: {
     description: virtualNetworkAlertName
@@ -135,7 +134,7 @@ resource virtualNetworkAlert 'Microsoft.Insights/activityLogAlerts@2020-10-01' =
 //////////////////////////////////////////////////
 resource virtualMachineCpuAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
   name: virtualMachineCpuAlertName
-  location: location
+  location: 'global'
   tags: tags
   properties: {
     description: virtualMachineCpuAlertName

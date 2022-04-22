@@ -9,12 +9,14 @@ param diagnosticsStorageAccountId string
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
 
+@description('The location for all resources.')
+param location string
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'app config'
@@ -70,6 +72,6 @@ resource appConfigKeyAspNetCoreEnvironment 'Microsoft.AppConfiguration/configura
   }
 }
 
-// Outpus
+// Outputs
 //////////////////////////////////////////////////
 output appConfigName string = appConfig.name

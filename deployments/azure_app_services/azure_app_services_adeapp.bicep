@@ -27,6 +27,9 @@ param diagnosticsStorageAccountId string
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
 
+@description('The location for all resources.')
+param location string
+
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
@@ -38,7 +41,6 @@ param vnetIntegrationSubnetId string
 
 // Variables
 //////////////////////////////////////////////////
-var location = resourceGroup().location
 var tags = {
   environment: 'production'
   function: 'adeApp'
@@ -183,7 +185,7 @@ resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-1
   }
 }]
 
-// Resource - Prviate Endpoint Dns Group - Private Endpoint - App Service - ADE App(s)
+// Resource - Private Endpoint Dns Group - Private Endpoint - App Service - ADE App(s)
 //////////////////////////////////////////////////
 resource adeAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = [for (adeAppAppService, i) in adeAppAppServices: if (adeAppAppService.usePrivateEndpoint) {
   name: '${adeAppAppService.privateEndpointName}/dnsgroupname'
@@ -205,5 +207,6 @@ resource adeAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndp
 // Outputs
 //////////////////////////////////////////////////
 output adeAppDockerWebHookUris array = [for (adeAppAppService, i) in adeAppAppServices: {
+  // Should not return secrets, but we need it in this case
   adeAppDockerWebHookUri: '${list(resourceId('Microsoft.Web/sites/config', adeAppAppService.adeAppAppServiceName, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
 }]

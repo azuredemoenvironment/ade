@@ -29,6 +29,9 @@ param listOfAllowedSKUs array = [
   'Standard_D4s_v3'
 ]
 
+@description('The location for all resources.')
+param location string = deployment().location
+
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
@@ -104,6 +107,9 @@ module networkWatcherModule 'azure_network_watcher.bicep' = {
   dependsOn: [
     networkWatcherResourceGroup
   ]
+  params: {
+    location: location
+  }
 }
 
 // Module - Log Analytics Workspace
@@ -115,6 +121,7 @@ module logAnalyticsModule './azure_log_analytics.bicep' = {
     monitorResourceGroup
   ]
   params: {
+    location: location
     logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
   }
 }
@@ -128,6 +135,7 @@ module storageAccountDiagnosticsModule './azure_storage_accounts.bicep' = {
     monitorResourceGroup
   ]
   params: {
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
     storageAccountAccessTier: diagnosticsStorageAccount.accessTier
     storageAccountKind: diagnosticsStorageAccount.kind
@@ -145,6 +153,7 @@ module storageAccountNsgFlowLogsModule './azure_storage_accounts.bicep' = {
     monitorResourceGroup
   ]
   params: {
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
     storageAccountAccessTier: nsgFlowLogsStorageAccount.accessTier
     storageAccountKind: nsgFlowLogsStorageAccount.kind
@@ -164,6 +173,7 @@ module eventHubDiagnosticsModule './azure_event_hub.bicep' = {
   params: {
     eventHubName: diagnosticsEventHubName
     eventHubNamespaceName: diagnosticsEventHubNamespaceName
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId   
   }
 }
@@ -180,6 +190,7 @@ module appConfigModule './azure_app_config.bicep' = {
     appConfigName: appConfigName
     diagnosticsStorageAccountId: storageAccountDiagnosticsModule.outputs.diagnosticsStorageAccountId
     eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
+    location: location    
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId    
   }
 }
@@ -196,6 +207,7 @@ module applicationInsightsModule './azure_application_insights.bicep' = {
     applicationInsightsName: applicationInsightsName
     diagnosticsStorageAccountId: storageAccountDiagnosticsModule.outputs.diagnosticsStorageAccountId
     eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
+    location: location    
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
   }
 }
@@ -238,7 +250,7 @@ module policyModule './azure_policy.bicep' = {
   }
 }
 
-// Module - Indentity
+// Module - Identity
 //////////////////////////////////////////////////
 module identityModule 'azure_identity.bicep' = {
   scope: resourceGroup(identityResourceGroupName)
@@ -249,6 +261,7 @@ module identityModule 'azure_identity.bicep' = {
   params: {
     applicationGatewayManagedIdentityName: applicationGatewayManagedIdentityName
     containerRegistryManagedIdentityName: containerRegistryManagedIdentityName
+    location: location
   }
 }
 
@@ -267,6 +280,7 @@ module keyVaultModule './azure_key_vault.bicep' = {
     diagnosticsStorageAccountId: storageAccountDiagnosticsModule.outputs.diagnosticsStorageAccountId
     eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
     keyVaultName: keyVaultName
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
   }
 }
