@@ -276,6 +276,7 @@ resource inspectorGadgetWafPolicy 'Microsoft.Network/ApplicationGatewayWebApplic
               }
             ]
             operator: 'IPMatch'
+            // cspell: disable-next-line
             negationConditon: false
             matchValues: [
               applicationGatewayPublicIpAddress.properties.ipAddress

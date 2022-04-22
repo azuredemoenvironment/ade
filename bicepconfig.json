@@ -1,0 +1,11 @@
+{
+  "analyzers": {
+    "core": {
+      "rules": {
+        "outputs-should-not-contain-secrets": {
+          "level": "off"
+        }
+      }
+    }
+  }
+}
