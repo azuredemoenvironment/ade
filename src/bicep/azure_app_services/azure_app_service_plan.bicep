@@ -3,8 +3,17 @@
 @description('The name of the App Service Plan.')
 param appServicePlanName string
 
-@description('The region location of deployment.')
+@description('The ID of the Diagnostics Storage Account.')
+param diagnosticsStorageAccountId string
+
+@description('The ID of the Event Hub Namespace Authorization Rule.')
+param eventHubNamespaceAuthorizationRuleId string
+
+@description('The location for all resources.')
 param location string
+
+@description('The ID of the Log Analytics Workspace.')
+param logAnalyticsWorkspaceId string
 
 // Variables
 //////////////////////////////////////////////////
@@ -16,7 +25,7 @@ var tags = {
 
 // Resource - App Service Plan
 //////////////////////////////////////////////////
-resource appServicePlan 'Microsoft.Web/serverfarms@2020-10-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: appServicePlanName
   location: location
   tags: tags
@@ -29,9 +38,28 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2020-10-01' = {
   }
 }
 
+// Resource - App Service Plan - Diagnostic Settings
+//////////////////////////////////////////////////
+resource appServicePlanDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: appServicePlan
+  name: '${appServicePlan.name}-diagnostics'
+  properties: {
+    workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
+    logAnalyticsDestinationType: 'Dedicated'
+    metrics: [
+      {
+        category: 'AllMetrics'
+        enabled: true
+      }
+    ]
+  }
+}
+
 // Resource - App Service Plan - Autoscale Setting
 //////////////////////////////////////////////////
-resource autoscaleSetting 'Microsoft.insights/autoscalesettings@2015-04-01' = {
+resource autoscaleSetting 'Microsoft.Insights/autoscalesettings@2021-05-01-preview' = {
   name: '${appServicePlan.name}-autoscale'
   location: location
   tags: tags

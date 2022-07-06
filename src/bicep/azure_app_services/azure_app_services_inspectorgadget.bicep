@@ -47,15 +47,16 @@ var tags = {
 
 // Resource - App Service - Inspector Gadget
 //////////////////////////////////////////////////
-resource inspectorGadgetAppService 'Microsoft.Web/sites@2020-12-01' = {
+resource inspectorGadgetAppService 'Microsoft.Web/sites@2022-03-01' = {
   name: inspectorGadgetAppServiceName
   location: location
   tags: tags
   kind: 'container'
   properties: {
     serverFarmId: appServicePlanId
+    virtualNetworkSubnetId: vnetIntegrationSubnetId
+    vnetRouteAllEnabled: true
     httpsOnly: false
-
     siteConfig: {
       linuxFxVersion: inspectorGadgetDockerImage
       appSettings: [
@@ -64,25 +65,11 @@ resource inspectorGadgetAppService 'Microsoft.Web/sites@2020-12-01' = {
           value: 'Data Source=tcp:${inspectorGadgetSqlServerFQDN},1433;Initial Catalog=${inspectorGadgetSqlDatabaseName};User Id=${adminUserName}@${inspectorGadgetSqlServerFQDN};Password=${adminPassword};'
         }
         {
-          name: 'WEBSITE_VNET_ROUTE_ALL'
-          value: '1'
-        }
-        {
           name: 'WEBSITE_DNS_SERVER'
           value: '168.63.129.16'
         }
       ]
     }
-  }
-}
-
-// Resource - App Service - Networking - Inspector Gadget
-//////////////////////////////////////////////////
-resource inspectorGadgetAppServiceNetworking 'Microsoft.Web/sites/config@2020-12-01' = {
-  name: '${inspectorGadgetAppService.name}/virtualNetwork'
-  properties: {
-    subnetResourceId: vnetIntegrationSubnetId
-    swiftSupported: true
   }
 }
 
