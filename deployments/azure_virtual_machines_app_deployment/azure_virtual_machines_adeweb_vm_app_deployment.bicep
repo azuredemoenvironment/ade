@@ -110,6 +110,9 @@ resource adeWebVm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for (adeWebV
     adeWebVirtualMachine.availabilityZone
   ]
   tags: tags
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     proximityPlacementGroup: {
       id: adeWebVirtualMachine.proximityPlacementGroupId
@@ -156,7 +159,8 @@ resource adeWebVm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for (adeWebV
 // Resource - Dependency Agent Linux
 //////////////////////////////////////////////////
 resource adeWebVmDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
-  name: '${adeWebVm[i].name}/DependencyAgentLinux'
+  parent: adeWebVm[i]
+  name: 'DependencyAgentLinux'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
@@ -169,7 +173,8 @@ resource adeWebVmDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2
 // Resource - Microsoft Monitoring Agent
 //////////////////////////////////////////////////
 resource adeWebVmMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
-  name: '${adeWebVm[i].name}/OMSExtension'
+  parent: adeWebVm[i]
+  name: 'OMSExtension'
   location: location
   properties: {
     publisher: 'Microsoft.EnterpriseCloud.Monitoring'
@@ -185,10 +190,26 @@ resource adeWebVmMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/ext
   }
 }]
 
+// Resource - Guest Configuration
+//////////////////////////////////////////////////
+resource windowsVMGuestConfigExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
+  parent: adeWebVm[i]
+  name: 'AzurePolicyforLinux'
+  location: location
+  properties: {
+    publisher: 'Microsoft.GuestConfiguration'
+    type: 'ConfigurationforLinux'
+    typeHandlerVersion: '1.0'
+    autoUpgradeMinorVersion: true
+    enableAutomaticUpgrade: true
+  }
+}]
+
 // Resource - Custom Script Extension - ADE Web Vmss
 //////////////////////////////////////////////////
 resource adeWebVmCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
-  name: '${adeWebVm[i].name}/CustomScriptextension'
+  parent: adeWebVm[i]
+  name: 'CustomScriptextension'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'

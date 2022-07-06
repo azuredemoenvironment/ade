@@ -34,7 +34,7 @@ function Set-InitialArmParameters {
         'aliasRegion'                              = $aliasRegion
         'aliasPairedRegion'                        = $aliasPairedRegion
         'contactEmailAddress'                      = $email
-        'scriptsBaseUri'                 = $scriptsBaseUri
+        'scriptsBaseUri'                           = $scriptsBaseUri
         'azureRegion'                              = $azureRegion
         'azurePairedRegion'                        = $azurePairedRegion
         'deployAzureFirewall'                      = 'false'
