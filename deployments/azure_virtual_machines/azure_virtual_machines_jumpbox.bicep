@@ -53,9 +53,9 @@ var tags = {
   costCenter: 'it'
 }
 
-// Resource - Public Ip Address - Jumpbox
+// Resource - Public Ip Address
 //////////////////////////////////////////////////
-resource jumpboxPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+resource jumpboxPublicIpAddress 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
   name: jumpboxPublicIpAddressName
   location: location
   tags: tags
@@ -67,7 +67,7 @@ resource jumpboxPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01'
   }
 }
 
-// Resource - Public Ip Address - Diagnostic Settings - Jumpbox
+// Resource - Public Ip Address - Diagnostic Settings
 //////////////////////////////////////////////////
 resource jumpboxPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: jumpboxPublicIpAddress
@@ -100,9 +100,9 @@ resource jumpboxPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSetting
   }
 }
 
-// Resource - Network Interface - Jumpbox
+// Resource - Network Interface
 //////////////////////////////////////////////////
-resource jumpboxNIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
+resource jumpboxNIC 'Microsoft.Network/networkInterfaces@2022-01-01' = {
   name: jumpboxNICName
   location: location
   tags: tags
@@ -124,7 +124,7 @@ resource jumpboxNIC 'Microsoft.Network/networkInterfaces@2020-08-01' = {
   }
 }
 
-// Resource - Network Interface - Diagnostic Settings - Jumpbox
+// Resource - Network Interface - Diagnostic Settings
 //////////////////////////////////////////////////
 resource jumpboxNICDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: jumpboxNIC
@@ -143,12 +143,15 @@ resource jumpboxNICDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01
   }
 }
 
-// Resource - Virtual Machine - Jumpbox
+// Resource - Virtual Machine
 //////////////////////////////////////////////////
-resource jumpbox 'Microsoft.Compute/virtualMachines@2020-12-01' = {
+resource jumpbox 'Microsoft.Compute/virtualMachines@2022-03-01' = {
   name: jumpboxName
   location: location
   tags: tags
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     hardwareProfile: {
       vmSize: 'Standard_B2ms'
@@ -158,7 +161,7 @@ resource jumpbox 'Microsoft.Compute/virtualMachines@2020-12-01' = {
       imageReference: {
         publisher: 'MicrosoftWindowsServer'
         offer: 'WindowsServer'
-        sku: '2019-Datacenter-smalldisk'
+        sku: '2022-Datacenter-smalldisk'
         version: 'latest'
       }
       osDisk: {
@@ -190,10 +193,11 @@ resource jumpbox 'Microsoft.Compute/virtualMachines@2020-12-01' = {
   }
 }
 
-// Resource - Custom Script Extension - Jumpbox
+// Resource - Custom Script Extension
 //////////////////////////////////////////////////
-resource jumpboxCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${jumpbox.name}/CustomScriptextension'
+resource jumpboxCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2022-03-01' = {
+  parent: jumpbox
+  name: 'CustomScriptextension'
   location: location
   properties: {
     publisher: 'Microsoft.Compute'
@@ -211,10 +215,11 @@ resource jumpboxCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensi
   }
 }
 
-// Resource - Dependency Agent Windows - Jumpbox
+// Resource - Dependency Agent Windows
 //////////////////////////////////////////////////
-resource jumpboxDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${jumpbox.name}/DependencyAgentWindows'
+resource jumpboxDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2022-03-01' = {
+  parent: jumpbox
+  name: 'DependencyAgentWindows'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
@@ -224,10 +229,11 @@ resource jumpboxDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@20
   }
 }
 
-// Resource - Microsoft Monitoring Agent - Jumpbox
+// Resource - Microsoft Monitoring Agent
 //////////////////////////////////////////////////
-resource jumpboxMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${jumpbox.name}/MMAExtension'
+resource jumpboxMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2022-03-01' = {
+  parent: jumpbox
+  name: 'MMAExtension'
   location: location
   properties: {
     publisher: 'Microsoft.EnterpriseCloud.Monitoring'
@@ -240,5 +246,20 @@ resource jumpboxMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/exte
     protectedSettings: {
       workspaceKey: logAnalyticsWorkspaceKey
     }
+  }
+}
+
+// Resource - Guest Configuration
+//////////////////////////////////////////////////
+resource jumpboxGuestConfiguration 'Microsoft.Compute/virtualMachines/extensions@2022-03-01' = {
+  parent: jumpbox
+  name: 'AzurePolicyforWindows'
+  location: location
+  properties: {
+    publisher: 'Microsoft.GuestConfiguration'
+    type: 'ConfigurationforWindows'
+    typeHandlerVersion: '1.0'
+    autoUpgradeMinorVersion: true
+    enableAutomaticUpgrade: true
   }
 }

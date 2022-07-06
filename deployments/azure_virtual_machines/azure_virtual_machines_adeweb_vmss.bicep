@@ -49,6 +49,9 @@ resource adeWebVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
     tier: 'Standard'
     capacity: 1
   }
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     overprovision: true
     upgradePolicy: {
@@ -118,6 +121,16 @@ resource adeWebVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
               protectedSettings: {
                 workspaceKey: logAnalyticsWorkspaceKey
               }
+            }
+          }
+          {
+            name: 'AzurePolicyforLinux'
+            properties: {
+              publisher: 'Microsoft.GuestConfiguration'
+              type: 'ConfigurationforLinux'
+              typeHandlerVersion: '1.0'
+              autoUpgradeMinorVersion: true
+              enableAutomaticUpgrade: true
             }
           }
         ]
