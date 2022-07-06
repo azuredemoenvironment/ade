@@ -136,7 +136,7 @@ try {
             $resourcePassword = $null
         }
 
-        if($scriptsBaseUri -eq $null) {
+        if ([string]::IsNullOrWhiteSpace($scriptsBaseUri)) {
             $scriptsBaseUri = "https://raw.githubusercontent.com/azuredemoenvironment/ade/main/scripts"
         }
 
