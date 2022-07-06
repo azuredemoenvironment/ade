@@ -17,7 +17,7 @@ function Deploy-ArmTemplate {
 
     $deploymentName = $stepName.replace(' ', '').replace(':', '') + 'Deployment'
     # TODO: move the templates to be in the module
-    $deploymentRootFolder = "$PSScriptRoot/../../../../deployments/$folderName"
+    $deploymentRootFolder = "$PSScriptRoot/../../../../src/bicep/$folderName"
     $templateFile = "$deploymentRootFolder/$fileName."
     if ($bicep) {
         $templateFile += "bicep"

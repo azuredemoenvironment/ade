@@ -17,7 +17,7 @@ RUN    apk update \
 
 
 # Download and Install PowerShell
-RUN    curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.1.3/powershell-7.1.3-linux-alpine-x64.tar.gz -o /tmp/powershell.tar.gz \
+RUN    curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.2.5/powershell-7.2.5-linux-alpine-x64.tar.gz -o /tmp/powershell.tar.gz \
     && mkdir -p /opt/microsoft/powershell/7 \
     && tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
     && chmod +x /opt/microsoft/powershell/7/pwsh \
@@ -42,10 +42,9 @@ RUN mkdir -p /opt/ade \
 # Switch to new root directory and copy assets
 WORKDIR /opt/ade
 
-COPY ./deployments/ deployments
-COPY ./modules/ modules
+COPY ./src src
 COPY ade.ps1 .
-COPY login.ps1 .
+COPY login.ps1 /opt/ade/login.ps1
 COPY profile.ps1 /root/.config/powershell/Microsoft.PowerShell_profile.ps1
 
 RUN    chmod 777 ade.ps1 \

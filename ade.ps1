@@ -94,7 +94,7 @@ $ErrorActionPreference = "Stop"
 $PSDefaultParameterValues['*:ErrorAction'] = 'Stop'
 
 # Import Modules
-Import-Module "$PSScriptRoot/modules/ADE" -Force -Verbose
+Import-Module "$PSScriptRoot/src/ps/ADE.psm1" -Force -Verbose
 
 try {
     ###################################################################################################

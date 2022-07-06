@@ -33,6 +33,6 @@ function Prompt {
 
 Write-Header "Welcome to the Azure Demo Environment"
 
-/opt/ade/login.ps1
+Login
 
 Write-Header 'Done! Run "deploy" to start deploying the Azure Demo Environment!'

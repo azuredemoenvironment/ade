@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  # This is the primary Azure Demo Environment Image, and will be used as the main
+  # interactive runtime
+  ade:
+    image: ade
+    container_name: ade
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    stdin_open: true
+    tty: true
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - ./:/opt/ade:rw
+      - ./profile.ps1:/root/.config/powershell/Microsoft.PowerShell_profile.ps1
