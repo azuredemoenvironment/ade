@@ -16,7 +16,7 @@ param location string
 //////////////////////////////////////////////////
 
 @batchSize(1)
-resource adeAppWebHook 'Microsoft.ContainerRegistry/registries/webhooks@2019-05-01' = [for (adeAppAppService, i) in adeAppAppServices: {
+resource adeAppWebHook 'Microsoft.ContainerRegistry/registries/webhooks@2021-09-01' = [for (adeAppAppService, i) in adeAppAppServices: {
   name: '${containerRegistryName}/${adeAppAppService.adeAppAppServiceName}'
   location: location
   properties: {

@@ -49,13 +49,15 @@ var tags = {
 
 // Resource - App Service - ADE App(s)
 //////////////////////////////////////////////////
-resource adeAppService 'Microsoft.Web/sites@2020-12-01' = [for (adeAppAppService, i) in adeAppAppServices: {
+resource adeAppService 'Microsoft.Web/sites@2022-03-01' = [for (adeAppAppService, i) in adeAppAppServices: {
   name: adeAppAppService.adeAppAppServiceName
   location: location
   tags: tags
   kind: 'container'
   properties: {
     serverFarmId: appServicePlanId
+    virtualNetworkSubnetId: vnetIntegrationSubnetId
+    vnetRouteAllEnabled: true
     httpsOnly: false
     siteConfig: {
       linuxFxVersion: 'DOCKER|${containerRegistryURL}/${adeAppAppService.containerImageName}'
@@ -92,25 +94,11 @@ resource adeAppService 'Microsoft.Web/sites@2020-12-01' = [for (adeAppAppService
           value: 'false'
         }
         {
-          name: 'WEBSITE_VNET_ROUTE_ALL'
-          value: '1'
-        }
-        {
           name: 'WEBSITE_DNS_SERVER'
           value: '168.63.129.16'
         }
       ]
     }
-  }
-}]
-
-// Resource - App Service - Networking - ADE App(s)
-//////////////////////////////////////////////////
-resource adeAppServiceNetworking 'Microsoft.Web/sites/config@2020-12-01' = [for (adeAppAppService, i) in adeAppAppServices: {
-  name: '${adeAppService[i].name}/virtualNetwork'
-  properties: {
-    subnetResourceId: vnetIntegrationSubnetId
-    swiftSupported: true
   }
 }]
 
@@ -164,7 +152,7 @@ resource adeAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05
 
 // Resource - Private Endpoint - App Service - ADE App(s)
 //////////////////////////////////////////////////
-resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = [for (adeAppAppService, i) in adeAppAppServices: if (adeAppAppService.usePrivateEndpoint) {
+resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2022-01-01' = [for (adeAppAppService, i) in adeAppAppServices: if (adeAppAppService.usePrivateEndpoint) {
   name: adeAppAppService.privateEndpointName
   location: location
   properties: {
@@ -187,7 +175,7 @@ resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-1
 
 // Resource - Private Endpoint Dns Group - Private Endpoint - App Service - ADE App(s)
 //////////////////////////////////////////////////
-resource adeAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = [for (adeAppAppService, i) in adeAppAppServices: if (adeAppAppService.usePrivateEndpoint) {
+resource adeAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2022-01-01' = [for (adeAppAppService, i) in adeAppAppServices: if (adeAppAppService.usePrivateEndpoint) {
   name: '${adeAppAppService.privateEndpointName}/dnsgroupname'
   dependsOn: [
     adeAppServicePrivateEndpoint

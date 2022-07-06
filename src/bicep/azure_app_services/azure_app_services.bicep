@@ -206,7 +206,10 @@ module appServicePlanModule 'azure_app_service_plan.bicep' = {
   ]
   params: {
     appServicePlanName: appServicePlanName
+    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location:location
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
   }
 }
 
