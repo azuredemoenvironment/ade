@@ -7,7 +7,8 @@ name: Build Container Image - ade
 jobs:
   build-image:
     name: Build and Publish Image ade
-    uses: azuredemoenvironment/ade-app/.github/workflows/build-container-template.yml@brandonmartinez/issue/1-Move-ADE-App-Directories-to-This-Repository
+    uses: azuredemoenvironment/ade-app/.github/workflows/build-container-template.yml@main
     with:
       image_to_push: ade
       tag_name: ${GITHUB_REF/refs\/tags\//}
+      tag_latest: ${{github.ref == 'refs/heads/main'}}

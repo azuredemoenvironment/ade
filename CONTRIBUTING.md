@@ -10,7 +10,7 @@ docker run \
   -it --rm --name ade \
   -v /var/run/docker.sock:/var/run/docker.sock:rw \
   -v /path/to/local/ade:/opt/ade \
-  azuredemoenvironment/ade
+  ghcr.io/azuredemoenvironment/ade/ade:latest
 ```
 
 ## Using the Current Branch Deployment Scripts

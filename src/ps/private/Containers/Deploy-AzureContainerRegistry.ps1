@@ -30,10 +30,10 @@ function Deploy-AzureContainerRegistry {
     
     $imagesToPullAndPush | ForEach-Object { 
         $containerImageName = "ade-$_"
-        $dockerHubImageName = "azuredemoenvironment/$($containerImageName):latest"
+        $gitHubContainerRegistryImageName = "azuredemoenvironment/ade-app/$($containerImageName):latest"
 
-        Write-Log "Requesting ACR to Pull Docker Hub Image $dockerHubImageName to $containerRegistryLoginServer"
-        az acr import --name "$containerRegistryName" --source "docker.io/$dockerHubImageName" --image "$($containerImageName):latest" --force
+        Write-Log "Requesting ACR to Pull GitHub Container Registry Image $gitHubContainerRegistryImageName to $containerRegistryLoginServer"
+        az acr import --name "$containerRegistryName" --source "ghcr.io/$gitHubContainerRegistryImageName" --image "$($containerImageName):latest" --force
         Confirm-LastExitCode
 
         # TODO: Create an ACR Task to Poll Docker Hub for updates: https://docs.microsoft.com/en-us/azure/container-registry/container-registry-tasks-overview#automate-os-and-framework-patching
