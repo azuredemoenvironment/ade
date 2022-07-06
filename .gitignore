@@ -1,12 +1,9 @@
-.env
-.metals
 *.certificate.ps1
 *.key.azcli
 *.parameters.json
 *.personal.*
 /.vs
 data/**
-test/ADE.LoadTests/gatling/results
 .DS_Store
 Thumbs.db
 .temp

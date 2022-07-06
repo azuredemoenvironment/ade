@@ -1,9 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Web Services" type="CompoundRunConfigurationType">
-    <toRun name="User" type="LaunchSettings" />
-    <toRun name="ApiGateway" type="LaunchSettings" />
-    <toRun name="DataIngestor" type="LaunchSettings" />
-    <toRun name="DataReporter" type="LaunchSettings" />
-    <method v="2" />
-  </configuration>
-</component>
