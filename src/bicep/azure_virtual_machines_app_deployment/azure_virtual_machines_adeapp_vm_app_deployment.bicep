@@ -118,6 +118,9 @@ resource adeAppVm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for (adeAppV
     adeAppVirtualMachine.availabilityZone
   ]
   tags: tags
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     proximityPlacementGroup: {
       id: adeAppVirtualMachine.proximityPlacementGroupId
@@ -164,7 +167,8 @@ resource adeAppVm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for (adeAppV
 // Resource - Dependency Agent Linux
 //////////////////////////////////////////////////
 resource adeAppVmDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeAppVirtualMachine, i) in adeAppVirtualMachines: {
-  name: '${adeAppVm[i].name}/DependencyAgentLinux'
+  parent: adeAppVm[i]
+  name: 'DependencyAgentLinux'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
@@ -177,7 +181,8 @@ resource adeAppVmDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2
 // Resource - Microsoft Monitoring Agent
 //////////////////////////////////////////////////
 resource adeAppVmMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeAppVirtualMachine, i) in adeAppVirtualMachines: {
-  name: '${adeAppVm[i].name}/OMSExtension'
+  parent: adeAppVm[i]
+  name: 'OMSExtension'
   location: location
   properties: {
     publisher: 'Microsoft.EnterpriseCloud.Monitoring'
@@ -193,10 +198,26 @@ resource adeAppVmMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/ext
   }
 }]
 
+// Resource - Guest Configuration
+//////////////////////////////////////////////////
+resource windowsVMGuestConfigExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeAppVirtualMachine, i) in adeAppVirtualMachines: {
+  parent: adeAppVm[i]
+  name: 'AzurePolicyforLinux'
+  location: location
+  properties: {
+    publisher: 'Microsoft.GuestConfiguration'
+    type: 'ConfigurationforLinux'
+    typeHandlerVersion: '1.0'
+    autoUpgradeMinorVersion: true
+    enableAutomaticUpgrade: true
+  }
+}]
+
 // Resource - Custom Script Extension - ADE App Vm
 //////////////////////////////////////////////////
 resource adeAppVmCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeAppVirtualMachine, i) in adeAppVirtualMachines: {
-  name: '${adeAppVm[i].name}/CustomScriptextension'
+  parent: adeAppVm[i]
+  name: 'CustomScriptextension'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
