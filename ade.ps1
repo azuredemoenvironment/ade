@@ -94,7 +94,7 @@ $ErrorActionPreference = "Stop"
 $PSDefaultParameterValues['*:ErrorAction'] = 'Stop'
 
 # Import Modules
-Import-Module "$PSScriptRoot/modules/ADE" -Force -Verbose
+Import-Module "$PSScriptRoot/src/ps/ADE.psm1" -Force -Verbose
 
 try {
     ###################################################################################################
@@ -136,7 +136,7 @@ try {
             $resourcePassword = $null
         }
 
-        if($scriptsBaseUri -eq $null) {
+        if ([string]::IsNullOrWhiteSpace($scriptsBaseUri)) {
             $scriptsBaseUri = "https://raw.githubusercontent.com/azuredemoenvironment/ade/main/scripts"
         }
 

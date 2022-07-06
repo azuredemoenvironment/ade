@@ -6,6 +6,5 @@
 *.personal.*
 /.vs
 data/**
-test/ADE.LoadTests/gatling/results
 .DS_Store
 Thumbs.db

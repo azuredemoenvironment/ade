@@ -82,7 +82,7 @@ docker run \
   -it --rm --name ade \
   -v /var/run/docker.sock:/var/run/docker.sock:rw \
   -v /path/to/certificate/data/folder/yourcert.pfx:/opt/ade/data/wildcard.pfx \
-  azuredemoenvironment/ade
+  ghcr.io/azuredemoenvironment/ade/ade:latest
 ```
 
 _Note: replace `/path/to/certificate/data/folder/yourcert.pfx` with an absolute
