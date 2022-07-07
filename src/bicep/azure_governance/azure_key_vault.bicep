@@ -81,18 +81,6 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
           ]
         }
       }
-      {
-        objectId: 'abfa0a7c-a6b6-4736-8310-5855508787cd'
-        tenantId: subscription().tenantId
-        permissions: {
-          certificates: [
-            'get'
-          ]
-          secrets: [
-            'get'
-          ]
-        }
-      }
     ]
   }
 }
@@ -107,7 +95,7 @@ resource certificateBase64StringSecret 'Microsoft.KeyVault/vaults/secrets@2021-1
   }
 }
 
-// Resource - Key Vault - Secret - Certificate
+// Resource - Key Vault - Secret - Resource Password
 //////////////////////////////////////////////////
 resource resourcePasswordSecret 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
   parent: keyVault
