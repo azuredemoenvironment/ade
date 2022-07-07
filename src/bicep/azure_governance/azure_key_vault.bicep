@@ -3,6 +3,9 @@
 @description('The Service Principal Name ID of the Application Gateway Managed Identity.')
 param applicationGatewayManagedIdentityPrincipalID string
 
+@description('The Base64 encoded certificate for Azure resources.')
+param certificateBase64String string
+
 @description('The Service Principal Name ID of the Container Registry Managed Identity.')
 param containerRegistryManagedIdentityPrincipalID string
 
@@ -20,6 +23,9 @@ param location string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
+
+@description('The password for Azure resources.')
+param resourcePassword string
 
 // Variables
 //////////////////////////////////////////////////
@@ -88,6 +94,26 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
         }
       }
     ]
+  }
+}
+
+// Resource - Key Vault - Secret - Certificate
+//////////////////////////////////////////////////
+resource certificateBase64StringSecret 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
+  parent: keyVault
+  name: 'certificate'
+  properties: {
+    value: certificateBase64String
+  }
+}
+
+// Resource - Key Vault - Secret - Certificate
+//////////////////////////////////////////////////
+resource resourcePasswordSecret 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
+  parent: keyVault
+  name: 'resourcePassword'
+  properties: {
+    value: resourcePassword
   }
 }
 

@@ -5,10 +5,13 @@ function Set-InitialArmParameters {
         [string] $resourceUserName,
         [string] $rootDomainName,
         [string] $localNetworkRange,
+        [string] $scriptsBaseUri,
+        [SecureString] $secureResourcePassword,
+        [SecureString] $secureCertificatePassword,
         [string] $azureRegion,
         [string] $azurePairedRegion,
         [string] $module,
-        [string] $scriptsBaseUri,
+        [string] $wildcardCertificatePath,
         [bool] $overwriteParameterFiles,
         [bool] $skipConfirmation
     )
@@ -23,6 +26,9 @@ function Set-InitialArmParameters {
     $PairedRegionResourceGroupNamePrefix = "rg-ade-$aliasPairedRegion"
     $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
     $acrName = "acr-ade-$aliasRegion-001".replace('-', '')
+
+    $certificateBase64String = Convert-WildcardCertificateToBase64String $secureCertificatePassword $wildcardCertificatePath
+    $plainTextResourcePassword = ConvertFrom-SecureString -SecureString $secureResourcePassword -AsPlainText
 
     Write-Log 'Generating ARM Parameters'
 
@@ -43,8 +49,10 @@ function Set-InitialArmParameters {
 
         # Generated Parameters        
         'adminUserName'                            = $resourceUserName
+        'certificateBase64String'                  = $certificateBase64String
         'localNetworkGatewayAddressPrefix'         = $localNetworkRange
         'logAnalyticsWorkspaceName'                = "log-ade-$aliasRegion-001"
+        'resourcePassword'                         = $plainTextResourcePassword
         'sourceAddressPrefix'                      = $sourceAddressPrefix
         'sslCertificateName'                       = $rootDomainName
 

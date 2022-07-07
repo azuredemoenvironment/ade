@@ -118,7 +118,18 @@ try {
     Write-Status 'Configuring Parameters'
     $defaultPrimaryRegion = $(az configure -l --query "[?name == 'location'].value | [0]" --output tsv)
     $defaultSecondaryRegion = $(az configure -l --query "[?name == 'locationpair'].value | [0]" --output tsv)
-    $armParameters = Set-InitialArmParameters $alias $email $resourceUserName $rootDomainName $localNetworkRange $defaultPrimaryRegion $defaultSecondaryRegion $module $scriptsBaseUri $overwriteParameterFiles $skipConfirmation
+
+    if ($secureCertificatePassword -eq $null -and $certificatePassword) {
+        $secureCertificatePassword = ConvertTo-SecureString $certificatePassword -AsPlainText -Force
+        $certificatePassword = $null
+    }
+
+    if ($secureResourcePassword -eq $null -and $resourcePassword) {
+        $secureResourcePassword = ConvertTo-SecureString $resourcePassword -AsPlainText -Force
+        $resourcePassword = $null
+    }
+
+    $armParameters = Set-InitialArmParameters $alias $email $resourceUserName $rootDomainName $localNetworkRange $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath $defaultPrimaryRegion $defaultSecondaryRegion $module $scriptsBaseUri $overwriteParameterFiles $skipConfirmation
 
     ###################################################################################################
     # Start the Requested Action
@@ -126,15 +137,6 @@ try {
     # TODO: only one of these steps should be allowed
     if ($deploy) {
         # $isInteractive = $PSCmdlet.ParameterSetName -eq 'interactive'
-        if ($secureCertificatePassword -eq $null) {
-            $secureCertificatePassword = ConvertTo-SecureString $certificatePassword -AsPlainText -Force
-            $certificatePassword = $null
-        }
-    
-        if ($secureResourcePassword -eq $null) {
-            $secureResourcePassword = ConvertTo-SecureString $resourcePassword -AsPlainText -Force
-            $resourcePassword = $null
-        }
 
         if ([string]::IsNullOrWhiteSpace($scriptsBaseUri)) {
             $scriptsBaseUri = "https://raw.githubusercontent.com/azuredemoenvironment/ade/main/scripts"
