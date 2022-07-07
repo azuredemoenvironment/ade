@@ -1,8 +1,5 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The Azure Active Directory User ID.')
-param azureActiveDirectoryUserID string
-
 @description('The Service Principal Name ID of the Application Gateway Managed Identity.')
 param applicationGatewayManagedIdentityPrincipalID string
 
@@ -52,24 +49,6 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
     tenantId: subscription().tenantId
     publicNetworkAccess: 'enabled'
     accessPolicies: [
-      {
-        objectId: azureActiveDirectoryUserID
-        tenantId: subscription().tenantId
-        permissions: {
-          keys: [
-            'all'
-            'purge'
-          ]
-          secrets: [
-            'all'
-            'purge'
-          ]
-          certificates: [
-            'all'
-            'purge'
-          ]
-        }
-      }
       {
         objectId: applicationGatewayManagedIdentityPrincipalID
         tenantId: subscription().tenantId

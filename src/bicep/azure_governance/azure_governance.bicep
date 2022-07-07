@@ -7,9 +7,6 @@ targetScope = 'subscription'
 @description('The user alias and Azure region defined from user input.')
 param aliasRegion string
 
-@description('The Azure Active Directory User ID.')
-param azureActiveDirectoryUserID string
-
 @description('The selected Azure region for deployment.')
 param azureRegion string
 
@@ -275,7 +272,6 @@ module keyVaultModule './azure_key_vault.bicep' = {
   ]
   params: {
     applicationGatewayManagedIdentityPrincipalID: identityModule.outputs.applicationGatewayManagedIdentityPrincipalId
-    azureActiveDirectoryUserID: azureActiveDirectoryUserID
     containerRegistryManagedIdentityPrincipalID: identityModule.outputs.containerRegistryManagedIdentityPrincipalId
     diagnosticsStorageAccountId: storageAccountDiagnosticsModule.outputs.diagnosticsStorageAccountId
     eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId

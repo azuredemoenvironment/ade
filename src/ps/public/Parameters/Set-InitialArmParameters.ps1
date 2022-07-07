@@ -24,9 +24,6 @@ function Set-InitialArmParameters {
     $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
     $acrName = "acr-ade-$aliasRegion-001".replace('-', '')
 
-    Write-Log 'Gathering User Information from az'
-    $adSignedInUser = az ad signed-in-user show | ConvertFrom-Json
-
     Write-Log 'Generating ARM Parameters'
 
     $armParameters = @{
@@ -46,10 +43,9 @@ function Set-InitialArmParameters {
 
         # Generated Parameters        
         'adminUserName'                            = $resourceUserName
-        'azureActiveDirectoryUserID'               = $adSignedInUser.objectId              
         'localNetworkGatewayAddressPrefix'         = $localNetworkRange
-        'logAnalyticsWorkspaceName'                = "log-ade-$aliasRegion-001"                  
-        'sourceAddressPrefix'                      = $sourceAddressPrefix        
+        'logAnalyticsWorkspaceName'                = "log-ade-$aliasRegion-001"
+        'sourceAddressPrefix'                      = $sourceAddressPrefix
         'sslCertificateName'                       = $rootDomainName
 
         # Required for Deploy-AzureAppServicePlanScaleDown.ps1
