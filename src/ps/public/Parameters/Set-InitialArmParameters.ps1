@@ -5,13 +5,13 @@ function Set-InitialArmParameters {
         [string] $resourceUserName,
         [string] $rootDomainName,
         [string] $localNetworkRange,
-        [string] $scriptsBaseUri,
         [SecureString] $secureResourcePassword,
         [SecureString] $secureCertificatePassword,
+        [string] $wildcardCertificatePath,
         [string] $azureRegion,
         [string] $azurePairedRegion,
         [string] $module,
-        [string] $wildcardCertificatePath,
+        [string] $scriptsBaseUri,
         [bool] $overwriteParameterFiles,
         [bool] $skipConfirmation
     )

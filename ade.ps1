@@ -142,7 +142,7 @@ try {
             $scriptsBaseUri = "https://raw.githubusercontent.com/azuredemoenvironment/ade/main/scripts"
         }
 
-        Deploy-AzureDemoEnvironment $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
+        Deploy-AzureDemoEnvironment $armParameters
     }
 
     if ($deallocate) {
