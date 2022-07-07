@@ -7,11 +7,11 @@ targetScope = 'subscription'
 @description('The user alias and Azure region defined from user input.')
 param aliasRegion string
 
-@description('The Azure Active Directory User ID.')
-param azureActiveDirectoryUserID string
-
 @description('The selected Azure region for deployment.')
 param azureRegion string
+
+@description('The Base64 encoded certificate for Azure resources.')
+param certificateBase64String string
 
 @description('The list of allowed locations for resource deployment. Used in Azure Policy module.')
 param listOfAllowedLocations array
@@ -31,6 +31,9 @@ param listOfAllowedSKUs array = [
 
 @description('The location for all resources.')
 param location string = deployment().location
+
+@description('The password for Azure resources.')
+param resourcePassword string
 
 // Global Variables
 //////////////////////////////////////////////////
@@ -275,12 +278,13 @@ module keyVaultModule './azure_key_vault.bicep' = {
   ]
   params: {
     applicationGatewayManagedIdentityPrincipalID: identityModule.outputs.applicationGatewayManagedIdentityPrincipalId
-    azureActiveDirectoryUserID: azureActiveDirectoryUserID
+    certificateBase64String: certificateBase64String
     containerRegistryManagedIdentityPrincipalID: identityModule.outputs.containerRegistryManagedIdentityPrincipalId
     diagnosticsStorageAccountId: storageAccountDiagnosticsModule.outputs.diagnosticsStorageAccountId
     eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
     keyVaultName: keyVaultName
     location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
+    resourcePassword: resourcePassword
   }
 }

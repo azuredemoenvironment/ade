@@ -1,9 +1,6 @@
 function Deploy-AzureDemoEnvironment {
     param(
-        [object] $armParameters,
-        [SecureString] $secureResourcePassword,
-        [SecureString] $secureCertificatePassword,
-        [object] $wildcardCertificatePath
+        [object] $armParameters
     )
 
     Write-ScriptSection "Initializing Azure Demo Environment Deploy"
@@ -34,7 +31,7 @@ function Deploy-AzureDemoEnvironment {
     
     # Core Services
     ###################################
-    Deploy-AzureGovernance $armParameters $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath
+    Deploy-AzureGovernance $armParameters
     Deploy-AzureNetworking $armParameters
     Deploy-AzureContainerRegistry $armParameters
     
