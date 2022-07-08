@@ -49,6 +49,7 @@ var adeAppAppServices = [
     adeAppName: 'userservice'
     containerImageName: 'ade-userservice'
     privateEndpointName: 'pl-ade-${aliasRegion}-ade-userservice'
+    subnetId: virtualNetwork002::userServiceSubnet.id
     usePrivateEndpoint: true
   }
   {
@@ -56,6 +57,7 @@ var adeAppAppServices = [
     adeAppName: 'dataingestorservice'
     containerImageName: 'ade-dataingestorservice'
     privateEndpointName: 'pl-ade-${aliasRegion}-ade-dataingestorservice'
+    subnetId: virtualNetwork002::dataIngestorServiceSubnet.id
     usePrivateEndpoint: true
   }
   {
@@ -63,6 +65,7 @@ var adeAppAppServices = [
     adeAppName: 'datareporterservice'
     containerImageName: 'ade-datareporterservice'
     privateEndpointName: 'pl-ade-${aliasRegion}-ade-datareporterservice'
+    subnetId: virtualNetwork002::dataReporterServiceSubnet.id
     usePrivateEndpoint: true
   }
   {
@@ -70,6 +73,7 @@ var adeAppAppServices = [
     adeAppName: 'eventingestorservice'
     containerImageName: 'ade-eventingestorservice'
     privateEndpointName: 'pl-ade-${aliasRegion}-ade-eventingestorservice'
+    subnetId: virtualNetwork002::eventIngestorServiceSubnet.id
     usePrivateEndpoint: true
   }
 ]
@@ -80,7 +84,10 @@ var appConfigName = 'appcs-ade-${aliasRegion}-001'
 var appServicePlanName = 'plan-ade-${aliasRegion}-001'
 var azureAppServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
 var containerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
+var dataIngestorServiceSubnetName = 'snet-ade-${aliasRegion}-dataIngestorService'
+var dataReporterServiceSubnetName = 'snet-ade-${aliasRegion}-dataReporterService'
 var eventHubNamespaceAuthorizationRuleName = 'evh-ade-${aliasRegion}-diagnostics/RootManageSharedAccessKey'
+var eventIngestorServiceSubnetName = 'snet-ade-${aliasRegion}-eventIngestorService'
 var diagnosticsStorageAccountName = replace('sa-ade-${aliasRegion}-diags', '-', '')
 var inspectorGadgetAppServiceName = replace('app-ade-${aliasRegion}-inspectorgadget', '-', '')
 var inspectorGadgetDockerImage = 'DOCKER|jelledruyts/inspectorgadget:latest'
@@ -88,7 +95,7 @@ var inspectorGadgetSqlDatabaseName = 'sqldb-ade-${aliasRegion}-inspectorgadget'
 var inspectorGadgetSqlServerName = 'sql-ade-${aliasRegion}-inspectorgadget'
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
-var privateEndpointSubnetName = 'snet-ade-${aliasRegion}-privateEndpoint'
+var userServiceSubnetName = 'snet-ade-${aliasRegion}-userService'
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
 var vnetIntegrationSubnetName = 'snet-ade-${aliasRegion}-vnetIntegration'
 
@@ -173,12 +180,21 @@ resource inspectorGadgetSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' exi
 //////////////////////////////////////////////////
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
-  name: virtualNetwork002Name
+  name: virtualNetwork002Name  
+  resource dataIngestorServiceSubnet 'subnets@2020-07-01' existing = {
+    name: dataIngestorServiceSubnetName
+  }
+  resource dataReporterServiceSubnet 'subnets@2020-07-01' existing = {
+    name: dataReporterServiceSubnetName
+  }
+  resource eventIngestorServiceSubnet 'subnets@2020-07-01' existing = {
+    name: eventIngestorServiceSubnetName
+  }
+  resource userServiceSubnet 'subnets@2020-07-01' existing = {
+    name: userServiceSubnetName
+  }
   resource vnetIntegrationSubnet 'subnets@2020-07-01' existing = {
     name: vnetIntegrationSubnetName
-  }
-  resource privateEndpointSubnet 'subnets@2020-07-01' existing = {
-    name: privateEndpointSubnetName
   }
 }
 
@@ -254,7 +270,6 @@ module adeAppServicesModule 'azure_app_services_adeapp.bicep' = {
     containerRegistryURL: containerRegistry.properties.loginServer
     location:location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    privateEndpointSubnetId: virtualNetwork002::privateEndpointSubnet.id
     vnetIntegrationSubnetId: virtualNetwork002::vnetIntegrationSubnet.id
   }
 }

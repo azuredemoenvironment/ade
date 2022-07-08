@@ -9,6 +9,9 @@ param adeAppSqlServerName string
 @description('The name of the ADE App Sql Server Private Endpoint.')
 param adeAppSqlServerPrivateEndpointName string
 
+@description('The ID of the ADE App Sql Subnet.')
+param adeAppSqlSubnetId string
+
 @description('The password of the admin user.')
 @secure()
 param adminPassword string
@@ -36,9 +39,6 @@ param location string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
-
-@description('The ID of the Private Endpoint Subnet.')
-param privateEndpointSubnetId string
 
 // Variables
 //////////////////////////////////////////////////
@@ -167,7 +167,7 @@ resource adeAppSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2020
   location: location
   properties: {
     subnet: {
-      id: privateEndpointSubnetId
+      id: adeAppSqlSubnetId
     }
     privateLinkServiceConnections: [
       {

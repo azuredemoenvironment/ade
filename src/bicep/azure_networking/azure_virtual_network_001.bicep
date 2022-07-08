@@ -3,6 +3,9 @@
 @description('The name of the Application Gateway Subnet.')
 param applicationGatewaySubnetName string
 
+@description('The ID of the Application Gateway Subnet NSG.')
+param applicationGatewaySubnetNSGId string
+
 @description('The address prefix of the Application Gateway Subnet.')
 param applicationGatewaySubnetPrefix string
 
@@ -76,15 +79,12 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
     }
     subnets: [
       {
-        name: azureFirewallSubnetName
-        properties: {
-          addressPrefix: azureFirewallSubnetPrefix
-        }
-      }
-      {
         name: applicationGatewaySubnetName
         properties: {
           addressPrefix: applicationGatewaySubnetPrefix
+          networkSecurityGroup: {
+            id: applicationGatewaySubnetNSGId
+          }
           serviceEndpoints: [
             {
               service: 'Microsoft.Web'
@@ -102,12 +102,9 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         }
       }
       {
-        name: managementSubnetName
+        name: azureFirewallSubnetName
         properties: {
-          addressPrefix: managementSubnetPrefix
-          networkSecurityGroup: {
-            id: managementSubnetNSGId
-          }
+          addressPrefix: azureFirewallSubnetPrefix
         }
       }
       {
@@ -116,7 +113,31 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
           addressPrefix: gatewaySubnetPrefix
         }
       }
+      {
+        name: managementSubnetName
+        properties: {
+          addressPrefix: managementSubnetPrefix
+          networkSecurityGroup: {
+            id: managementSubnetNSGId
+          }
+        }
+      }
     ]
+  }
+  resource applicationGatewaySubnet 'subnets' existing = {
+    name: applicationGatewaySubnetName
+  }
+  resource azureBastionSubnet 'subnets' existing = {
+    name: azureBastionSubnetName
+  }
+  resource azureFirewallSubnet 'subnets' existing = {
+    name: azureFirewallSubnetName
+  }
+  resource gatewaySubnet 'subnets' existing = {
+    name: gatewaySubnetName
+  }
+  resource managementSubnet 'subnets' existing = {
+    name: managementSubnetName
   }
 }
 
@@ -147,7 +168,7 @@ resource virtualNetwork001Diagnostics 'microsoft.insights/diagnosticSettings@202
 
 // Outputs
 //////////////////////////////////////////////////
+output azureBastionSubnetId string = virtualNetwork001::azureBastionSubnet.id
+output azureFirewallSubnetId string = virtualNetwork001::azureFirewallSubnet.id
+output gatewaySubnetId string = virtualNetwork001::gatewaySubnet.id
 output virtualNetwork001Id string = virtualNetwork001.id
-output azureFirewallSubnetId string = virtualNetwork001.properties.subnets[0].id
-output azureBastionSubnetId string = virtualNetwork001.properties.subnets[2].id
-output gatewaySubnetId string = virtualNetwork001.properties.subnets[4].id

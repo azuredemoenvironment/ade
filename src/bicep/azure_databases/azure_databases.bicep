@@ -29,6 +29,7 @@ var networkingResourceGroupName = 'rg-ade-${aliasRegion}-networking'
 var adeAppSqlDatabaseName = 'sqldb-ade-${aliasRegion}-adeapp'
 var adeAppSqlServerName = 'sql-ade-${aliasRegion}-adeapp'
 var adeAppSqlServerPrivateEndpointName = 'pl-ade-${aliasRegion}-adeappsql'
+var adeAppSqlSubnetName = 'snet-ade-${aliasRegion}-adeAppSql'
 var appConfigName = 'appcs-ade-${aliasRegion}-001'
 var azureSqlPrivateDnsZoneName = 'privatelink${environment().suffixes.sqlServerHostname}'
 var eventHubNamespaceAuthorizationRuleName = 'evh-ade-${aliasRegion}-diagnostics/RootManageSharedAccessKey'
@@ -36,9 +37,9 @@ var diagnosticsStorageAccountName = replace('sa-ade-${aliasRegion}-diags', '-', 
 var inspectorGadgetSqlDatabaseName = 'sqldb-ade-${aliasRegion}-inspectorgadget'
 var inspectorGadgetSqlServerName = 'sql-ade-${aliasRegion}-inspectorgadget'
 var inspectorGadgetSqlServerPrivateEndpointName = 'pl-ade-${aliasRegion}-inspectorgadgetsql'
+var inspectorGadgetSqlSubnetName = 'snet-ade-${aliasRegion}-inspectorGadgetSql'
 var keyVaultName = 'kv-ade-${aliasRegion}-001'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
-var privateEndpointSubnetName = 'snet-ade-${aliasRegion}-privateEndpoint'
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
 
 // Existing Resource - App Config
@@ -87,8 +88,11 @@ resource azureSqlPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' e
 resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
   name: virtualNetwork002Name
-  resource privateEndpointSubnet 'subnets@2020-07-01' existing = {
-    name: privateEndpointSubnetName
+  resource adeAppSqlSubnet 'subnets@2020-07-01' existing = {
+    name: adeAppSqlSubnetName
+  }
+  resource inspectorGadgetSqlSubnet 'subnets@2020-07-01' existing = {
+    name: inspectorGadgetSqlSubnetName
   }
 }
 
@@ -118,6 +122,7 @@ module adeAppSqlModule './azure_databases_adeapp_sql.bicep' = {
     adeAppSqlDatabaseName: adeAppSqlDatabaseName
     adeAppSqlServerName: adeAppSqlServerName
     adeAppSqlServerPrivateEndpointName: adeAppSqlServerPrivateEndpointName
+    adeAppSqlSubnetId: virtualNetwork002::adeAppSqlSubnet.id
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
     appConfigName: appConfig.name
@@ -127,7 +132,6 @@ module adeAppSqlModule './azure_databases_adeapp_sql.bicep' = {
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location: location    
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    privateEndpointSubnetId: virtualNetwork002::privateEndpointSubnet.id
   }
 }
 
@@ -148,8 +152,8 @@ module inspectorGadgetSqlModule './azure_databases_inspectorgadget_sql.bicep' = 
     inspectorGadgetSqlDatabaseName: inspectorGadgetSqlDatabaseName
     inspectorGadgetSqlServerName: inspectorGadgetSqlServerName
     inspectorGadgetSqlServerPrivateEndpointName: inspectorGadgetSqlServerPrivateEndpointName
+    inspectorGadgetSqlSubnetId: virtualNetwork002::inspectorGadgetSqlSubnet.id
     location: location    
-    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    privateEndpointSubnetId: virtualNetwork002::privateEndpointSubnet.id
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id    
   }
 }

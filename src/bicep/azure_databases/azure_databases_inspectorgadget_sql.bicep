@@ -25,14 +25,14 @@ param inspectorGadgetSqlServerName string
 @description('The name of the Inspector Gadget Sql Server Private Endpoint.')
 param inspectorGadgetSqlServerPrivateEndpointName string
 
+@description('The ID of the Inspector Gadget Sql Subnet.')
+param inspectorGadgetSqlSubnetId string
+
 @description('The location for all resources.')
 param location string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
-
-@description('The ID of the Private Endpoint Subnet.')
-param privateEndpointSubnetId string
 
 // Variables
 //////////////////////////////////////////////////
@@ -150,7 +150,7 @@ resource inspectorGadgetSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpo
   location: location
   properties: {
     subnet: {
-      id: privateEndpointSubnetId
+      id: inspectorGadgetSqlSubnetId
     }
     privateLinkServiceConnections: [
       {
