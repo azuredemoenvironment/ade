@@ -242,12 +242,12 @@ resource applicationGatewaySubnetNSG 'Microsoft.Network/networkSecurityGroups@20
   location: location
   tags: tags
   properties: {
-    securityRules: [
+    securityRules: [      
       {
         name: 'Gateway_Manager_Inbound'
         properties: {
           description: 'Allow Gateway Manager Access'
-          protocol: '*'
+          protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '65200-65535'
           sourceAddressPrefix: 'GatewayManager'
@@ -257,11 +257,39 @@ resource applicationGatewaySubnetNSG 'Microsoft.Network/networkSecurityGroups@20
           direction: 'Inbound'
         }
       }
+      {
+        name: 'HTTP_Inbound'
+        properties: {
+          description: 'Allow HTTP Inbound'
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          destinationPortRange: '80'
+          sourceAddressPrefix: '*'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 200
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'HTTPS_Inbound'
+        properties: {
+          description: 'Allow HTTPS Inbound'
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          destinationPortRange: '443'
+          sourceAddressPrefix: '*'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 300
+          direction: 'Inbound'
+        }
+      }
     ]
   }
 }
 
-// Resource - Network Security Group - Diagnostic Settings - Azure Bastion Subnet
+// Resource - Network Security Group - Diagnostic Settings - Application Gateway Subnet
 //////////////////////////////////////////////////
 resource applicationGatewaySubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: applicationGatewaySubnetNSG
