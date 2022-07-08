@@ -33,9 +33,6 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The ID of the Private Endpoint Subnet.')
-param privateEndpointSubnetId string
-
 @description('The ID of the Virtual Network Integration Subnet.')
 param vnetIntegrationSubnetId string
 
@@ -157,7 +154,7 @@ resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2022-0
   location: location
   properties: {
     subnet: {
-      id: privateEndpointSubnetId
+      id: adeAppAppService.subnetId
     }
     privateLinkServiceConnections: [
       {

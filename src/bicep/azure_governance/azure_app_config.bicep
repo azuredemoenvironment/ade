@@ -25,12 +25,16 @@ var tags = {
 
 // Resource - App Configuration
 //////////////////////////////////////////////////
-resource appConfig 'Microsoft.AppConfiguration/configurationStores@2020-07-01-preview' = {
+resource appConfig 'Microsoft.AppConfiguration/configurationStores@2022-05-01' = {
   name: appConfigName
   location: location
   tags: tags
   sku: {
     name: 'Standard'
+  }
+  properties: {
+    createMode: 'Default'
+    enablePurgeProtection: false
   }
 }
 

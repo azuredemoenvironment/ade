@@ -6,6 +6,15 @@ param adeAppAksSubnetName string
 @description('The address prefix of the ADE AKS Subnet.')
 param adeAppAksSubnetPrefix string
 
+@description('The name of the ADE App SQL Subnet.')
+param adeAppSqlSubnetName string
+
+@description('The ID of the ADE App SQL Subnet NSG.')
+param adeAppSqlSubnetNSGId string
+
+@description('The address prefix of the ADE App SQL Subnet.')
+param adeAppSqlSubnetPrefix string
+
 @description('The name of the ADE App Vmss Subnet.')
 param adeAppVmssSubnetName string
 
@@ -42,11 +51,47 @@ param adeWebVmSubnetNSGId string
 @description('The address prefix of the ADE Web Vm Subnet.')
 param adeWebVmSubnetPrefix string
 
+@description('The name of the Data Ingestor Subnet.')
+param dataIngestorServiceSubnetName string
+
+@description('The ID of the Data Ingestor Subnet NSG.')
+param dataIngestorServiceSubnetNSGId string
+
+@description('The address prefix of the Data Ingestor Subnet.')
+param dataIngestorServiceSubnetPrefix string
+
+@description('The name of the Data Reporter Subnet.')
+param dataReporterServiceSubnetName string
+
+@description('The ID of the Data Reporter Subnet NSG.')
+param dataReporterServiceSubnetNSGId string
+
+@description('The address prefix of the Data Reporter Subnet.')
+param dataReporterServiceSubnetPrefix string
+
 @description('The ID of the Diagnostics Storage Account.')
 param diagnosticsStorageAccountId string
 
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
+
+@description('The name of the Event Ingestor Subnet.')
+param eventIngestorServiceSubnetName string
+
+@description('The ID of the Event Ingestor Subnet NSG.')
+param eventIngestorServiceSubnetNSGId string
+
+@description('The address prefix of the Event Ingestor Subnet.')
+param eventIngestorServiceSubnetPrefix string
+
+@description('The name of the Inspector Gadget SQL Subnet.')
+param inspectorGadgetSqlSubnetName string
+
+@description('The ID of the Inspector Gadget SQL Subnet NSG.')
+param inspectorGadgetSqlSubnetNSGId string
+
+@description('The address prefix of the Inspector Gadget SQL Subnet.')
+param inspectorGadgetSqlSubnetPrefix string
 
 @description('The location for all resources.')
 param location string
@@ -57,11 +102,14 @@ param logAnalyticsWorkspaceId string
 @description('The ID of the Nat Gateway.')
 param natGatewayId string
 
-@description('The name of the Private Endpoint Subnet.')
-param privateEndpointSubnetName string
+@description('The name of the User Service Subnet.')
+param userServiceSubnetName string
 
-@description('The address prefix of the Private Endpoint Subnet.')
-param privateEndpointSubnetPrefix string
+@description('The ID of the User Service Subnet NSG.')
+param userServiceSubnetNSGId string
+
+@description('The address prefix of the User Service Subnet.')
+param userServiceSubnetPrefix string
 
 @description('The name of the Virtual Network.')
 param virtualNetwork002Name string
@@ -71,6 +119,9 @@ param virtualnetwork002Prefix string
 
 @description('The name of the VNET Integration Subnet.')
 param vnetIntegrationSubnetName string
+
+@description('The ID of the VNET Integration Subnet NSG.')
+param vnetIntegrationSubnetNSGId string
 
 @description('The address prefix of the VNET Integration Subnet.')
 param vnetIntegrationSubnetPrefix string
@@ -95,13 +146,42 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         virtualnetwork002Prefix
       ]
     }
-    subnets: [
+    subnets: [      
       {
-        name: adeWebVmSubnetName
+        name: adeAppAksSubnetName
         properties: {
-          addressPrefix: adeWebVmSubnetPrefix
+          addressPrefix: adeAppAksSubnetPrefix
+          serviceEndpoints: [
+            {
+              service: 'Microsoft.ContainerRegistry'
+            }
+          ]
+        }
+      }
+      {
+        name: adeAppSqlSubnetName
+        properties: {
+          addressPrefix: adeAppSqlSubnetPrefix
+          privateEndpointNetworkPolicies: 'Enabled'
           networkSecurityGroup: {
-            id: adeWebVmSubnetNSGId
+            id: adeAppSqlSubnetNSGId
+          }
+        }
+      }
+      {
+        name: adeAppVmssSubnetName
+        properties: {
+          addressPrefix: adeAppVmssSubnetPrefix
+          networkSecurityGroup: {
+            id: adeAppVmssSubnetNSGId
+          }
+          serviceEndpoints: [
+            {
+              service: 'Microsoft.Sql'
+            }
+          ]
+          natGateway: {
+            id: natGatewayId
           }
         }
       }
@@ -132,31 +212,62 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         }
       }
       {
-        name: adeAppVmssSubnetName
+        name: adeWebVmSubnetName
         properties: {
-          addressPrefix: adeAppVmssSubnetPrefix
+          addressPrefix: adeWebVmSubnetPrefix
           networkSecurityGroup: {
-            id: adeAppVmssSubnetNSGId
-          }
-          serviceEndpoints: [
-            {
-              service: 'Microsoft.Sql'
-            }
-          ]
-          natGateway: {
-            id: natGatewayId
+            id: adeWebVmSubnetNSGId
           }
         }
       }
       {
-        name: adeAppAksSubnetName
+        name: dataIngestorServiceSubnetName
         properties: {
-          addressPrefix: adeAppAksSubnetPrefix
-          serviceEndpoints: [
-            {
-              service: 'Microsoft.ContainerRegistry'
-            }
-          ]
+          addressPrefix: dataIngestorServiceSubnetPrefix
+          privateEndpointNetworkPolicies: 'Enabled'
+          networkSecurityGroup: {
+            id: dataIngestorServiceSubnetNSGId
+          }
+        }
+      }
+      {
+        name: dataReporterServiceSubnetName
+        properties: {
+          addressPrefix: dataReporterServiceSubnetPrefix
+          privateEndpointNetworkPolicies: 'Enabled'
+          networkSecurityGroup: {
+            id: dataReporterServiceSubnetNSGId
+          }
+        }
+      }   
+      {
+        name: eventIngestorServiceSubnetName
+        properties: {
+          addressPrefix: eventIngestorServiceSubnetPrefix
+          privateEndpointNetworkPolicies: 'Enabled'
+          networkSecurityGroup: {
+            id: eventIngestorServiceSubnetNSGId
+          }
+        }
+      }
+      {
+        name: inspectorGadgetSqlSubnetName
+        properties: {
+          addressPrefix: inspectorGadgetSqlSubnetPrefix
+          privateEndpointNetworkPolicies: 'Enabled'
+          networkSecurityGroup: {
+            id: inspectorGadgetSqlSubnetNSGId
+          }
+        }
+      }
+      {
+        name: userServiceSubnetName
+        properties: {
+          addressPrefix: userServiceSubnetPrefix
+          privateEndpointNetworkPolicies: 'Enabled'
+          networkSecurityGroup: {
+            id: userServiceSubnetNSGId
+          }
         }
       }
       {
@@ -171,13 +282,9 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
               }
             }
           ]
-        }
-      }
-      {
-        name: privateEndpointSubnetName
-        properties: {
-          addressPrefix: privateEndpointSubnetPrefix
-          privateEndpointNetworkPolicies: 'Disabled'
+          networkSecurityGroup: {
+            id: vnetIntegrationSubnetNSGId
+          }
         }
       }
     ]

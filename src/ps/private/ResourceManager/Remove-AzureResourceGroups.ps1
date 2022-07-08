@@ -37,7 +37,7 @@ function Remove-AzureResourceGroups {
         az group delete -n $_ -y
         Confirm-LastExitCode
 
-        Write-Log "Removed $_ Resourced Group"
+        Write-Log "Removed $_ Resource Group"
     }
 
     Write-ScriptSection "Finished Removing Azure Resource Groups"
