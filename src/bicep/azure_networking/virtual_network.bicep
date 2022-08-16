@@ -21,7 +21,7 @@ param virtualNetworks array
 // Resource - Virtual Network
 //////////////////////////////////////////////////
 @batchSize(1)
-resource vnet 'Microsoft.Network/virtualNetworks@2022-01-01' = [for (virtualNetwork, i) in virtualNetworks: {
+resource vnet 'Microsoft.Network/virtualNetworks@2022-01-01' = [for virtualNetwork in virtualNetworks: {
   name: virtualNetwork.name
   location: location
   tags: tags
@@ -87,3 +87,8 @@ output azureBastionSubnetId string = virtualNetwork001::azureBastionSubnet.id
 output azureFirewallSubnetId string = virtualNetwork001::azureFirewallSubnet.id
 output gatewaySubnetId string = virtualNetwork001::gatewaySubnet.id
 output virtualNetwork001Id string = virtualNetwork001.id
+
+output vnets array = [for (virtualNetwork, i) in virtualNetworks: {
+  virtualNetworkId: vnet[i].id
+
+}]

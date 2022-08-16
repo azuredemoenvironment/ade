@@ -30,7 +30,6 @@ param resourcePassword string
 // Resources
 var appConfigName = 'appcs-${appEnvironment}-001'
 var keyVaultName = 'kv-${appEnvironment}-001'
-var logAnalyticsWorkspaceName = 'log-${appEnvironment}-001'
 var tags = {
   deploymentDate: deploymentDate
   owner: ownerName
@@ -38,49 +37,44 @@ var tags = {
 
 // Existing Resource - Application Insights
 //////////////////////////////////////////////////
-var applicationInsightsName = 'appinsights-${appEnvironment}-001'
 resource applicationInsights 'Microsoft.Insights/components@2020-02-02' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: applicationInsightsName
+  name: 'appinsights-${appEnvironment}-001'
 }
 
 // Existing Resource - Event Hub Authorization Rule
 //////////////////////////////////////////////////
-var eventHubNamespaceAuthorizationRuleName = 'evh-${appEnvironment}-diagnostics/RootManageSharedAccessKey'
 resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2021-11-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: eventHubNamespaceAuthorizationRuleName
+  name: 'evh-${appEnvironment}-diagnostics/RootManageSharedAccessKey'
 }
 
 // Existing Resource - Log Analytics Workspace
 //////////////////////////////////////////////////
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: logAnalyticsWorkspaceName
+  name: 'log-${appEnvironment}-001'
 }
 
 // Existing Resource - Managed Identity - Application Gateway
 //////////////////////////////////////////////////
-var applicationGatewayManagedIdentityName = 'id-${appEnvironment}-applicationgateway'
 resource applicationGatewayManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
   scope: resourceGroup(identityResourceGroupName)
-  name: applicationGatewayManagedIdentityName
+  name: 'id-${appEnvironment}-applicationgateway'
 }
 
 // Existing Resource - Managed Identity - Container Registry
 //////////////////////////////////////////////////
-var containerRegistryManagedIdentityName = 'id-${appEnvironment}-containerregistry'
 resource containerRegistryManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
   scope: resourceGroup(identityResourceGroupName)
-  name: containerRegistryManagedIdentityName
+  name: 'id-${appEnvironment}-containerregistry'
 }
 
 // Existing Resource - Storage Account - Diagnostics
 //////////////////////////////////////////////////
-var diagnosticsStorageAccountName = replace('sa-${appEnvironment}-diags', '-', '')
 resource diagnosticsStorageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: diagnosticsStorageAccountName
+  name: replace('sa-${appEnvironment}-diags', '-', '')
 }
 
 // Module - App Configuration
