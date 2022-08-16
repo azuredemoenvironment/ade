@@ -4,7 +4,7 @@ function Set-AzureKeyVaultResourceId {
     )
 
     Write-Log 'Getting Azure Key Vault Resource ID and Assigning to ARM Parameters'
-    $keyVaultResourceID = az keyvault show -n $armParameters.keyVaultName -g $armParameters.keyVaultResourceGroupName --query id
+    $keyVaultResourceID = az keyvault show -n $armParameters.keyVaultName -g $armParameters.securityResourceGroupName --query id
     $armParameters['keyVaultResourceID'] = $keyVaultResourceID.replace('"', '')
     Confirm-LastExitCode
 }

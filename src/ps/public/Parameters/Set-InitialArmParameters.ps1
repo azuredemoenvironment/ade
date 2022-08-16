@@ -18,46 +18,43 @@ function Set-InitialArmParameters {
     
     # Initial Parameter Setup
     $azureRegionShortName = Get-RegionShortName $azureRegion
-    $azurePairedRegionShortName = Get-RegionShortName $azurePairedRegion
-    $aliasRegion = "$alias-$azureRegionShortName".ToLowerInvariant()
-    $aliasPairedRegion = "$alias-$azurePairedRegionShortName".ToLowerInvariant()
-
-    $azureRegionResourceGroupNamePrefix = "rg-ade-$aliasRegion"
-    $PairedRegionResourceGroupNamePrefix = "rg-ade-$aliasPairedRegion"
-    $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
-    $acrName = "acr-ade-$aliasRegion-001".replace('-', '')
-
+    $appEnvironment = "ade-$alias-$azureRegionShortName".ToLowerInvariant()
+    $acrName = "acr-$appEnvironment-001".replace('-', '')
+    
+    
     $certificateBase64String = Convert-WildcardCertificateToBase64String $secureCertificatePassword $wildcardCertificatePath
+    $ownerName = $(az account show --query "user.name" --output tsv)
     $plainTextResourcePassword = ConvertFrom-SecureString -SecureString $secureResourcePassword -AsPlainText
+    $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
 
     Write-Log 'Generating ARM Parameters'
 
     $armParameters = @{
         # Standard Parameters
-        'aliasRegion'                              = $aliasRegion
-        'aliasPairedRegion'                        = $aliasPairedRegion
-        'contactEmailAddress'                      = $email
-        'scriptsBaseUri'                           = $scriptsBaseUri
-        'azureRegion'                              = $azureRegion
+        'appEnvironment'                           = $appEnvironment
         'azurePairedRegion'                        = $azurePairedRegion
+        'azureRegion'                              = $azureRegion
+        'contactEmailAddress'                      = $email
         'deployAzureFirewall'                      = 'false'
         'deployVpnGateway'                         = 'false'
         'module'                                   = $module
-        'overwriteParameterFiles'                  = $overwriteParameterFiles
+        'overwriteParameterFiles'                  = $overwriteParameterFiles 
         'rootDomainName'                           = $rootDomainName
+        'scriptsBaseUri'                           = $scriptsBaseUri
         'skipConfirmation'                         = $skipConfirmation
 
         # Generated Parameters        
         'adminUserName'                            = $resourceUserName
         'certificateBase64String'                  = $certificateBase64String
         'localNetworkGatewayAddressPrefix'         = $localNetworkRange
-        'logAnalyticsWorkspaceName'                = "log-ade-$aliasRegion-001"
+        'logAnalyticsWorkspaceName'                = "log-$appEnvironment-001"
+        'ownerName'                                = $ownerName
         'resourcePassword'                         = $plainTextResourcePassword
         'sourceAddressPrefix'                      = $sourceAddressPrefix
         'sslCertificateName'                       = $rootDomainName
 
         # Required for Deploy-AzureAppServicePlanScaleDown.ps1
-        'appServicePlanName'                       = "plan-ade-$aliasRegion-001"
+        'appServicePlanName'                       = "plan-$appEnvironment-001"
 
         # Required for Deploy-AzureContainerRegistry.ps1
         'acrName'                                  = $acrName
@@ -65,65 +62,67 @@ function Set-InitialArmParameters {
 
         # Required for Deploy-AzureGovernance.ps1               
         'keyVaultKeyName'                          = "containerRegistry"
-        'keyVaultName'                             = "kv-ade-$aliasRegion-001"
+        'keyVaultName'                             = "kv-$appEnvironment-001"
 
         # Required for Remove-AzureActivityLogDiagnostics.ps1
         'activityLogDiagnosticsName'               = "subscriptionActivityLog"
 
         # Required for Remove-AzureCostManagementBudget.ps1
-        'adeBudgetName'                            = "budget-ade-$aliasRegion-monthly"
+        'adeBudgetName'                            = "budget-$appEnvironment-monthly"
 
         # Required for Remove-AzurePolicyAssignmentsAndDefinitions.ps1
-        'adeInitiativeDefinition'                  = "policy-ade-$aliasRegion-adeinitiative"
+        'adeInitiativeDefinition'                  = "policy-$appEnvironment-adeinitiative"
 
         # Required for Set-AzureContainerInstancesToStarted.ps1 and Set-AzureContainerInstancesToStopped.ps1
-        'adeLoadTestingGatlingContainerGroupName'  = "ci-ade-$aliasRegion-adeloadtesting-gatling"
-        'adeLoadTestingGrafanaContainerGroupName'  = "ci-ade-$aliasRegion-adeloadtesting-grafana"
-        'adeLoadTestingInfluxDbContainerGroupName' = "ci-ade-$aliasRegion-adeloadtesting-influxdb"
-        'adeLoadTestingRedisContainerGroupName'    = "ci-ade-$aliasRegion-adeloadtesting-redis"
+        'adeLoadTestingGatlingContainerGroupName'  = "ci-$appEnvironment-adeloadtesting-gatling"
+        'adeLoadTestingGrafanaContainerGroupName'  = "ci-$appEnvironment-adeloadtesting-grafana"
+        'adeLoadTestingInfluxDbContainerGroupName' = "ci-$appEnvironment-adeloadtesting-influxdb"
+        'adeLoadTestingRedisContainerGroupName'    = "ci-$appEnvironment-adeloadtesting-redis"
         
         # Required for Set-AzureFirewallToAllocated.ps1 and Set-AzureFirewallToDeallocated.ps1
-        'azureFirewallPublicIpAddressName'         = "pip-ade-$aliasRegion-fw001"
-        'azureFirewallName'                        = "fw-ade-$aliasRegion-001"        
-        'virtualNetwork001Name'                    = "vnet-ade-$aliasRegion-001"
+        'azureFirewallPublicIpAddressName'         = "pip-$appEnvironment-fw001"
+        'azureFirewallName'                        = "fw-$appEnvironment-001"        
+        'virtualNetwork001Name'                    = "vnet-$appEnvironment-001"
 
         # Required for Set-AzureVmssToAllocated.ps1 and Set-AzureVmssToAllocated.ps1
-        'adeAppVmssName'                           = "vmss-ade-$aliasRegion-adeapp-vmss"
-        'adeWebVmssName'                           = "vmss-ade-$aliasRegion-adeweb-vmss"
+        'adeAppVmssName'                           = "vmss-$appEnvironment-adeapp-vmss"
+        'adeWebVmssName'                           = "vmss-$appEnvironment-adeweb-vmss"
 
         # Required for Set-AzureVirtualMachinesToAllocated.ps1 and Set-AzureVirtualMachinesToDellocated.ps1
         'jumpboxName'                              = "vm-jumpbox01"
-        'adeWebVm01Name'                           = "vm-ade-$aliasRegion-adeweb01"
-        'adeWebVm02Name'                           = "vm-ade-$aliasRegion-adeweb02"
-        'adeWebVm03Name'                           = "vm-ade-$aliasRegion-adeweb03"
-        'adeAppVm01Name'                           = "vm-ade-$aliasRegion-adeapp01"
-        'adeAppVm02Name'                           = "vm-ade-$aliasRegion-adeapp02"
-        'adeAppVm03Name'                           = "vm-ade-$aliasRegion-adeapp03"
+        'adeWebVm01Name'                           = "vm-$appEnvironment-adeweb01"
+        'adeWebVm02Name'                           = "vm-$appEnvironment-adeweb02"
+        'adeWebVm03Name'                           = "vm-$appEnvironment-adeweb03"
+        'adeAppVm01Name'                           = "vm-$appEnvironment-adeapp01"
+        'adeAppVm02Name'                           = "vm-$appEnvironment-adeapp02"
+        'adeAppVm03Name'                           = "vm-$appEnvironment-adeapp03"
   
         # Resource Group Names
-        'adeAppAksNodeResourceGroupName'           = "$azureRegionResourceGroupNamePrefix-adeappaks-node"
-        'adeAppAksResourceGroupName'               = "$azureRegionResourceGroupNamePrefix-adeappaks"
-        'adeAppAppServicesResourceGroupName'       = "$azureRegionResourceGroupNamePrefix-adeappweb"
-        'adeAppLoadTestingResourceGroupName'       = "$azureRegionResourceGroupNamePrefix-adeapploadtesting"
-        'adeAppSqlResourceGroupName'               = "$azureRegionResourceGroupNamePrefix-adeappdb"
-        'adeAppVmResourceGroupName'                = "$azureRegionResourceGroupNamePrefix-adeappvm"
-        'adeAppVmssResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-adeappvmss"    
-        'appConfigResourceGroupName'               = "$azureRegionResourceGroupNamePrefix-appconfig"
-        'applicationGatewayResourceGroupName'      = "$azureRegionResourceGroupNamePrefix-applicationgateway"
-        'appServicePlanResourceGroupName'          = "$azureRegionResourceGroupNamePrefix-appserviceplan"     
-        'containerRegistryResourceGroupName'       = "$azureRegionResourceGroupNamePrefix-containerregistry"
-        'dnsResourceGroupName'                     = "$azureRegionResourceGroupNamePrefix-dns"
-        'identityResourceGroupName'                = "$azureRegionResourceGroupNamePrefix-identity"     
-        'inspectorGadgetResourceGroupName'         = "$azureRegionResourceGroupNamePrefix-inspectorgadget"
-        'jumpboxResourceGroupName'                 = "$azureRegionResourceGroupNamePrefix-jumpbox"   
-        'keyVaultResourceGroupName'                = "$azureRegionResourceGroupNamePrefix-keyvault"
-        'monitorResourceGroupName'                 = "$azureRegionResourceGroupNamePrefix-monitor"
-        'networkingResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-networking"
+        'adeAppAksNodeResourceGroupName'           = "rg-$appEnvironment-adeappaks-node"
+        'adeAppAksResourceGroupName'               = "rg-$appEnvironment-adeappaks"
+        'adeAppAppServicesResourceGroupName'       = "rg-$appEnvironment-adeappweb"
+        'adeAppLoadTestingResourceGroupName'       = "rg-$appEnvironment-adeapploadtesting"
+        'adeAppSqlResourceGroupName'               = "rg-$appEnvironment-adeappdb"
+        'adeAppVmResourceGroupName'                = "rg-$appEnvironment-adeappvm"
+        'adeAppVmssResourceGroupName'              = "rg-$appEnvironment-adeappvmss"    
+        # 'appConfigResourceGroupName'             = "rg-$appEnvironment-appconfig"
+        'applicationGatewayResourceGroupName'      = "rg-$appEnvironment-applicationgateway"
+        'appServicePlanResourceGroupName'          = "rg-$appEnvironment-appserviceplan"     
+        'containerRegistryResourceGroupName'       = "rg-$appEnvironment-containerregistry"
+        'dnsResourceGroupName'                     = "rg-$appEnvironment-dns"
+        'identityResourceGroupName'                = "rg-$appEnvironment-identity"     
+        'inspectorGadgetResourceGroupName'         = "rg-$appEnvironment-inspectorgadget"
+        'jumpboxResourceGroupName'                 = "rg-$appEnvironment-jumpbox"   
+        # 'keyVaultResourceGroupName'              = "rg-$appEnvironment-keyvault"
+        'managementResourceGroupName'              = "rg-$appEnvironment-management"
+        'mopnitorResourceGroupName'                = "rg-$appEnvironment-monitor"
+        'networkingResourceGroupName'              = "rg-$appEnvironment-networking"
         'networkWatcherResourceGroupName'          = "NetworkWatcherRG"
-        'proximityPlacementGroupResourceGroupName' = "$azureRegionResourceGroupNamePrefix-ppg"
+        'proximityPlacementGroupResourceGroupName' = "rg-$appEnvironment-ppg"
+        'securityResourceGroupName'                = "rg-$appEnvironment-security"
     }
 
-    if (Confirm-AzureResourceExists 'keyvault' $armParameters.keyVaultResourceGroupName $armParameters.keyVaultName) {
+    if (Confirm-AzureResourceExists 'keyvault' $armParameters.securityResourceGroupName $armParameters.keyVaultName) {
         Set-AzureKeyVaultResourceId $armParameters
     }
 

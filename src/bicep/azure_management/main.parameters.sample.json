@@ -2,14 +2,11 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "aliasRegion": {
-            "value": "@@aliasRegion@@"
+        "appEnvironment": {
+            "value": "@@appEnvironment@@"
         },
         "azureRegion": {
             "value": "@@azureRegion@@"
-        },
-        "certificateBase64String": {
-            "value": "@@certificateBase64String@@"
         },
         "listOfAllowedLocations": {
             "value": [
@@ -17,8 +14,8 @@
                 "@@azurePairedRegion@@"
             ]
         },
-        "resourcePassword": {
-            "value": "@@resourcePassword@@"
+        "ownerName": {
+            "value": "@@ownerName@@"
         }
     }
 }

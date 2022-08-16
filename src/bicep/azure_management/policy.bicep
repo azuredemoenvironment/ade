@@ -21,7 +21,7 @@ param logAnalyticsWorkspaceId string
 
 // Resource - Initiative Definition
 //////////////////////////////////////////////////
-resource initiativeDefinition 'Microsoft.Authorization/policySetDefinitions@2019-09-01' = {
+resource initiativeDefinition 'Microsoft.Authorization/policySetDefinitions@2021-06-01' = {
   name: initiativeDefinitionName
   properties: {
     policyType: 'Custom'
@@ -83,10 +83,10 @@ resource initiativeDefinition 'Microsoft.Authorization/policySetDefinitions@2019
 
 // Resource - Policy Assignment - Initiative Definition
 //////////////////////////////////////////////////
-resource initiativeDefinitionPolicyAssignment 'Microsoft.Authorization/policyAssignments@2019-09-01' = {
+resource initiativeDefinitionPolicyAssignment 'Microsoft.Authorization/policyAssignments@2021-06-01' = {
   name: initiativeDefinitionName
+  scope: subscription()
   properties: {
-    scope: subscription().id
     enforcementMode: 'Default'
     policyDefinitionId: initiativeDefinition.id
     parameters: {
@@ -102,14 +102,14 @@ resource initiativeDefinitionPolicyAssignment 'Microsoft.Authorization/policyAss
 
 // Resource - Policy Assignment - Azure Monitor for VMs
 //////////////////////////////////////////////////
-resource azureMonitorVMsPolicyAssignment 'Microsoft.Authorization/policyAssignments@2019-09-01' = {
+resource azureMonitorVMsPolicyAssignment 'Microsoft.Authorization/policyAssignments@2021-06-01' = {
   name: 'Enable Azure Monitor for VMs'
   location: azureRegion
+  scope: subscription()
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    scope: subscription().id
     enforcementMode: 'Default'
     policyDefinitionId: '/providers/Microsoft.Authorization/policySetDefinitions/55f3eceb-5573-4f18-9695-226972c6d74a'
     parameters: {
@@ -122,14 +122,14 @@ resource azureMonitorVMsPolicyAssignment 'Microsoft.Authorization/policyAssignme
 
 // Resource - Policy Assignment - Azure Monitor for VMSS
 //////////////////////////////////////////////////
-resource azureMonitorVMSSPolicyAssignment 'Microsoft.Authorization/policyAssignments@2019-09-01' = {
+resource azureMonitorVMSSPolicyAssignment 'Microsoft.Authorization/policyAssignments@2021-06-01' = {
   name: 'Enable Azure Monitor for Virtual Machine Scale Sets'
   location: azureRegion
+  scope: subscription()
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    scope: subscription().id
     enforcementMode: 'Default'
     policyDefinitionId: '/providers/Microsoft.Authorization/policySetDefinitions/75714362-cae7-409e-9b99-a8e5075b7fad'
     parameters: {

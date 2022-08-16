@@ -12,13 +12,8 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-// Variables
-//////////////////////////////////////////////////
-var tags = {
-  environment: 'production'
-  function: 'monitoring and diagnostics'
-  costCenter: 'it'
-}
+@description('The list of Resource tags')
+param tags object
 
 // Resource - Event Hub Namespace
 //////////////////////////////////////////////////
@@ -40,7 +35,7 @@ resource eventHubNamespace 'Microsoft.EventHub/namespaces@2021-11-01' = {
 
 // Resource - Event Hub
 //////////////////////////////////////////////////
-resource eventHub 'Microsoft.EventHub/namespaces/eventhubs@2017-04-01' = {
+resource eventHub 'Microsoft.EventHub/namespaces/eventhubs@2021-11-01' = {
   name: '${eventHubNamespace.name}/${eventHubName}'
   properties: {
     messageRetentionInDays: 1

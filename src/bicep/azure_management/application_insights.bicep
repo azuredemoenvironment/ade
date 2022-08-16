@@ -15,17 +15,12 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-// Variables
-//////////////////////////////////////////////////
-var tags = {
-  environment: 'production'
-  function: 'monitoring and diagnostics'
-  costCenter: 'it'
-}
+@description('The list of Resource tags')
+param tags object
 
 // Resource - Application Insights
 //////////////////////////////////////////////////
-resource applicationInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
+resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: applicationInsightsName
   location: location
   tags: tags

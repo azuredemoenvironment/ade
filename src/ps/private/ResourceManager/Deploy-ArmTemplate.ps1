@@ -13,7 +13,9 @@ function Deploy-ArmTemplate {
 
     $overwriteParameterFiles = [System.Convert]::ToBoolean($armParameters.overwriteParameterFiles)
     $folderName = $stepName.replace(' ', '_').replace(':', '').toLowerInvariant()
-    $fileName = $folderName
+    $fileName = "main"
+    # TODO: Adjusted file name to main
+    # $fileName = $folderName
 
     $deploymentName = $stepName.replace(' ', '').replace(':', '') + 'Deployment'
     # TODO: move the templates to be in the module

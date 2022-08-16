@@ -25,15 +25,11 @@ param location string
 param logAnalyticsWorkspaceId string
 
 @description('The password for Azure resources.')
+@secure()
 param resourcePassword string
 
-// Variables
-//////////////////////////////////////////////////
-var tags = {
-  environment: 'production'
-  function: 'key vault'
-  costCenter: 'it'
-}
+@description('The list of Resource tags')
+param tags object
 
 // Resource - Key Vault
 //////////////////////////////////////////////////
