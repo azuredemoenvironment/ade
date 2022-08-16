@@ -78,7 +78,7 @@ module storageAccountDiagnosticsModule './storage_account.bicep' = {
   params: {
     location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
-    diagnosticsStorageAccountName: diagnosticsStorageAccountName
+    storageAccountName: diagnosticsStorageAccountName
     tags: tags
   }
 }
@@ -102,7 +102,7 @@ module applicationInsightsModule './application_insights.bicep' = {
   name: 'applicationInsightsDeployment'
   params: {
     applicationInsightsName: applicationInsightsName
-    diagnosticsStorageAccountId: storageAccountDiagnosticsModule.outputs.diagnosticsStorageAccountId
+    diagnosticsStorageAccountId: storageAccountDiagnosticsModule.outputs.storageAccountId
     eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
     location: location    
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
@@ -117,7 +117,7 @@ module activityLogModule './activity_log.bicep' = {
   name: 'activityLogDeployment'
   params: {
     activityLogDiagnosticSettingsName: activityLogDiagnosticSettingsName
-    diagnosticsStorageAccountId: storageAccountDiagnosticsModule.outputs.diagnosticsStorageAccountId
+    diagnosticsStorageAccountId: storageAccountDiagnosticsModule.outputs.storageAccountId
     eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
   }

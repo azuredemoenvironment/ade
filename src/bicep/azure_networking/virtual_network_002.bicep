@@ -9,8 +9,8 @@ param adeAppAksSubnetPrefix string
 @description('The name of the ADE App SQL Subnet.')
 param adeAppSqlSubnetName string
 
-@description('The ID of the ADE App SQL Subnet NSG.')
-param adeAppSqlSubnetNSGId string
+@description('The ID of the ADE App SQL Subnet Nsg.')
+param adeAppSqlSubnetNsgId string
 
 @description('The address prefix of the ADE App SQL Subnet.')
 param adeAppSqlSubnetPrefix string
@@ -18,8 +18,8 @@ param adeAppSqlSubnetPrefix string
 @description('The name of the ADE App Vmss Subnet.')
 param adeAppVmssSubnetName string
 
-@description('The ID of the ADE App Vmss Subnet NSG.')
-param adeAppVmssSubnetNSGId string
+@description('The ID of the ADE App Vmss Subnet Nsg.')
+param adeAppVmssSubnetNsgId string
 
 @description('The address prefix of the ADE App Vmss Subnet.')
 param adeAppVmssSubnetPrefix string
@@ -27,8 +27,8 @@ param adeAppVmssSubnetPrefix string
 @description('The name of the ADE App Vm Subnet.')
 param adeAppVmSubnetName string
 
-@description('The ID of the ADE App Vm Subnet NSG.')
-param adeAppVmSubnetNSGId string
+@description('The ID of the ADE App Vm Subnet Nsg.')
+param adeAppVmSubnetNsgId string
 
 @description('The address prefix of the ADE App Vm Subnet.')
 param adeAppVmSubnetPrefix string
@@ -36,8 +36,8 @@ param adeAppVmSubnetPrefix string
 @description('The name of the ADE Web Vmss Subnet.')
 param adeWebVmssSubnetName string
 
-@description('The ID of the ADE Web Vmss Subnet NSG.')
-param adeWebVmssSubnetNSGId string
+@description('The ID of the ADE Web Vmss Subnet Nsg.')
+param adeWebVmssSubnetNsgId string
 
 @description('The address prefix of the ADE Web Vmss Subnet.')
 param adeWebVmssSubnetPrefix string
@@ -45,8 +45,8 @@ param adeWebVmssSubnetPrefix string
 @description('The name of the ADE Web Vm Subnet.')
 param adeWebVmSubnetName string
 
-@description('The ID of the ADE Web Vm Subnet NSG.')
-param adeWebVmSubnetNSGId string
+@description('The ID of the ADE Web Vm Subnet Nsg.')
+param adeWebVmSubnetNsgId string
 
 @description('The address prefix of the ADE Web Vm Subnet.')
 param adeWebVmSubnetPrefix string
@@ -54,8 +54,8 @@ param adeWebVmSubnetPrefix string
 @description('The name of the Data Ingestor Subnet.')
 param dataIngestorServiceSubnetName string
 
-@description('The ID of the Data Ingestor Subnet NSG.')
-param dataIngestorServiceSubnetNSGId string
+@description('The ID of the Data Ingestor Subnet Nsg.')
+param dataIngestorServiceSubnetNsgId string
 
 @description('The address prefix of the Data Ingestor Subnet.')
 param dataIngestorServiceSubnetPrefix string
@@ -63,8 +63,8 @@ param dataIngestorServiceSubnetPrefix string
 @description('The name of the Data Reporter Subnet.')
 param dataReporterServiceSubnetName string
 
-@description('The ID of the Data Reporter Subnet NSG.')
-param dataReporterServiceSubnetNSGId string
+@description('The ID of the Data Reporter Subnet Nsg.')
+param dataReporterServiceSubnetNsgId string
 
 @description('The address prefix of the Data Reporter Subnet.')
 param dataReporterServiceSubnetPrefix string
@@ -78,8 +78,8 @@ param eventHubNamespaceAuthorizationRuleId string
 @description('The name of the Event Ingestor Subnet.')
 param eventIngestorServiceSubnetName string
 
-@description('The ID of the Event Ingestor Subnet NSG.')
-param eventIngestorServiceSubnetNSGId string
+@description('The ID of the Event Ingestor Subnet Nsg.')
+param eventIngestorServiceSubnetNsgId string
 
 @description('The address prefix of the Event Ingestor Subnet.')
 param eventIngestorServiceSubnetPrefix string
@@ -87,8 +87,8 @@ param eventIngestorServiceSubnetPrefix string
 @description('The name of the Inspector Gadget SQL Subnet.')
 param inspectorGadgetSqlSubnetName string
 
-@description('The ID of the Inspector Gadget SQL Subnet NSG.')
-param inspectorGadgetSqlSubnetNSGId string
+@description('The ID of the Inspector Gadget SQL Subnet Nsg.')
+param inspectorGadgetSqlSubnetNsgId string
 
 @description('The address prefix of the Inspector Gadget SQL Subnet.')
 param inspectorGadgetSqlSubnetPrefix string
@@ -105,8 +105,8 @@ param natGatewayId string
 @description('The name of the User Service Subnet.')
 param userServiceSubnetName string
 
-@description('The ID of the User Service Subnet NSG.')
-param userServiceSubnetNSGId string
+@description('The ID of the User Service Subnet Nsg.')
+param userServiceSubnetNsgId string
 
 @description('The address prefix of the User Service Subnet.')
 param userServiceSubnetPrefix string
@@ -120,8 +120,8 @@ param virtualnetwork002Prefix string
 @description('The name of the VNET Integration Subnet.')
 param vnetIntegrationSubnetName string
 
-@description('The ID of the VNET Integration Subnet NSG.')
-param vnetIntegrationSubnetNSGId string
+@description('The ID of the VNET Integration Subnet Nsg.')
+param vnetIntegrationSubnetNsgId string
 
 @description('The address prefix of the VNET Integration Subnet.')
 param vnetIntegrationSubnetPrefix string
@@ -164,7 +164,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
           addressPrefix: adeAppSqlSubnetPrefix
           privateEndpointNetworkPolicies: 'Enabled'
           networkSecurityGroup: {
-            id: adeAppSqlSubnetNSGId
+            id: adeAppSqlSubnetNsgId
           }
         }
       }
@@ -173,7 +173,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         properties: {
           addressPrefix: adeAppVmssSubnetPrefix
           networkSecurityGroup: {
-            id: adeAppVmssSubnetNSGId
+            id: adeAppVmssSubnetNsgId
           }
           serviceEndpoints: [
             {
@@ -190,7 +190,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         properties: {
           addressPrefix: adeAppVmSubnetPrefix
           networkSecurityGroup: {
-            id: adeAppVmSubnetNSGId
+            id: adeAppVmSubnetNsgId
           }
           serviceEndpoints: [
             {
@@ -207,7 +207,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         properties: {
           addressPrefix: adeWebVmssSubnetPrefix
           networkSecurityGroup: {
-            id: adeWebVmssSubnetNSGId
+            id: adeWebVmssSubnetNsgId
           }
         }
       }
@@ -216,7 +216,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         properties: {
           addressPrefix: adeWebVmSubnetPrefix
           networkSecurityGroup: {
-            id: adeWebVmSubnetNSGId
+            id: adeWebVmSubnetNsgId
           }
         }
       }
@@ -226,7 +226,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
           addressPrefix: dataIngestorServiceSubnetPrefix
           privateEndpointNetworkPolicies: 'Enabled'
           networkSecurityGroup: {
-            id: dataIngestorServiceSubnetNSGId
+            id: dataIngestorServiceSubnetNsgId
           }
         }
       }
@@ -236,7 +236,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
           addressPrefix: dataReporterServiceSubnetPrefix
           privateEndpointNetworkPolicies: 'Enabled'
           networkSecurityGroup: {
-            id: dataReporterServiceSubnetNSGId
+            id: dataReporterServiceSubnetNsgId
           }
         }
       }   
@@ -246,7 +246,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
           addressPrefix: eventIngestorServiceSubnetPrefix
           privateEndpointNetworkPolicies: 'Enabled'
           networkSecurityGroup: {
-            id: eventIngestorServiceSubnetNSGId
+            id: eventIngestorServiceSubnetNsgId
           }
         }
       }
@@ -256,7 +256,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
           addressPrefix: inspectorGadgetSqlSubnetPrefix
           privateEndpointNetworkPolicies: 'Enabled'
           networkSecurityGroup: {
-            id: inspectorGadgetSqlSubnetNSGId
+            id: inspectorGadgetSqlSubnetNsgId
           }
         }
       }
@@ -266,7 +266,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
           addressPrefix: userServiceSubnetPrefix
           privateEndpointNetworkPolicies: 'Enabled'
           networkSecurityGroup: {
-            id: userServiceSubnetNSGId
+            id: userServiceSubnetNsgId
           }
         }
       }
@@ -283,7 +283,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' = {
             }
           ]
           networkSecurityGroup: {
-            id: vnetIntegrationSubnetNSGId
+            id: vnetIntegrationSubnetNsgId
           }
         }
       }

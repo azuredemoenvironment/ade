@@ -3,8 +3,8 @@
 @description('The name of the Application Gateway Subnet.')
 param applicationGatewaySubnetName string
 
-@description('The ID of the Application Gateway Subnet NSG.')
-param applicationGatewaySubnetNSGId string
+@description('The ID of the Application Gateway Subnet Nsg.')
+param applicationGatewaySubnetNsgId string
 
 @description('The address prefix of the Application Gateway Subnet.')
 param applicationGatewaySubnetPrefix string
@@ -12,8 +12,8 @@ param applicationGatewaySubnetPrefix string
 @description('The name of the Azure Bastion Subnet.')
 param azureBastionSubnetName string
 
-@description('The ID of the Azure Bastion Subnet NSG.')
-param azureBastionSubnetNSGId string
+@description('The ID of the Azure Bastion Subnet Nsg.')
+param azureBastionSubnetNsgId string
 
 @description('The address prefix of the Azure Bastion Subnet.')
 param azureBastionSubnetPrefix string
@@ -45,8 +45,8 @@ param logAnalyticsWorkspaceId string
 @description('The name of the Management Subnet.')
 param managementSubnetName string
 
-@description('The ID of the Management Subnet NSG.')
-param managementSubnetNSGId string
+@description('The ID of the Management Subnet Nsg.')
+param managementSubnetNsgId string
 
 @description('The address prefix of the Management Subnet.')
 param managementSubnetPrefix string
@@ -83,7 +83,7 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         properties: {
           addressPrefix: applicationGatewaySubnetPrefix
           networkSecurityGroup: {
-            id: applicationGatewaySubnetNSGId
+            id: applicationGatewaySubnetNsgId
           }
           serviceEndpoints: [
             {
@@ -97,7 +97,7 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         properties: {
           addressPrefix: azureBastionSubnetPrefix
           networkSecurityGroup: {
-            id: azureBastionSubnetNSGId
+            id: azureBastionSubnetNsgId
           }
         }
       }
@@ -118,7 +118,7 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' = {
         properties: {
           addressPrefix: managementSubnetPrefix
           networkSecurityGroup: {
-            id: managementSubnetNSGId
+            id: managementSubnetNsgId
           }
         }
       }

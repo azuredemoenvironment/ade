@@ -1,31 +1,31 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the ADE App SQL Subnet NSG.')
-param adeAppSqlSubnetNSGName string
+@description('The name of the ADE App SQL Subnet Nsg.')
+param adeAppSqlSubnetNsgName string
 
-@description('The name of the ADE App Vmss Subnet NSG.')
-param adeAppVmssSubnetNSGName string
+@description('The name of the ADE App Vmss Subnet Nsg.')
+param adeAppVmssSubnetNsgName string
 
-@description('The name of the ADE App Vm Subnet NSG.')
-param adeAppVmSubnetNSGName string
+@description('The name of the ADE App Vm Subnet Nsg.')
+param adeAppVmSubnetNsgName string
 
-@description('The name of the ADE Web Vmss Subnet NSG.')
-param adeWebVmssSubnetNSGName string
+@description('The name of the ADE Web Vmss Subnet Nsg.')
+param adeWebVmssSubnetNsgName string
 
-@description('The name of the ADE Web Vm Subnet NSG.')
-param adeWebVmSubnetNSGName string
+@description('The name of the ADE Web Vm Subnet Nsg.')
+param adeWebVmSubnetNsgName string
 
-@description('The name of the Application Gateway Subnet NSG.')
-param applicationGatewaySubnetNSGName string
+@description('The name of the Application Gateway Subnet Nsg.')
+param applicationGatewaySubnetNsgName string
 
-@description('The name of the Azure Bastion Subnet NSG.')
-param azureBastionSubnetNSGName string
+@description('The name of the Azure Bastion Subnet Nsg.')
+param azureBastionSubnetNsgName string
 
-@description('The name of the Data Ingestor Service Subnet NSG.')
-param dataIngestorServiceSubnetNSGName string
+@description('The name of the Data Ingestor Service Subnet Nsg.')
+param dataIngestorServiceSubnetNsgName string
 
-@description('The name of the Data Reporter Service Subnet NSG.')
-param dataReporterServiceSubnetNSGName string
+@description('The name of the Data Reporter Service Subnet Nsg.')
+param dataReporterServiceSubnetNsgName string
 
 @description('The ID of the Diagnostics Storage Account.')
 param diagnosticsStorageAccountId string
@@ -33,11 +33,11 @@ param diagnosticsStorageAccountId string
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
 
-@description('The name of the Event Ingestor Service Subnet NSG.')
-param eventIngestorServiceSubnetNSGName string
+@description('The name of the Event Ingestor Service Subnet Nsg.')
+param eventIngestorServiceSubnetNsgName string
 
-@description('The name of the Inspector Gadget SQL Subnet NSG.')
-param inspectorGadgetSqlSubnetNSGName string
+@description('The name of the Inspector Gadget SQL Subnet Nsg.')
+param inspectorGadgetSqlSubnetNsgName string
 
 @description('The location for all resources.')
 param location string
@@ -45,17 +45,17 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The name of the Management Subnet NSG.')
-param managementSubnetNSGName string
+@description('The name of the Management Subnet Nsg.')
+param managementSubnetNsgName string
 
 @description('The public IP address of the on-premises network.')
 param sourceAddressPrefix string
 
-@description('The name of the User Service Subnet NSG.')
-param userServiceSubnetNSGName string
+@description('The name of the User Service Subnet Nsg.')
+param userServiceSubnetNsgName string
 
-@description('The name of the VNET Integration Subnet NSG.')
-param vnetIntegrationSubnetNSGName string
+@description('The name of the VNET Integration Subnet Nsg.')
+param vnetIntegrationSubnetNsgName string
 
 // Variables
 //////////////////////////////////////////////////
@@ -67,8 +67,8 @@ var tags = {
 
 // Resource - Network Security Group - ADE App SQL Subnet
 //////////////////////////////////////////////////
-resource adeAppSqlSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
-  name: adeAppSqlSubnetNSGName
+resource adeAppSqlSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: adeAppSqlSubnetNsgName
   location: location
   tags: tags
   properties: {
@@ -78,9 +78,9 @@ resource adeAppSqlSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01'
 
 // Resource - Network Security Group - Diagnostic Settings - ADE App SQL Subnet
 //////////////////////////////////////////////////
-resource adeAppSqlSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: adeAppSqlSubnetNSG
-  name: '${adeAppSqlSubnetNSG.name}-diagnostics'
+resource adeAppSqlSubnetNsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: adeAppSqlSubnetNsg
+  name: '${adeAppSqlSubnetNsg.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -101,8 +101,8 @@ resource adeAppSqlSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@20
 
 // Resource - Network Security Group - ADE App Vmss Subnet
 //////////////////////////////////////////////////
-resource adeAppVmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
-  name: adeAppVmssSubnetNSGName
+resource adeAppVmssSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: adeAppVmssSubnetNsgName
   location: location
   tags: tags
   properties: {
@@ -112,9 +112,9 @@ resource adeAppVmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01
 
 // Resource - Network Security Group - Diagnostic Settings - ADE App Vmss Subnet
 //////////////////////////////////////////////////
-resource adeAppVmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: adeAppVmssSubnetNSG
-  name: '${adeAppVmssSubnetNSG.name}-diagnostics'
+resource adeAppVmssSubnetNsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: adeAppVmssSubnetNsg
+  name: '${adeAppVmssSubnetNsg.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -135,8 +135,8 @@ resource adeAppVmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2
 
 // Resource - Network Security Group - ADE App Vm Subnet
 //////////////////////////////////////////////////
-resource adeAppVmSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
-  name: adeAppVmSubnetNSGName
+resource adeAppVmSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: adeAppVmSubnetNsgName
   location: location
   tags: tags
   properties: {
@@ -146,9 +146,9 @@ resource adeAppVmSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' 
 
 // Resource - Network Security Group - Diagnostic Settings - ADE App Vm Subnet
 //////////////////////////////////////////////////
-resource adeAppVmSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: adeAppVmSubnetNSG
-  name: '${adeAppVmSubnetNSG.name}-diagnostics'
+resource adeAppVmSubnetNsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: adeAppVmSubnetNsg
+  name: '${adeAppVmSubnetNsg.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -169,8 +169,8 @@ resource adeAppVmSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@202
 
 // Resource - Network Security Group - ADE Web Vmss Subnet
 //////////////////////////////////////////////////
-resource adeWebVmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
-  name: adeWebVmssSubnetNSGName
+resource adeWebVmssSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: adeWebVmssSubnetNsgName
   location: location
   tags: tags
   properties: {
@@ -180,9 +180,9 @@ resource adeWebVmssSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01
 
 // Resource - Network Security Group - Diagnostic Settings - ADE Web Vmss Subnet
 //////////////////////////////////////////////////
-resource adeWebVmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: adeWebVmssSubnetNSG
-  name: '${adeWebVmssSubnetNSG.name}-diagnostics'
+resource adeWebVmssSubnetNsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: adeWebVmssSubnetNsg
+  name: '${adeWebVmssSubnetNsg.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -203,8 +203,8 @@ resource adeWebVmssSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2
 
 // Resource - Network Security Group - ADE Web Vm Subnet
 //////////////////////////////////////////////////
-resource adeWebVmSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
-  name: adeWebVmSubnetNSGName
+resource adeWebVmSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: adeWebVmSubnetNsgName
   location: location
   tags: tags
   properties: {
@@ -214,9 +214,9 @@ resource adeWebVmSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' 
 
 // Resource - Network Security Group - Diagnostic Settings - ADE Web Vm Subnet
 //////////////////////////////////////////////////
-resource adeWebVmSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: adeWebVmSubnetNSG
-  name: '${adeWebVmSubnetNSG.name}-diagnostics'
+resource adeWebVmSubnetNsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: adeWebVmSubnetNsg
+  name: '${adeWebVmSubnetNsg.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -237,8 +237,8 @@ resource adeWebVmSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@202
 
 // Resource - Network Security Group - Application Gateway Subnet
 //////////////////////////////////////////////////
-resource applicationGatewaySubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
-  name: applicationGatewaySubnetNSGName
+resource applicationGatewaySubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: applicationGatewaySubnetNsgName
   location: location
   tags: tags
   properties: {
@@ -291,9 +291,9 @@ resource applicationGatewaySubnetNSG 'Microsoft.Network/networkSecurityGroups@20
 
 // Resource - Network Security Group - Diagnostic Settings - Application Gateway Subnet
 //////////////////////////////////////////////////
-resource applicationGatewaySubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: applicationGatewaySubnetNSG
-  name: '${applicationGatewaySubnetNSG.name}-diagnostics'
+resource applicationGatewaySubnetNsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: applicationGatewaySubnetNsg
+  name: '${applicationGatewaySubnetNsg.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -314,8 +314,8 @@ resource applicationGatewaySubnetNSGDiagnostics 'microsoft.insights/diagnosticSe
 
 // Resource - Network Security Group - Azure Bastion Subnet
 //////////////////////////////////////////////////
-resource azureBastionSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
-  name: azureBastionSubnetNSGName
+resource azureBastionSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: azureBastionSubnetNsgName
   location: location
   tags: tags
   properties: {
@@ -385,9 +385,9 @@ resource azureBastionSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-
 
 // Resource - Network Security Group - Diagnostic Settings - Azure Bastion Subnet
 //////////////////////////////////////////////////
-resource azureBastionSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: azureBastionSubnetNSG
-  name: '${azureBastionSubnetNSG.name}-diagnostics'
+resource azureBastionSubnetNsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: azureBastionSubnetNsg
+  name: '${azureBastionSubnetNsg.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -408,8 +408,8 @@ resource azureBastionSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings
 
 // Resource - Network Security Group - Data Ingestor Service Subnet
 //////////////////////////////////////////////////
-resource dataIngestorServiceSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
-  name: dataIngestorServiceSubnetNSGName
+resource dataIngestorServiceSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: dataIngestorServiceSubnetNsgName
   location: location
   tags: tags
   properties: {
@@ -419,9 +419,9 @@ resource dataIngestorServiceSubnetNSG 'Microsoft.Network/networkSecurityGroups@2
 
 // Resource - Network Security Group - Diagnostic Settings - Data Ingestor Service Subnet
 //////////////////////////////////////////////////
-resource dataIngestorServiceSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: dataIngestorServiceSubnetNSG
-  name: '${dataIngestorServiceSubnetNSG.name}-diagnostics'
+resource dataIngestorServiceSubnetNsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: dataIngestorServiceSubnetNsg
+  name: '${dataIngestorServiceSubnetNsg.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -442,8 +442,8 @@ resource dataIngestorServiceSubnetNSGDiagnostics 'microsoft.insights/diagnosticS
 
 // Resource - Network Security Group - Data Reporter Service Subnet
 //////////////////////////////////////////////////
-resource dataReporterServiceSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
-  name: dataReporterServiceSubnetNSGName
+resource dataReporterServiceSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: dataReporterServiceSubnetNsgName
   location: location
   tags: tags
   properties: {
@@ -453,9 +453,9 @@ resource dataReporterServiceSubnetNSG 'Microsoft.Network/networkSecurityGroups@2
 
 // Resource - Network Security Group - Diagnostic Settings - Data Reporter Service Subnet
 //////////////////////////////////////////////////
-resource dataReporterServiceSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: dataReporterServiceSubnetNSG
-  name: '${dataReporterServiceSubnetNSG.name}-diagnostics'
+resource dataReporterServiceSubnetNsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: dataReporterServiceSubnetNsg
+  name: '${dataReporterServiceSubnetNsg.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -476,8 +476,8 @@ resource dataReporterServiceSubnetNSGDiagnostics 'microsoft.insights/diagnosticS
 
 // Resource - Network Security Group - Event Ingestor Service Subnet
 //////////////////////////////////////////////////
-resource eventIngestorServiceSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
-  name: eventIngestorServiceSubnetNSGName
+resource eventIngestorServiceSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: eventIngestorServiceSubnetNsgName
   location: location
   tags: tags
   properties: {
@@ -487,9 +487,9 @@ resource eventIngestorServiceSubnetNSG 'Microsoft.Network/networkSecurityGroups@
 
 // Resource - Network Security Group - Diagnostic Settings - Event Ingestor Service Subnet
 //////////////////////////////////////////////////
-resource eventIngestorServiceSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: eventIngestorServiceSubnetNSG
-  name: '${eventIngestorServiceSubnetNSG.name}-diagnostics'
+resource eventIngestorServiceSubnetNsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: eventIngestorServiceSubnetNsg
+  name: '${eventIngestorServiceSubnetNsg.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -510,8 +510,8 @@ resource eventIngestorServiceSubnetNSGDiagnostics 'microsoft.insights/diagnostic
 
 // Resource - Network Security Group - Inspector Gadget SQL Subnet
 //////////////////////////////////////////////////
-resource inspectorGadgetSqlSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
-  name: inspectorGadgetSqlSubnetNSGName
+resource inspectorGadgetSqlSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: inspectorGadgetSqlSubnetNsgName
   location: location
   tags: tags
   properties: {
@@ -521,9 +521,9 @@ resource inspectorGadgetSqlSubnetNSG 'Microsoft.Network/networkSecurityGroups@20
 
 // Resource - Network Security Group - Diagnostic Settings - Inspector Gadget SQL Subnet
 //////////////////////////////////////////////////
-resource inspectorGadgetSqlSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: inspectorGadgetSqlSubnetNSG
-  name: '${inspectorGadgetSqlSubnetNSG.name}-diagnostics'
+resource inspectorGadgetSqlSubnetNsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: inspectorGadgetSqlSubnetNsg
+  name: '${inspectorGadgetSqlSubnetNsg.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -544,8 +544,8 @@ resource inspectorGadgetSqlSubnetNSGDiagnostics 'microsoft.insights/diagnosticSe
 
 // Resource - Network Security Group - Management Subnet
 //////////////////////////////////////////////////
-resource managementSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
-  name: managementSubnetNSGName
+resource managementSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: managementSubnetNsgName
   location: location
   tags: tags
   properties: {
@@ -570,9 +570,9 @@ resource managementSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01
 
 // Resource - Network Security Group - Diagnostic Settings - Management Subnet
 //////////////////////////////////////////////////
-resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: managementSubnetNSG
-  name: '${managementSubnetNSG.name}-diagnostics'
+resource managementSubnetNsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: managementSubnetNsg
+  name: '${managementSubnetNsg.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -593,8 +593,8 @@ resource managementSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2
 
 // Resource - Network Security Group - Inspector Gadget SQL Subnet
 //////////////////////////////////////////////////
-resource userServiceSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
-  name: userServiceSubnetNSGName
+resource userServiceSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: userServiceSubnetNsgName
   location: location
   tags: tags
   properties: {
@@ -604,9 +604,9 @@ resource userServiceSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-0
 
 // Resource - Network Security Group - Diagnostic Settings - Inspector Gadget SQL Subnet
 //////////////////////////////////////////////////
-resource userServiceSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: userServiceSubnetNSG
-  name: '${userServiceSubnetNSG.name}-diagnostics'
+resource userServiceSubnetNsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: userServiceSubnetNsg
+  name: '${userServiceSubnetNsg.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -627,8 +627,8 @@ resource userServiceSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@
 
 // Resource - Network Security Group - VNET Integration Subnet
 //////////////////////////////////////////////////
-resource vnetIntegrationSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
-  name: vnetIntegrationSubnetNSGName
+resource vnetIntegrationSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+  name: vnetIntegrationSubnetNsgName
   location: location
   tags: tags
   properties: {
@@ -638,9 +638,9 @@ resource vnetIntegrationSubnetNSG 'Microsoft.Network/networkSecurityGroups@2022-
 
 // Resource - Network Security Group - Diagnostic Settings - VNET Integration Subnet
 //////////////////////////////////////////////////
-resource vnetIntegrationSubnetNSGDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: vnetIntegrationSubnetNSG
-  name: '${vnetIntegrationSubnetNSG.name}-diagnostics'
+resource vnetIntegrationSubnetNsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: vnetIntegrationSubnetNsg
+  name: '${vnetIntegrationSubnetNsg.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -661,75 +661,75 @@ resource vnetIntegrationSubnetNSGDiagnostics 'microsoft.insights/diagnosticSetti
 
 // Outputs
 //////////////////////////////////////////////////
-output adeAppSqlSubnetNSGId string = adeAppSqlSubnetNSG.id
-output adeAppVmssSubnetNSGId string = adeAppVmssSubnetNSG.id
-output adeAppVmSubnetNSGId string = adeAppVmSubnetNSG.id
-output adeWebVmssSubnetNSGId string = adeWebVmssSubnetNSG.id
-output adeWebVmSubnetNSGId string = adeWebVmSubnetNSG.id
-output applicationGatewaySubnetNSGId string = applicationGatewaySubnetNSG.id
-output azureBastionSubnetNSGId string = azureBastionSubnetNSG.id
-output dataIngestorServiceSubnetNSGId string = dataIngestorServiceSubnetNSG.id
-output dataReporterServiceSubnetNSGId string = dataReporterServiceSubnetNSG.id
-output eventIngestorServiceSubnetNSGId string = eventIngestorServiceSubnetNSG.id
-output inspectorGadgetSqlSubnetNSGId string = inspectorGadgetSqlSubnetNSG.id
-output managementSubnetNSGId string = managementSubnetNSG.id
+output adeAppSqlSubnetNsgId string = adeAppSqlSubnetNsg.id
+output adeAppVmssSubnetNsgId string = adeAppVmssSubnetNsg.id
+output adeAppVmSubnetNsgId string = adeAppVmSubnetNsg.id
+output adeWebVmssSubnetNsgId string = adeWebVmssSubnetNsg.id
+output adeWebVmSubnetNsgId string = adeWebVmSubnetNsg.id
+output applicationGatewaySubnetNsgId string = applicationGatewaySubnetNsg.id
+output azureBastionSubnetNsgId string = azureBastionSubnetNsg.id
+output dataIngestorServiceSubnetNsgId string = dataIngestorServiceSubnetNsg.id
+output dataReporterServiceSubnetNsgId string = dataReporterServiceSubnetNsg.id
+output eventIngestorServiceSubnetNsgId string = eventIngestorServiceSubnetNsg.id
+output inspectorGadgetSqlSubnetNsgId string = inspectorGadgetSqlSubnetNsg.id
+output managementSubnetNsgId string = managementSubnetNsg.id
 output nsgConfigurations array = [  
   {
     name: 'adeAppSqlSubnet'
-    id: adeAppSqlSubnetNSG.id
+    id: adeAppSqlSubnetNsg.id
   }
   {
     name: 'adeAppVmssSubnet'
-    id: adeAppVmssSubnetNSG.id
+    id: adeAppVmssSubnetNsg.id
   }
   {
     name: 'adeAppVmSubnet'
-    id: adeAppVmSubnetNSG.id
+    id: adeAppVmSubnetNsg.id
   }
   {
     name: 'adeWebVmssSubnet'
-    id: adeWebVmssSubnetNSG.id
+    id: adeWebVmssSubnetNsg.id
   }
   {
     name: 'adeWebVmSubnet'
-    id: adeWebVmSubnetNSG.id
+    id: adeWebVmSubnetNsg.id
   }
   {
     name: 'applicationGatewaySubnet'
-    id: applicationGatewaySubnetNSG.id
+    id: applicationGatewaySubnetNsg.id
   }
   {
     name: 'azureBastionSubnet'
-    id: azureBastionSubnetNSG.id
+    id: azureBastionSubnetNsg.id
   }
   {
     name: 'dataIngestorServiceSubnet'
-    id: dataIngestorServiceSubnetNSG.id
+    id: dataIngestorServiceSubnetNsg.id
   }
   {
     name: 'dataReporterServiceSubnet'
-    id: dataReporterServiceSubnetNSG.id
+    id: dataReporterServiceSubnetNsg.id
   }
   {
     name: 'eventIngestorServiceSubnet'
-    id: eventIngestorServiceSubnetNSG.id
+    id: eventIngestorServiceSubnetNsg.id
   }
   {
     name: 'inspectorGadgetSqlSubnet'
-    id: inspectorGadgetSqlSubnetNSG.id
+    id: inspectorGadgetSqlSubnetNsg.id
   }
   {
     name: 'managementSubnet'
-    id: managementSubnetNSG.id
+    id: managementSubnetNsg.id
   }
   {
     name: 'userServiceSubnet'
-    id: userServiceSubnetNSG.id
+    id: userServiceSubnetNsg.id
   }
   {
     name: 'vnetIntegrationSubnet'
-    id: vnetIntegrationSubnetNSG.id
+    id: vnetIntegrationSubnetNsg.id
   }
 ]
-output userServiceSubnetNSGId string = userServiceSubnetNSG.id
-output vnetIntegrationSubnetNSGId string = vnetIntegrationSubnetNSG.id
+output userServiceSubnetNsgId string = userServiceSubnetNsg.id
+output vnetIntegrationSubnetNsgId string = vnetIntegrationSubnetNsg.id
