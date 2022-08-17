@@ -100,7 +100,7 @@ module adeAppAksClusterRbacNetworkContributor 'azure_kubernetes_services_rbac_ne
 
 // Module - Azure Kubernetes Services Cluster - RBAC - Acr Pull
 //////////////////////////////////////////////////
-module adeAppAksClusterRbacAcrPull 'azure_kubernetes_sersvices_rbac_acr_pull.bicep' = {
+module adeAppAksClusterRbacAcrPull 'azure_kubernetes_services_rbac_acr_pull.bicep' = {
   scope: resourceGroup(containerRegistryResourceGroupName)
   name: 'adeAppAksClusterRbacAcrPullDeployment'
   params: {
