@@ -33,7 +33,7 @@ var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 var networkingResourceGroupName = 'rg-ade-${aliasRegion}-networking'
 // Resources
 var adeAppAksSubnetName = 'snet-ade-${aliasRegion}-adeApp-aks'
-var adeAppAksSubnetPrefix = '10.102.101.0/24'
+var adeAppAksSubnetPrefix = '10.102.100.0/23'
 var adeAppSqlSubnetName = 'snet-ade-${aliasRegion}-adeAppSql'
 var adeAppSqlSubnetNSGName = 'nsg-ade-${aliasRegion}-adeAppSql'
 var adeAppSqlSubnetPrefix = '10.102.160.0/24'

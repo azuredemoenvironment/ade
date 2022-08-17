@@ -1,24 +1,24 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The DNS name of the ADE App AKS Cluster.')
+@description('The DNS name of the ADE App Aks Cluster.')
 param adeAppAksClusterDNSName string
 
-@description('The name of the ADE App AKS Cluster.')
+@description('The name of the ADE App Aks Cluster.')
 param adeAppAksClusterName string
 
-@description('The DNS Service IP ADdress of the ADE App AKS Cluster.')
+@description('The DNS Service IP ADdress of the ADE App Aks Cluster.')
 param adeAppAksDNSServiceIPAddress string
 
-@description('The Docker Bridge Address of the ADE App AKS Cluster.')
+@description('The Docker Bridge Address of the ADE App Aks Cluster.')
 param adeAppAksDockerBridgeAddress string
 
-@description('The name of the ADE App AKS Cluster Node Resource Group.')
+@description('The name of the ADE App Aks Cluster Node Resource Group.')
 param adeAppAksNodeResourceGroupName string
 
-@description('The Service Address Prefix of the ADE App AKS Cluster.')
+@description('The Service Address Prefix of the ADE App Aks Cluster.')
 param adeAppAksServiceAddressPrefix string
 
-@description('The ID of the ADE App AKS Subnet.')
+@description('The ID of the ADE App Aks Subnet.')
 param adeAppAksSubnetId string
 
 @description('The location for all resources.')
@@ -45,7 +45,7 @@ resource adeAppAksCluster 'Microsoft.ContainerService/managedClusters@2022-06-01
     type: 'SystemAssigned'
   }
   properties: {
-    kubernetesVersion: '1.19.7'
+    kubernetesVersion: '1.22.11'
     nodeResourceGroup: adeAppAksNodeResourceGroupName
     enableRBAC: true
     dnsPrefix: adeAppAksClusterDNSName
@@ -54,13 +54,19 @@ resource adeAppAksCluster 'Microsoft.ContainerService/managedClusters@2022-06-01
         name: 'agentpool'
         osDiskSizeGB: 0
         count: 3
+        enableAutoScaling: true
+        minCount: 1
+        maxCount: 3
         vmSize: 'Standard_B2s'
         osType: 'Linux'
         type: 'VirtualMachineScaleSets'
         mode: 'System'
-        enableAutoScaling: true
-        minCount: 1
-        maxCount: 3
+        maxPods: 110
+        availabilityZones: [
+          '1'
+          '2'
+          '3'
+        ]
         vnetSubnetID: adeAppAksSubnetId
         tags: tags
       }
@@ -151,5 +157,6 @@ resource adeAppAksClusterDiagnostics 'microsoft.insights/diagnosticSettings@2021
 
 // Outputs
 //////////////////////////////////////////////////
+output adeAppAksClusterKubeletIdentityId string = adeAppAksCluster.properties.identityProfile.kubeletidentity.objectId
 output adeAppAksClusterPrincipalId string = adeAppAksCluster.identity.principalId
 output adeAppAksControlPlaneFqdn string = adeAppAksCluster.properties.fqdn

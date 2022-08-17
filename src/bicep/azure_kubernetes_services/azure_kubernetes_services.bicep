@@ -16,6 +16,8 @@ param location string = deployment().location
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
+var containerRegistryResourceGroupName = 'rg-ade-${aliasRegion}-containerregistry'
+var networkingResourceGroupName = 'rg-ade-${aliasRegion}-networking'
 // Resources
 var acrPullRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
 var adeAppAksClusterDNSName = 'aks-ade-${aliasRegion}-001-dns'
@@ -27,11 +29,9 @@ var adeAppAksResourceGroupName = 'rg-ade-${aliasRegion}-adeappaks'
 var adeAppAksServiceAddressPrefix = '192.168.0.0/24'
 var adeAppAksSubnetName = 'snet-ade-${aliasRegion}-adeapp-aks'
 var containerRegistryName = replace('acr-ade-${aliasRegion}-001', '-', '')
-var containerRegistryResourceGroupName = 'rg-ade-${aliasRegion}-containerregistry'
 var logAnalyticsWorkspaceName = 'log-ade-${aliasRegion}-001'
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 var networkContributorRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', '4d97b98b-1d4f-4787-a291-c67834d212e7')
-var networkingResourceGroupName = 'rg-ade-${aliasRegion}-networking'
 var virtualNetwork002Name = 'vnet-ade-${aliasRegion}-002'
 
 // Existing Resource - Container Registry
@@ -86,16 +86,26 @@ module adeAppAksClusterModule 'azure_kubernetes_services_cluster.bicep' = {
   }
 }
 
-// Module - Azure Kubernetes Services Cluster - RBAC
+// Module - Azure Kubernetes Services Cluster - RBAC - Network Contributor
 //////////////////////////////////////////////////
-module adeAppAksClusterRbacModule 'azure_kubernetes_services_rbac.bicep' = {
-  scope: resourceGroup(adeAppAksResourceGroupName)
-  name: 'adeAppAksClusterDeployment'
+module adeAppAksClusterRbacNetworkContributor 'azure_kubernetes_services_rbac_network_contributor.bicep' = {
+  scope: resourceGroup(networkingResourceGroupName)
+  name: 'adeAppAksClusterRbacNetworkContributorDeployment'
   params: {
-    acrPullRoleDefinitionId: acrPullRoleDefinitionId
     adeAppAksClusterPrincipalId: adeAppAksClusterModule.outputs.adeAppAksClusterPrincipalId
     adeAppAksSubnetId: virtualNetwork002::adeAppAksSubnet.id
-    containerRegistryId: containerRegistry.id
     networkContributorRoleDefinitionId: networkContributorRoleDefinitionId
+  }
+}
+
+// Module - Azure Kubernetes Services Cluster - RBAC - Acr Pull
+//////////////////////////////////////////////////
+module adeAppAksClusterRbacAcrPull 'azure_kubernetes_sersvices_rbac_acr_pull.bicep' = {
+  scope: resourceGroup(containerRegistryResourceGroupName)
+  name: 'adeAppAksClusterRbacAcrPullDeployment'
+  params: {
+    acrPullRoleDefinitionId: acrPullRoleDefinitionId
+    adeAppAksClusterKubeletIdentityId: adeAppAksClusterModule.outputs.adeAppAksClusterKubeletIdentityId
+    containerRegistryId: containerRegistry.id
   }
 }

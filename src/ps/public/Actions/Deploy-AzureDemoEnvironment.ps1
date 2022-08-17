@@ -29,35 +29,35 @@ function Deploy-AzureDemoEnvironment {
 
     Write-ScriptSection "Starting Azure Demo Environment Deployments"
     
-    # Core Services
-    ###################################
+    # # Core Services
+    # ###################################
     Deploy-AzureGovernance $armParameters
     Deploy-AzureNetworking $armParameters
     Deploy-AzureContainerRegistry $armParameters
     
-    # Data Services
-    ###################################
+    # # Data Services
+    # ###################################
     Deploy-AzureDatabases $armParameters
 
-    # Compute Infrastructure
-    ###################################
+    # # Compute Infrastructure
+    # ###################################
     Deploy-AzureVirtualMachines $armParameters
     Deploy-AzureAppServices $armParameters
-    # Deploy-AzureKubernetesService $armParameters
+    Deploy-AzureKubernetesServices $armParameters
     Deploy-AzureContainerInstances $armParameters
     Deploy-AdeApplicationToVirtualMachines $armParameters
 
-    # Frontend Load Balancers
-    ###################################
+    # # Frontend Load Balancers
+    # ###################################
     Deploy-AzureFrontendLoadBalancers $armParameters
     
-    # Service Cleanup
-    ###################################
+    # # Service Cleanup
+    # ###################################
     Deploy-AzureAppServicePlanScaleDown $armParameters
     Set-AzureContainerInstancesToStopped $armParameters
 
-    # Additional Core Services
-    ###################################
+    # # Additional Core Services
+    # ###################################
     Deploy-AzureAlerts $armParameters
     Deploy-AzurePublicDns $armParameters
 
