@@ -95,7 +95,7 @@ var virtualNetwork002Prefix = '10.102.0.0/16'
 var virtualNetwork002Subnets = [
   {
     name: 'snet-${appEnvironment}-adeApp-aks'
-    subnetPrefix: '10.102.101.0/24'
+    subnetPrefix: '10.102.100.0/23'
     serviceEndpoint: 'Microsoft.ContainerRegistry'
   }
   {

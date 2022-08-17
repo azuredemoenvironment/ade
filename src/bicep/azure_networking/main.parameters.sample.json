@@ -2,11 +2,8 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "aliasRegion": {
-            "value": "@@aliasRegion@@"
-        },
-        "azureRegion": {
-            "value": "@@azureRegion@@"
+        "appEnvironment": {
+            "value": "@@appEnvironment@@"
         },
         "deployAzureFirewall": {
             "value": @@deployAzureFirewall@@
@@ -16,7 +13,16 @@
         },
         "localNetworkGatewayAddressPrefix": {
             "value": "@@localNetworkGatewayAddressPrefix@@"
-        }, 
+        },
+        "managementResourceGroupName": {
+            "value": "@@managementResourceGroupName@@"
+        },
+        "ownerName": {
+            "value": "@@ownerName@@"
+        },
+        "securityResourceGroupName": {
+            "value": "@@securityResourceGroupName@@"
+        },
         "sourceAddressPrefix": {
             "value": "@@sourceAddressPrefix@@"
         }              
