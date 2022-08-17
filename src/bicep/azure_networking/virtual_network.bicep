@@ -15,23 +15,37 @@ param logAnalyticsWorkspaceId string
 @description('The list of Resource tags')
 param tags object
 
-@description('The array of properties for the Virtual Networks.')
-param virtualNetworks array
+@description('The name of Virtual Network 001.')
+param virtualNetwork001Name string
 
-// Resource - Virtual Network
+@description('The address prefix of Virtual Network 001.')
+param virtualnetwork001Prefix string
+
+@description('The array of properties for Virtual Networks 001 Subnets.')
+param virtualNetwork001Subnets array
+
+@description('The name of Virtual Network 002.')
+param virtualNetwork002Name string
+
+@description('The address prefix of Virtual Network 002.')
+param virtualNetwork002Prefix string
+
+@description('The array of properties for Virtual Networks 002 Subnets.')
+param virtualNetwork002Subnets array
+
+// Resource - Virtual Network 001
 //////////////////////////////////////////////////
-@batchSize(1)
-resource vnet 'Microsoft.Network/virtualNetworks@2022-01-01' = [for virtualNetwork in virtualNetworks: {
-  name: virtualNetwork.name
+resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2022-01-01' = {
+  name: virtualNetwork001Name
   location: location
   tags: tags
   properties: {
     addressSpace: {
       addressPrefixes: [
-        virtualNetwork.addressPrefix
+        virtualnetwork001Prefix
       ]
     }
-    subnets: [for subnet in virtualNetwork.subnets: {
+    subnets: [for subnet in virtualNetwork001Subnets: {
       name: subnet.name
       properties: {
         addressPrefix: subnet.subnetPrefix
@@ -50,17 +64,22 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-01-01' = [for virtualNetwo
       }
     }]
   }
-  resource subnet 'subnets' existing = [for (subnet, i) in virtualNetwork.subnets: {
-    name: subnet[i].name
-  }]
+  resource azureBastionSubnet 'subnets' existing = {
+    name: 'AzureBastionSubnet'
+  }
+  resource azureFirewallSubnet 'subnets' existing = {
+    name: 'AzureFirewallSubnet'
+  }
+  resource gatewaySubnet 'subnets' existing = {
+    name: 'GatewaySubnet'
+  }
 }
 
-// Resource - Virtual Network - Diagnostic Settings
+// Resource - Virtual Network 001 - Diagnostic Settings
 //////////////////////////////////////////////////
-@batchSize(1)
-resource virtualNetworkDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (virtualNetwork, i) in virtualNetworks: {
-  scope: vnet[i]
-  name: '${virtualNetwork.name}-diagnostics'
+resource virtualNetwork001Diagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: virtualNetwork001
+  name: '${virtualNetwork001.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -79,7 +98,65 @@ resource virtualNetworkDiagnostics 'microsoft.insights/diagnosticSettings@2021-0
       }
     ]
   }
-}]
+}
+
+// Resource - Virtual Network 002
+//////////////////////////////////////////////////
+resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2022-01-01' = {
+  name: virtualNetwork002Name
+  location: location
+  tags: tags
+  properties: {
+    addressSpace: {
+      addressPrefixes: [
+        virtualNetwork002Prefix
+      ]
+    }
+    subnets: [for subnet in virtualNetwork002Subnets: {
+      name: subnet.name
+      properties: {
+        addressPrefix: subnet.subnetPrefix
+        natGateway: {
+          id: subnet.natGatewayId
+        }
+        networkSecurityGroup: {
+          id: subnet.networkSecurityGroupId
+        }
+        privateEndpointNetworkPolicies: subnet.privateEndpointNetworkPolicies
+        serviceEndpoints: [
+          {
+            service: subnet.serviceEndpoint
+          }
+        ]
+      }
+    }]
+  }
+}
+
+// Resource - Virtual Network 002 - Diagnostic Settings
+//////////////////////////////////////////////////
+resource virtualNetwork002Diagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: virtualNetwork002
+  name: '${virtualNetwork002.name}-diagnostics'
+  properties: {
+    workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: diagnosticsStorageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
+    logAnalyticsDestinationType: 'Dedicated'
+    logs: [
+      {
+        category: 'VMProtectionAlerts'
+        enabled: true
+      }
+    ]
+    metrics: [
+      {
+        category: 'AllMetrics'
+        enabled: true
+      }
+    ]
+  }
+}
 
 // Outputs
 //////////////////////////////////////////////////
@@ -87,8 +164,4 @@ output azureBastionSubnetId string = virtualNetwork001::azureBastionSubnet.id
 output azureFirewallSubnetId string = virtualNetwork001::azureFirewallSubnet.id
 output gatewaySubnetId string = virtualNetwork001::gatewaySubnet.id
 output virtualNetwork001Id string = virtualNetwork001.id
-
-output vnets array = [for (virtualNetwork, i) in virtualNetworks: {
-  virtualNetworkId: vnet[i].id
-
-}]
+output virtualNetwork002Id string = virtualNetwork002.id
