@@ -32,27 +32,195 @@ param sourceAddressPrefix string
 
 // Variables
 //////////////////////////////////////////////////
-var adeAppSqlSubnetNsgName = 'nsg-${appEnvironment}-adeAppSql'
-var adeAppVmssSubnetNsgName = 'nsg-${appEnvironment}-adeApp-vmss'
-var adeAppVmSubnetNsgName = 'nsg-${appEnvironment}-adeApp-vm'
-var adeWebVmssSubnetNsgName = 'nsg-${appEnvironment}-adeWeb-vmss'
-var adeWebVmSubnetNsgName = 'nsg-${appEnvironment}-adeWeb-vm'
-var applicationGatewaySubnetNsgName = 'nsg-${appEnvironment}-applicationGateway'
+
+var networkSecurityGroups = [
+  {
+    name: 'nsg-${appEnvironment}-adeAppSql'
+    subnetShortName: 'adeAppSqlSubnet'
+  }
+  {
+    name: 'nsg-${appEnvironment}-adeApp-vmss'
+    subnetShortName: 'adeAppVmssSubnet'
+  }
+  {
+    name: 'nsg-${appEnvironment}-adeApp-vm'
+    subnetShortName: 'adeAppVmSubnet'
+  }
+  {
+    name: 'nsg-${appEnvironment}-adeWeb-vmss'
+    subnetShortName: 'adeWebVmssSubnet'
+  }
+  {
+    name: 'nsg-${appEnvironment}-adeWeb-vm'
+    subnetShortName: 'adeWebVmSubnet'
+  }
+  {
+    name: 'nsg-${appEnvironment}-applicationGateway'
+    subnetShortName: 'applicationGatewaySubnet'
+    securityRules: [
+      {
+        securityRuleName: 'Gateway_Manager_Inbound'
+        securityRuleDescription: 'Allow Gateway Manager Access'
+        securityRuleProtocol: 'Tcp'
+        securityRuleSourcePortRange: '*'
+        securityRuleDestinationPortRange: '65200-65535'
+        securityRuleSourceAddressPrefix: 'GatewayManager'
+        securityRuleDestinationAddressPrefix: '*'
+        securityRuleAccess: 'Allow'
+        securityRulePriority: 100
+        securityRuleDirection: 'Inbound'
+      }
+      {
+        securityRuleName: 'HTTP_Inbound'
+        securityRuleDescription: 'Allow HTTP Inbound'
+        securityRuleProtocol: 'Tcp'
+        securityRuleSourcePortRange: '*'
+        securityRuleDestinationPortRange: '80'
+        securityRuleSourceAddressPrefix: '*'
+        securityRuleDestinationAddressPrefix: '*'
+        securityRuleAccess: 'Allow'
+        securityRulePriority: 200
+        securityRuleDirection: 'Inbound'
+      }
+      {
+        securityRuleName: 'HTTPS_Inbound'
+        securityRuleDescription: 'Allow HTTPS Inbound'
+        securityRuleProtocol: 'Tcp'
+        securityRuleSourcePortRange: '*'
+        securityRuleDestinationPortRange: '443'
+        securityRuleSourceAddressPrefix: '*'
+        securityRuleDestinationAddressPrefix: '*'
+        securityRuleAccess: 'Allow'
+        securityRulePriority: 300
+        securityRuleDirection: 'Inbound'
+      }
+    ]
+  }
+  {
+    name: 'nsg-${appEnvironment}-bastion'
+    subnetShortName: 'azureBastionSubnet'
+    securityRules: [
+      {
+        securityRuleName: 'HTTPS_Inbound'
+        securityRuleDescription: 'Allow HTTPS Access from Current Location'
+        securityRuleProtocol: 'Tcp'
+        securityRuleSourcePortRange: '*'
+        securityRuleDestinationPortRange: '443'
+        securityRuleSourceAddressPrefix: sourceAddressPrefix
+        securityRuleDestinationAddressPrefix: '*'
+        securityRuleAccess: 'Allow'
+        securityRulePriority: 100
+        securityRuleDirection: 'Inbound'
+      }
+      {
+        securityRuleName: 'Gateway_Manager_Inbound'
+        securityRuleDescription: 'Allow Gateway Manager Access'
+        securityRuleProtocol: 'Tcp'
+        securityRuleSourcePortRange: '*'
+        securityRuleDestinationPortRange: '443'
+        securityRuleSourceAddressPrefix: 'GatewayManager'
+        securityRuleDestinationAddressPrefix: '*'
+        securityRuleAccess: 'Allow'
+        securityRulePriority: 200
+        securityRuleDirection: 'Inbound'
+      }
+      {
+        securityRuleName: 'SSH_RDP_Outbound'
+        securityRuleDescription: 'Allow SSH and RDP Outbound'
+        securityRuleProtocol: '*'
+        securityRuleSourcePortRange: '*'
+        securityRuleDestinationPortRanges: [
+          '22'
+          '3389'
+        ]
+        securityRuleSourceAddressPrefix: '*'
+        securityRuleDestinationAddressPrefix: 'VirtualNetwork'
+        securityRuleAccess: 'Allow'
+        securityRulePriority: 100
+        securityRuleDirection: 'Outbound'
+      }
+      {
+        securityRuleName: 'Azure_Cloud_Outbound'
+        securityRuleDescription: 'Allow Azure Cloud Outbound'
+        securityRuleProtocol: 'Tcp'
+        securityRuleSourcePortRange: '*'
+        securityRuleDestinationPortRange: '443'
+        securityRuleSourceAddressPrefix: '*'
+        securityRuleDestinationAddressPrefix: 'AzureCloud'
+        securityRuleAccess: 'Allow'
+        securityRulePriority: 200
+        securityRuleDirection: 'Outbound'
+      }
+    ]
+  }
+  {
+    name: 'nsg-${appEnvironment}-dataIngestorService'
+    subnetShortName: 'dataIngestorServiceSubnet'
+  }
+  {
+    name: 'nsg-${appEnvironment}-dataReporterService'
+    subnetShortName: 'dataReporterServiceSubnet'
+  }
+  {
+    name: 'nsg-${appEnvironment}-eventIngestorService'
+    subnetShortName: 'eventIngestorServiceSubnet'
+  }
+  {
+    name: 'nsg-${appEnvironment}-inspectorGadgetSql'
+    subnetShortName: 'inspectorGadgetSqlSubnet'
+  }
+  {
+    name: 'nsg-${appEnvironment}-management'
+    subnetShortName: 'managementSubnet'
+    securityRules: [
+      {
+        securityRuleName: 'RDP_Inbound'
+        securityRuleDescription: 'Allow RDP Access from Current Location'
+        securityRuleProtocol: '*'
+        securityRuleSourcePortRange: '*'
+        securityRuleDestinationPortRange: '3389'
+        securityRuleSourceAddressPrefix: sourceAddressPrefix
+        securityRuleDestinationAddressPrefix: '*'
+        securityRuleAccess: 'Allow'
+        securityRulePriority: 100
+        securityRuleDirection: 'Inbound'
+      }
+    ]
+  }
+  {
+    name: 'nsg-${appEnvironment}-userService'
+    subnetShortName: 'userServiceSubnet'
+  }
+  {
+    name: 'nsg-${appEnvironment}-vnetIntegration'
+    subnetShortName: 'vnetIntegrationSubnet'
+  }
+]
+
+// var adeAppSqlSubnetNsgName = 'nsg-${appEnvironment}-adeAppSql'
+// var adeAppVmssSubnetNsgName = 'nsg-${appEnvironment}-adeApp-vmss'
+// var adeAppVmSubnetNsgName = 'nsg-${appEnvironment}-adeApp-vm'
+// var adeWebVmssSubnetNsgName = 'nsg-${appEnvironment}-adeWeb-vmss'
+// var adeWebVmSubnetNsgName = 'nsg-${appEnvironment}-adeWeb-vm'
+// var applicationGatewaySubnetNsgName = 'nsg-${appEnvironment}-applicationGateway'
+// var azureBastionSubnetNsgName = 'nsg-${appEnvironment}-bastion'
+// var dataIngestorServiceSubnetNsgName = 'nsg-${appEnvironment}-dataIngestorService'
+// var dataReporterServiceSubnetNsgName = 'nsg-${appEnvironment}-dataReporterService'
+// var eventIngestorServiceSubnetNsgName = 'nsg-${appEnvironment}-eventIngestorService'
+// var inspectorGadgetSqlSubnetNsgName = 'nsg-${appEnvironment}-inspectorGadgetSql'
+// var managementSubnetNsgName = 'nsg-${appEnvironment}-management'
+// var userServiceSubnetNsgName = 'nsg-${appEnvironment}-userService'
+// var vnetIntegrationSubnetNsgName = 'nsg-${appEnvironment}-vnetIntegration'
+
 var appServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
 var azureBastionName = 'bastion-${appEnvironment}-001'
 var azureBastionPublicIpAddressName = 'pip-${appEnvironment}-bastion001'
-var azureBastionSubnetNsgName = 'nsg-${appEnvironment}-bastion'
 var azureFirewallName = 'fw-${appEnvironment}-001'
 var azureFirewallPublicIpAddressName = 'pip-${appEnvironment}-fw001'
 var azureSQLprivateDnsZoneName = 'privatelink${environment().suffixes.sqlServerHostname}'
 var connectionName = 'cn-${appEnvironment}-vgw001'
-var dataIngestorServiceSubnetNsgName = 'nsg-${appEnvironment}-dataIngestorService'
-var dataReporterServiceSubnetNsgName = 'nsg-${appEnvironment}-dataReporterService'
-var eventIngestorServiceSubnetNsgName = 'nsg-${appEnvironment}-eventIngestorService'
-var inspectorGadgetSqlSubnetNsgName = 'nsg-${appEnvironment}-inspectorGadgetSql'
 var internetRouteTableName = 'route-${appEnvironment}-internet'
 var localNetworkGatewayName = 'lgw-${appEnvironment}-vgw001'
-var managementSubnetNsgName = 'nsg-${appEnvironment}-management'
 var natGatewayName = 'ngw-${appEnvironment}-001'
 var natGatewayPublicIPPrefixName = 'pipp-${appEnvironment}-ngw001'
 var networkWatcherResourceGroupName = 'NetworkWatcherRG'
@@ -61,20 +229,19 @@ var tags = {
   deploymentDate: deploymentDate
   owner: ownerName
 }
-var userServiceSubnetNsgName = 'nsg-${appEnvironment}-userService'
 var virtualNetwork001Name = 'vnet-${appEnvironment}-001'
 var virtualnetwork001Prefix = '10.101.0.0/16'
 var virtualNetwork001Subnets = [
   {
     name: 'snet-${appEnvironment}-applicationGateway'
     subnetPrefix: '10.101.11.0/24'
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.applicationGatewaySubnetNsgId
+    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupIds[5].resourceId
     serviceEndpoint: 'Microsoft.Web'
   }
   {
     name: 'AzureBastionSubnet'
     subnetPrefix: '10.101.21.0/24'
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.azureBastionSubnetNsgId
+    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupIds[6].resourceId
   }
   {
     name: 'AzureFirewallSubnet'
@@ -87,7 +254,7 @@ var virtualNetwork001Subnets = [
   {
     name: 'snet-${appEnvironment}-management'
     subnetPrefix: '10.101.31.0/24'
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.managementSubnetNsgId
+    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupIds[11].resourceId
   }
 ]
 var virtualNetwork002Name = 'vnet-${appEnvironment}-002'
@@ -101,65 +268,65 @@ var virtualNetwork002Subnets = [
   {
     name: 'snet-${appEnvironment}-adeAppSql'
     subnetPrefix: '10.102.160.0/24'
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.adeAppSqlSubnetNsgId
+    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupIds[0].resourceId
     privateEndpointNetworkPolicies: 'Enabled'
   }
   {
     name: 'snet-${appEnvironment}-adeApp-vmss'
     subnetPrefix: '10.102.12.0/24'
     natGatewayId: natGatewayModule.outputs.natGatewayId
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.adeAppVmssSubnetNsgId
+    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupIds[1].resourceId
     serviceEndpoint: 'Microsoft.Sql'
   }
   {
     name: 'snet-${appEnvironment}-adeApp-vm'
     subnetPrefix: '10.102.2.0/24'
     natGatewayId: natGatewayModule.outputs.natGatewayId
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.adeAppVmSubnetNsgId
+    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupIds[2].resourceId
     serviceEndpoint: 'Microsoft.Sql'
   }
   {
     name: 'snet-${appEnvironment}-adeWeb-vmss'
     subnetPrefix: '10.102.11.0/24'
     natGatewayId: natGatewayModule.outputs.natGatewayId
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.adeWebVmssSubnetNsgId
+    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupIds[3].resourceId
     serviceEndpoint: 'Microsoft.Sql'
   }
   {
     name: 'snet-${appEnvironment}-adeWeb-vm'
     subnetPrefix: '10.102.1.0/24'
     natGatewayId: natGatewayModule.outputs.natGatewayId
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.adeWebVmSubnetNsgId
+    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupIds[4].resourceId
     serviceEndpoint: 'Microsoft.Sql'
   }
   {
     name: 'snet-${appEnvironment}-dataIngestorService'
     subnetPrefix: '10.102.152.0/24'
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.dataIngestorServiceSubnetNsgId
+    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupIds[7].resourceId
     privateEndpointNetworkPolicies: 'Enabled'
   }
   {
     name: 'snet-${appEnvironment}-dataReporterService'
     subnetPrefix: '10.102.153.0/24'
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.dataReporterServiceSubnetNsgId
+    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupIds[8].resourceId
     privateEndpointNetworkPolicies: 'Enabled'
   }
   {
     name: 'snet-${appEnvironment}-eventIngestorService'
     subnetPrefix: '10.102.154.0/24'
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.eventIngestorServiceSubnetNsgId
+    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupIds[9].resourceId
     privateEndpointNetworkPolicies: 'Enabled'
   }
   {
     name: 'snet-${appEnvironment}-inspectorGadgetSql'
     subnetPrefix: '10.102.161.0/24'
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.inspectorGadgetSqlSubnetNsgId
+    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupIds[10].resourceId
     privateEndpointNetworkPolicies: 'Enabled'
   }
   {
     name: 'snet-${appEnvironment}-userService'
     subnetPrefix: '10.102.151.0/24'
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.userServiceSubnetNsgId
+    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupIds[12].resourceId
     privateEndpointNetworkPolicies: 'Enabled'
   }
   {
@@ -167,11 +334,10 @@ var virtualNetwork002Subnets = [
     subnetPrefix: '10.102.201.0/24'
     delegationName: 'appServicePlanDelegation'
     delegationServiceName: 'Microsoft.Web/serverFarms'
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.vnetIntegrationSubnetNsgId
+    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupIds[13].resourceId
     privateEndpointNetworkPolicies: 'Enabled'
   }
 ]
-var vnetIntegrationSubnetNsgName = 'nsg-${appEnvironment}-vnetIntegration'
 var vpnGatewayName = 'vpng-${appEnvironment}-001'
 var vpnGatewayPublicIpAddressName = 'pip-${appEnvironment}-vgw001'
 
