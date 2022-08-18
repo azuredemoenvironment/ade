@@ -247,7 +247,7 @@ var virtualNetwork001Subnets = [
     properties: {
       addressPrefix: '10.101.11.0/24'
       networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[5].resourceI
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[5].resourceId
       }
       serviceEndpoints: [
         {
@@ -261,7 +261,7 @@ var virtualNetwork001Subnets = [
     properties: {
       addressPrefix: '10.101.21.0/24'
       networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[6].resourceI
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[6].resourceId
       }
     }
   }
@@ -282,7 +282,7 @@ var virtualNetwork001Subnets = [
     properties: {
       addressPrefix: '10.101.31.0/24'
       networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[11].resourceI
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[11].resourceId
       }
     }
   }
