@@ -26,7 +26,7 @@ param tags object
 
 // Resource - Container Registry
 //////////////////////////////////////////////////
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-01' = {
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-09-01' = {
   name: containerRegistryName
   location: location
   tags: tags
@@ -77,8 +77,3 @@ resource acrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-
     principalType: 'User'
   }
 }
-
-// Outputs
-//////////////////////////////////////////////////
-output containerRegistryURL string = containerRegistry.properties.loginServer
-output containerRegistryCredentials string = first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
