@@ -39,7 +39,7 @@ param tags object
 
 // Resource - Sql Server - Inspector Gadget
 //////////////////////////////////////////////////
-resource inspectorGadgetSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
+resource inspectorGadgetSqlServer 'Microsoft.Sql/servers@2022-02-01-preview' = {
   name: inspectorGadgetSqlServerName
   location: location
   tags: tags
@@ -53,7 +53,7 @@ resource inspectorGadgetSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
 
 // Resource - Sql Database - Inspector Gadget
 //////////////////////////////////////////////////
-resource inspectorGadgetSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' = {
+resource inspectorGadgetSqlDatabase 'Microsoft.Sql/servers/databases@2022-02-01-preview' = {
   parent: inspectorGadgetSqlServer
   name: inspectorGadgetSqlDatabaseName
   location: location
@@ -140,7 +140,7 @@ resource inspectorGadgetSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSet
 
 // Resource - Private Endpoint - Sql Server - Inspector Gadget
 //////////////////////////////////////////////////
-resource inspectorGadgetSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = {
+resource inspectorGadgetSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2022-01-01' = {
   name: inspectorGadgetSqlServerPrivateEndpointName
   location: location
   properties: {
@@ -163,7 +163,7 @@ resource inspectorGadgetSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpo
 
 // Resource - Private Endpoint Dns Group - Private Endpoint - Inspector Gadget Sql Server
 //////////////////////////////////////////////////
-resource azureSqlprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
+resource azureSqlprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2022-01-01' = {
   name: '${inspectorGadgetSqlServerPrivateEndpoint.name}/dnsgroupname'
   properties: {
     privateDnsZoneConfigs: [

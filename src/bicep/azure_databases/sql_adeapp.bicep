@@ -39,7 +39,7 @@ param tags object
 
 // Resource - Sql Server - ADE App
 //////////////////////////////////////////////////
-resource adeAppSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
+resource adeAppSqlServer 'Microsoft.Sql/servers@2022-02-01-preview' = {
   name: adeAppSqlServerName
   location: location
   tags: tags
@@ -53,7 +53,7 @@ resource adeAppSqlServer 'Microsoft.Sql/servers@2020-11-01-preview' = {
 
 // Resource - Sql Database - ADE App
 //////////////////////////////////////////////////
-resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' = {
+resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2022-02-01-preview' = {
   parent: adeAppSqlServer
   name: adeAppSqlDatabaseName
   location: location
@@ -142,7 +142,7 @@ resource adeAppSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@202
 
 // Resource - Private Endpoint - ADE App Sql Server
 //////////////////////////////////////////////////
-resource adeAppSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2020-11-01' = {
+resource adeAppSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2022-01-01' = {
   name: adeAppSqlServerPrivateEndpointName
   location: location
   properties: {
@@ -165,7 +165,7 @@ resource adeAppSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2020
 
 // Resource - Private Endpoint Dns Group - Private Endpoint - ADE App Sql Server
 //////////////////////////////////////////////////
-resource azureSqlprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
+resource azureSqlprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2022-01-01' = {
   name: '${adeAppSqlServerPrivateEndpoint.name}/dnsgroupname'
   properties: {
     privateDnsZoneConfigs: [
@@ -180,6 +180,6 @@ resource azureSqlprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints
 }
 
 // Outputs
-
+//////////////////////////////////////////////////
 output adeAppSqlServerAdministratorLogin string = adeAppSqlServer.properties.administratorLogin
 output adeAppSqlServerFqdn string = adeAppSqlServer.properties.fullyQualifiedDomainName
