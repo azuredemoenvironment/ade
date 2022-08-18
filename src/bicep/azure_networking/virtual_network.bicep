@@ -47,17 +47,7 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2022-01-01' = {
     }
     subnets: [for subnet in virtualNetwork001Subnets: {
       name: subnet.name
-      properties: {
-        addressPrefix: subnet.subnetPrefix
-        natGateway: subnet.natGatewayId != null ? {
-          id: subnet.natGatewayId
-        } : null
-        networkSecurityGroup: subnet.networkSecurityGroupId != null ? {
-          id: subnet.networkSecurityGroupId
-        } : null
-        privateEndpointNetworkPolicies: subnet.privateEndpointNetworkPolicies != null ? subnet.privateEndpointNetworkPolicies : null
-        serviceEndpoints: subnet.serviceEndpoints != null ? subnet.serviceEndpoints : null
-      }
+      properties: subnet.properties
     }]
   }
   resource azureBastionSubnet 'subnets' existing = {
@@ -110,17 +100,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2022-01-01' = {
     }
     subnets: [for subnet in virtualNetwork002Subnets: {
       name: subnet.name
-      properties: {
-        addressPrefix: subnet.subnetPrefix
-        natGateway: subnet.natGatewayId != null ? {
-          id: subnet.natGatewayId
-        } : null
-        networkSecurityGroup: subnet.networkSecurityGroupId != null ? {
-          id: subnet.networkSecurityGroupId
-        } : null
-        privateEndpointNetworkPolicies: subnet.privateEndpointNetworkPolicies != null ? subnet.privateEndpointNetworkPolicies : null
-        serviceEndpoints: subnet.serviceEndpoints != null ? subnet.serviceEndpoints : null
-      }
+      properties: subnet.properties
     }]
   }
 }

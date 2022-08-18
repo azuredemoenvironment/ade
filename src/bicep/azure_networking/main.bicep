@@ -95,7 +95,7 @@ var networkSecurityGroups = [
             access: 'Allow'
             priority: 100
             direction: 'Inbound'
-          }        
+          }
         }
         {
           name: 'HTTP_Inbound'
@@ -109,7 +109,7 @@ var networkSecurityGroups = [
             access: 'Allow'
             priority: 200
             direction: 'Inbound'
-          }        
+          }
         }
         {
           name: 'HTTPS_Inbound'
@@ -123,10 +123,10 @@ var networkSecurityGroups = [
             access: 'Allow'
             priority: 300
             direction: 'Inbound'
-          }        
+          }
         }
       ]
-    }   
+    }
   }
   {
     name: 'nsg-${appEnvironment}-bastion'
@@ -144,7 +144,7 @@ var networkSecurityGroups = [
             access: 'Allow'
             priority: 100
             direction: 'Inbound'
-          }        
+          }
         }
         {
           name: 'Gateway_Manager_Inbound'
@@ -158,7 +158,7 @@ var networkSecurityGroups = [
             access: 'Allow'
             priority: 200
             direction: 'Inbound'
-          }        
+          }
         }
         {
           name: 'SSH_RDP_Outbound'
@@ -175,7 +175,7 @@ var networkSecurityGroups = [
             access: 'Allow'
             priority: 100
             direction: 'Outbound'
-          }        
+          }
         }
         {
           name: 'Azure_Cloud_Outbound'
@@ -190,10 +190,10 @@ var networkSecurityGroups = [
             priority: 200
             direction: 'Outbound'
           }
-          
+
         }
       ]
-    }  
+    }
   }
   {
     name: 'nsg-${appEnvironment}-dataIngestorService'
@@ -227,10 +227,10 @@ var networkSecurityGroups = [
             access: 'Allow'
             priority: 100
             direction: 'Inbound'
-          }        
+          }
         }
       ]
-    } 
+    }
   }
   {
     name: 'nsg-${appEnvironment}-userService'
@@ -244,207 +244,202 @@ var networkSecurityGroups = [
 var virtualNetwork001Subnets = [
   {
     name: 'snet-${appEnvironment}-applicationGateway'
-    subnetPrefix: '10.101.11.0/24'
-    natGatewayId: null
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[5].resourceId
-    privateEndpointNetworkPolicies: null
-    serviceEndpoints: [
-      {
-        service: 'Microsoft.Web'
+    properties: {
+      addressPrefix: '10.101.11.0/24'
+      networkSecurityGroup: {
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[5].resourceI
       }
-    ]
+      serviceEndpoints: [
+        {
+          service: 'Microsoft.Web'
+        }
+      ]
+    }
   }
   {
     name: 'AzureBastionSubnet'
-    subnetPrefix: '10.101.21.0/24'
-    natGatewayId: null
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[6].resourceId
-    privateEndpointNetworkPolicies: null
-    serviceEndpoints: [
-      {
-        service: null
+    properties: {
+      addressPrefix: '10.101.21.0/24'
+      networkSecurityGroup: {
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[6].resourceI
       }
-    ]
+    }
   }
   {
     name: 'AzureFirewallSubnet'
-    subnetPrefix: '10.101.1.0/24'
-    natGatewayId: null
-    networkSecurityGroupId: null    
-    privateEndpointNetworkPolicies: null
-    serviceEndpoints: [
-      {
-        service: null
-      }
-    ]
+    properties: {
+      addressPrefix: '10.101.1.0/24'
+    }
   }
   {
     name: 'GatewaySubnet'
-    subnetPrefix: '10.101.255.0/24'
-    natGatewayId: null
-    networkSecurityGroupId: null
-    privateEndpointNetworkPolicies: null
-    serviceEndpoints: [
-      {
-        service: null
-      }
-    ]
+    properties: {
+      addressPrefix: '10.101.255.0/24'
+    }
   }
   {
     name: 'snet-${appEnvironment}-management'
-    subnetPrefix: '10.101.31.0/24'
-    natGatewayId: null
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[11].resourceId
-    privateEndpointNetworkPolicies: null
-    serviceEndpoints: [
-      {
-        service: null
+    properties: {
+      addressPrefix: '10.101.31.0/24'
+      networkSecurityGroup: {
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[11].resourceI
       }
-    ]
+    }
   }
 ]
 var virtualNetwork002Subnets = [
   {
     name: 'snet-${appEnvironment}-adeApp-aks'
-    subnetPrefix: '10.102.100.0/23'
-    natGatewayId: null
-    networkSecurityGroupId: null
-    privateEndpointNetworkPolicies: null
-    serviceEndpoints: [
-      {
-        service: 'Microsoft.ContainerRegistry'
-      }
-    ]
+    properties: {
+      addressPrefix: '10.102.100.0/23'
+      serviceEndpoints: [
+        {
+          service: 'Microsoft.ContainerRegistry'
+        }
+      ]
+    }
   }
   {
     name: 'snet-${appEnvironment}-adeAppSql'
-    subnetPrefix: '10.102.160.0/24'
-    natGatewayId: null
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[0].resourceId
-    privateEndpointNetworkPolicies: 'Enabled'
-    serviceEndpoints: [
-      {
-        service: null
+    properties: {
+      addressPrefix: '10.102.160.0/24'
+      networkSecurityGroup: {
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[0].resourceId
       }
-    ]
+      privateEndpointNetworkPolicies: 'Enabled'
+    }
   }
   {
     name: 'snet-${appEnvironment}-adeApp-vmss'
-    subnetPrefix: '10.102.12.0/24'
-    natGatewayId: natGatewayModule.outputs.natGatewayId
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[1].resourceId
-    privateEndpointNetworkPolicies: null
-    serviceEndpoints: [
-      {
-        service: 'Microsoft.Sql'
+    properties: {
+      addressPrefix: '10.102.12.0/24'
+      natGateway: {
+        id: natGatewayModule.outputs.natGatewayId
       }
-    ]
+      networkSecurityGroup: {
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[1].resourceId
+      }
+      serviceEndpoints: [
+        {
+          service: 'Microsoft.Sql'
+        }
+      ]
+    }
   }
   {
     name: 'snet-${appEnvironment}-adeApp-vm'
-    subnetPrefix: '10.102.2.0/24'
-    natGatewayId: natGatewayModule.outputs.natGatewayId
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[2].resourceId
-    privateEndpointNetworkPolicies: null  
-    serviceEndpoints: 'Microsoft.Sql'
-  }
+    properties: {
+      addressPrefix: '10.102.2.0/24'
+      natGateway: {
+        id: natGatewayModule.outputs.natGatewayId
+      }
+      networkSecurityGroup: {
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[2].resourceId
+      }
+      serviceEndpoints: 'Microsoft.Sql'
+    } }
+
   {
     name: 'snet-${appEnvironment}-adeWeb-vmss'
-    subnetPrefix: '10.102.11.0/24'
-    natGatewayId: natGatewayModule.outputs.natGatewayId
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[3].resourceId
-    privateEndpointNetworkPolicies: null  
-    serviceEndpoints: [
-      {
-        service: 'Microsoft.Sql'
+    properties: {
+      addressPrefix: '10.102.11.0/24'
+      natGateway: {
+        id: natGatewayModule.outputs.natGatewayId
       }
-    ]
+      networkSecurityGroup: {
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[3].resourceId
+      }
+      serviceEndpoints: [
+        {
+          service: 'Microsoft.Sql'
+        }
+      ]
+    }
   }
   {
     name: 'snet-${appEnvironment}-adeWeb-vm'
-    subnetPrefix: '10.102.1.0/24'
-    natGatewayId: natGatewayModule.outputs.natGatewayId
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[4].resourceId
-    privateEndpointNetworkPolicies: null  
-    serviceEndpoints: [
-      {
-        service: 'Microsoft.Sql'
+    properties: {
+      addressPrefix: '10.102.1.0/24'
+      natGateway: {
+        id: natGatewayModule.outputs.natGatewayId
       }
-    ]
+      networkSecurityGroup: {
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[4].resourceId
+      }
+      serviceEndpoints: [
+        {
+          service: 'Microsoft.Sql'
+        }
+      ]
+    }
   }
   {
     name: 'snet-${appEnvironment}-dataIngestorService'
-    subnetPrefix: '10.102.152.0/24'
-    natGatewayId: null
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[7].resourceId
-    privateEndpointNetworkPolicies: 'Enabled'
-    serviceEndpoints: [
-      {
-        service: null
+    properties: {
+      addressPrefix: '10.102.152.0/24'
+      networkSecurityGroup: {
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[7].resourceId
       }
-    ]
+      privateEndpointNetworkPolicies: 'Enabled'
+    }
   }
   {
     name: 'snet-${appEnvironment}-dataReporterService'
-    subnetPrefix: '10.102.153.0/24'
-    natGatewayId: null
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[8].resourceId
-    privateEndpointNetworkPolicies: 'Enabled'
-    serviceEndpoints: [
-      {
-        service: null
+    properties: {
+      addressPrefix: '10.102.153.0/24'
+      networkSecurityGroup: {
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[8].resourceId
       }
-    ]
+      privateEndpointNetworkPolicies: 'Enabled'
+    }
   }
   {
     name: 'snet-${appEnvironment}-eventIngestorService'
-    subnetPrefix: '10.102.154.0/24'
-    natGatewayId: null
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[9].resourceId
-    privateEndpointNetworkPolicies: 'Enabled'
-    serviceEndpoints: [
-      {
-        service: null
+    properties: {
+      addressPrefix: '10.102.154.0/24'
+      networkSecurityGroup: {
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[9].resourceId
       }
-    ]
+      privateEndpointNetworkPolicies: 'Enabled'
+    }
   }
   {
     name: 'snet-${appEnvironment}-inspectorGadgetSql'
-    subnetPrefix: '10.102.161.0/24'
-    natGatewayId: null
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[10].resourceId
-    privateEndpointNetworkPolicies: 'Enabled'
-    serviceEndpoints: [
-      {
-        service: null
+    properties: {
+      addressPrefix: '10.102.161.0/24'
+      networkSecurityGroup: {
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[10].resourceId
       }
-    ]
+      privateEndpointNetworkPolicies: 'Enabled'
+    }
   }
   {
     name: 'snet-${appEnvironment}-userService'
-    subnetPrefix: '10.102.151.0/24'
-    natGatewayId: null
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[12].resourceId
-    privateEndpointNetworkPolicies: 'Enabled'
-    serviceEndpoints: [
-      {
-        service: null
+    properties: {
+      addressPrefix: '10.102.151.0/24'
+      networkSecurityGroup: {
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[12].resourceId
       }
-    ]
+      privateEndpointNetworkPolicies: 'Enabled'
+    }
   }
   {
     name: 'snet-${appEnvironment}-vnetIntegration'
-    subnetPrefix: '10.102.201.0/24'
-    delegationName: 'appServicePlanDelegation'
-    delegationServiceName: 'Microsoft.Web/serverFarms'
-    natGatewayId: null
-    networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[13].resourceId
-    privateEndpointNetworkPolicies: 'Enabled'
-    serviceEndpoints: [
-      {
-        service: null
+    properties: {
+      addressPrefix: '10.102.201.0/24'
+      delegations: [
+        {
+          name: 'appServicePlanDelegation'
+          properties: {
+            serviceName: 'Microsoft.Web/serverFarms'
+          }
+        }
+      ]
+      networkSecurityGroup: {
+        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[13].resourceId
       }
-    ]
+      privateEndpointNetworkPolicies: 'Enabled'
+    }
   }
 ]
 
@@ -507,7 +502,7 @@ module networkSecurityGroupsModule './network_security_group.bicep' = {
   params: {
     diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
-    location: location    
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     networkSecurityGroups: networkSecurityGroups
     tags: tags
@@ -570,7 +565,7 @@ module azureBastionModule './bastion.bicep' = {
     azureBastionSubnetId: virtualNetworkModule.outputs.azureBastionSubnetId
     diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
-    location: location    
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     tags: tags
   }
