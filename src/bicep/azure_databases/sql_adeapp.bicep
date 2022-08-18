@@ -19,12 +19,6 @@ param adminPassword string
 @description('The name of the admin user.')
 param adminUserName string
 
-@description('The name of the App Config instance.')
-param appConfigName string
-
-@description('The name of the App Config instance Resource Group.')
-param appConfigResourceGroupName string
-
 @description('The ID of the Azure Sql Private Dns Zone.')
 param azureSqlPrivateDnsZoneId string
 
@@ -40,13 +34,8 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-// Variables
-//////////////////////////////////////////////////
-var tags = {
-  environment: 'production'
-  function: 'sql'
-  costCenter: 'it'
-}
+@description('The list of Resource tags')
+param tags object
 
 // Resource - Sql Server - ADE App
 //////////////////////////////////////////////////
@@ -84,16 +73,7 @@ resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' 
   }
 }
 
-// Module - App Config - ADE App Sql Database
-//////////////////////////////////////////////////
-module azureDatabasesAdeAppSqlAppConfigModule './azure_databases_adeapp_sql_app_config.bicep' = {
-  scope: resourceGroup(appConfigResourceGroupName)
-  name: 'azureDatabasesAdeAppSqlAppConfigDeployment'
-  params: {
-    appConfigName: appConfigName
-    sqlServerConnectionString: 'Data Source=tcp:${adeAppSqlServer.properties.fullyQualifiedDomainName},1433;Initial Catalog=${adeAppSqlDatabaseName};User Id=${adeAppSqlServer.properties.administratorLogin}@${adeAppSqlServer.properties.fullyQualifiedDomainName};Password=${adminPassword};'
-  }
-}
+
 
 // Resource - Sql Database - Diagnostic Settings - ADE App
 //////////////////////////////////////////////////
@@ -198,3 +178,8 @@ resource azureSqlprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints
     ]
   }
 }
+
+// Outputs
+
+output adeAppSqlServerAdministratorLogin string = adeAppSqlServer.properties.administratorLogin
+output adeAppSqlServerFqdn string = adeAppSqlServer.properties.fullyQualifiedDomainName

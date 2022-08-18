@@ -34,13 +34,8 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-// Variables
-//////////////////////////////////////////////////
-var tags = {
-  environment: 'production'
-  function: 'sql'
-  costCenter: 'it'
-}
+@description('The list of Resource tags')
+param tags object
 
 // Resource - Sql Server - Inspector Gadget
 //////////////////////////////////////////////////
