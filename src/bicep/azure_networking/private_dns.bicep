@@ -18,13 +18,8 @@ param virtualNetwork002Id string
 @description('The name of Virtual Network 002.')
 param virtualNetwork002Name string
 
-// Variables
-//////////////////////////////////////////////////
-var tags = {
-  environment: 'production'
-  function: 'networking'
-  costCenter: 'it'
-}
+@description('The list of Resource tags')
+param tags object
 
 // Resource - Private Dns Zone - Privatelink.Azurewebsites.Net
 //////////////////////////////////////////////////

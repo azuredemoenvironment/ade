@@ -31,19 +31,14 @@ param logAnalyticsWorkspaceId string
 @description('The public IP address of the on-premises network.')
 param sourceAddressPrefix string
 
+@description('The list of Resource tags')
+param tags object
+
 @description('The name of the VPN Gateway.')
 param vpnGatewayName string
 
 @description('The name of the VPN Gateway Public IP Address.')
 param vpnGatewayPublicIpAddressName string
-
-// Variables
-//////////////////////////////////////////////////
-var tags = {
-  environment: 'production'
-  function: 'networking'
-  costCenter: 'it'
-}
 
 // Resource - Public Ip Address
 //////////////////////////////////////////////////

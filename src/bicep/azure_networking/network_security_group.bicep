@@ -12,7 +12,7 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-
+@description('The array of Network Security Group names and properties.')
 param networkSecurityGroups array
 
 @description('The list of Resource tags')
@@ -24,9 +24,7 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = [for (networ
   name: networkSecurityGroup.name
   location: location
   tags: tags
-  properties: {
-    securityRules: networkSecurityGroup.securityRules
-  }
+  properties: networkSecurityGroup.properties
 }]
 
 // Resource - Network Security Group - Diagnostic Settings
@@ -55,6 +53,7 @@ resource nsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-previe
 
 // Outputs
 //////////////////////////////////////////////////
-output networkSecurityGroupIds array = [for (networkSecurityGroup, i) in networkSecurityGroups: {
+output networkSecurityGroupProperties array = [for (networkSecurityGroup, i) in networkSecurityGroups: {
+  name: nsg[i].name
   resourceId: nsg[i].id
 }]

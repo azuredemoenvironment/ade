@@ -19,7 +19,7 @@ param tags object
 param virtualNetwork001Name string
 
 @description('The address prefix of Virtual Network 001.')
-param virtualnetwork001Prefix string
+param virtualNetwork001Prefix string
 
 @description('The array of properties for Virtual Networks 001 Subnets.')
 param virtualNetwork001Subnets array
@@ -42,25 +42,21 @@ resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2022-01-01' = {
   properties: {
     addressSpace: {
       addressPrefixes: [
-        virtualnetwork001Prefix
+        virtualNetwork001Prefix
       ]
     }
     subnets: [for subnet in virtualNetwork001Subnets: {
       name: subnet.name
       properties: {
         addressPrefix: subnet.subnetPrefix
-        natGateway: {
+        natGateway: subnet.natGatewayId != null ? {
           id: subnet.natGatewayId
-        }
-        networkSecurityGroup: {
+        } : null
+        networkSecurityGroup: subnet.networkSecurityGroupId != null ? {
           id: subnet.networkSecurityGroupId
-        }
-        privateEndpointNetworkPolicies: subnet.privateEndpointNetworkPolicies
-        serviceEndpoints: [
-          {
-            service: subnet.serviceEndpoint
-          }
-        ]
+        } : null
+        privateEndpointNetworkPolicies: subnet.privateEndpointNetworkPolicies != null ? subnet.privateEndpointNetworkPolicies : null
+        serviceEndpoints: subnet.serviceEndpoints != null ? subnet.serviceEndpoints : null
       }
     }]
   }
@@ -116,18 +112,14 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2022-01-01' = {
       name: subnet.name
       properties: {
         addressPrefix: subnet.subnetPrefix
-        natGateway: {
+        natGateway: subnet.natGatewayId != null ? {
           id: subnet.natGatewayId
-        }
-        networkSecurityGroup: {
+        } : null
+        networkSecurityGroup: subnet.networkSecurityGroupId != null ? {
           id: subnet.networkSecurityGroupId
-        }
-        privateEndpointNetworkPolicies: subnet.privateEndpointNetworkPolicies
-        serviceEndpoints: [
-          {
-            service: subnet.serviceEndpoint
-          }
-        ]
+        } : null
+        privateEndpointNetworkPolicies: subnet.privateEndpointNetworkPolicies != null ? subnet.privateEndpointNetworkPolicies : null
+        serviceEndpoints: subnet.serviceEndpoints != null ? subnet.serviceEndpoints : null
       }
     }]
   }

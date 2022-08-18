@@ -1,6 +1,6 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The application environment (workload, environment, location).')
+@description('The application environment (workoad, environment, location).')
 param appEnvironment string
 
 @description('Deploy Azure Firewall if value is set to true.')
@@ -56,7 +56,7 @@ var virtualNetwork002Prefix = '10.102.0.0/16'
 var vpnGatewayName = 'vpng-${appEnvironment}-001'
 var vpnGatewayPublicIpAddressName = 'pip-${appEnvironment}-vgw001'
 
-// Variable Arrays
+// Variable Arrarys
 //////////////////////////////////////////////////
 var networkSecurityGroups = [
   {
@@ -248,11 +248,7 @@ var virtualNetwork001Subnets = [
     natGatewayId: null
     networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[5].resourceId
     privateEndpointNetworkPolicies: null
-    serviceEndpoints: [
-      {
-        service: 'Microsoft.Web'
-      }
-    ]
+    serviceEndpoint: 'Microsoft.Web'
   }
   {
     name: 'AzureBastionSubnet'
@@ -260,11 +256,7 @@ var virtualNetwork001Subnets = [
     natGatewayId: null
     networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[6].resourceId
     privateEndpointNetworkPolicies: null
-    serviceEndpoints: [
-      {
-        service: null
-      }
-    ]
+    serviceEndpoint: null
   }
   {
     name: 'AzureFirewallSubnet'
@@ -272,11 +264,7 @@ var virtualNetwork001Subnets = [
     natGatewayId: null
     networkSecurityGroupId: null    
     privateEndpointNetworkPolicies: null
-    serviceEndpoints: [
-      {
-        service: null
-      }
-    ]
+    serviceEndpoint: null
   }
   {
     name: 'GatewaySubnet'
@@ -284,11 +272,7 @@ var virtualNetwork001Subnets = [
     natGatewayId: null
     networkSecurityGroupId: null
     privateEndpointNetworkPolicies: null
-    serviceEndpoints: [
-      {
-        service: null
-      }
-    ]
+    serviceEndpoint: null
   }
   {
     name: 'snet-${appEnvironment}-management'
@@ -296,11 +280,7 @@ var virtualNetwork001Subnets = [
     natGatewayId: null
     networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[11].resourceId
     privateEndpointNetworkPolicies: null
-    serviceEndpoints: [
-      {
-        service: null
-      }
-    ]
+    serviceEndpoint: null
   }
 ]
 var virtualNetwork002Subnets = [
@@ -309,12 +289,8 @@ var virtualNetwork002Subnets = [
     subnetPrefix: '10.102.100.0/23'
     natGatewayId: null
     networkSecurityGroupId: null
-    privateEndpointNetworkPolicies: null
-    serviceEndpoints: [
-      {
-        service: 'Microsoft.ContainerRegistry'
-      }
-    ]
+    privateEndpointNetworkPolicies: null  
+    serviceEndpoint: 'Microsoft.ContainerRegistry'
   }
   {
     name: 'snet-${appEnvironment}-adeAppSql'
@@ -322,23 +298,15 @@ var virtualNetwork002Subnets = [
     natGatewayId: null
     networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[0].resourceId
     privateEndpointNetworkPolicies: 'Enabled'
-    serviceEndpoints: [
-      {
-        service: null
-      }
-    ]
+    serviceEndpoint: null
   }
   {
     name: 'snet-${appEnvironment}-adeApp-vmss'
     subnetPrefix: '10.102.12.0/24'
     natGatewayId: natGatewayModule.outputs.natGatewayId
     networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[1].resourceId
-    privateEndpointNetworkPolicies: null
-    serviceEndpoints: [
-      {
-        service: 'Microsoft.Sql'
-      }
-    ]
+    privateEndpointNetworkPolicies: null  
+    serviceEndpoint: 'Microsoft.Sql'
   }
   {
     name: 'snet-${appEnvironment}-adeApp-vm'
@@ -346,7 +314,7 @@ var virtualNetwork002Subnets = [
     natGatewayId: natGatewayModule.outputs.natGatewayId
     networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[2].resourceId
     privateEndpointNetworkPolicies: null  
-    serviceEndpoints: 'Microsoft.Sql'
+    serviceEndpoint: 'Microsoft.Sql'
   }
   {
     name: 'snet-${appEnvironment}-adeWeb-vmss'
@@ -354,11 +322,7 @@ var virtualNetwork002Subnets = [
     natGatewayId: natGatewayModule.outputs.natGatewayId
     networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[3].resourceId
     privateEndpointNetworkPolicies: null  
-    serviceEndpoints: [
-      {
-        service: 'Microsoft.Sql'
-      }
-    ]
+    serviceEndpoint: 'Microsoft.Sql'
   }
   {
     name: 'snet-${appEnvironment}-adeWeb-vm'
@@ -366,11 +330,7 @@ var virtualNetwork002Subnets = [
     natGatewayId: natGatewayModule.outputs.natGatewayId
     networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[4].resourceId
     privateEndpointNetworkPolicies: null  
-    serviceEndpoints: [
-      {
-        service: 'Microsoft.Sql'
-      }
-    ]
+    serviceEndpoint: 'Microsoft.Sql'
   }
   {
     name: 'snet-${appEnvironment}-dataIngestorService'
@@ -378,11 +338,7 @@ var virtualNetwork002Subnets = [
     natGatewayId: null
     networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[7].resourceId
     privateEndpointNetworkPolicies: 'Enabled'
-    serviceEndpoints: [
-      {
-        service: null
-      }
-    ]
+    serviceEndpoint: null
   }
   {
     name: 'snet-${appEnvironment}-dataReporterService'
@@ -390,11 +346,7 @@ var virtualNetwork002Subnets = [
     natGatewayId: null
     networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[8].resourceId
     privateEndpointNetworkPolicies: 'Enabled'
-    serviceEndpoints: [
-      {
-        service: null
-      }
-    ]
+    serviceEndpoint: null
   }
   {
     name: 'snet-${appEnvironment}-eventIngestorService'
@@ -402,11 +354,7 @@ var virtualNetwork002Subnets = [
     natGatewayId: null
     networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[9].resourceId
     privateEndpointNetworkPolicies: 'Enabled'
-    serviceEndpoints: [
-      {
-        service: null
-      }
-    ]
+    serviceEndpoint: null
   }
   {
     name: 'snet-${appEnvironment}-inspectorGadgetSql'
@@ -414,11 +362,7 @@ var virtualNetwork002Subnets = [
     natGatewayId: null
     networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[10].resourceId
     privateEndpointNetworkPolicies: 'Enabled'
-    serviceEndpoints: [
-      {
-        service: null
-      }
-    ]
+    serviceEndpoint: null
   }
   {
     name: 'snet-${appEnvironment}-userService'
@@ -426,11 +370,7 @@ var virtualNetwork002Subnets = [
     natGatewayId: null
     networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[12].resourceId
     privateEndpointNetworkPolicies: 'Enabled'
-    serviceEndpoints: [
-      {
-        service: null
-      }
-    ]
+    serviceEndpoint: null
   }
   {
     name: 'snet-${appEnvironment}-vnetIntegration'
@@ -440,11 +380,7 @@ var virtualNetwork002Subnets = [
     natGatewayId: null
     networkSecurityGroupId: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[13].resourceId
     privateEndpointNetworkPolicies: 'Enabled'
-    serviceEndpoints: [
-      {
-        service: null
-      }
-    ]
+    serviceEndpoint: null
   }
 ]
 
