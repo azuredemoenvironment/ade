@@ -4,7 +4,8 @@
     "parameters": {
         "appEnvironment": {
             "value": "@@appEnvironment@@"
-        },"identityResourceGroupName": {
+        },
+        "identityResourceGroupName": {
             "value": "@@identityResourceGroupName@@"
         },
         "managementResourceGroupName": {

@@ -39,7 +39,7 @@ function Deploy-AzureDemoEnvironment {
     
     # # Data Services
     # ###################################
-    # Deploy-AzureDatabases $armParameters
+    Deploy-AzureDatabases $armParameters
 
     # # Compute Infrastructure
     # ###################################
