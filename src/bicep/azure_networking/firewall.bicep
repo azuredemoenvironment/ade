@@ -26,7 +26,7 @@ param tags object
 
 // Resource - Public Ip Address
 //////////////////////////////////////////////////
-resource azureFirewallPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+resource azureFirewallPublicIpAddress 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
   name: azureFirewallPublicIpAddressName
   location: location
   tags: tags
@@ -73,7 +73,7 @@ resource azureFirewallPublicIpAddressDiagnostics 'Microsoft.Insights/diagnosticS
 
 // Resource - Azure Firewall
 //////////////////////////////////////////////////
-resource azureFirewall 'Microsoft.Network/azureFirewalls@2020-07-01' = {
+resource azureFirewall 'Microsoft.Network/azureFirewalls@2022-01-01' = {
   name: azureFirewallName
   location: location
   tags: tags

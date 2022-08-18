@@ -14,7 +14,7 @@ param virtualNetwork002Name string
 
 // Resource - Virtual Network Peering - Virtual Network 001 To Virtual Network 002
 //////////////////////////////////////////////////
-resource vnetPeering001to002 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-08-01' = {
+resource vnetPeering001to002 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2022-01-01' = {
   name: '${virtualNetwork001Name}/${virtualNetwork001Name}-${virtualNetwork002Name}'
   properties: {
     allowVirtualNetworkAccess: true
@@ -29,7 +29,7 @@ resource vnetPeering001to002 'Microsoft.Network/virtualNetworks/virtualNetworkPe
 
 // Resource - Virtual Network Peering - Virtual Network 002 To Virtual Network 001
 //////////////////////////////////////////////////
-resource vnetPeering002to001 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-08-01' = {
+resource vnetPeering002to001 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2022-01-01' = {
   name: '${virtualNetwork002Name}/${virtualNetwork002Name}-${virtualNetwork001Name}'
   properties: {
     allowVirtualNetworkAccess: true

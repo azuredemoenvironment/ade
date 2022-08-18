@@ -1,5 +1,8 @@
 // Parameters
 //////////////////////////////////////////////////
+@description('The Id of the Acr Pull Role Definition.')
+param acrPullRoleDefinitionId string
+
 @description('The name of the Container Registry.')
 param containerRegistryName string
 
@@ -9,9 +12,8 @@ param diagnosticsStorageAccountId string
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
 
-// @description('The Principal ID of the Container Registry Managed Identity.')
-// @secure()
-// param containerRegistryManagedIdentityPrincipalID string
+@description('The Principal ID of the Container Registry Managed Identity.')
+param containerRegistryManagedIdentityPrincipalID string
 
 @description('The location for all resources.')
 param location string
@@ -19,14 +21,8 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-// Variables
-//////////////////////////////////////////////////
-// var acrPullRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d') // Role Assignment Definition for ACR Pull - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#acrpull
-var tags = {
-  environment: 'production'
-  function: 'containerRegistry'
-  costCenter: 'it'
-}
+@description('The list of Resource tags')
+param tags object
 
 // Resource - Container Registry
 //////////////////////////////////////////////////
@@ -73,15 +69,14 @@ resource containerRegistryDiagnostics 'microsoft.insights/diagnosticSettings@202
 
 // Resource - Role Assignment - Acr Pull
 //////////////////////////////////////////////////
-// resource containerRegistryRoleAssignments 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-//   scope: containerRegistry
-//   name: guid(resourceGroup().id, acrPullRoleDefinitionId, containerRegistryManagedIdentityPrincipalID)
-//   properties: {
-//     roleDefinitionId: acrPullRoleDefinitionId
-//     principalId: containerRegistryManagedIdentityPrincipalID
-//     principalType: 'User'
-//   }
-// }
+resource acrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(containerRegistry.id, acrPullRoleDefinitionId, containerRegistryManagedIdentityPrincipalID)
+  properties: {
+    roleDefinitionId: acrPullRoleDefinitionId
+    principalId: containerRegistryManagedIdentityPrincipalID
+    principalType: 'User'
+  }
+}
 
 // Outputs
 //////////////////////////////////////////////////

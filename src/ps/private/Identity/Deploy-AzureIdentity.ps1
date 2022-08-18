@@ -15,7 +15,7 @@ function Deploy-AzureIdentity {
     # Create the Azure Identity Resource Group
     az group create -n $resourceGroupName -l $azureRegion
 
-    # Deploy the Azure Identity Bicep template at the Resource Group scope.
+    # Deploy the Azure Identity Bicep Template at the Resource Group Scope.
     ##################################################
     Deploy-ArmTemplate 'Azure Identity' $armParameters $resourceGroupName  -bicep
 

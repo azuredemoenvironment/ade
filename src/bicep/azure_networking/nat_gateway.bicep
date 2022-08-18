@@ -14,7 +14,7 @@ param tags object
 
 // Resource - Public Ip Prefix
 //////////////////////////////////////////////////
-resource natGatewaypublicIPPrefix 'Microsoft.Network/publicIPPrefixes@2020-07-01' = {
+resource natGatewaypublicIPPrefix 'Microsoft.Network/publicIPPrefixes@2022-01-01' = {
   name: natGatewayPublicIPPrefixName
   location: location
   tags: tags
@@ -29,7 +29,7 @@ resource natGatewaypublicIPPrefix 'Microsoft.Network/publicIPPrefixes@2020-07-01
 
 // Resource - Nat Gateway
 //////////////////////////////////////////////////
-resource natGateway 'Microsoft.Network/natGateways@2020-07-01' = {
+resource natGateway 'Microsoft.Network/natGateways@2022-01-01' = {
   name: natGatewayName
   location: location
   tags: tags

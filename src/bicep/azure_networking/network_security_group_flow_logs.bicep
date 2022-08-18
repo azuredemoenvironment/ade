@@ -16,7 +16,7 @@ param nsgFlowLogsStorageAccountId string
 //////////////////////////////////////////////////
 
 // Resource - Network Security Group Flow Logs
-resource nsgFlowLog 'Microsoft.Network/networkWatchers/flowLogs@2020-11-01' = [for networkSecurityGroupProperty in networkSecurityGroupProperties: {
+resource nsgFlowLog 'Microsoft.Network/networkWatchers/flowLogs@2022-01-01' = [for networkSecurityGroupProperty in networkSecurityGroupProperties: {
   name: 'NetworkWatcher_${location}/${networkSecurityGroupProperty.name}'
   location: location
   properties: {

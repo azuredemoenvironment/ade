@@ -42,7 +42,7 @@ param vpnGatewayPublicIpAddressName string
 
 // Resource - Public Ip Address
 //////////////////////////////////////////////////
-resource vpnGatewayPublicIpAddress 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+resource vpnGatewayPublicIpAddress 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
   name: vpnGatewayPublicIpAddressName
   location: location
   tags: tags
@@ -86,7 +86,7 @@ resource vpnGatewayPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSett
 
 // Resource - Local Network Gateway
 //////////////////////////////////////////////////
-resource localNetworkGateway 'Microsoft.Network/localNetworkGateways@2020-08-01' = {
+resource localNetworkGateway 'Microsoft.Network/localNetworkGateways@2022-01-01' = {
   name: localNetworkGatewayName
   location: location
   tags: tags
@@ -102,7 +102,7 @@ resource localNetworkGateway 'Microsoft.Network/localNetworkGateways@2020-08-01'
 
 // Resource - Vpn Gateway
 //////////////////////////////////////////////////
-resource vpnGateway 'Microsoft.Network/virtualNetworkGateways@2020-08-01' = {
+resource vpnGateway 'Microsoft.Network/virtualNetworkGateways@2022-01-01' = {
   name: vpnGatewayName
   location: location
   tags: tags
@@ -172,7 +172,7 @@ resource vpnGatewayDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01
 
 // Resource - Connection
 //////////////////////////////////////////////////
-resource connection 'Microsoft.Network/connections@2020-08-01' = {
+resource connection 'Microsoft.Network/connections@2022-01-01' = {
   name: connectionName
   location: location
   tags: tags

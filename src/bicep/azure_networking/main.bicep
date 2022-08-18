@@ -336,9 +336,13 @@ var virtualNetwork002Subnets = [
       networkSecurityGroup: {
         id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[2].resourceId
       }
-      serviceEndpoints: 'Microsoft.Sql'
-    } }
-
+      serviceEndpoints: [
+        {
+          service: 'Microsoft.Sql'
+        }
+      ]
+    }
+  }
   {
     name: 'snet-${appEnvironment}-adeWeb-vmss'
     properties: {

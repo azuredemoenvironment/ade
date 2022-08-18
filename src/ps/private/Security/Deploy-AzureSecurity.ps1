@@ -30,7 +30,7 @@ function Deploy-AzureSecurity {
     # Create the Azure Security Resource Group
     az group create -n $resourceGroupName -l $azureRegion
 
-    # Deploy the Azure Security Bicep template at the Resource Group scope.
+    # Deploy the Azure Security Bicep Template at the Resource Group Scope.
     ##################################################
     Deploy-ArmTemplate 'Azure Security' $armParameters $resourceGroupName  -bicep
 

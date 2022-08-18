@@ -3,15 +3,31 @@ function Deploy-AzureContainerRegistry {
         [object] $armParameters
     )
 
-    Deploy-ArmTemplate 'Azure Container Registry' $armParameters -resourceLevel 'sub' -bicep
+    # Deploy Azure Container Registry
+    ##################################################
+    Write-ScriptSection "Initializing Container Registry Deployment"
 
+    # Parameters
+    ##################################################
+    $resourceGroupName = $armParameters.containerRegistryResourceGroupName
     $stopwatch = [system.diagnostics.stopwatch]::StartNew()
     $containerRegistryName = $armParameters.acrName
     $containerRegistryLoginServer = $armParameters.containerRegistryLoginServer
 
+    # Create the Azure Container Registry Resource Group
+    ##################################################
+    az group create -n $resourceGroupName -l $azureRegion
+
+    # Deploy the Azure Container Registry Bicep Template at the Resource Group Scope.
+    ##################################################
+    Deploy-ArmTemplate 'Azure Container Registry' $armParameters $resourceGroupName -bicep
+
+    Write-Status "Finished Azure Container Registry Deployment"
+
+    # Push Docker Images to Azure Container Registry
+    ##################################################
     Write-ScriptSection "Pushing Docker Images to $containerRegistryLoginServer"
 
-    # Deploy Container Images   
     az acr login -n $containerRegistryName
     Confirm-LastExitCode
 
@@ -42,5 +58,5 @@ function Deploy-AzureContainerRegistry {
     $stopwatch.Stop()
     $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)
 
-    Write-Status "Finished Tagging and Pushing Docker Images to $containerRegistryLoginServer in $elapsedSeconds seconds"
+    Write-Status "Finished Pushing Docker Images to $containerRegistryLoginServer in $elapsedSeconds seconds"
 }
