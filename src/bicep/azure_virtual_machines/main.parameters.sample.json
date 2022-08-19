@@ -5,14 +5,23 @@
         "adminUserName": {
             "value": "@@adminUsername@@"
         },
-        "aliasRegion": {
-            "value": "@@aliasRegion@@"
+        "appEnvironment": {
+            "value": "@@appEnvironment@@"
         },
-        "azureRegion": {
-            "value": "@@azureRegion@@"
+        "managementResourceGroupName": {
+            "value": "@@managementResourceGroupName@@"
+        },
+        "networkingResourceGroupName": {
+            "value": "@@networkingResourceGroupName@@"
+        },
+        "ownerName": {
+            "value": "@@ownerName@@"
         },
         "scriptsBaseUri": {
             "value": "@@scriptsBaseUri@@"
-        }
+        },
+        "securityResourceGroupName": {
+            "value": "@@securityResourceGroupName@@"
+        }        
     }
 }

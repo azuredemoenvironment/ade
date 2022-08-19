@@ -9,7 +9,8 @@ function Deploy-AzureContainerRegistry {
 
     # Parameters
     ##################################################
-    $resourceGroupName = $armParameters.containerRegistryResourceGroupName
+    $azureRegion = $armParameters.azureRegion
+    $resourceGroupName = $armParameters.containerResourceGroupName
     $stopwatch = [system.diagnostics.stopwatch]::StartNew()
     $containerRegistryName = $armParameters.acrName
     $containerRegistryLoginServer = $armParameters.containerRegistryLoginServer

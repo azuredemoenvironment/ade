@@ -1,0 +1,48 @@
+{
+  "virtualNetwork001Subnets": [
+    {
+      "name": "snet-ade-bfett-eus-applicationGateway",
+      "properties": {
+        "addressPrefix": "10.101.11.0/24",
+        "networkSecurityGroup": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'networkSecurityGroupsDeployment')).outputs.networkSecurityGroupProperties.value[5].resourceId]"
+        },
+        "serviceEndpoints": [
+          {
+            "service": "Microsoft.Web"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AzureBastionSubnet",
+      "properties": {
+        "addressPrefix": "10.101.21.0/24",
+        "networkSecurityGroup": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'networkSecurityGroupsDeployment')).outputs.networkSecurityGroupProperties.value[6].resourceId]"
+        }
+      }
+    },
+    {
+      "name": "AzureFirewallSubnet",
+      "properties": {
+        "addressPrefix": "10.101.1.0/24"
+      }
+    },
+    {
+      "name": "GatewaySubnet",
+      "properties": {
+        "addressPrefix": "10.101.255.0/24"
+      }
+    },
+    {
+      "name": "snet-ade-bfett-eus-management",
+      "properties": {
+        "addressPrefix": "10.101.31.0/24",
+        "networkSecurityGroup": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'networkSecurityGroupsDeployment')).outputs.networkSecurityGroupProperties.value[11].resourceId]"
+        }
+      }
+    }
+  ]
+}

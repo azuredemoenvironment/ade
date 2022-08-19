@@ -58,189 +58,193 @@ var vpnGatewayPublicIpAddressName = 'pip-${appEnvironment}-vgw001'
 
 // Variable Arrays
 //////////////////////////////////////////////////
-var networkSecurityGroups = [
-  {
-    name: 'nsg-${appEnvironment}-adeAppSql'
-    properties: {}
-  }
-  {
-    name: 'nsg-${appEnvironment}-adeApp-vmss'
-    properties: {}
-  }
-  {
-    name: 'nsg-${appEnvironment}-adeApp-vm'
-    properties: {}
-  }
-  {
-    name: 'nsg-${appEnvironment}-adeWeb-vmss'
-    properties: {}
-  }
-  {
-    name: 'nsg-${appEnvironment}-adeWeb-vm'
-    properties: {}
-  }
-  {
-    name: 'nsg-${appEnvironment}-applicationGateway'
-    properties: {
-      securityRules: [
-        {
-          name: 'Gateway_Manager_Inbound'
-          properties: {
-            description: 'Allow Gateway Manager Access'
-            protocol: 'Tcp'
-            sourcePortRange: '*'
-            destinationPortRange: '65200-65535'
-            sourceAddressPrefix: 'GatewayManager'
-            destinationAddressPrefix: '*'
-            access: 'Allow'
-            priority: 100
-            direction: 'Inbound'
-          }
-        }
-        {
-          name: 'HTTP_Inbound'
-          properties: {
-            description: 'Allow HTTP Inbound'
-            protocol: 'Tcp'
-            sourcePortRange: '*'
-            destinationPortRange: '80'
-            sourceAddressPrefix: '*'
-            destinationAddressPrefix: '*'
-            access: 'Allow'
-            priority: 200
-            direction: 'Inbound'
-          }
-        }
-        {
-          name: 'HTTPS_Inbound'
-          properties: {
-            description: 'Allow HTTPS Inbound'
-            protocol: 'Tcp'
-            sourcePortRange: '*'
-            destinationPortRange: '443'
-            sourceAddressPrefix: '*'
-            destinationAddressPrefix: '*'
-            access: 'Allow'
-            priority: 300
-            direction: 'Inbound'
-          }
-        }
-      ]
-    }
-  }
-  {
-    name: 'nsg-${appEnvironment}-bastion'
-    properties: {
-      securityRules: [
-        {
-          name: 'HTTPS_Inbound'
-          properties: {
-            description: 'Allow HTTPS Access from Current Location'
-            protocol: 'Tcp'
-            sourcePortRange: '*'
-            destinationPortRange: '443'
-            sourceAddressPrefix: sourceAddressPrefix
-            destinationAddressPrefix: '*'
-            access: 'Allow'
-            priority: 100
-            direction: 'Inbound'
-          }
-        }
-        {
-          name: 'Gateway_Manager_Inbound'
-          properties: {
-            description: 'Allow Gateway Manager Access'
-            protocol: 'Tcp'
-            sourcePortRange: '*'
-            destinationPortRange: '443'
-            sourceAddressPrefix: 'GatewayManager'
-            destinationAddressPrefix: '*'
-            access: 'Allow'
-            priority: 200
-            direction: 'Inbound'
-          }
-        }
-        {
-          name: 'SSH_RDP_Outbound'
-          properties: {
-            description: 'Allow SSH and RDP Outbound'
-            protocol: '*'
-            sourcePortRange: '*'
-            destinationPortRanges: [
-              '22'
-              '3389'
-            ]
-            sourceAddressPrefix: '*'
-            destinationAddressPrefix: 'VirtualNetwork'
-            access: 'Allow'
-            priority: 100
-            direction: 'Outbound'
-          }
-        }
-        {
-          name: 'Azure_Cloud_Outbound'
-          properties: {
-            description: 'Allow Azure Cloud Outbound'
-            protocol: 'Tcp'
-            sourcePortRange: '*'
-            destinationPortRange: '443'
-            sourceAddressPrefix: '*'
-            destinationAddressPrefix: 'AzureCloud'
-            access: 'Allow'
-            priority: 200
-            direction: 'Outbound'
-          }
 
-        }
-      ]
-    }
-  }
-  {
-    name: 'nsg-${appEnvironment}-dataIngestorService'
-    properties: {}
-  }
-  {
-    name: 'nsg-${appEnvironment}-dataReporterService'
-    properties: {}
-  }
-  {
-    name: 'nsg-${appEnvironment}-eventIngestorService'
-    properties: {}
-  }
-  {
-    name: 'nsg-${appEnvironment}-inspectorGadgetSql'
-    properties: {}
-  }
-  {
-    name: 'nsg-${appEnvironment}-management'
-    properties: {
-      securityRules: [
-        {
-          name: 'RDP_Inbound'
-          properties: {
-            description: 'Allow RDP Access from Current Location'
-            protocol: '*'
-            sourcePortRange: '*'
-            destinationPortRange: '3389'
-            sourceAddressPrefix: sourceAddressPrefix
-            destinationAddressPrefix: '*'
-            access: 'Allow'
-            priority: 100
-            direction: 'Inbound'
-          }
-        }
-      ]
-    }
-  }
-  {
-    name: 'nsg-${appEnvironment}-userService'
-    properties: {}
-  }
-  {
-    name: 'nsg-${appEnvironment}-vnetIntegration'
-    properties: {}
-  }
-]
+// var networkSecurityGroups = [
+//   {
+//     name: 'nsg-${appEnvironment}-adeAppSql'
+//     properties: {}
+//   }
+//   {
+//     name: 'nsg-${appEnvironment}-adeApp-vmss'
+//     properties: {}
+//   }
+//   {
+//     name: 'nsg-${appEnvironment}-adeApp-vm'
+//     properties: {}
+//   }
+//   {
+//     name: 'nsg-${appEnvironment}-adeWeb-vmss'
+//     properties: {}
+//   }
+//   {
+//     name: 'nsg-${appEnvironment}-adeWeb-vm'
+//     properties: {}
+//   }
+//   {
+//     name: 'nsg-${appEnvironment}-applicationGateway'
+//     properties: {
+//       securityRules: [
+//         {
+//           name: 'Gateway_Manager_Inbound'
+//           properties: {
+//             description: 'Allow Gateway Manager Access'
+//             protocol: 'Tcp'
+//             sourcePortRange: '*'
+//             destinationPortRange: '65200-65535'
+//             sourceAddressPrefix: 'GatewayManager'
+//             destinationAddressPrefix: '*'
+//             access: 'Allow'
+//             priority: 100
+//             direction: 'Inbound'
+//           }
+//         }
+//         {
+//           name: 'HTTP_Inbound'
+//           properties: {
+//             description: 'Allow HTTP Inbound'
+//             protocol: 'Tcp'
+//             sourcePortRange: '*'
+//             destinationPortRange: '80'
+//             sourceAddressPrefix: '*'
+//             destinationAddressPrefix: '*'
+//             access: 'Allow'
+//             priority: 200
+//             direction: 'Inbound'
+//           }
+//         }
+//         {
+//           name: 'HTTPS_Inbound'
+//           properties: {
+//             description: 'Allow HTTPS Inbound'
+//             protocol: 'Tcp'
+//             sourcePortRange: '*'
+//             destinationPortRange: '443'
+//             sourceAddressPrefix: '*'
+//             destinationAddressPrefix: '*'
+//             access: 'Allow'
+//             priority: 300
+//             direction: 'Inbound'
+//           }
+//         }
+//       ]
+//     }
+//   }
+//   {
+//     name: 'nsg-${appEnvironment}-bastion'
+//     properties: {
+//       securityRules: [
+//         {
+//           name: 'HTTPS_Inbound'
+//           properties: {
+//             description: 'Allow HTTPS Access from Current Location'
+//             protocol: 'Tcp'
+//             sourcePortRange: '*'
+//             destinationPortRange: '443'
+//             sourceAddressPrefix: sourceAddressPrefix
+//             destinationAddressPrefix: '*'
+//             access: 'Allow'
+//             priority: 100
+//             direction: 'Inbound'
+//           }
+//         }
+//         {
+//           name: 'Gateway_Manager_Inbound'
+//           properties: {
+//             description: 'Allow Gateway Manager Access'
+//             protocol: 'Tcp'
+//             sourcePortRange: '*'
+//             destinationPortRange: '443'
+//             sourceAddressPrefix: 'GatewayManager'
+//             destinationAddressPrefix: '*'
+//             access: 'Allow'
+//             priority: 200
+//             direction: 'Inbound'
+//           }
+//         }
+//         {
+//           name: 'SSH_RDP_Outbound'
+//           properties: {
+//             description: 'Allow SSH and RDP Outbound'
+//             protocol: '*'
+//             sourcePortRange: '*'
+//             destinationPortRanges: [
+//               '22'
+//               '3389'
+//             ]
+//             sourceAddressPrefix: '*'
+//             destinationAddressPrefix: 'VirtualNetwork'
+//             access: 'Allow'
+//             priority: 100
+//             direction: 'Outbound'
+//           }
+//         }
+//         {
+//           name: 'Azure_Cloud_Outbound'
+//           properties: {
+//             description: 'Allow Azure Cloud Outbound'
+//             protocol: 'Tcp'
+//             sourcePortRange: '*'
+//             destinationPortRange: '443'
+//             sourceAddressPrefix: '*'
+//             destinationAddressPrefix: 'AzureCloud'
+//             access: 'Allow'
+//             priority: 200
+//             direction: 'Outbound'
+//           }
+
+//         }
+//       ]
+//     }
+//   }
+//   {
+//     name: 'nsg-${appEnvironment}-dataIngestorService'
+//     properties: {}
+//   }
+//   {
+//     name: 'nsg-${appEnvironment}-dataReporterService'
+//     properties: {}
+//   }
+//   {
+//     name: 'nsg-${appEnvironment}-eventIngestorService'
+//     properties: {}
+//   }
+//   {
+//     name: 'nsg-${appEnvironment}-inspectorGadgetSql'
+//     properties: {}
+//   }
+//   {
+//     name: 'nsg-${appEnvironment}-management'
+//     properties: {
+//       securityRules: [
+//         {
+//           name: 'RDP_Inbound'
+//           properties: {
+//             description: 'Allow RDP Access from Current Location'
+//             protocol: '*'
+//             sourcePortRange: '*'
+//             destinationPortRange: '3389'
+//             sourceAddressPrefix: sourceAddressPrefix
+//             destinationAddressPrefix: '*'
+//             access: 'Allow'
+//             priority: 100
+//             direction: 'Inbound'
+//           }
+//         }
+//       ]
+//     }
+//   }
+//   {
+//     name: 'nsg-${appEnvironment}-userService'
+//     properties: {}
+//   }
+//   {
+//     name: 'nsg-${appEnvironment}-vnetIntegration'
+//     properties: {}
+//   }
+// ]
+
+var networkSecurityGroups = loadJsonContent('network_security_groups.json', 'networkSecurityGroups')
+
 var virtualNetwork001Subnets = [
   {
     name: 'snet-${appEnvironment}-applicationGateway'
@@ -287,6 +291,9 @@ var virtualNetwork001Subnets = [
     }
   }
 ]
+
+// var virtualNetwork001Subnets = loadJsonContent('virtual_network_001_subnets.json', 'virtualNetwork001Subnets')
+
 var virtualNetwork002Subnets = [
   {
     name: 'snet-${appEnvironment}-adeApp-aks'
@@ -446,6 +453,8 @@ var virtualNetwork002Subnets = [
     }
   }
 ]
+
+// var virtualNetwork002Subnets = loadJsonContent('virtual_network_002_subnets.json', 'virtualNetwork002Subnets')
 
 // Existing Resource - Event Hub Authorization Rule
 //////////////////////////////////////////////////

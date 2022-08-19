@@ -1,0 +1,181 @@
+{
+  "networkSecurityGroups": [
+    {
+      "name": "nsg-ade-bfett-eus-adeAppSql",
+      "properties": {}
+    },
+    {
+      "name": "nsg-ade-bfett-eus-adeApp-vmss",
+      "properties": {}
+    },
+    {
+      "name": "nsg-ade-bfett-eus-adeApp-vm",
+      "properties": {}
+    },
+    {
+      "name": "nsg-ade-bfett-eus-adeWeb-vmss",
+      "properties": {}
+    },
+    {
+      "name": "nsg-ade-bfett-eus-adeWeb-vm",
+      "properties": {}
+    },
+    {
+      "name": "nsg-ade-bfett-eus-applicationGateway",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Gateway_Manager_Inbound",
+            "properties": {
+              "description": "Allow Gateway Manager Access",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "65200-65535",
+              "sourceAddressPrefix": "GatewayManager",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "HTTP_Inbound",
+            "properties": {
+              "description": "Allow HTTP Inbound",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 200,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "HTTPS_Inbound",
+            "properties": {
+              "description": "Allow HTTPS Inbound",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 300,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "nsg-ade-bfett-eus-bastion",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "HTTPS_Inbound",
+            "properties": {
+              "description": "Allow HTTPS Access from Current Location",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefix": "73.109.46.136",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "Gateway_Manager_Inbound",
+            "properties": {
+              "description": "Allow Gateway Manager Access",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefix": "GatewayManager",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 200,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "SSH_RDP_Outbound",
+            "properties": {
+              "description": "Allow SSH and RDP Outbound",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRanges": ["22", "3389"],
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "VirtualNetwork",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Outbound"
+            }
+          },
+          {
+            "name": "Azure_Cloud_Outbound",
+            "properties": {
+              "description": "Allow Azure Cloud Outbound",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "AzureCloud",
+              "access": "Allow",
+              "priority": 200,
+              "direction": "Outbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "nsg-ade-bfett-eus-dataIngestorService",
+      "properties": {}
+    },
+    {
+      "name": "nsg-ade-bfett-eus-dataReporterService",
+      "properties": {}
+    },
+    {
+      "name": "nsg-ade-bfett-eus-eventIngestorService",
+      "properties": {}
+    },
+    {
+      "name": "nsg-ade-bfett-eus-inspectorGadgetSql",
+      "properties": {}
+    },
+    {
+      "name": "nsg-ade-bfett-eus-management",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "RDP_Inbound",
+            "properties": {
+              "description": "Allow RDP Access from Current Location",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "73.109.46.136",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "nsg-ade-bfett-eus-userService",
+      "properties": {}
+    },
+    {
+      "name": "nsg-ade-bfett-eus-vnetIntegration",
+      "properties": {}
+    }
+  ]
+}

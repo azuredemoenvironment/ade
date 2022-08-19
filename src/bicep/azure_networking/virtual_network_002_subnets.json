@@ -1,0 +1,161 @@
+{
+  "virtualNetwork002Subnets": [
+    {
+      "name": "snet-ade-bfett-eus-adeApp-aks",
+      "properties": {
+        "addressPrefix": "10.102.100.0/23",
+        "serviceEndpoints": [
+          {
+            "service": "Microsoft.ContainerRegistry"
+          }
+        ]
+      }
+    },
+    {
+      "name": "snet-ade-bfett-eus-adeAppSql",
+      "properties": {
+        "addressPrefix": "10.102.160.0/24",
+        "networkSecurityGroup": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'networkSecurityGroupsDeployment')).outputs.networkSecurityGroupProperties.value[0].resourceId]"
+        },
+        "privateEndpointNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "name": "snet-ade-bfett-eus-adeApp-vmss",
+      "properties": {
+        "addressPrefix": "10.102.12.0/24",
+        "natGateway": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'natGatewayDeployment')).outputs.natGatewayId.value]"
+        },
+        "networkSecurityGroup": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'networkSecurityGroupsDeployment')).outputs.networkSecurityGroupProperties.value[1].resourceId]"
+        },
+        "serviceEndpoints": [
+          {
+            "service": "Microsoft.Sql"
+          }
+        ]
+      }
+    },
+    {
+      "name": "snet-ade-bfett-eus-adeApp-vm",
+      "properties": {
+        "addressPrefix": "10.102.2.0/24",
+        "natGateway": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'natGatewayDeployment')).outputs.natGatewayId.value]"
+        },
+        "networkSecurityGroup": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'networkSecurityGroupsDeployment')).outputs.networkSecurityGroupProperties.value[2].resourceId]"
+        },
+        "serviceEndpoints": [
+          {
+            "service": "Microsoft.Sql"
+          }
+        ]
+      }
+    },
+    {
+      "name": "snet-ade-bfett-eus-adeWeb-vmss",
+      "properties": {
+        "addressPrefix": "10.102.11.0/24",
+        "natGateway": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'natGatewayDeployment')).outputs.natGatewayId.value]"
+        },
+        "networkSecurityGroup": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'networkSecurityGroupsDeployment')).outputs.networkSecurityGroupProperties.value[3].resourceId]"
+        },
+        "serviceEndpoints": [
+          {
+            "service": "Microsoft.Sql"
+          }
+        ]
+      }
+    },
+    {
+      "name": "snet-ade-bfett-eus-adeWeb-vm",
+      "properties": {
+        "addressPrefix": "10.102.1.0/24",
+        "natGateway": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'natGatewayDeployment')).outputs.natGatewayId.value]"
+        },
+        "networkSecurityGroup": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'networkSecurityGroupsDeployment')).outputs.networkSecurityGroupProperties.value[4].resourceId]"
+        },
+        "serviceEndpoints": [
+          {
+            "service": "Microsoft.Sql"
+          }
+        ]
+      }
+    },
+    {
+      "name": "snet-ade-bfett-eus-dataIngestorService",
+      "properties": {
+        "addressPrefix": "10.102.152.0/24",
+        "networkSecurityGroup": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'networkSecurityGroupsDeployment')).outputs.networkSecurityGroupProperties.value[7].resourceId]"
+        },
+        "privateEndpointNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "name": "snet-ade-bfett-eus-dataReporterService",
+      "properties": {
+        "addressPrefix": "10.102.153.0/24",
+        "networkSecurityGroup": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'networkSecurityGroupsDeployment')).outputs.networkSecurityGroupProperties.value[8].resourceId]"
+        },
+        "privateEndpointNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "name": "snet-ade-bfett-eus-eventIngestorService",
+      "properties": {
+        "addressPrefix": "10.102.154.0/24",
+        "networkSecurityGroup": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'networkSecurityGroupsDeployment')).outputs.networkSecurityGroupProperties.value[9].resourceId]"
+        },
+        "privateEndpointNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "name": "snet-ade-bfett-eus-inspectorGadgetSql",
+      "properties": {
+        "addressPrefix": "10.102.161.0/24",
+        "networkSecurityGroup": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'networkSecurityGroupsDeployment')).outputs.networkSecurityGroupProperties.value[10].resourceId]"
+        },
+        "privateEndpointNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "name": "snet-ade-bfett-eus-userService",
+      "properties": {
+        "addressPrefix": "10.102.151.0/24",
+        "networkSecurityGroup": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'networkSecurityGroupsDeployment')).outputs.networkSecurityGroupProperties.value[12].resourceId]"
+        },
+        "privateEndpointNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "name": "snet-ade-bfett-eus-vnetIntegration",
+      "properties": {
+        "addressPrefix": "10.102.201.0/24",
+        "delegations": [
+          {
+            "name": "appServicePlanDelegation",
+            "properties": {
+              "serviceName": "Microsoft.Web/serverFarms"
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[reference(resourceId('Microsoft.Resources/deployments', 'networkSecurityGroupsDeployment')).outputs.networkSecurityGroupProperties.value[13].resourceId]"
+        },
+        "privateEndpointNetworkPolicies": "Enabled"
+      }
+    }
+  ]
+}

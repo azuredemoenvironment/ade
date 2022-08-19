@@ -74,6 +74,6 @@ resource acrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-
   properties: {
     roleDefinitionId: acrPullRoleDefinitionId
     principalId: containerRegistryManagedIdentityPrincipalID
-    principalType: 'User'
+    principalType: 'ServicePrincipal'
   }
 }
