@@ -235,7 +235,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existi
 
 // Module - Jumpbox
 //////////////////////////////////////////////////
-module jumpBoxModule './azure_virtual_machines_jumpbox.bicep' = {
+module jumpBoxModule './virtual_machine_jumpbox.bicep' = {
   name: 'jumpBoxDeployment'
   params: {
     adminPassword: keyVault.getSecret('resourcePassword')

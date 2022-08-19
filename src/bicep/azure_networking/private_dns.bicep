@@ -3,8 +3,8 @@
 @description('The name of the Azure App Service Private DNS Zone.')
 param appServicePrivateDnsZoneName string
 
-@description('The name of the Azure SQL Private DNS Zone.')
-param azureSQLPrivateDnsZoneName string
+@description('The name of the Azure Sql Private DNS Zone.')
+param azureSqlPrivateDnsZoneName string
 
 @description('The ID of Virtual Network 001.')
 param virtualNetwork001Id string
@@ -31,8 +31,8 @@ resource appServicePrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01'
 
 // Resource - Private Dns Zone - Privatelink.Database.Windows.Net
 //////////////////////////////////////////////////
-resource azureSQLPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
-  name: azureSQLPrivateDnsZoneName
+resource azureSqlPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
+  name: azureSqlPrivateDnsZoneName
   location: 'global'
   tags: tags
 }
@@ -66,7 +66,7 @@ resource vnetLink02 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-
 // Resource Virtual Network Link - Privatelink.Database.Windows.Net To Virtual Network 001
 //////////////////////////////////////////////////
 resource vnetLink11 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  name: '${azureSQLPrivateDnsZone.name}/${virtualNetwork001Name}-link'
+  name: '${azureSqlPrivateDnsZone.name}/${virtualNetwork001Name}-link'
   location: 'global'
   properties: {
     registrationEnabled: false
@@ -79,7 +79,7 @@ resource vnetLink11 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-
 // Resource Virtual Network Link - Privatelink.Database.Windows.Net To Virtual Network 002
 //////////////////////////////////////////////////
 resource vnetLink12 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  name: '${azureSQLPrivateDnsZone.name}/${virtualNetwork002Name}-link'
+  name: '${azureSqlPrivateDnsZone.name}/${virtualNetwork002Name}-link'
   location: 'global'
   properties: {
     registrationEnabled: false

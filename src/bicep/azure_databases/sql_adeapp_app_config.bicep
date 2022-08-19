@@ -20,7 +20,7 @@ param appConfigName string
 //////////////////////////////////////////////////
 var sqlServerConnectionString = 'Data Source=tcp:${adeAppSqlServerFqdn},1433;Initial Catalog=${adeAppSqlDatabaseName};User Id=${adeAppSqlServerAdministratorLogin}@${adeAppSqlServerFqdn};Password=${adminPassword};'
 
-// Resource - App Configuration - ADE App SQL Database Connection String
+// Resource - App Configuration - ADE App Sql Database Connection String
 //////////////////////////////////////////////////
 resource appConfigKeyAdeSqlServerConnectionString 'Microsoft.AppConfiguration/configurationStores/keyValues@2022-05-01' = {
   name: '${appConfigName}/ADE:SqlServerConnectionString'

@@ -8,16 +8,20 @@ function Remove-AzureResourceGroups {
     # ORDER MATTERS!!!
     $resourceGroupsToRemove = @(
         $armParameters.dnsResourceGroupName
-        $armParameters.inspectorGadgetResourceGroupName
-        $armParameters.adeAppAppServicesResourceGroupName
-        $armParameters.appServicePlanResourceGroupName         
+        $armParameters.appServiceResourceGroupName
+        # $armParameters.inspectorGadgetResourceGroupName
+        # $armParameters.adeAppServicesResourceGroupName
+        # $armParameters.appServicePlanResourceGroupName         
         $armParameters.adeAppLoadTestingResourceGroupName
-        $armParameters.adeAppVmssResourceGroupName
-        $armParameters.adeAppVmResourceGroupName
-        $armParameters.jumpboxResourceGroupName
-        $armParameters.proximityPlacementGroupResourceGroupName
-        $armParameters.adeAppSqlResourceGroupName
-        $armParameters.containerRegistryResourceGroupName
+        # $armParameters.adeAppVmssResourceGroupName
+        # $armParameters.adeAppVmResourceGroupName
+        # $armParameters.jumpboxResourceGroupName
+        # $armParameters.proximityPlacementGroupResourceGroupName
+        $armParameters.virtualMachineResourceGroupName
+        # $armParameters.adeAppSqlResourceGroupName
+        $armParameters.databaseResourceGroupName
+        # $armParameters.containerRegistryResourceGroupName
+        $armParameters.containerResourceGroupName
         $armParameters.networkingResourceGroupName
         # $armParameters.keyVaultResourceGroupName
         # $armParameters.appConfigResourceGroupName

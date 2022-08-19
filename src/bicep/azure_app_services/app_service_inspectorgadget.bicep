@@ -34,16 +34,11 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
+@description('The list of Resource tags')
+param tags object
+
 @description('The ID of the Virtual Network Integration Subnet.')
 param vnetIntegrationSubnetId string
-
-// Variables
-//////////////////////////////////////////////////
-var tags = {
-  environment: 'production'
-  function: 'inspectorGadget'
-  costCenter: 'it'
-}
 
 // Resource - App Service - Inspector Gadget
 //////////////////////////////////////////////////

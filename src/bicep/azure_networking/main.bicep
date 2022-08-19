@@ -37,7 +37,7 @@ var azureBastionName = 'bastion-${appEnvironment}-001'
 var azureBastionPublicIpAddressName = 'pip-${appEnvironment}-bastion001'
 var azureFirewallName = 'fw-${appEnvironment}-001'
 var azureFirewallPublicIpAddressName = 'pip-${appEnvironment}-fw001'
-var azureSQLprivateDnsZoneName = 'privatelink${environment().suffixes.sqlServerHostname}'
+var azureSqlprivateDnsZoneName = 'privatelink${environment().suffixes.sqlServerHostname}'
 var connectionName = 'cn-${appEnvironment}-vgw001'
 var internetRouteTableName = 'route-${appEnvironment}-internet'
 var localNetworkGatewayName = 'lgw-${appEnvironment}-vgw001'
@@ -635,7 +635,7 @@ module privateDnsModule './private_dns.bicep' = {
   name: 'privateDnsDeployment'
   params: {
     appServicePrivateDnsZoneName: appServicePrivateDnsZoneName
-    azureSQLPrivateDnsZoneName: azureSQLprivateDnsZoneName
+    azureSqlPrivateDnsZoneName: azureSqlprivateDnsZoneName
     virtualNetwork001Id: virtualNetworkModule.outputs.virtualNetwork001Id
     virtualNetwork001Name: virtualNetwork001Name
     virtualNetwork002Id: virtualNetworkModule.outputs.virtualNetwork002Id

@@ -1,21 +1,22 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The array of properties for the ADE App App Services.')
-param adeAppAppServices array
-
 @description('The connection string from the App Configuration instance.')
 param appConfigConnectionString string
 
 @description('The ID of the App Service Plan.')
 param appServicePlanId string
 
+@description('The array of properties for the Ade App App Services.')
+param appServices array
+
 @description('The ID of the Azure App Service Private DNS Zone.')
-param azureAppServicePrivateDnsZoneId string
+param appServicePrivateDnsZoneId string
 
 @description('The name of the admin user of the Azure Container Registry.')
 param containerRegistryName string
 
 @description('The password of the admin user of the Azure Container Registry.')
+@secure()
 param containerRegistryPassword string
 
 @description('The URL of the Azure Container Registry.')
@@ -44,10 +45,10 @@ var tags = {
   costCenter: 'it'
 }
 
-// Resource - App Service - ADE App(s)
+// Resource - App Service - Ade App
 //////////////////////////////////////////////////
-resource adeAppService 'Microsoft.Web/sites@2022-03-01' = [for (adeAppAppService, i) in adeAppAppServices: {
-  name: adeAppAppService.adeAppAppServiceName
+resource app 'Microsoft.Web/sites@2022-03-01' = [for (appService, i) in appServices: {
+  name: appService.name
   location: location
   tags: tags
   kind: 'container'
@@ -57,7 +58,7 @@ resource adeAppService 'Microsoft.Web/sites@2022-03-01' = [for (adeAppAppService
     vnetRouteAllEnabled: true
     httpsOnly: false
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryURL}/${adeAppAppService.containerImageName}'
+      linuxFxVersion: 'DOCKER|${containerRegistryURL}/${appService.containerImageName}'
       alwaysOn: true
       http20Enabled: true
       httpLoggingEnabled: true
@@ -67,7 +68,7 @@ resource adeAppService 'Microsoft.Web/sites@2022-03-01' = [for (adeAppAppService
           value: appConfigConnectionString
         }
         {
-          name: 'ADE__ENVIRONMENT'
+          name: 'Ade__ENVIRONMENT'
           value: 'appservices'
         }
         {
@@ -99,11 +100,11 @@ resource adeAppService 'Microsoft.Web/sites@2022-03-01' = [for (adeAppAppService
   }
 }]
 
-// Resource - App Service - Diagnostic Settings - ADE App(s)
+// Resource - App Service - Diagnostic Settings - Ade App(s)
 //////////////////////////////////////////////////
-resource adeAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (adeAppAppService, i) in adeAppAppServices: {
-  scope: adeAppService[i]
-  name: '${adeAppAppService.adeAppAppServiceName}-diagnostics'
+resource appDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (appService, i) in appServices: {
+  scope: app[i]
+  name: '${appService.adeAppServiceName}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -147,20 +148,20 @@ resource adeAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05
   }
 }]
 
-// Resource - Private Endpoint - App Service - ADE App(s)
+// Resource - Private Endpoint - App Service - Ade App(s)
 //////////////////////////////////////////////////
-resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2022-01-01' = [for (adeAppAppService, i) in adeAppAppServices: if (adeAppAppService.usePrivateEndpoint) {
-  name: adeAppAppService.privateEndpointName
+resource appPrivateEndpoint 'Microsoft.Network/privateEndpoints@2022-01-01' = [for (appService, i) in appServices: if (appService.usePrivateEndpoint) {
+  name: appService.privateEndpointName
   location: location
   properties: {
     subnet: {
-      id: adeAppAppService.subnetId
+      id: appService.subnetId
     }
     privateLinkServiceConnections: [
       {
-        name: adeAppAppService.privateEndpointName
+        name: appService.privateEndpointName
         properties: {
-          privateLinkServiceId: adeAppService[i].id
+          privateLinkServiceId: appService[i].id
           groupIds: [
             'sites'
           ]
@@ -170,19 +171,19 @@ resource adeAppServicePrivateEndpoint 'Microsoft.Network/privateEndpoints@2022-0
   }
 }]
 
-// Resource - Private Endpoint Dns Group - Private Endpoint - App Service - ADE App(s)
+// Resource - Private Endpoint Dns Group - Private Endpoint - App Service - Ade App(s)
 //////////////////////////////////////////////////
-resource adeAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2022-01-01' = [for (adeAppAppService, i) in adeAppAppServices: if (adeAppAppService.usePrivateEndpoint) {
-  name: '${adeAppAppService.privateEndpointName}/dnsgroupname'
+resource appPrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2022-01-01' = [for (appService, i) in appServices: if (appService.usePrivateEndpoint) {
+  name: '${appService.privateEndpointName}/dnsgroupname'
   dependsOn: [
-    adeAppServicePrivateEndpoint
+    appPrivateEndpoint
   ]
   properties: {
     privateDnsZoneConfigs: [
       {
         name: 'config1'
         properties: {
-          privateDnsZoneId: azureAppServicePrivateDnsZoneId
+          privateDnsZoneId: appServicePrivateDnsZoneId
         }
       }
     ]
@@ -191,7 +192,7 @@ resource adeAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndp
 
 // Outputs
 //////////////////////////////////////////////////
-output adeAppDockerWebHookUris array = [for (adeAppAppService, i) in adeAppAppServices: {
+output appDockerWebHookUris array = [for (appService, i) in appServices: {
   // Should not return secrets, but we need it in this case
-  adeAppDockerWebHookUri: '${list(resourceId('Microsoft.Web/sites/config', adeAppAppService.adeAppAppServiceName, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
+  adeAppDockerWebHookUri: '${list(resourceId('Microsoft.Web/sites/config', appService.name, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
 }]
