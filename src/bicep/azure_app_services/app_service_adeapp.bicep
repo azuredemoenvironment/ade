@@ -104,7 +104,7 @@ resource app 'Microsoft.Web/sites@2022-03-01' = [for (appService, i) in appServi
 //////////////////////////////////////////////////
 resource appDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (appService, i) in appServices: {
   scope: app[i]
-  name: '${appService.adeAppServiceName}-diagnostics'
+  name: '${appService.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId
@@ -161,7 +161,7 @@ resource appPrivateEndpoint 'Microsoft.Network/privateEndpoints@2022-01-01' = [f
       {
         name: appService.privateEndpointName
         properties: {
-          privateLinkServiceId: appService[i].id
+          privateLinkServiceId: app[i].id
           groupIds: [
             'sites'
           ]

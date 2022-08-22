@@ -23,7 +23,7 @@ var sqlServerConnectionString = 'Data Source=tcp:${adeAppSqlServerFqdn},1433;Ini
 // Resource - App Configuration - ADE App Sql Database Connection String
 //////////////////////////////////////////////////
 resource appConfigKeyAdeSqlServerConnectionString 'Microsoft.AppConfiguration/configurationStores/keyValues@2022-05-01' = {
-  name: '${appConfigName}/ADE:SqlServerConnectionString'
+  name: '${appConfigName}/Ade:SqlServerConnectionString'
   properties: {
     value: sqlServerConnectionString
   }

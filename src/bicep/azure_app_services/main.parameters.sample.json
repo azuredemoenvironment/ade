@@ -5,11 +5,26 @@
         "adminUserName": {
             "value": "@@adminUsername@@"
         },
-        "aliasRegion": {
-            "value": "@@aliasRegion@@"
+        "appEnvironment": {
+            "value": "@@appEnvironment@@"
         },
-        "azureRegion": {
-            "value": "@@azureRegion@@"
+        "containerResourceGroupName": {
+            "value": "@@containerResourceGroupName@@"
+        },
+        "databaseResourceGroupName": {
+            "value": "@@databaseResourceGroupName@@"
+        },
+        "managementResourceGroupName": {
+            "value": "@@managementResourceGroupName@@"
+        },
+        "networkingResourceGroupName": {
+            "value": "@@networkingResourceGroupName@@"
+        },
+        "ownerName": {
+            "value": "@@ownerName@@"
+        },
+        "securityResourceGroupName": {
+            "value": "@@securityResourceGroupName@@"
         }
         
     }

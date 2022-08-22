@@ -17,7 +17,7 @@ param location string
 
 @batchSize(1)
 resource webHook 'Microsoft.ContainerRegistry/registries/webhooks@2021-09-01' = [for (appService, i) in appServices: {
-  name: '${containerRegistryName}/${appService.adeAppServiceName}'
+  name: '${containerRegistryName}/${appService.name}'
   location: location
   properties: {
     status: 'enabled'

@@ -50,6 +50,7 @@ var appServices = [
     appShortName: 'frontend'
     containerImageName: 'ade-frontend'
     privateEndpointName: 'pl-${appEnvironment}-ade-frontend'
+    subnetId: null
     usePrivateEndpoint: false
   }
   {
@@ -57,6 +58,7 @@ var appServices = [
     appShortName: 'apigateway'
     containerImageName: 'ade-apigateway'
     privateEndpointName: 'pl-${appEnvironment}-ade-apigateway'
+    subnetId: null
     usePrivateEndpoint: false
   }
   {
