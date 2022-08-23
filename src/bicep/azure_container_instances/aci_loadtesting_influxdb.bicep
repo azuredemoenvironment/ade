@@ -1,15 +1,16 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the Redis Container Group.')
-param adeLoadTestingRedisContainerGroupName string
+@description('The name of the InfluxDb Container Group.')
+param adeLoadTestingInfluxDbContainerGroupName string
 
-@description('The name of the Redis Container Image.')
-param adeLoadTestingRedisContainerImageName string
+@description('The name of the InfluxDb Container Image.')
+param adeLoadTestingInfluxDbContainerImageName string
 
 @description('The name of the admin user of the Azure Container Registry.')
 param containerRegistryName string
 
 @description('The password of the admin user of the Azure Container Registry.')
+@secure()
 param containerRegistryPassword string
 
 @description('The URL of the Azure Container Registry.')
@@ -18,30 +19,33 @@ param containerRegistryURL string
 @description('The location for all resources.')
 param location string
 
-// Variables
-//////////////////////////////////////////////////
-var tags = {
-  environment: 'production'
-  function: 'aci'
-  costCenter: 'it'
-}
+@description('The list of Resource tags')
+param tags object
 
-// Resource - Azure Container Instance - Container Group - Redis
+// Resource - Azure Container Instance - Container Group - Influx Db
 //////////////////////////////////////////////////
-resource adeLoadTestingRedisContainerGroup 'Microsoft.ContainerInstance/containerGroups@2021-03-01' = {
-  name: adeLoadTestingRedisContainerGroupName
+resource adeLoadTestingInfluxDbContainerGroup 'Microsoft.ContainerInstance/containerGroups@2021-03-01' = {
+  name: adeLoadTestingInfluxDbContainerGroupName
   location: location
   tags: tags
   properties: {
     containers: [
       {
-        name: adeLoadTestingRedisContainerGroupName
+        name: adeLoadTestingInfluxDbContainerGroupName
         properties: {
-          image: adeLoadTestingRedisContainerImageName
+          image: adeLoadTestingInfluxDbContainerImageName
           ports: [
             {
               protocol: 'TCP'
-              port: 6379
+              port: 8083
+            }
+            {
+              protocol: 'TCP'
+              port: 8086
+            }
+            {
+              protocol: 'TCP'
+              port: 2003
             }
           ]
           environmentVariables: []
@@ -57,12 +61,20 @@ resource adeLoadTestingRedisContainerGroup 'Microsoft.ContainerInstance/containe
     osType: 'Linux'
     restartPolicy: 'Never'
     ipAddress: {
-      dnsNameLabel: adeLoadTestingRedisContainerGroupName
+      dnsNameLabel: adeLoadTestingInfluxDbContainerGroupName
       type: 'Public'
       ports: [
         {
-          port: 6379
           protocol: 'TCP'
+          port: 8083
+        }
+        {
+          protocol: 'TCP'
+          port: 8086
+        }
+        {
+          protocol: 'TCP'
+          port: 2003
         }
       ]
     }
@@ -78,4 +90,4 @@ resource adeLoadTestingRedisContainerGroup 'Microsoft.ContainerInstance/containe
 
 // Outputs
 //////////////////////////////////////////////////
-output redisFqdn string = adeLoadTestingRedisContainerGroup.properties.ipAddress.fqdn
+output influxFqdn string = adeLoadTestingInfluxDbContainerGroup.properties.ipAddress.fqdn

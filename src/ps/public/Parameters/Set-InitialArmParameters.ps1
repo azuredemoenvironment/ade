@@ -101,7 +101,7 @@ function Set-InitialArmParameters {
         'adeAppAksNodeResourceGroupName'           = "rg-$appEnvironment-adeappaks-node"
         'adeAppAksResourceGroupName'               = "rg-$appEnvironment-adeappaks"
         # 'adeAppServicesResourceGroupName'       = "rg-$appEnvironment-adeappweb"
-        'adeAppLoadTestingResourceGroupName'       = "rg-$appEnvironment-adeapploadtesting"
+        # 'adeAppLoadTestingResourceGroupName'       = "rg-$appEnvironment-adeapploadtesting"
         # 'adeAppSqlResourceGroupName'               = "rg-$appEnvironment-adeappdb"
         # 'adeAppVmResourceGroupName'                = "rg-$appEnvironment-adeappvm"
         # 'adeAppVmssResourceGroupName'              = "rg-$appEnvironment-adeappvmss"    
