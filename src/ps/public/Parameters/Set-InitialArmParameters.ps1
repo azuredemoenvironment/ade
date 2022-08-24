@@ -27,8 +27,15 @@ function Set-InitialArmParameters {
     $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
     $acrName = "acr-ade-$aliasRegion-001".replace('-', '')
 
-    $certificateBase64String = Convert-WildcardCertificateToBase64String $secureCertificatePassword $wildcardCertificatePath
-    $plainTextResourcePassword = ConvertFrom-SecureString -SecureString $secureResourcePassword -AsPlainText
+    $certificateBase64String = ''
+    if ($secureCertificatePassword -ne $null -and $wildcardCertificatePath -eq $null) {
+        $certificateBase64String = Convert-WildcardCertificateToBase64String $secureCertificatePassword $wildcardCertificatePath
+    }
+    
+    $plainTextResourcePassword = ''
+    if ($secureResourcePassword -ne $null) {
+        $plainTextResourcePassword = ConvertFrom-SecureString -SecureString $secureResourcePassword -AsPlainText
+    }
 
     Write-Log 'Generating ARM Parameters'
 
