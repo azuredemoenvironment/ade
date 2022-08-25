@@ -1,21 +1,21 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the ADE App Module.')
+@description('The name of the  App Module.')
 param adeAppModuleName string
 
-@description('The ID of the ADE App Vmss Load Balancer Backend Pool.')
+@description('The ID of the  App Vmss Load Balancer Backend Pool.')
 param adeAppVmssLoadBalancerBackendPoolId string
 
-@description('The private Ip address of the ADE App Vmss Load Balancer.')
+@description('The private Ip address of the  App Vmss Load Balancer.')
 param adeAppVmssLoadBalancerPrivateIpAddress string
 
-@description('The name of the ADE App VMSS.')
+@description('The name of the  App VMSS.')
 param adeAppVmssName string
 
-@description('The name of the ADE App VMSS NIC.')
+@description('The name of the  App VMSS NIC.')
 param adeAppVmssNICName string
 
-@description('The ID of the ADE App Subnet.')
+@description('The ID of the  App Subnet.')
 param adeAppVmssSubnetId string
 
 @description('The password of the admin user.')
@@ -61,7 +61,7 @@ var tags = {
 }
 var timeStamp = int('${substring(sanitizeCurrentTime, 1, 2)}${substring(sanitizeCurrentTime, 3, 2)}${substring(sanitizeCurrentTime, 5, 2)}${substring(sanitizeCurrentTime, 7, 4)}')
 
-// Resource - Virtual Machine Scale Set - ADE App
+// Resource - Virtual Machine Scale Set -  App
 //////////////////////////////////////////////////
 resource adeAppVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
   name: adeAppVmssName

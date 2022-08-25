@@ -44,8 +44,8 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-01' e
 
 // Module - Azure Container Instances - Redis
 //////////////////////////////////////////////////
-module azureContainerInstancesADELoadTestingRedisModule 'aci_loadtesting_redis.bicep' = {
-  name: 'azureContainerInstancesADELoadTestingRedisDeployment'
+module aciLoadTestingRedisModule 'aci_loadtesting_redis.bicep' = {
+  name: 'aciLoadTestingRedisDeployment'
   params: {
     adeLoadTestingRedisContainerGroupName: adeLoadTestingRedisContainerGroupName
     adeLoadTestingRedisContainerImageName: adeLoadTestingRedisContainerImageName
@@ -59,8 +59,8 @@ module azureContainerInstancesADELoadTestingRedisModule 'aci_loadtesting_redis.b
 
 // Module - Azure Container Instances - InfluxDb
 //////////////////////////////////////////////////
-module azureContainerInstancesADELoadTestingInfluxDbModule 'azure_container_instances_adeloadtesting_influxdb.bicep' = {
-  name: 'azureContainerInstancesADELoadTestingInfluxDbDeployment'
+module aciLoadTestingInfluxDbModule 'aci_loadtesting_influxdb.bicep' = {
+  name: 'aciLoadTestingInfluxDbDeployment'
   params: {
     adeLoadTestingInfluxDbContainerGroupName: adeLoadTestingInfluxDbContainerGroupName
     adeLoadTestingInfluxDbContainerImageName: adeLoadTestingInfluxDbContainerImageName
@@ -68,38 +68,41 @@ module azureContainerInstancesADELoadTestingInfluxDbModule 'azure_container_inst
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     containerRegistryURL: containerRegistry.properties.loginServer
     location: location
+    tags: tags
   }
 }
 
 // Module - Azure Container Instances - Grafana
 //////////////////////////////////////////////////
-module azureContainerInstancesADELoadTestingGrafanaModule 'azure_container_instances_adeloadtesting_grafana.bicep' = {
-  name: 'azureContainerInstancesADELoadTestingGrafanaDeployment'
+module aciLoadTestingGrafanaModule 'aci_loadtesting_grafana.bicep' = {
+  name: 'aciLoadTestingGrafanaDeployment'
   params: {
     adeLoadTestingGrafanaContainerGroupName: adeLoadTestingGrafanaContainerGroupName
     adeLoadTestingGrafanaContainerImageName: adeLoadTestingGrafanaContainerImageName
-    adeLoadTestingInfluxDbDNSNameLabel: azureContainerInstancesADELoadTestingInfluxDbModule.outputs.influxFqdn
+    adeLoadTestingInfluxDbDNSNameLabel: aciLoadTestingInfluxDbModule.outputs.influxFqdn
     containerRegistryName: containerRegistry.name
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     containerRegistryURL: containerRegistry.properties.loginServer
     location: location
+    tags: tags
   }
 }
 
 // Module - Azure Container Instances - Gatling
 //////////////////////////////////////////////////
-module azureContainerInstancesADELoadTestingGatlingModule 'azure_container_instances_adeloadtesting_gatling.bicep' = {
-  name: 'azureContainerInstancesADELoadTestingGatlingDeployment'
+module aciLoadTestingGatlingModule 'aci_loadtesting_gatling.bicep' = {
+  name: 'aciLoadTestingGatlingDeployment'
   params: {
     adeAppApiGatewayHostName: adeAppApiGatewayHostName
     adeAppFrontEndHostName: adeAppFrontEndHostName
     adeLoadTestingGatlingContainerGroupName: adeLoadTestingGatlingContainerGroupName
     adeLoadTestingGatlingContainerImageName: adeLoadTestingGatlingContainerImageName
-    adeLoadTestingInfluxDbDNSNameLabel: azureContainerInstancesADELoadTestingInfluxDbModule.outputs.influxFqdn
-    adeLoadTestingRedisDNSNameLabel: azureContainerInstancesADELoadTestingRedisModule.outputs.redisFqdn
+    adeLoadTestingInfluxDbDNSNameLabel: aciLoadTestingInfluxDbModule.outputs.influxFqdn
+    adeLoadTestingRedisDNSNameLabel: aciLoadTestingRedisModule.outputs.redisFqdn
     containerRegistryName: containerRegistry.name
     containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
     containerRegistryURL: containerRegistry.properties.loginServer
     location: location
+    tags: tags
   }
 }

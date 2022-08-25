@@ -1,24 +1,24 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The DNS name of the ADE App Aks Cluster.')
+@description('The DNS name of the  App Aks Cluster.')
 param aksClusterDNSName string
 
-@description('The name of the ADE App Aks Cluster.')
+@description('The name of the  App Aks Cluster.')
 param aksClusterName string
 
-@description('The DNS Service IP ADdress of the ADE App Aks Cluster.')
+@description('The DNS Service IP ADdress of the  App Aks Cluster.')
 param aksDNSServiceIPAddress string
 
-@description('The Docker Bridge Address of the ADE App Aks Cluster.')
+@description('The Docker Bridge Address of the  App Aks Cluster.')
 param aksDockerBridgeAddress string
 
-@description('The name of the ADE App Aks Cluster Node Resource Group.')
+@description('The name of the  App Aks Cluster Node Resource Group.')
 param aksNodeResourceGroupName string
 
-@description('The Service Address Prefix of the ADE App Aks Cluster.')
+@description('The Service Address Prefix of the  App Aks Cluster.')
 param aksServiceAddressPrefix string
 
-@description('The ID of the ADE App Aks Subnet.')
+@description('The ID of the  App Aks Subnet.')
 param aksSubnetId string
 
 @description('The location for all resources.')
@@ -30,7 +30,7 @@ param logAnalyticsWorkspaceId string
 @description('The list of Resource tags')
 param tags object
 
-// Resource - Azure Kubernetes Service Cluster - ADE App
+// Resource - Azure Kubernetes Service Cluster -  App
 //////////////////////////////////////////////////
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-06-01' = {
   name: aksClusterName
@@ -87,7 +87,7 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-06-01' = {
   }
 }
 
-// Resource - Azure Kubernetes Service Cluster - ADE App - Diagnostic Settings
+// Resource - Azure Kubernetes Service Cluster -  App - Diagnostic Settings
 //////////////////////////////////////////////////
 resource aksClusterDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: aksCluster

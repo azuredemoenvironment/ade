@@ -1,15 +1,15 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the ADE App Vmss Load Balancer.')
+@description('The name of the  App Vmss Load Balancer.')
 param adeAppVmssLoadBalancerName string
 
-@description('The private Ip address of the ADE App Vmss Load Balancer.')
+@description('The private Ip address of the  App Vmss Load Balancer.')
 param adeAppVmssLoadBalancerPrivateIpAddress string
 
-@description('The ID of the ADE App Vmss Subnet.')
+@description('The ID of the  App Vmss Subnet.')
 param adeAppVmssSubnetId string
 
-@description('Array of backend services for ADE App.')
+@description('Array of backend services for  App.')
 param backendServices array
 
 @description('The ID of the Diagnostics Storage Account.')
@@ -32,7 +32,7 @@ var tags = {
   costCenter: 'it'
 }
 
-// Resource - Load Balancer - ADE App Vmss
+// Resource - Load Balancer -  App Vmss
 //////////////////////////////////////////////////
 resource adeAppVmssLoadBalancer 'Microsoft.Network/loadBalancers@2020-11-01' = {
   name: adeAppVmssLoadBalancerName
@@ -90,7 +90,7 @@ resource adeAppVmssLoadBalancer 'Microsoft.Network/loadBalancers@2020-11-01' = {
   }
 }
 
-// Resource - Load Balancer - Diagnostic Settings - ADE App Vmss
+// Resource - Load Balancer - Diagnostic Settings -  App Vmss
 //////////////////////////////////////////////////
 resource adeAppVmssLoadBalancerDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: adeAppVmssLoadBalancer

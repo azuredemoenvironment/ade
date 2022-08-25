@@ -215,7 +215,7 @@ module proximityPlacementGroupModule 'azure_proximity_placement_groups_adeapp.bi
   }
 }
 
-// Module - Load Balancer - ADE App Vm
+// Module - Load Balancer -  App Vm
 //////////////////////////////////////////////////
 module adeAppVmLoadBalancerModule 'azure_load_balancers_adeapp_vm.bicep' = {
   scope: resourceGroup(adeAppVmResourceGroupName)
@@ -232,7 +232,7 @@ module adeAppVmLoadBalancerModule 'azure_load_balancers_adeapp_vm.bicep' = {
   }
 }
 
-// Module - Load Balancer - ADE App Vmss
+// Module - Load Balancer -  App Vmss
 //////////////////////////////////////////////////
 module adeAppVmssLoadBalancerModule 'azure_load_balancers_adeapp_vmss.bicep' = {
   scope: resourceGroup(adeAppVmssResourceGroupName)
@@ -249,7 +249,7 @@ module adeAppVmssLoadBalancerModule 'azure_load_balancers_adeapp_vmss.bicep' = {
   }
 }
 
-// Module - ADE Web Vm
+// Module -  Web Vm
 //////////////////////////////////////////////////
 module adeWebVmModule 'azure_virtual_machines_adeweb_vm_app_deployment.bicep' = {
   scope: resourceGroup(adeAppVmResourceGroupName)
@@ -273,7 +273,7 @@ module adeWebVmModule 'azure_virtual_machines_adeweb_vm_app_deployment.bicep' = 
   }
 }
 
-// Module - ADE App Vm
+// Module -  App Vm
 //////////////////////////////////////////////////
 module adeAppVmModule 'azure_virtual_machines_adeapp_vm_app_deployment.bicep' = {
   scope: resourceGroup(adeAppVmResourceGroupName)
@@ -298,7 +298,7 @@ module adeAppVmModule 'azure_virtual_machines_adeapp_vm_app_deployment.bicep' = 
   }
 }
 
-// Module - ADE Web Vmss
+// Module -  Web Vmss
 //////////////////////////////////////////////////
 module adeWebVmssModule 'azure_virtual_machines_adeweb_vmss_app_deployment.bicep' = {
   scope: resourceGroup(adeAppVmssResourceGroupName)
@@ -321,7 +321,7 @@ module adeWebVmssModule 'azure_virtual_machines_adeweb_vmss_app_deployment.bicep
   }
 }
 
-// Module - ADE App Vmss
+// Module -  App Vmss
 //////////////////////////////////////////////////
 module adeAppVmssModule 'azure_virtual_machines_adeapp_vmss_app_deployment.bicep' = {
   scope: resourceGroup(adeAppVmssResourceGroupName)

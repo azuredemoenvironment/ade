@@ -1,30 +1,30 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The ID of the ADE App Api Gateway Backend Pool.')
+@description('The ID of the  App Api Gateway Backend Pool.')
 param adeAppApiGatewayBackendPoolId string
 
-@description('The ID of the ADE App Api Gateway VMSS Backend Pool.')
+@description('The ID of the  App Api Gateway VMSS Backend Pool.')
 param adeAppApiGatewayVmssBackendPoolId string
 
-@description('The ID of the ADE App Frontend Backend Pool.')
+@description('The ID of the  App Frontend Backend Pool.')
 param adeAppFrontendBackendPoolId string
 
-@description('The ID of the ADE App Frontend VMSS Backend Pool.')
+@description('The ID of the  App Frontend VMSS Backend Pool.')
 param adeAppFrontendVmssBackendPoolId string
 
-@description('The private Ip address of the ADE App Vmss Load Balancer.')
+@description('The private Ip address of the  App Vmss Load Balancer.')
 param adeAppVmssLoadBalancerPrivateIpAddress string
 
-@description('The name of the ADE Web Module.')
+@description('The name of the  Web Module.')
 param adeWebModuleName string
 
-@description('The name of the ADE Web VMSS.')
+@description('The name of the  Web VMSS.')
 param adeWebVmssName string
 
-@description('The name of the ADE Web VMSS NIC.')
+@description('The name of the  Web VMSS NIC.')
 param adeWebVmssNICName string
 
-@description('The ID of the ADE Web Subnet.')
+@description('The ID of the  Web Subnet.')
 param adeWebVmssSubnetId string
 
 @description('The password of the admin user.')
@@ -70,7 +70,7 @@ var tags = {
 }
 var timeStamp = int('${substring(sanitizeCurrentTime, 1, 2)}${substring(sanitizeCurrentTime, 3, 2)}${substring(sanitizeCurrentTime, 5, 2)}${substring(sanitizeCurrentTime, 7, 4)}')
 
-// Resource - Virtual Machine Scale Set - ADE Web
+// Resource - Virtual Machine Scale Set -  Web
 //////////////////////////////////////////////////
 resource adeWebVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
   name: adeWebVmssName

@@ -1,9 +1,9 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The host name of the ADE App Frontend.')
+@description('The host name of the  App Frontend.')
 param adeAppFrontEndHostName string
 
-@description('The host name of the ADE App Api Gateway.')
+@description('The host name of the  App Api Gateway.')
 param adeAppApiGatewayHostName string
 
 @description('The name of the Gatling Container Group.')
@@ -22,6 +22,7 @@ param adeLoadTestingInfluxDbDNSNameLabel string
 param containerRegistryName string
 
 @description('The password of the admin user of the Azure Container Registry.')
+@secure()
 param containerRegistryPassword string
 
 @description('The URL of the Azure Container Registry.')
@@ -30,13 +31,8 @@ param containerRegistryURL string
 @description('The location for all resources.')
 param location string
 
-// Variables
-//////////////////////////////////////////////////
-var tags = {
-  environment: 'production'
-  function: 'aci'
-  costCenter: 'it'
-}
+@description('The list of Resource tags')
+param tags object
 
 // Resource - Azure Container Instance - Container Group - Gatling
 //////////////////////////////////////////////////

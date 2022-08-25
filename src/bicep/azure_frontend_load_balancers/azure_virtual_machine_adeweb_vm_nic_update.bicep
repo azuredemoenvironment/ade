@@ -1,21 +1,21 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The ID of the ADE App Api Gateway Backend Pool.')
+@description('The ID of the  App Api Gateway Backend Pool.')
 param adeAppApiGatewayBackendPoolId string
 
-@description('The ID of the ADE App Api Gateway Virtual Machine Backend Pool.')
+@description('The ID of the  App Api Gateway Virtual Machine Backend Pool.')
 param adeAppApiGatewayVmBackendPoolId string
 
-@description('The array of properties for the ADE Web Virtual Machines.')
+@description('The array of properties for the  Web Virtual Machines.')
 param adeWebVirtualMachines array
 
-@description('The ID of the ADE App Frontend Backend Pool.')
+@description('The ID of the  App Frontend Backend Pool.')
 param adeAppFrontendBackendPoolId string
 
-@description('The ID of the ADE App Frontend Virtual Machine Backend Pool.')
+@description('The ID of the  App Frontend Virtual Machine Backend Pool.')
 param adeAppFrontendVmBackendPoolId string
 
-@description('The ID of the ADE Web Virtual Machine subnet.')
+@description('The ID of the  Web Virtual Machine subnet.')
 param adeWebVmSubnetId string
 
 @description('The ID of the Diagnostics Storage Account.')
@@ -38,7 +38,7 @@ var tags = {
   costCenter: 'it'
 }
 
-// Resource - Network Interface - ADE Web Vm
+// Resource - Network Interface -  Web Vm
 //////////////////////////////////////////////////
 resource adeWebVmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
   name: adeWebVirtualMachine.nicName

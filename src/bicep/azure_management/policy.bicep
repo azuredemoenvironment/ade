@@ -28,7 +28,7 @@ resource initiativeDefinition 'Microsoft.Authorization/policySetDefinitions@2021
     displayName: initiativeDefinitionName
     description: 'Initiative Definition for Resource Location and VM SKU Size'
     metadata: {
-      category: 'ADE Initiative'
+      category: ' Initiative'
     }
     parameters: {
       listOfAllowedLocations: {

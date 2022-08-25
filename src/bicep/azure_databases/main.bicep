@@ -91,7 +91,7 @@ resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existi
   }
 }
 
-// Module - Sql - ADE App
+// Module - Sql -  App
 //////////////////////////////////////////////////
 module adeAppSqlModule 'sql_adeapp.bicep' = {
   name: 'adeAppSqlDeployment'
@@ -131,7 +131,7 @@ module inspectorGadgetSqlModule 'sql_inspectorgadget.bicep' = {
   }
 }
 
-// Module - App Config - ADE App - Sql Database
+// Module - App Config -  App - Sql Database
 //////////////////////////////////////////////////
 module adeAppSqlAppConfigModule './sql_adeapp_app_config.bicep' = {
   scope: resourceGroup(securityResourceGroupName)

@@ -188,7 +188,7 @@ module applicationGatewayModule 'azure_application_gateway.bicep' = {
   }
 }
 
-// Module - Network Interface Update - ADE Web Vm
+// Module - Network Interface Update -  Web Vm
 //////////////////////////////////////////////////
 module adeWebVmNICUpdateModule './azure_virtual_machine_adeweb_vm_nic_update.bicep' = {
   scope: resourceGroup(adeAppVmResourceGroupName)
@@ -207,7 +207,7 @@ module adeWebVmNICUpdateModule './azure_virtual_machine_adeweb_vm_nic_update.bic
   }
 }
 
-// Module - Network Interface Update - ADE Web Vmss
+// Module - Network Interface Update -  Web Vmss
 //////////////////////////////////////////////////
 module adeWebVmssNICUpdateModule './azure_virtual_machine_adeweb_vmss_nic_update.bicep' = {
   scope: resourceGroup(adeAppVmssResourceGroupName)

@@ -20,11 +20,15 @@ function Set-InitialArmParameters {
     $azureRegionShortName = Get-RegionShortName $azureRegion
     $appEnvironment = "ade-$alias-$azureRegionShortName".ToLowerInvariant()
     $acrName = "acr-$appEnvironment-001".replace('-', '')
-    
-    
-    $certificateBase64String = Convert-WildcardCertificateToBase64String $secureCertificatePassword $wildcardCertificatePath
+    $certificateBase64String = ''
+    if ($secureCertificatePassword -ne $null -and $wildcardCertificatePath -eq $null) {
+        $certificateBase64String = Convert-WildcardCertificateToBase64String $secureCertificatePassword $wildcardCertificatePath
+    }
     $ownerName = $(az account show --query "user.name" --output tsv)
-    $plainTextResourcePassword = ConvertFrom-SecureString -SecureString $secureResourcePassword -AsPlainText
+    $plainTextResourcePassword = ''
+    if ($secureResourcePassword -ne $null) {
+        $plainTextResourcePassword = ConvertFrom-SecureString -SecureString $secureResourcePassword -AsPlainText
+    }
     $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
 
     Write-Log 'Generating ARM Parameters'

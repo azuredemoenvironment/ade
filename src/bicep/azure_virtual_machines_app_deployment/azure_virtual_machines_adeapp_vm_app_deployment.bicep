@@ -1,15 +1,15 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The ID of the ADE App Vmss Load Balancer Backend Pool.')
+@description('The ID of the  App Vmss Load Balancer Backend Pool.')
 param adeAppVmLoadBalancerBackendPoolId string
 
-@description('The private Ip address of the ADE App Vm Load Balancer.')
+@description('The private Ip address of the  App Vm Load Balancer.')
 param adeAppVmLoadBalancerPrivateIpAddress string
 
-@description('The array of properties for the ADE App Virtual Machines.')
+@description('The array of properties for the  App Virtual Machines.')
 param adeAppVirtualMachines array
 
-@description('The ID of the ADE App Virtual Machine subnet.')
+@description('The ID of the  App Virtual Machine subnet.')
 param adeAppVmSubnetId string
 
 @description('The password of the admin user.')
@@ -64,7 +64,7 @@ var tags = {
 }
 var timeStamp = int('${substring(sanitizeCurrentTime, 1, 2)}${substring(sanitizeCurrentTime, 3, 2)}${substring(sanitizeCurrentTime, 5, 2)}${substring(sanitizeCurrentTime, 7, 4)}')
 
-// Resource - Network Interface - ADE App Vm
+// Resource - Network Interface -  App Vm
 //////////////////////////////////////////////////
 resource adeAppVmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (adeAppVirtualMachine, i) in adeAppVirtualMachines: {
   name: adeAppVirtualMachine.nicName
@@ -213,7 +213,7 @@ resource windowsVMGuestConfigExtension 'Microsoft.Compute/virtualMachines/extens
   }
 }]
 
-// Resource - Custom Script Extension - ADE App Vm
+// Resource - Custom Script Extension -  App Vm
 //////////////////////////////////////////////////
 resource adeAppVmCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeAppVirtualMachine, i) in adeAppVirtualMachines: {
   parent: adeAppVm[i]

@@ -4,25 +4,25 @@ targetScope = 'subscription'
 
 // Parameters
 //////////////////////////////////////////////////
-@description('The amount of the ADE Budget.')
+@description('The amount of the  Budget.')
 param adeBudgetAmount int
 
-@description('The name of the ADE Budget.')
+@description('The name of the  Budget.')
 param adeBudgetName string
 
-@description('The first threshold of the ADE Budget.')
+@description('The first threshold of the  Budget.')
 param adeBudgetFirstThreshold int
 
-@description('The second threshold of the ADE Budget.')
+@description('The second threshold of the  Budget.')
 param adeBudgetSecondThreshold int
 
-@description('The third threshold of the ADE Budget.')
+@description('The third threshold of the  Budget.')
 param adeBudgetThirdThreshold int
 
-@description('The first threshold of the Forecasted ADE Budget.')
+@description('The first threshold of the Forecasted  Budget.')
 param adeBudgetForecastedThreshold int
 
-@description('The time grain of the ADE Budget.')
+@description('The time grain of the  Budget.')
 param adeBudgetTimeGrain string
 
 @description('The ID of the Budget Action Group.')

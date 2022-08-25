@@ -1,12 +1,12 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The private Ip address of the ADE App Vm Load Balancer.')
+@description('The private Ip address of the  App Vm Load Balancer.')
 param adeAppVmLoadBalancerPrivateIpAddress string
 
-@description('The array of properties for the ADE Web Virtual Machines.')
+@description('The array of properties for the  Web Virtual Machines.')
 param adeWebVirtualMachines array
 
-@description('The ID of the ADE Web Virtual Machine subnet.')
+@description('The ID of the  Web Virtual Machine subnet.')
 param adeWebVmSubnetId string
 
 @description('The password of the admin user.')
@@ -61,7 +61,7 @@ var tags = {
 }
 var timeStamp = int('${substring(sanitizeCurrentTime, 1, 2)}${substring(sanitizeCurrentTime, 3, 2)}${substring(sanitizeCurrentTime, 5, 2)}${substring(sanitizeCurrentTime, 7, 4)}')
 
-// Resource - Network Interface - ADE Web Vm
+// Resource - Network Interface -  Web Vm
 //////////////////////////////////////////////////
 resource adeWebVmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
   name: adeWebVirtualMachine.nicName
@@ -205,7 +205,7 @@ resource windowsVMGuestConfigExtension 'Microsoft.Compute/virtualMachines/extens
   }
 }]
 
-// Resource - Custom Script Extension - ADE Web Vmss
+// Resource - Custom Script Extension -  Web Vmss
 //////////////////////////////////////////////////
 resource adeWebVmCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
   parent: adeWebVm[i]

@@ -1,33 +1,33 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The Fqdn of the ADE App Api Gateway App Service.')
+@description('The Fqdn of the  App Api Gateway App Service.')
 param adeAppApiGatewayAppServiceFqdn string
 
-@description('The Host Name of the ADE App Api Gateway App Service.')
+@description('The Host Name of the  App Api Gateway App Service.')
 param adeAppApiGatewayAppServiceHostName string
 
-@description('The Host Name of the ADE App Api Gateway.')
+@description('The Host Name of the  App Api Gateway.')
 param adeAppApiGatewayHostName string
 
-@description('The Host Name of the ADE App Api Gateway Virtual Machine.')
+@description('The Host Name of the  App Api Gateway Virtual Machine.')
 param adeAppApiGatewayVmHostName string
 
-@description('The Host Name of the ADE App Api Gateway VMSS.')
+@description('The Host Name of the  App Api Gateway VMSS.')
 param adeAppApiGatewayVmssHostName string
 
-@description('The Fqdn of the ADE App Frontend App Service.')
+@description('The Fqdn of the  App Frontend App Service.')
 param adeAppFrontendAppServiceFqdn string
 
-@description('The Host Name of the ADE App Frontend App Service.')
+@description('The Host Name of the  App Frontend App Service.')
 param adeAppFrontendAppServiceHostName string
 
-@description('The Host Name of the ADE App Frontend.')
+@description('The Host Name of the  App Frontend.')
 param adeAppFrontendHostName string
 
-@description('The Host Name of the ADE App Frontend Virtual Machine.')
+@description('The Host Name of the  App Frontend Virtual Machine.')
 param adeAppFrontendVmHostName string
 
-@description('The Host Name of the ADE App Frontend VMSS.')
+@description('The Host Name of the  App Frontend VMSS.')
 param adeAppFrontendVmssHostName string
 
 @description('The ID of the Application Gateway Managed Identity.')

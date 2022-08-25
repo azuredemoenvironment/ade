@@ -1,15 +1,15 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the ADE App Sql Database.')
+@description('The name of the  App Sql Database.')
 param adeAppSqlDatabaseName string
 
-@description('The name of the ADE App Sql Server.')
+@description('The name of the  App Sql Server.')
 param adeAppSqlServerName string
 
-@description('The name of the ADE App Sql Server Private Endpoint.')
+@description('The name of the  App Sql Server Private Endpoint.')
 param adeAppSqlServerPrivateEndpointName string
 
-@description('The ID of the ADE App Sql Subnet.')
+@description('The ID of the  App Sql Subnet.')
 param adeAppSqlSubnetId string
 
 @description('The password of the admin user.')
@@ -37,7 +37,7 @@ param logAnalyticsWorkspaceId string
 @description('The list of Resource tags')
 param tags object
 
-// Resource - Sql Server - ADE App
+// Resource - Sql Server -  App
 //////////////////////////////////////////////////
 resource adeAppSqlServer 'Microsoft.Sql/servers@2022-02-01-preview' = {
   name: adeAppSqlServerName
@@ -51,7 +51,7 @@ resource adeAppSqlServer 'Microsoft.Sql/servers@2022-02-01-preview' = {
   }
 }
 
-// Resource - Sql Database - ADE App
+// Resource - Sql Database -  App
 //////////////////////////////////////////////////
 resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2022-02-01-preview' = {
   parent: adeAppSqlServer
@@ -75,7 +75,7 @@ resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2022-02-01-preview' 
 
 
 
-// Resource - Sql Database - Diagnostic Settings - ADE App
+// Resource - Sql Database - Diagnostic Settings -  App
 //////////////////////////////////////////////////
 resource adeAppSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: adeAppSqlDatabase
@@ -140,7 +140,7 @@ resource adeAppSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSettings@202
   }
 }
 
-// Resource - Private Endpoint - ADE App Sql Server
+// Resource - Private Endpoint -  App Sql Server
 //////////////////////////////////////////////////
 resource adeAppSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2022-01-01' = {
   name: adeAppSqlServerPrivateEndpointName
@@ -163,7 +163,7 @@ resource adeAppSqlServerPrivateEndpoint 'Microsoft.Network/privateEndpoints@2022
   }
 }
 
-// Resource - Private Endpoint Dns Group - Private Endpoint - ADE App Sql Server
+// Resource - Private Endpoint Dns Group - Private Endpoint -  App Sql Server
 //////////////////////////////////////////////////
 resource azureSqlprivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2022-01-01' = {
   name: '${adeAppSqlServerPrivateEndpoint.name}/dnsgroupname'
