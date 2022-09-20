@@ -1,17 +1,17 @@
 function Set-InitialArmParameters {
     param(
-        [string] $alias,
-        [string] $email,
-        [string] $resourceUserName,
-        [string] $rootDomainName,
-        [string] $localNetworkRange,
-        [SecureString] $secureResourcePassword,
-        [SecureString] $secureCertificatePassword,
-        [string] $wildcardCertificatePath,
-        [string] $azureRegion,
-        [string] $azurePairedRegion,
-        [string] $module,
-        [string] $scriptsBaseUri,
+        [Parameter(mandatory = $true)][string] $alias,
+        [Parameter(mandatory = $true)][string] $email,
+        [Parameter(mandatory = $true)][string] $resourceUserName,
+        [Parameter(mandatory = $true)][string] $rootDomainName,
+        [Parameter(mandatory = $true)][string] $localNetworkRange,
+        [Parameter(mandatory = $true)][SecureString] $secureResourcePassword,
+        [Parameter(mandatory = $true)][SecureString] $secureCertificatePassword,
+        [Parameter(mandatory = $true)][string] $wildcardCertificatePath,
+        [Parameter(mandatory = $true)][string] $azureRegion,
+        [Parameter(mandatory = $true)][string] $azurePairedRegion,
+        [Parameter(mandatory = $true)][string] $module,
+        [Parameter(mandatory = $true)][string] $scriptsBaseUri,
         [bool] $overwriteParameterFiles,
         [bool] $skipConfirmation
     )
@@ -28,8 +28,12 @@ function Set-InitialArmParameters {
     $acrName = "acr-ade-$aliasRegion-001".replace('-', '')
 
     $certificateBase64String = ''
-    if ($secureCertificatePassword -ne $null -and $wildcardCertificatePath -eq $null) {
+    if ($secureCertificatePassword -ne $null -and $wildcardCertificatePath -ne $null) {
         $certificateBase64String = Convert-WildcardCertificateToBase64String $secureCertificatePassword $wildcardCertificatePath
+    }
+
+    if ($certificateBase64String -eq $null -or $certificateBase64String -eq '') {
+        throw "A base64 encoded certificate is required to proceed. Ensure you have wildcard.pfx in the data directory, and have supplied the appropriate certificate password."
     }
     
     $plainTextResourcePassword = ''

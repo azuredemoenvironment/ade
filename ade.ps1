@@ -129,19 +129,30 @@ try {
         $resourcePassword = $null
     }
 
-    $armParameters = Set-InitialArmParameters $alias $email $resourceUserName $rootDomainName $localNetworkRange $secureResourcePassword $secureCertificatePassword $wildcardCertificatePath $defaultPrimaryRegion $defaultSecondaryRegion $module $scriptsBaseUri $overwriteParameterFiles $skipConfirmation
+    if ([string]::IsNullOrWhiteSpace($scriptsBaseUri)) {
+        $scriptsBaseUri = "https://raw.githubusercontent.com/azuredemoenvironment/ade/main/scripts"
+    }
+
+    $armParameters = Set-InitialArmParameters -alias $alias `
+        -email $email `
+        -resourceUserName $resourceUserName `
+        -rootDomainName $rootDomainName `
+        -localNetworkRange $localNetworkRange `
+        -secureResourcePassword $secureResourcePassword `
+        -secureCertificatePassword $secureCertificatePassword `
+        -wildcardCertificatePath $wildcardCertificatePath `
+        -azureRegion $defaultPrimaryRegion `
+        -azurePairedRegion $defaultSecondaryRegion `
+        -module $module `
+        -scriptsBaseUri $scriptsBaseUri `
+        -overwriteParameterFiles $overwriteParameterFiles `
+        -skipConfirmation $skipConfirmation
 
     ###################################################################################################
     # Start the Requested Action
     ###################################################################################################
     # TODO: only one of these steps should be allowed
     if ($deploy) {
-        # $isInteractive = $PSCmdlet.ParameterSetName -eq 'interactive'
-
-        if ([string]::IsNullOrWhiteSpace($scriptsBaseUri)) {
-            $scriptsBaseUri = "https://raw.githubusercontent.com/azuredemoenvironment/ade/main/scripts"
-        }
-
         Deploy-AzureDemoEnvironment $armParameters
     }
 
