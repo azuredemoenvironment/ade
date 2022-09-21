@@ -145,6 +145,7 @@ try {
         -azurePairedRegion $defaultSecondaryRegion `
         -module $module `
         -scriptsBaseUri $scriptsBaseUri `
+        -isDeploying $deploy `
         -overwriteParameterFiles $overwriteParameterFiles `
         -skipConfirmation $skipConfirmation
 
