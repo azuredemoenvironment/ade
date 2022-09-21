@@ -78,7 +78,7 @@ The Azure Demo Environment is designed to run within a Docker container. To
 start ADE, open a terminal and run the following command relevant to your shell
 (be sure to set the certificate path variable):
 
-**Bash**
+### Bash
 
 ```sh
 CERTIFICATE_PATH="/path/to/certificate/data/folder/yourcert.pfx"
@@ -90,7 +90,7 @@ docker run \
   ghcr.io/azuredemoenvironment/ade/ade:latest
 ```
 
-**PowerShell**
+### PowerShell
 
 ```ps
 $CertificatePath = 'C:/path/to/certificate/data/folder/yourcert.pfx'
