@@ -7,8 +7,20 @@ function Write-Header {
     Write-Host "" | Out-Null
 }
 
-function Login {
+function FullLogin {
     Invoke-Expression "& `"/opt/ade/login.ps1`""
+}
+
+function Login {
+    Invoke-Expression "& `"/opt/ade/login.ps1`" -loginOnly"
+}
+
+function ChangeRegion {
+    Invoke-Expression "& `"/opt/ade/login.ps1`" -regionOnly"
+}
+
+function ChangeSubscription {
+    Invoke-Expression "& `"/opt/ade/login.ps1`" -subscriptionOnly"
 }
 
 function Deploy {
@@ -33,6 +45,6 @@ function Prompt {
 
 Write-Header "Welcome to the Azure Demo Environment"
 
-Login
+FullLogin
 
 Write-Header 'Done! Run "deploy" to start deploying the Azure Demo Environment!'
