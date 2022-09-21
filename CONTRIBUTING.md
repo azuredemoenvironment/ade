@@ -6,9 +6,9 @@ if you want to contribute to the project.
 
 ## Prerequisites
 
-In addition to the pre-requisites for running ADE, you will also need the
-following. ADE development is cross-platform, just make sure to install the
-OS-appropriate tooling for each of these.
+In addition to the prerequisites for running ADE, you will also need additional
+software installed. ADE development is cross-platform, just make sure to install
+the OS-appropriate tooling for each of these:
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [Git](https://git-scm.com/)
@@ -17,10 +17,9 @@ OS-appropriate tooling for each of these.
 ## System Setup
 
 Once you have installed the prerequisites, you will need to clone the ADE repo
-locally and open it in VS Code. We recommend having a short `src` folder path
-for development in general (e.g. `C:\src\` on Windows or `~/src` on Linux/Mac).
-However, if you have a folder already setup for your source code, feel free to
-use that.
+locally. We recommend having a short `src` folder path for development in
+general (e.g., `C:\src\` on Windows or `~/src` on Linux/Mac). However, if you
+already have a folder setup for your source code, feel free to use that instead.
 
 Inside of your primary source directory, create a new folder called
 `azuredemoenvironment`. In there, you'll want to
@@ -29,13 +28,13 @@ the ADE repositories: [ade](https://github.com/azuredemoenvironment/ade) and
 [ade-app](https://github.com/azuredemoenvironment/ade-app).
 
 As is required in the normal ADE workflow, you'll need a **custom domain** that
-**you own and/or can update the DNS nameserver entries for**, as well as a
-**PFX-formatted** SSL certificate for deploying SSL/TLS secured services. We
-recommend that you copy your PFX certificate to
+**you own and/or have access to update the DNS nameserver entries for**, as well
+as a **PFX-formatted** SSL certificate for that domain to deploy SSL/TLS secured
+services. We recommend that you copy your PFX certificate to
 `src/azuredemoenvironment/ade/data/` and rename the file to `wildcard.pfx`.
 
-You should have a directory structure similar to this (in addition to all the
-checked out ADE code):
+After that setup, you should have a directory structure similar to the
+following, in addition to the checked out code structures:
 
 - src (or existing source directory)
   - azuredemoenvironment
@@ -48,13 +47,13 @@ checked out ADE code):
 
 Open the `src/azuredemoenvironment` root folder in VS Code. You should see the
 two repositories you checked out in the existing steps. Navigate the folder
-structure and become familiar with it.
+structure and start to become familiar with it.
 
-Under the `src/azuredemoenvironment/ade` folder, clone the
+Under the `src/azuredemoenvironment/ade` folder, duplicate the
 `ade.personal.sample.ps1` file to `ade.personal.ps1`. Update this file with your
-specific ADE parameters, such as the `alias` and `certificatePassword`, to make
-running ADE deployments multiple times easier. This is an ignored file, and
-should **never** be checked in to the repository.
+specific ADE parameters, such as the `alias` and `certificatePassword`, to
+simplify multiple ADE deployment runs. This is an ignored file, and should
+**never** be checked in to the source code repository.
 
 Next, open a terminal window (_Terminal -> New Terminal_ in the VS Code
 application menu). This may open a bash or PowerShell terminal window, depending
@@ -63,9 +62,9 @@ slightly different due to shell differences).
 
 ## Start the ADE Shell Container
 
-In the terminal window, run the following commands (based on the type of shell
-you're using), making sure to update the ADE directory variable to be the **full
-path** to the `src/azuredemoenvironment/ade` repository folder:
+In the terminal window, run the appropriate commands for your shell, making sure
+to update the ADE directory variable to be the **full path** to the
+`src/azuredemoenvironment/ade` repository folder:
 
 ### Bash
 
@@ -85,21 +84,21 @@ docker run \
 ```ps
 $AdeDir = 'C:/path/to/ade/repository/folder'
 
-docker run \
-  -it --rm --name ade \
-  -v /var/run/docker.sock:/var/run/docker.sock:rw \
-  -v "$AdeDir:/opt/ade" \
-  -v "$AdeDir/profile.ps1:/root/.config/powershell/Microsoft.PowerShell_profile.ps1" \
+docker run `
+  -it --rm --name ade `
+  -v /var/run/docker.sock:/var/run/docker.sock:rw `
+  -v "$AdeDir:/opt/ade" `
+  -v "$AdeDir/profile.ps1:/root/.config/powershell/Microsoft.PowerShell_profile.ps1" `
   ghcr.io/azuredemoenvironment/ade/ade:latest
 ```
 
 ## Execute a Deployment
 
 When the ADE Shell starts, you'll be prompted to login to the `az` CLI, as well
-as selecting a subscription and region to deploy ADE into. Once you've completed
-those steps, you can now start a deployment.
+as selecting a subscription and region in which to deploy ADE. Once you've
+completed those steps, you can now start a deployment.
 
-Assuming you've updated your `ade.personal.ps1` file with your specific
+Assuming you've updated your `ade.personal.ps1` file with your custom
 configuration, you can execute this script from the ADE shell by running the
 following command:
 
@@ -108,7 +107,7 @@ following command:
 ```
 
 This will execute a `deploy` command with your configuration. If you need to
-re-run a deployment, simply just execute the script again.
+re-run a deployment, simply execute the script again.
 
 ## Contribute
 
@@ -116,7 +115,7 @@ Congratulations! You now have a functional development environment. You can now
 make changes to the ADE codebase and test them locally within that container.
 Unless you modify ADE Shell code (e.g. `profile.ps1`), you should not need to
 restart the container; your changes are reflected immediately thanks to the
-Docker volume mount in the `docker run` command you used to start the container.
+volume mount in the `docker run` command used to start the container.
 
 If you leave your container running and your login token expires, you can run
 the `Login` command from the ADE prompt to refresh your session. If you want to
@@ -148,6 +147,14 @@ from GitHub.
 
 There are a few edge cases where you need to do additional steps to test your
 code.
+
+### ADE Shell Changes
+
+Updating the `profile.ps1` file requires a restart of the ADE Shell container.
+This is because the PowerShell profile is modified at container startup, and you
+will need to reload that profile configuration to see the changes. Type `exit`
+in the running container, and re-execute your `docker run` command to see your
+changes.
 
 ### Virtual Machine Custom Script Extensions
 
