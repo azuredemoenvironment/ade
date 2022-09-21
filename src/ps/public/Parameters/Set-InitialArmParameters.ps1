@@ -12,6 +12,7 @@ function Set-InitialArmParameters {
         [string] $azurePairedRegion,
         [string] $module,
         [string] $scriptsBaseUri,
+        [bool] $isDeploying,
         [bool] $overwriteParameterFiles,
         [bool] $skipConfirmation
     )
@@ -32,8 +33,8 @@ function Set-InitialArmParameters {
         $certificateBase64String = Convert-WildcardCertificateToBase64String $secureCertificatePassword $wildcardCertificatePath
     }
 
-    if ([string]::IsNullOrWhiteSpace($certificateBase64String)) {
-        Write-Warning "A base64 encoded certificate was not provided; if running the deploy command be sure to validate your certificate is in the correct location and that the password is correct."
+    if ($isDeploying -and [string]::IsNullOrWhiteSpace($certificateBase64String)) {
+        throw "A base64 encoded certificate is required to proceed. Ensure you have wildcard.pfx in the data directory, and have supplied the appropriate certificate password."
     }
     
     $plainTextResourcePassword = ''
