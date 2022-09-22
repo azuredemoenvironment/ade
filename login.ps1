@@ -67,7 +67,8 @@ function selectSubscription() {
 
 function selectRegion() {
   Write-Header "Setting Region To Deploy"
-  $regions = $(az account list-locations --query "[].{RegionName:name,SecondaryRegionName:metadata.pairedRegion[0].name}" --output json) | ConvertFrom-Json
+  $regions = $(az account list-locations --query "[?metadata.regionType=='Physical' && metadata.regionCategory=='Recommended'].{RegionName:name,SecondaryRegionName:metadata.pairedRegion[0].name}" --output json)  | ConvertFrom-Json
+  #$regions = $(az account list-locations --query "[].{RegionName:name,SecondaryRegionName:metadata.pairedRegion[0].name}" --output json) | ConvertFrom-Json
   $regionCount = $regions.Count
   
   Write-Header "Select a Region; found $regionCount"
