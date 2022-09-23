@@ -11,5 +11,5 @@ function Deploy-AzureAppServicePlanAutoScaleDown {
     az appserviceplan update -g $appServicePlanResourceGroupName -n $appServicePlanName --sku B1
     Confirm-LastExitCode
 
-    Write-ScriptSection "Finished Azure App Service Plan Scale Down Deployment"
+    Write-ScriptSection "Finished Azure App Service Plan Nightly Scale Down Deployment"
 }
