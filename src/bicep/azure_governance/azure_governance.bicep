@@ -43,6 +43,7 @@ var identityResourceGroupName = 'rg-ade-${aliasRegion}-identity'
 var keyVaultResourceGroupName = 'rg-ade-${aliasRegion}-keyvault'
 var monitorResourceGroupName = 'rg-ade-${aliasRegion}-monitor'
 var networkWatcherResourceGroupName = 'NetworkWatcherRG'
+var azureAutomationResourceGroupName = 'rg-ade-${aliasRegion}-automation'
 // Resources
 var activityLogDiagnosticSettingsName = 'subscriptionactivitylog'
 var appConfigName = 'appcs-ade-${aliasRegion}-001'
@@ -66,6 +67,7 @@ var nsgFlowLogsStorageAccount = {
   name: replace('sa-ade-${aliasRegion}-nsgflow', '-', '')
   sku: 'Standard_LRS'
 }
+var azureAutomationName = 'aa-ade-${aliasRegion}-001'
 
 // Resource Group - App Configuration
 //////////////////////////////////////////////////
@@ -99,6 +101,13 @@ resource monitorResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = 
 //////////////////////////////////////////////////
 resource networkWatcherResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
   name: networkWatcherResourceGroupName
+  location: azureRegion
+}
+
+//Resource Group - Azure Automation
+////////////////////////////////////////////////
+resource azureAutomationResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+  name: azureAutomationResourceGroupName
   location: azureRegion
 }
 
@@ -287,4 +296,17 @@ module keyVaultModule './azure_key_vault.bicep' = {
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
     resourcePassword: resourcePassword
   }
+}
+
+module azureAutomationModule 'azure_automation.bicep' = {
+  scope: resourceGroup(azureAutomationResourceGroupName)
+  name: 'azureAutomationDeployment'
+  dependsOn: [
+    azureAutomationResourceGroup
+  ]
+  params: {
+    azureAutomationName: azureAutomationName
+    location: location
+  }
+
 }
