@@ -28,6 +28,11 @@ function Set-InitialArmParameters {
     $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
     $acrName = "acr-ade-$aliasRegion-001".replace('-', '')
 
+    #DateandTimeforAutoScaling
+    $DateTime = Get-Date
+    
+
+
     $certificateBase64String = ''
     if ($secureCertificatePassword -ne $null -and $wildcardCertificatePath -ne $null) {
         $certificateBase64String = Convert-WildcardCertificateToBase64String $secureCertificatePassword $wildcardCertificatePath
@@ -133,6 +138,12 @@ function Set-InitialArmParameters {
         'networkingResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-networking"
         'networkWatcherResourceGroupName'          = "NetworkWatcherRG"
         'proximityPlacementGroupResourceGroupName' = "$azureRegionResourceGroupNamePrefix-ppg"
+
+        #Required for autoscaling apps, vms, containerServices
+        'timeToScaleDown' = $DateTime.ToUniversalTime() 
+        'timeToScaleUp' = $DateTime.ToUniversalTime()
+
+
     }
 
     if (Confirm-AzureResourceExists 'keyvault' $armParameters.keyVaultResourceGroupName $armParameters.keyVaultName) {
