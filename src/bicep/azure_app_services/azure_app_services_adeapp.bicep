@@ -121,10 +121,10 @@ resource adeAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05
         category: 'AppServiceAppLogs'
         enabled: true
       }
-      {
-        category: 'AppServiceFileAuditLogs'
-        enabled: true
-      }
+      //{
+      //  category: 'AppServiceFileAuditLogs'
+      //  enabled: true
+      //}
       {
         category: 'AppServiceAuditLogs'
         enabled: true
