@@ -68,6 +68,10 @@ var nsgFlowLogsStorageAccount = {
   sku: 'Standard_LRS'
 }
 var azureAutomationName = 'aa-ade-${aliasRegion}-001'
+var azureAutomationAppScaleUpRunbook = 'appscaleuprunbook-ade-${aliasRegion}-001'
+var azureAutomationAppScaleDownRunbook = 'appscaledownrunbook-ade-${aliasRegion}-001'
+var azureAutomationVmStopRunbook = 'vmstoprunbook-ade-${aliasRegion}-001'
+var azureAutomationVmStartRunbook = 'vmstartrunbook-ade-${aliasRegion}-001'
 
 // Resource Group - App Configuration
 //////////////////////////////////////////////////
@@ -306,6 +310,10 @@ module azureAutomationModule 'azure_automation.bicep' = {
   ]
   params: {
     azureAutomationName: azureAutomationName
+    azureAutomationAppScaleUpRunbookName:  azureAutomationAppScaleUpRunbook
+    azureAutomationAppScaleDownRunbookName: azureAutomationAppScaleDownRunbook
+    azureAutomationVmStopRunbookName: azureAutomationVmStopRunbook
+    azureAutomationVmStartRunbookName: azureAutomationVmStartRunbook
     location: location
   }
 

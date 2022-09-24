@@ -83,6 +83,7 @@
         "publishingcredentials",
         "redirectionconfig",
         "routingrule",
+        "Runbook",
         "saade",
         "Scriptextension",
         "serverfarms",

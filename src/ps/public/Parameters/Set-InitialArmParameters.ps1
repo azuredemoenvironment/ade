@@ -138,10 +138,11 @@ function Set-InitialArmParameters {
         'networkingResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-networking"
         'networkWatcherResourceGroupName'          = "NetworkWatcherRG"
         'proximityPlacementGroupResourceGroupName' = "$azureRegionResourceGroupNamePrefix-ppg"
+        'azureAutomationResourceGroupName'         = "$azureRegionResourceGroupNamePrefix-automation"
 
         #Required for autoscaling apps, vms, containerServices
-        'timeToScaleDown' = $DateTime.ToUniversalTime() 
-        'timeToScaleUp' = $DateTime.ToUniversalTime()
+        #'timeToScaleDown' = $DateTime.ToUniversalTime() 
+        #'timeToScaleUp' = $DateTime.ToUniversalTime()
 
 
     }
