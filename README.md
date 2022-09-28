@@ -32,9 +32,9 @@ software must be setup and configured.
 
     - Public IP Addresses (10 - 20)
 
-  **Note: At this time, the Azure Demo Environment is configured to deploy to
-  East US (Primary Region), East US 2, and West US (Secondary Region). In a
-  future update, other regions will be supported.**
+  **Note: At this time, the Azure Demo Environment can be configured to deploy to
+  any region with availability zones. Most testing has been done in East US.
+  Internal Microsoft subscriptions will have additional region limitations.**
 
 ### Software Installations
 
