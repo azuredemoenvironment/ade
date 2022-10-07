@@ -72,7 +72,8 @@ var azureAutomationAppScaleUpRunbook = 'appscaleuprunbook-ade-${aliasRegion}-001
 var azureAutomationAppScaleDownRunbook = 'appscaledownrunbook-ade-${aliasRegion}-001'
 var azureAutomationVmStopRunbook = 'vmstoprunbook-ade-${aliasRegion}-001'
 var azureAutomationVmStartRunbook = 'vmstartrunbook-ade-${aliasRegion}-001'
-
+var azureAutomationVmDeallocationSchedule = 'vmstoprunbookschedule-ade-${aliasRegion}-001'
+var azureAutomationDeallocationJob = 'vmstoprunbookjob-ade-${aliasRegion}-001'
 // Resource Group - App Configuration
 //////////////////////////////////////////////////
 resource appConfigResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
@@ -314,6 +315,8 @@ module azureAutomationModule 'azure_automation.bicep' = {
     azureAutomationAppScaleDownRunbookName: azureAutomationAppScaleDownRunbook
     azureAutomationVmStopRunbookName: azureAutomationVmStopRunbook
     azureAutomationVmStartRunbookName: azureAutomationVmStartRunbook
+    azureAutomationVmDeallocationScheduleName: azureAutomationVmDeallocationSchedule
+    azureAutomationDeallocationJobName: azureAutomationDeallocationJob
     location: location
   }
 

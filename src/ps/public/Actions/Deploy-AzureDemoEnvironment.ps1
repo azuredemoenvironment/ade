@@ -41,7 +41,7 @@ function Deploy-AzureDemoEnvironment {
 
     # Compute Infrastructure
     ###################################
-    #Deploy-AzureVirtualMachines $armParameters
+   #Deploy-AzureVirtualMachines $armParameters
     #Deploy-AzureAppServices $armParameters
     # Deploy-AzureKubernetesService $armParameters
     #Deploy-AzureContainerInstances $armParameters

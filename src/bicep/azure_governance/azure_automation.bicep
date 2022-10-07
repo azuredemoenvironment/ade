@@ -16,6 +16,12 @@ param azureAutomationVmStopRunbookName string
 @description('The name of the Azure Automation Runbook.')
 param azureAutomationVmStartRunbookName string
 
+@description('The name of the Azure Automation Runbook Schedule.')
+param azureAutomationVmDeallocationScheduleName string
+
+@description('The name of the Azure Automation Runbook Job.')
+param azureAutomationDeallocationJobName string
+
 @description('The location for all resources.')
 param location string
 
@@ -46,6 +52,8 @@ resource azureAutomation 'Microsoft.Automation/automationAccounts@2021-06-22' = 
 
    }
   }
+  
+//appscaleuprunbook
 
   resource azureAutomationAppScaleUpRunbook 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' = {
     name: azureAutomationAppScaleUpRunbookName
@@ -55,9 +63,11 @@ resource azureAutomation 'Microsoft.Automation/automationAccounts@2021-06-22' = 
      runbookType: 'PowerShell'
      logVerbose: true
      logProgress: true
-  }
+    }
 }
   
+//appscaledownrunbook
+
 resource azureAutomationAppScaleDownRunbook 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' = {
   name: azureAutomationAppScaleDownRunbookName
   location: location
@@ -70,7 +80,7 @@ resource azureAutomationAppScaleDownRunbook 'Microsoft.Automation/automationAcco
 }
   
    
-
+//vmdeallocation
 resource azureAutomationVmStopRunbook 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' = {
   name: azureAutomationVmStopRunbookName
   location: location
@@ -79,10 +89,13 @@ resource azureAutomationVmStopRunbook 'Microsoft.Automation/automationAccounts/r
    runbookType: 'PowerShell'
    logVerbose: true
    logProgress: true
+   publishContentLink: {
+    uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/main/src/ps/private/VirtualMachines/Set-AzureVirtualMachinesToDeallocated.ps1'
+   }
 }
 }
   
-
+//Vmallocation
 resource azureAutomationVmStartRunbook 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' = {
   name: azureAutomationVmStartRunbookName
   location: location
@@ -91,6 +104,37 @@ resource azureAutomationVmStartRunbook 'Microsoft.Automation/automationAccounts/
    runbookType: 'PowerShell'
    logVerbose: true
    logProgress: true
+   publishContentLink: {
+    uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/main/src/ps/private/VirtualMachines/Set-AzureVirtualMachinesToAllocated.ps1'
+   }
 }
 }
   
+//VmDeallocationSchedule
+resource azureAutomationVmDeallocationSchedule 'Microsoft.Automation/automationAccounts/schedules@2020-01-13-preview' = {
+  name: azureAutomationVmDeallocationScheduleName
+  parent: azureAutomation
+  properties: {
+    timeZone: 'Etc/UTC'
+    startTime: '2022-10-07T21:30:00+00:00'
+    interval:1
+    frequency: 'Day'   
+  }
+
+}
+
+//VmDeallocationScheduleWithRunbook
+resource azureAutomationDeallocationJob 'Microsoft.Automation/automationAccounts/jobSchedules@2020-01-13-preview' = {
+  name: azureAutomationDeallocationJobName
+  parent: azureAutomation
+    properties: {
+      parameters: {}
+    runbook: {
+      name: azureAutomationVmDeallocationScheduleName
+    }
+    schedule: {
+      name: azureAutomationVmDeallocationScheduleName
+    }
+  }
+
+}
