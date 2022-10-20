@@ -29,25 +29,30 @@ catch {
     }
 }
 
-if ($ResourceGroupName) { 
+if ($ResourceGroupName) 
+{ 
 	$VMs = Get-AzVM -ResourceGroupName $ResourceGroupName
 }
-else { 
+else 
+{ 
 	$VMs = Get-AzVM
 }
 
-# Stop each of the VMs
-foreach ($VM in $VMs) {
-	$StopRtn = $VM | Stop-AzVM -Force -ErrorAction Continue
+# Start each of the VMs
+foreach ($VM in $VMs)
+{
+	$StartRtn = $VM | Start-AzVM -ErrorAction Continue
 
-	if (!$StopRtn.IsSuccessStatusCode) {
-		# The VM failed to stop, so send notice
-        Write-Output ($VM.Name + " failed to stop")
-        Write-Error ($VM.Name + " failed to stop. Error was:") -ErrorAction Continue
-		Write-Error (ConvertTo-Json $StopRtn) -ErrorAction Continue
+	if ($StartRtn.Status -ne 'Succeeded')
+	{
+		# The VM failed to start, so send notice
+        Write-Output ($VM.Name + " failed to start")
+        Write-Error ($VM.Name + " failed to start. Error was:") -ErrorAction Continue
+		Write-Error (ConvertTo-Json $StartRtn.Error) -ErrorAction Continue
 	}
-	else {
+	else
+	{
 		# The VM stopped, so send notice
-		Write-Output ($VM.Name + " has been stopped")
+		Write-Output ($VM.Name + " has been started")
 	}
 }
