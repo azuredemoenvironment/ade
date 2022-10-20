@@ -95,7 +95,7 @@ resource azureAutomationVmStopRunbook 'Microsoft.Automation/automationAccounts/r
 }
 }
   
-//Vmallocation
+//VmAllocation
 resource azureAutomationVmStartRunbook 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' = {
   name: azureAutomationVmStartRunbookName
   location: location
@@ -116,7 +116,7 @@ resource azureAutomationVmDeallocationSchedule 'Microsoft.Automation/automationA
   parent: azureAutomation
   properties: {
     timeZone: 'Etc/UTC'
-    startTime: '2022-10-07T21:30:00+00:00'
+    startTime: '2022-10-07T21:30:00+00:00' // do this as a parameter in powershell
     interval:1
     frequency: 'Day'   
   }

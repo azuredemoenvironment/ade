@@ -27,9 +27,13 @@ function Set-InitialArmParameters {
     $PairedRegionResourceGroupNamePrefix = "rg-ade-$aliasPairedRegion"
     $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
     $acrName = "acr-ade-$aliasRegion-001".replace('-', '')
+    #runbook start time parameter
+     #Required for autoscaling apps, vms, containerServices
+        #'timeToScaleDown' = $DateTime.ToUniversalTime() 
+        #'timeToScaleUp' = $DateTime.ToUniversalTime()
 
     #DateandTimeforAutoScaling
-    $DateTime = Get-Date
+    #$DateTime = Get-Date
     
 
 
@@ -72,6 +76,7 @@ function Set-InitialArmParameters {
         'resourcePassword'                         = $plainTextResourcePassword
         'sourceAddressPrefix'                      = $sourceAddressPrefix
         'sslCertificateName'                       = $rootDomainName
+        #add alphabetically
 
         # Required for Deploy-AzureAppServicePlanScaleDown.ps1
         'appServicePlanName'                       = "plan-ade-$aliasRegion-001"
@@ -140,9 +145,7 @@ function Set-InitialArmParameters {
         'proximityPlacementGroupResourceGroupName' = "$azureRegionResourceGroupNamePrefix-ppg"
         'azureAutomationResourceGroupName'         = "$azureRegionResourceGroupNamePrefix-automation"
 
-        #Required for autoscaling apps, vms, containerServices
-        #'timeToScaleDown' = $DateTime.ToUniversalTime() 
-        #'timeToScaleUp' = $DateTime.ToUniversalTime()
+       
 
 
     }
