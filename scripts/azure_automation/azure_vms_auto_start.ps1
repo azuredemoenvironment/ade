@@ -24,7 +24,7 @@ foreach ($VM in $VMs) {
 	$StartRtn = $VM | Start-AzVM -ErrorAction Continue
 	
 	if ($StartRtn.Status -ne 'Succeeded') {
-		# The VM failed to stop, so send notice
+		# The VM failed to start, so send notice
         Write-Output ($VM.Name + " failed to Start")
         Write-Error ($VM.Name + " failed to Start. Error was:") -ErrorAction Continue
 		Write-Error (ConvertTo-Json $StopRtn) -ErrorAction Continue
