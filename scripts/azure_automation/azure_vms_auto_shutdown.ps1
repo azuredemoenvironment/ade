@@ -1,33 +1,16 @@
 [OutputType([String])]
 
 param (
-    [Parameter(Mandatory=$false)] 
-    [String]  $AzureConnectionAssetName = "AzureRunAsConnection",
-
+    [Parameter(Mandatory = $false)]
+	[String]$AzureSubscriptionID,
+    
     [Parameter(Mandatory=$false)] 
     [String] $ResourceGroupName
 )
+#Connect to Azure
 
-try {
-    # Connect to Azure using service principal auth
-    $ServicePrincipalConnection = Get-AutomationConnection -Name $AzureConnectionAssetName         
+Connect-AzAccount -Identity
 
-    Write-Output "Logging in to Azure..."
-
-    $Null = Add-AzAccount `
-        -ServicePrincipal `
-        -TenantId $ServicePrincipalConnection.TenantId `
-        -ApplicationId $ServicePrincipalConnection.ApplicationId `
-        -CertificateThumbprint $ServicePrincipalConnection.CertificateThumbprint 
-}
-catch {
-    if(!$ServicePrincipalConnection) {
-        throw "Connection $AzureConnectionAssetName not found."
-    }
-    else {
-        throw $_.Exception
-    }
-}
 
 if ($ResourceGroupName) { 
 	$VMs = Get-AzVM -ResourceGroupName $ResourceGroupName
@@ -39,8 +22,8 @@ else {
 # Stop each of the VMs
 foreach ($VM in $VMs) {
 	$StopRtn = $VM | Stop-AzVM -Force -ErrorAction Continue
-
-	if (!$StopRtn.IsSuccessStatusCode) {
+	
+	if ($StopRtn.Status -ne 'Succeeded') {
 		# The VM failed to stop, so send notice
         Write-Output ($VM.Name + " failed to stop")
         Write-Error ($VM.Name + " failed to stop. Error was:") -ErrorAction Continue
