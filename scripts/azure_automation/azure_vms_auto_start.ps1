@@ -1,58 +1,36 @@
 [OutputType([String])]
 
 param (
-    [Parameter(Mandatory=$false)] 
-    [String]  $AzureConnectionAssetName = "AzureRunAsConnection",
-
+    [Parameter(Mandatory = $false)]
+	[String]$AzureSubscriptionID,
+    
     [Parameter(Mandatory=$false)] 
     [String] $ResourceGroupName
 )
+#Connect to Azure
 
-try {
-    # Connect to Azure using service principal auth
-    $ServicePrincipalConnection = Get-AutomationConnection -Name $AzureConnectionAssetName         
+Connect-AzAccount -Identity
 
-    Write-Output "Logging in to Azure..."
 
-    $Null = Add-AzAccount `
-        -ServicePrincipal `
-        -TenantId $ServicePrincipalConnection.TenantId `
-        -ApplicationId $ServicePrincipalConnection.ApplicationId `
-        -CertificateThumbprint $ServicePrincipalConnection.CertificateThumbprint 
-}
-catch {
-    if(!$ServicePrincipalConnection) {
-        throw "Connection $AzureConnectionAssetName not found."
-    }
-    else {
-        throw $_.Exception
-    }
-}
-
-if ($ResourceGroupName) 
-{ 
+if ($ResourceGroupName) { 
 	$VMs = Get-AzVM -ResourceGroupName $ResourceGroupName
 }
-else 
-{ 
+else { 
 	$VMs = Get-AzVM
 }
 
-# Start each of the VMs
-foreach ($VM in $VMs)
-{
+# Stop each of the VMs
+foreach ($VM in $VMs) {
 	$StartRtn = $VM | Start-AzVM -ErrorAction Continue
-
-	if ($StartRtn.Status -ne 'Succeeded')
-	{
-		# The VM failed to start, so send notice
-        Write-Output ($VM.Name + " failed to start")
-        Write-Error ($VM.Name + " failed to start. Error was:") -ErrorAction Continue
-		Write-Error (ConvertTo-Json $StartRtn.Error) -ErrorAction Continue
+	
+	if ($StartRtn.Status -ne 'Succeeded') {
+		# The VM failed to stop, so send notice
+        Write-Output ($VM.Name + " failed to Start")
+        Write-Error ($VM.Name + " failed to Start. Error was:") -ErrorAction Continue
+		Write-Error (ConvertTo-Json $StopRtn) -ErrorAction Continue
 	}
-	else
-	{
-		# The VM stopped, so send notice
-		Write-Output ($VM.Name + " has been started")
+	else {
+		# The VM started, so send notice
+		Write-Output ($VM.Name + " has been Started")
 	}
 }
