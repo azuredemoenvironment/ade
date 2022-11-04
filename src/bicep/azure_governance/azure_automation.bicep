@@ -19,8 +19,8 @@ param azureAutomationVmStartRunbookName string
 @description('The name of the Azure Automation Runbook Schedule.')
 param azureAutomationVmDeallocationScheduleName string
 
-@description('The name of the Azure Automation Runbook Job.')
-param azureAutomationDeallocationJobName string
+//@description('The name of the Azure Automation Runbook Job.')
+//param azureAutomationDeallocationJobName string
 
 @description('The location for all resources.')
 param location string
@@ -80,7 +80,7 @@ resource azureAutomationAppScaleDownRunbook 'Microsoft.Automation/automationAcco
 }
   
    
-//vmdeallocation
+//VmDeallocation
 resource azureAutomationVmStopRunbook 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' = {
   name: azureAutomationVmStopRunbookName
   location: location
@@ -90,7 +90,7 @@ resource azureAutomationVmStopRunbook 'Microsoft.Automation/automationAccounts/r
    logVerbose: true
    logProgress: true
    publishContentLink: {
-    uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/main/src/ps/private/VirtualMachines/Set-AzureVirtualMachinesToDeallocated.ps1'
+    uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/sjkaursb93/217-azure-runbook-scaleupdown/scripts/azure_automation/azure_vms_auto_shutdown.ps1'
    }
 }
 }
@@ -105,8 +105,8 @@ resource azureAutomationVmStartRunbook 'Microsoft.Automation/automationAccounts/
    logVerbose: true
    logProgress: true
    publishContentLink: {
-    uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/main/src/ps/private/VirtualMachines/Set-AzureVirtualMachinesToAllocated.ps1'
-   }
+    uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/sjkaursb93/217-azure-runbook-scaleupdown/scripts/azure_automation/azure_vms_auto_start.ps1'
+  }
 }
 }
   
@@ -116,25 +116,25 @@ resource azureAutomationVmDeallocationSchedule 'Microsoft.Automation/automationA
   parent: azureAutomation
   properties: {
     timeZone: 'Etc/UTC'
-    startTime: '2022-10-07T21:30:00+00:00' // do this as a parameter in powershell
+    startTime: '2022-10-27T21:30:00+00:00' // do this as a parameter in powershell
     interval:1
     frequency: 'Day'   
-  }
+  } 
 
 }
 
 //VmDeallocationScheduleWithRunbook
-resource azureAutomationDeallocationJob 'Microsoft.Automation/automationAccounts/jobSchedules@2020-01-13-preview' = {
-  name: azureAutomationDeallocationJobName
-  parent: azureAutomation
-    properties: {
-      parameters: {}
-    runbook: {
-      name: azureAutomationVmDeallocationScheduleName
-    }
-    schedule: {
-      name: azureAutomationVmDeallocationScheduleName
-    }
-  }
+// resource azureAutomationDeallocationJob 'Microsoft.Automation/automationAccounts/jobSchedules@2020-01-13-preview' = {
+//   name: azureAutomationDeallocationJobName
+//   parent: azureAutomation
+//     properties: {
+//       parameters: {}
+//     runbook: {
+//       name: azureAutomationVmStopRunbookName
+//     }
+//     schedule: {
+//       name: azureAutomationVmDeallocationScheduleName
+//     }
+//   }
 
-}
+// }
