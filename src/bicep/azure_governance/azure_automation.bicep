@@ -22,11 +22,11 @@ param azureAutomationVmDeallocationScheduleName string
 //@description('The name of the Azure Automation Runbook Job.')
 //param azureAutomationDeallocationJobName string
 
-@description('The DateTime in UTC')
+@description('The allocation dateTime in UTC')
 param allocationStartTime string 
 
-@description('The DateTime in UTC')
-param deAllocationStartTime string 
+@description('The deallocation dateTime in UTC')
+param deallocationStartTime string 
 
 
 @description('The location for all resources.')
@@ -123,7 +123,7 @@ resource azureAutomationVmDeallocationSchedule 'Microsoft.Automation/automationA
   parent: azureAutomation
   properties: {
     timeZone: 'Etc/UTC'
-    startTime: deAllocationStartTime
+    startTime: deallocationStartTime
     interval:1
     frequency: 'Day'   
   } 

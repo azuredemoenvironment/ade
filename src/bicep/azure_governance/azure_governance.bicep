@@ -36,6 +36,12 @@ param location string = deployment().location
 @description('The password for Azure resources.')
 param resourcePassword string
 
+@description('The allocation dateTime in UTC')
+param allocationStartTime string 
+
+@description('The deallocation dateTime in UTC')
+param deallocationStartTime string 
+
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
@@ -75,7 +81,6 @@ var azureAutomationAppScaleDownRunbook = 'appscaledownrunbook-ade-${aliasRegion}
 var azureAutomationVmStopRunbook = 'vmstoprunbook-ade-${aliasRegion}-001'
 var azureAutomationVmStartRunbook = 'vmstartrunbook-ade-${aliasRegion}-001'
 var azureAutomationVmDeallocationSchedule = 'vmstoprunbookschedule-ade-${aliasRegion}-001'
-var runbookSchedule = dateTimeUTC
 //var azureAutomationDeallocationJob = 'vmstoprunbookjob-ade-${aliasRegion}-001'
 // Resource Group - App Configuration
 //////////////////////////////////////////////////
@@ -314,12 +319,13 @@ module azureAutomationModule 'azure_automation.bicep' = {
   ]
   params: {
     azureAutomationName: azureAutomationName
-    datetimeUTC: dateTimeUTC
     azureAutomationAppScaleUpRunbookName:  azureAutomationAppScaleUpRunbook
     azureAutomationAppScaleDownRunbookName: azureAutomationAppScaleDownRunbook
     azureAutomationVmStopRunbookName: azureAutomationVmStopRunbook
     azureAutomationVmStartRunbookName: azureAutomationVmStartRunbook
     azureAutomationVmDeallocationScheduleName: azureAutomationVmDeallocationSchedule
+    allocationStartTime: allocationStartTime
+    deallocationStartTime: deallocationStartTime
     //azureAutomationDeallocationJobName: azureAutomationDeallocationJob
     location: location
   }
