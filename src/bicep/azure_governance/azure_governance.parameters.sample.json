@@ -11,6 +11,9 @@
         "certificateBase64String": {
             "value": "@@certificateBase64String@@"
         },
+        "dateTimeUTC": {
+            "value": "@@dateTimeUTC@@"
+        },
         "listOfAllowedLocations": {
             "value": [
                 "@@azureRegion@@",

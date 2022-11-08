@@ -13,6 +13,7 @@ param azureRegion string
 @description('The Base64 encoded certificate for Azure resources.')
 param certificateBase64String string
 
+
 @description('The list of allowed locations for resource deployment. Used in Azure Policy module.')
 param listOfAllowedLocations array
 
@@ -67,12 +68,14 @@ var nsgFlowLogsStorageAccount = {
   name: replace('sa-ade-${aliasRegion}-nsgflow', '-', '')
   sku: 'Standard_LRS'
 }
+//Sim added all the automation variables
 var azureAutomationName = 'aa-ade-${aliasRegion}-001'
 var azureAutomationAppScaleUpRunbook = 'appscaleuprunbook-ade-${aliasRegion}-001'
 var azureAutomationAppScaleDownRunbook = 'appscaledownrunbook-ade-${aliasRegion}-001'
 var azureAutomationVmStopRunbook = 'vmstoprunbook-ade-${aliasRegion}-001'
 var azureAutomationVmStartRunbook = 'vmstartrunbook-ade-${aliasRegion}-001'
 var azureAutomationVmDeallocationSchedule = 'vmstoprunbookschedule-ade-${aliasRegion}-001'
+var runbookSchedule = dateTimeUTC
 //var azureAutomationDeallocationJob = 'vmstoprunbookjob-ade-${aliasRegion}-001'
 // Resource Group - App Configuration
 //////////////////////////////////////////////////
@@ -286,7 +289,7 @@ module identityModule 'azure_identity.bicep' = {
 //////////////////////////////////////////////////
 module keyVaultModule './azure_key_vault.bicep' = {
   scope: resourceGroup(keyVaultResourceGroupName)
-  name: 'logAnalyticsDeployment'
+   name: 'logAnalyticsDeployment'
   dependsOn: [
     keyVaultResourceGroup
   ]
@@ -311,6 +314,7 @@ module azureAutomationModule 'azure_automation.bicep' = {
   ]
   params: {
     azureAutomationName: azureAutomationName
+    datetimeUTC: dateTimeUTC
     azureAutomationAppScaleUpRunbookName:  azureAutomationAppScaleUpRunbook
     azureAutomationAppScaleDownRunbookName: azureAutomationAppScaleDownRunbook
     azureAutomationVmStopRunbookName: azureAutomationVmStopRunbook

@@ -29,8 +29,9 @@ function Set-InitialArmParameters {
     $acrName = "acr-ade-$aliasRegion-001".replace('-', '')
     #runbook start time parameter
      #Required for autoscaling apps, vms, containerServices
-        #'timeToScaleDown' = $DateTime.ToUniversalTime() 
-        #'timeToScaleUp' = $DateTime.ToUniversalTime()
+     #convert a specific time to UTC here and then use it in automation
+    #$allocationStartTime = ((Get-Date -Hour 8).AddDays(1)).ToUniversalTime() 
+    #$deallocationStartTIme = (Get-Date - Hour 19).ToUniversalTime()
 
 
     $certificateBase64String = ''
@@ -54,8 +55,6 @@ function Set-InitialArmParameters {
         'aliasRegion'                              = $aliasRegion
         'aliasPairedRegion'                        = $aliasPairedRegion
         'contactEmailAddress'                      = $email
-        #Sim added this date time to UTC
-        'dateTimeUTC'                              = Get-Date.ToUniversalTime()
         'scriptsBaseUri'                           = $scriptsBaseUri
         'azureRegion'                              = $azureRegion
         'azurePairedRegion'                        = $azurePairedRegion

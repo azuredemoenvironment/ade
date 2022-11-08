@@ -22,6 +22,13 @@ param azureAutomationVmDeallocationScheduleName string
 //@description('The name of the Azure Automation Runbook Job.')
 //param azureAutomationDeallocationJobName string
 
+@description('The DateTime in UTC')
+param allocationStartTime string 
+
+@description('The DateTime in UTC')
+param deAllocationStartTime string 
+
+
 @description('The location for all resources.')
 param location string
 
@@ -116,7 +123,7 @@ resource azureAutomationVmDeallocationSchedule 'Microsoft.Automation/automationA
   parent: azureAutomation
   properties: {
     timeZone: 'Etc/UTC'
-    startTime: '2022-10-27T21:30:00+00:00' // do this as a parameter in powershell
+    startTime: deAllocationStartTime
     interval:1
     frequency: 'Day'   
   } 
