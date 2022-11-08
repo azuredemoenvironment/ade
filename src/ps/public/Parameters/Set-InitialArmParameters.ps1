@@ -32,10 +32,6 @@ function Set-InitialArmParameters {
         #'timeToScaleDown' = $DateTime.ToUniversalTime() 
         #'timeToScaleUp' = $DateTime.ToUniversalTime()
 
-    #DateandTimeforAutoScaling
-    #$DateTime = Get-Date
-    
-
 
     $certificateBase64String = ''
     if ($secureCertificatePassword -ne $null -and $wildcardCertificatePath -ne $null) {
@@ -58,6 +54,8 @@ function Set-InitialArmParameters {
         'aliasRegion'                              = $aliasRegion
         'aliasPairedRegion'                        = $aliasPairedRegion
         'contactEmailAddress'                      = $email
+        #Sim added this date time to UTC
+        'dateTimeUTC'                              = Get-Date.ToUniversalTime()
         'scriptsBaseUri'                           = $scriptsBaseUri
         'azureRegion'                              = $azureRegion
         'azurePairedRegion'                        = $azurePairedRegion
