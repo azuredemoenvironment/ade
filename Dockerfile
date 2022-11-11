@@ -17,7 +17,7 @@ RUN    apk update \
 
 
 # Download and Install PowerShell
-RUN    curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell-7.3.0-linux-alpine-x64.tar.gz -o /tmp/powershell.tar.gz \
+RUN    curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.2.7/powershell-7.2.7-linux-alpine-x64.tar.gz -o /tmp/powershell.tar.gz \
     && mkdir -p /opt/microsoft/powershell/7 \
     && tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
     && chmod +x /opt/microsoft/powershell/7/pwsh \
