@@ -23,6 +23,7 @@ function Remove-AzureResourceGroups {
         $armParameters.appConfigResourceGroupName
         $armParameters.identityResourceGroupName
         $armParameters.monitorResourceGroupName
+        $armParameters.containerAppsResourceGroupName
     )
 
     $resourceGroupsToRemove | ForEach-Object {

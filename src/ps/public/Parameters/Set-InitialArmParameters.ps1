@@ -133,6 +133,7 @@ function Set-InitialArmParameters {
         'networkingResourceGroupName'              = "$azureRegionResourceGroupNamePrefix-networking"
         'networkWatcherResourceGroupName'          = "NetworkWatcherRG"
         'proximityPlacementGroupResourceGroupName' = "$azureRegionResourceGroupNamePrefix-ppg"
+        'containerAppsResourceGroupName'           = "$azureRegionResourceGroupNamePrefix-containerapps"
     }
 
     if (Confirm-AzureResourceExists 'keyvault' $armParameters.keyVaultResourceGroupName $armParameters.keyVaultName) {
