@@ -1,6 +1,10 @@
 on:
   workflow_dispatch:
-  push:
+  pull_request:
+    types:
+      - opened
+    branches:
+      - main
 
 name: Build Container Image - ade
 

@@ -23,6 +23,6 @@ jobs:
 
     - name: Scan IaC Templates
       uses: microsoft/ps-rule@main
-      with:
+      with: 
+        option: 'ps-rule.yml'
         modules: 'PSRule.Rules.CAF'
-
