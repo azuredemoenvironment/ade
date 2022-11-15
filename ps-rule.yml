@@ -17,5 +17,15 @@ configuration:
   # Enable expansion for Bicep source files.
   AZURE_BICEP_FILE_EXPANSION: true
 
-  # Enable expansion for template expansion.
-  AZURE_PARAMETER_FILE_EXPANSION: true
+input:
+  pathIgnore: 
+    - '**/**'
+    - '!src/bicep/azure_alerts/azure_alerts.bicep'
+    - '!src/bicep/azure_app_services/azure_app_services.bicep'
+    - '!src/bicep/azure_container_instances/azure_container_instances.bicep'
+    - '!src/bicep/azure_container_registry/azure_container_registry.bicep'
+    - '!src/bicep/azure_databases/azure_databases.bicep'
+    - '!src/bicep/azure_frontend_load_balancers/azure_application_gateway.bicep'
+    - '!src/bicep/azure_frontend_load_balancers/azure_virtual_machine_adeweb_vm_nic_update.bicep'
+    - '!src/bicep/azure_frontend_load_balancers/azure_app_config_frontend_load_balancers.bicep'
+    - '!src/bicep/azure_frontend_load_balancers/azure_virtual_machine_adeweb_vmss_nic_update.bicep'
