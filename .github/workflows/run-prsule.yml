@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'src/bicep/**'
+  push:
   workflow_dispatch:
 
 
