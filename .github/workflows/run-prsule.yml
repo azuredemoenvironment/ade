@@ -22,7 +22,5 @@ jobs:
     - name: Scan IaC Templates
       uses: microsoft/ps-rule@main
       with:
-        inputType: 'inputPath'
-        inputPath: 'src/bicep'
         modules: 'PSRule.Rules.CAF'
 
