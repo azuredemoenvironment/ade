@@ -1,0 +1,21 @@
+# PSRule configuration
+# Please see the documentation for all configuration options:
+# https://aka.ms/ps-rule/options
+
+include:
+  module:
+  - PSRule.Rules.CAF
+
+requires:
+  PSRule.Rules.CAF: '>=0.3.0'
+
+output:
+  culture:
+  - en-US
+
+configuration:
+  # Enable expansion for Bicep source files.
+  AZURE_BICEP_FILE_EXPANSION: true
+
+  # Enable expansion for template expansion.
+  AZURE_PARAMETER_FILE_EXPANSION: true

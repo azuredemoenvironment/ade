@@ -1,0 +1,27 @@
+on:
+  pull_request:
+    types:
+      - opened
+    branches:
+      - main
+    paths:
+      - 'src/bicep/**'
+  workflow_dispatch:
+
+
+jobs: 
+  run-psrule:
+    name: Run PSRule analysis
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Scan IaC Templates
+      uses: microsoft/ps-rule@main
+      with:
+        inputType: 'inputPath'
+        inputPath: 'src/bicep'
+        modules: 'PSRule.Rules.CAF'
+
