@@ -1,3 +1,5 @@
+name: Run IaC Analysis with PSRule 
+
 on:
   pull_request:
     types:
