@@ -42,9 +42,11 @@ param allocationStartTime string
 @description('The deallocation dateTime in UTC')
 param deallocationStartTime string 
 
-@description('The job deallocation schedule guid')
+@description('The VM deallocation job schedule guid')
 param vmDeallocationLinkScheduleGuid string = newGuid() //because of an existing issue, guid solves the deployment issue with job schedule
 
+@description('The VM Allocation job schedule guid')
+param vmAllocationLinkScheduleGuid string = newGuid() //because of an existing issue, guid solves the deployment issue with job schedule
 
 // Global Variables
 //////////////////////////////////////////////////
@@ -86,6 +88,8 @@ var azureAutomationVmStopRunbook = 'vmstoprunbook-ade-${aliasRegion}-001'
 var azureAutomationVmStartRunbook = 'vmstartrunbook-ade-${aliasRegion}-001'
 var azureAutomationVmDeallocationSchedule = 'vmstoprunbookschedule-ade-${aliasRegion}-001'
 var vmDeallocationLinkSchedule = vmDeallocationLinkScheduleGuid
+var azureAutomationVmAllocationSchedule = 'vmstartrunbookschedule-ade-${aliasRegion}-001'
+var vmAllocationLinkSchedule = vmAllocationLinkScheduleGuid
 
 
 // Resource Group - App Configuration
@@ -325,13 +329,15 @@ module azureAutomationModule 'azure_automation.bicep' = {
   ]
   params: {
     azureAutomationName: azureAutomationName
-    azureAutomationAppScaleUpRunbookName:  azureAutomationAppScaleUpRunbook
-    azureAutomationAppScaleDownRunbookName: azureAutomationAppScaleDownRunbook
-    azureAutomationVmStopRunbookName: azureAutomationVmStopRunbook
-    azureAutomationVmStartRunbookName: azureAutomationVmStartRunbook
-    azureAutomationVmDeallocationScheduleName: azureAutomationVmDeallocationSchedule
     allocationStartTime: allocationStartTime
     deallocationStartTime: deallocationStartTime
+    azureAutomationAppScaleUpRunbookName:  azureAutomationAppScaleUpRunbook
+    azureAutomationAppScaleDownRunbookName: azureAutomationAppScaleDownRunbook
+    azureAutomationVmStartRunbookName: azureAutomationVmStartRunbook
+    azureAutomationVmAllocationScheduleName: azureAutomationVmAllocationSchedule
+    vmAllocationLinkScheduleName: vmAllocationLinkSchedule
+    azureAutomationVmStopRunbookName: azureAutomationVmStopRunbook
+    azureAutomationVmDeallocationScheduleName: azureAutomationVmDeallocationSchedule
     vmDeallocationLinkScheduleName: vmDeallocationLinkSchedule
     location: location
   }
