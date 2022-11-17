@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/azure-cli:latest
 # Install Docker Client
 ################################################
 
-RUN    apk add --update docker openrc \
+RUN    apk add --update docker openrc tzdata \
     && rc-update add docker boot
 
 # Install PowerShell Core
@@ -17,7 +17,7 @@ RUN    apk update \
 
 
 # Download and Install PowerShell
-RUN    curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.2.6/powershell-7.2.6-linux-alpine-x64.tar.gz -o /tmp/powershell.tar.gz \
+RUN    curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.2.7/powershell-7.2.7-linux-alpine-x64.tar.gz -o /tmp/powershell.tar.gz \
     && mkdir -p /opt/microsoft/powershell/7 \
     && tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
     && chmod +x /opt/microsoft/powershell/7/pwsh \
@@ -52,4 +52,5 @@ RUN    chmod 777 ade.ps1 \
 
 # Start the Shell
 ################################################
+ENV TZ=UTC
 CMD [ "pwsh", "-nologo" ]

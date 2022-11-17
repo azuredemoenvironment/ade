@@ -78,7 +78,7 @@ resource adeAppSqlDatabase 'Microsoft.Sql/servers/databases@2020-11-01-preview' 
   properties: {
     collation: 'Sql_Latin1_General_CP1_CI_AS'
     maxSizeBytes: 2147483648
-    zoneRedundant: true
+    zoneRedundant: false
     autoPauseDelay: 60
     minCapacity: 5
   }
