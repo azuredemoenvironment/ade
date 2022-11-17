@@ -19,8 +19,8 @@ param azureAutomationVmStartRunbookName string
 @description('The name of the Azure Automation Runbook Schedule.')
 param azureAutomationVmDeallocationScheduleName string
 
-//@description('The name of the Azure Automation Runbook Job.')
-//param azureAutomationDeallocationJobName string
+@description('The name of the Azure Automation Runbook Job.')
+param vmDeallocationLinkScheduleName string
 
 @description('The allocation dateTime in UTC')
 param allocationStartTime string 
@@ -40,7 +40,7 @@ var tags = {
   costCenter: 'it'
 }
 
-resource azureAutomation 'Microsoft.Automation/automationAccounts@2021-06-22' = {
+resource azureAutomation 'Microsoft.Automation/automationAccounts@2022-08-08' = {
   name: azureAutomationName
   location:location
   tags: tags
@@ -52,17 +52,30 @@ resource azureAutomation 'Microsoft.Automation/automationAccounts@2021-06-22' = 
       keySource: 'Microsoft.Automation'
       identity: {}
     }
-   publicNetworkAccess: true
+   publicNetworkAccess: false
    sku: {
     name: 'basic'
    }
 
    }
   }
+
+  //Azure Automation Role Assignment
+  @description('A new GUID used to identify the role assignment')
+   param roleVMNameGuid string = guid('VirtualMachineContributor')
+   var VirtualMachineContributor = 'subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c'
+   resource vmRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+    name: roleVMNameGuid
+      properties: {
+      principalId: azureAutomation.identity.principalId
+      roleDefinitionId: VirtualMachineContributor
+      principalType: 'ServicePrincipal'
+    }
+   }
   
 //appscaleuprunbook
 
-  resource azureAutomationAppScaleUpRunbook 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' = {
+  resource azureAutomationAppScaleUpRunbook 'Microsoft.Automation/automationAccounts/runbooks@2022-08-08' = {
     name: azureAutomationAppScaleUpRunbookName
     location: location
     parent: azureAutomation
@@ -75,7 +88,7 @@ resource azureAutomation 'Microsoft.Automation/automationAccounts@2021-06-22' = 
   
 //appscaledownrunbook
 
-resource azureAutomationAppScaleDownRunbook 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' = {
+resource azureAutomationAppScaleDownRunbook 'Microsoft.Automation/automationAccounts/runbooks@2022-08-08' = {
   name: azureAutomationAppScaleDownRunbookName
   location: location
   parent: azureAutomation
@@ -88,7 +101,7 @@ resource azureAutomationAppScaleDownRunbook 'Microsoft.Automation/automationAcco
   
    
 //VmDeallocation
-resource azureAutomationVmStopRunbook 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' = {
+resource azureAutomationVmStopRunbook 'Microsoft.Automation/automationAccounts/runbooks@2022-08-08' = {
   name: azureAutomationVmStopRunbookName
   location: location
   parent: azureAutomation
@@ -101,9 +114,21 @@ resource azureAutomationVmStopRunbook 'Microsoft.Automation/automationAccounts/r
    }
 }
 }
+//VmDeallocationSchedule
+resource azureAutomationVmDeallocationSchedule 'Microsoft.Automation/automationAccounts/schedules@2022-08-08' = {
+  name: azureAutomationVmDeallocationScheduleName
+  parent: azureAutomation
+  properties: {
+    timeZone: 'Etc/UTC'
+    startTime: deallocationStartTime
+    interval: 1
+    frequency: 'Day'   
+  } 
+
+}
   
 //VmAllocation
-resource azureAutomationVmStartRunbook 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' = {
+resource azureAutomationVmStartRunbook 'Microsoft.Automation/automationAccounts/runbooks@2022-08-08' = {
   name: azureAutomationVmStartRunbookName
   location: location
   parent: azureAutomation
@@ -117,31 +142,24 @@ resource azureAutomationVmStartRunbook 'Microsoft.Automation/automationAccounts/
 }
 }
   
-//VmDeallocationSchedule
-resource azureAutomationVmDeallocationSchedule 'Microsoft.Automation/automationAccounts/schedules@2020-01-13-preview' = {
-  name: azureAutomationVmDeallocationScheduleName
-  parent: azureAutomation
-  properties: {
-    timeZone: 'Etc/UTC'
-    startTime: deallocationStartTime
-    interval:1
-    frequency: 'Day'   
-  } 
 
-}
 
 //VmDeallocationScheduleWithRunbook
-// resource azureAutomationDeallocationJob 'Microsoft.Automation/automationAccounts/jobSchedules@2020-01-13-preview' = {
-//   name: azureAutomationDeallocationJobName
-//   parent: azureAutomation
-//     properties: {
-//       parameters: {}
-//     runbook: {
-//       name: azureAutomationVmStopRunbookName
-//     }
-//     schedule: {
-//       name: azureAutomationVmDeallocationScheduleName
-//     }
-//   }
+resource vmDeallocationLinkSchedule 'Microsoft.Automation/automationAccounts/jobSchedules@2022-08-08' = {
+  name: vmDeallocationLinkScheduleName
+  parent: azureAutomation
+  // dependsOn:[
+  //   //azureAutomationVmStopRunbook
+  //   azureAutomationVmDeallocationSchedule
+  // ]
+    properties: {
+      runbook: {
+        name: azureAutomationVmStopRunbookName
+      }
+      schedule: {
+        name: azureAutomationVmDeallocationScheduleName
+      }
+    
+  }
 
-// }
+}

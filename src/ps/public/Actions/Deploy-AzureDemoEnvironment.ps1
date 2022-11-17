@@ -31,25 +31,25 @@ function Deploy-AzureDemoEnvironment {
     
     # Core Services
     ###################################
-    #Deploy-AzureGovernance $armParameters
+    Deploy-AzureGovernance $armParameters
     #Deploy-AzureNetworking $armParameters
-    Deploy-AzureContainerRegistry $armParameters
+    #Deploy-AzureContainerRegistry $armParameters
     
     # Data Services
     ###################################
-    Deploy-AzureDatabases $armParameters
+    #Deploy-AzureDatabases $armParameters
 
     # Compute Infrastructure
     ###################################
     #Deploy-AzureVirtualMachines $armParameters
-    Deploy-AzureAppServices $armParameters
+    #Deploy-AzureAppServices $armParameters
     #Deploy-AzureKubernetesService $armParameters
-    Deploy-AzureContainerInstances $armParameters
+    #Deploy-AzureContainerInstances $armParameters
     #Deploy-AdeApplicationToVirtualMachines $armParameters
 
     # Frontend Load Balancers
     ###################################
-    Deploy-AzureFrontendLoadBalancers $armParameters
+    #Deploy-AzureFrontendLoadBalancers $armParameters
     
     # Service Cleanup
     ###################################
@@ -59,7 +59,7 @@ function Deploy-AzureDemoEnvironment {
     # Additional Core Services
     ###################################
     #Deploy-AzureAlerts $armParameters
-    Deploy-AzurePublicDns $armParameters
+    #Deploy-AzurePublicDns $armParameters
   
     $stopwatch.Stop()
     $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)

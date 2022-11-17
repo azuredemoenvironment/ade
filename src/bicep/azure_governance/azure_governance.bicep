@@ -42,6 +42,10 @@ param allocationStartTime string
 @description('The deallocation dateTime in UTC')
 param deallocationStartTime string 
 
+@description('The job deallocation schedule guid')
+param vmDeallocationLinkScheduleGuid string = newGuid() //because of an existing issue, guid solves the deployment issue with job schedule
+
+
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
@@ -81,7 +85,9 @@ var azureAutomationAppScaleDownRunbook = 'appscaledownrunbook-ade-${aliasRegion}
 var azureAutomationVmStopRunbook = 'vmstoprunbook-ade-${aliasRegion}-001'
 var azureAutomationVmStartRunbook = 'vmstartrunbook-ade-${aliasRegion}-001'
 var azureAutomationVmDeallocationSchedule = 'vmstoprunbookschedule-ade-${aliasRegion}-001'
-//var azureAutomationDeallocationJob = 'vmstoprunbookjob-ade-${aliasRegion}-001'
+var vmDeallocationLinkSchedule = vmDeallocationLinkScheduleGuid
+
+
 // Resource Group - App Configuration
 //////////////////////////////////////////////////
 resource appConfigResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
@@ -119,7 +125,7 @@ resource networkWatcherResourceGroup 'Microsoft.Resources/resourceGroups@2021-01
 
 //Resource Group - Azure Automation
 ////////////////////////////////////////////////
-resource azureAutomationResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' = {
+resource azureAutomationResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: azureAutomationResourceGroupName
   location: azureRegion
 }
@@ -326,7 +332,7 @@ module azureAutomationModule 'azure_automation.bicep' = {
     azureAutomationVmDeallocationScheduleName: azureAutomationVmDeallocationSchedule
     allocationStartTime: allocationStartTime
     deallocationStartTime: deallocationStartTime
-    //azureAutomationDeallocationJobName: azureAutomationDeallocationJob
+    vmDeallocationLinkScheduleName: vmDeallocationLinkSchedule
     location: location
   }
 

@@ -30,9 +30,8 @@ function Set-InitialArmParameters {
     #runbook start time parameter
      #Required for autoscaling apps, vms, containerServices
      #convert a specific time to UTC here and then use it in automation
-    $allocationStartTime = ((Get-Date -Hour 8).AddDays(1)).ToUniversalTime() 
-    $deallocationStartTime = (Get-Date - Hour 19).ToUniversalTime()
-
+    $allocationStartTime = ((Get-Date -Hour 8).AddDays(1)).ToUniversalTime() -f 'yyyy-mm-ddThh:mm:ss+00:00'
+    $deallocationStartTime = (Get-Date -Hour 21).ToUniversalTime() -f 'yyyy-mm-ddThh:mm:ss+00:00'
 
     $certificateBase64String = ''
     if ($secureCertificatePassword -ne $null -and $wildcardCertificatePath -ne $null) {
@@ -54,6 +53,8 @@ function Set-InitialArmParameters {
         # Standard Parameters
         'aliasRegion'                              = $aliasRegion
         'aliasPairedRegion'                        = $aliasPairedRegion
+        'allocationStartTime'                      = $allocationStartTime
+        'deallocationStartTime'                    = $deallocationStartTime
         'contactEmailAddress'                      = $email
         'scriptsBaseUri'                           = $scriptsBaseUri
         'azureRegion'                              = $azureRegion

@@ -11,8 +11,11 @@
         "certificateBase64String": {
             "value": "@@certificateBase64String@@"
         },
-        "dateTimeUTC": {
-            "value": "@@dateTimeUTC@@"
+        "allocationStartTime": {
+            "value": "@@allocationStartTime@@"
+        },
+        "deallocationStartTime": {
+            "value": "@@deallocationStartTime@@"
         },
         "listOfAllowedLocations": {
             "value": [
