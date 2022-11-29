@@ -25,6 +25,6 @@ resource adeAppWebHook 'Microsoft.ContainerRegistry/registries/webhooks@2021-09-
     actions: [
       'push'
     ]
-    serviceUri: adeAppDockerWebHookUris[i].adeAppDockerWebHookUri
+    serviceUri: (!empty(adeAppAppServices)) ? adeAppDockerWebHookUris[i].adeAppDockerWebHookUri : string(null)
   }
 }]
