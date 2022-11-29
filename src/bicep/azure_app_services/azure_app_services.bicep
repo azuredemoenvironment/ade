@@ -266,7 +266,7 @@ module adeAppServicesModule 'azure_app_services_adeapp.bicep' = {
     diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     containerRegistryName: containerRegistryName
-    containerRegistryPassword: first(listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords).value
+    containerRegistryPassword: containerRegistry.listCredentials().passwords[0].value
     containerRegistryURL: containerRegistry.properties.loginServer
     location:location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
