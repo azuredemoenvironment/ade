@@ -15,8 +15,6 @@ param location string
 // Variables
 //////////////////////////////////////////////////
 
-var dockerUri = [for uri in adeAppDockerWebHookUris: uri.adeAppDockerWebHookUri]
-
 @batchSize(1)
 resource adeAppWebHook 'Microsoft.ContainerRegistry/registries/webhooks@2021-09-01' = [for (adeAppAppService, i) in adeAppAppServices: {
   name: '${containerRegistryName}/${adeAppAppService.adeAppAppServiceName}'
@@ -27,6 +25,6 @@ resource adeAppWebHook 'Microsoft.ContainerRegistry/registries/webhooks@2021-09-
     actions: [
       'push'
     ]
-    serviceUri: dockerUri[i]
+    serviceUri: (adeAppDockerWebHookUris[0]).adeAppDockerWebHookUri
   }
 }]
