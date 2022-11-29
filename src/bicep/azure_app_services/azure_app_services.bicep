@@ -79,7 +79,7 @@ var adeAppAppServices = [
 ]
 var adeAppSqlDatabaseName = 'sqldb-ade-${aliasRegion}-adeapp'
 var adeAppSqlServerName = 'sql-ade-${aliasRegion}-adeapp'
-var appConfigConnectionString = first(listKeys(appConfig.id, appConfig.apiVersion).value).connectionString
+var appConfigConnectionString = appConfig.listKeys().value[0].connectionString
 var appConfigName = 'appcs-ade-${aliasRegion}-001'
 var appServicePlanName = 'plan-ade-${aliasRegion}-001'
 var azureAppServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
