@@ -1,9 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
-    "metadata": {
-        "template": "src/bicep/azure_app_services/azure_app_services.bicep"
-    },
     "parameters": {
         "adminUserName": {
             "value": "@@adminUsername@@"

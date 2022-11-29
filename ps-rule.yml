@@ -15,9 +15,10 @@ output:
 
 configuration:
   # Enable expansion for Bicep source files.
-  AZURE_PARAMETER_FILE_EXPANSION: true
+  AZURE_BICEP_FILE_EXPANSION: true
 
 input:
   pathIgnore: 
-    - '**/**'
-    - '!src/bicep/azure_app_services/azure_app_services.parameters.sample.json'
+    - '**/*'
+    - '!**/*.test.bicep' 
+
