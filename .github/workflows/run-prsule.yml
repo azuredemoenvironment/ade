@@ -11,6 +11,8 @@ on:
   push:
   workflow_dispatch:
 
+env:
+  PSRULE_AZURE_BICEP_PATH: '/usr/local/bin/bicep'
 
 jobs: 
   run-psrule:
