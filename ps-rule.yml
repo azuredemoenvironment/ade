@@ -13,10 +13,6 @@ output:
   culture:
   - en-US
 
-configuration:
-  # Enable expansion for Bicep source files.
-  AZURE_BICEP_FILE_EXPANSION: true
-
 input:
   pathIgnore: 
     - '**/*'
