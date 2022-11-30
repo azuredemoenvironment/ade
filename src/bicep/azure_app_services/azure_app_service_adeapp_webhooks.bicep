@@ -7,7 +7,7 @@ param adeAppAppServices array
 param containerRegistryName string
 
 @description('The array of ADE App Docker Web Hook Uris.')
-param adeAppDockerWebHookUris array
+param adeAppDockerWebHookUris array = []
 
 @description('The region location of deployment.')
 param location string
@@ -25,6 +25,6 @@ resource adeAppWebHook 'Microsoft.ContainerRegistry/registries/webhooks@2021-09-
     actions: [
       'push'
     ]
-    serviceUri: string((adeAppDockerWebHookUris[0]).adeAppDockerWebHookUri)
+    serviceUri: array(adeAppDockerWebHookUris)[i].adeAppDockerWebHookUri
   }
 }]
