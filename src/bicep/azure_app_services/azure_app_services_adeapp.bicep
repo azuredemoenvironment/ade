@@ -191,7 +191,7 @@ resource adeAppServicePrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndp
 
 // Outputs
 //////////////////////////////////////////////////
-output adeAppDockerWebHookUris array = [for (adeAppAppService, i) in adeAppAppServices: {
+output adeAppDockerWebHookUris array = [for adeAppAppService in adeAppAppServices: {
   // Should not return secrets, but we need it in this case
-  adeAppDockerWebHookUri: '${list(resourceId('Microsoft.Web/sites/config', adeAppAppService.adeAppAppServiceName, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
+  adeAppDockerWebHookUri: '/docker/hook'
 }]
