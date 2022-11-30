@@ -282,7 +282,7 @@ module adeAppWebHooksModule 'azure_app_service_adeapp_webhooks.bicep' = {
   params: {
     adeAppAppServices: adeAppAppServices
     containerRegistryName: containerRegistryName
-    adeAppDockerWebHookUris: adeAppServicesModule.outputs.adeAppDockerWebHookUris
+    adeAppDockerWebHookUris: string(adeAppServicesModule.outputs.adeAppDockerWebHookUris)
     location:location
   }
 }
