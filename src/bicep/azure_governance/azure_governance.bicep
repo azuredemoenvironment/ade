@@ -48,6 +48,7 @@ param vmDeallocationLinkScheduleGuid string = newGuid() //because of an existing
 @description('The VM Allocation job schedule guid')
 param vmAllocationLinkScheduleGuid string = newGuid() //because of an existing issue, guid solves the deployment issue with job schedule
 
+
 // Global Variables
 //////////////////////////////////////////////////
 // Resource Groups
@@ -90,6 +91,8 @@ var azureAutomationVmDeallocationSchedule = 'vmstoprunbookschedule-ade-${aliasRe
 var vmDeallocationLinkSchedule = vmDeallocationLinkScheduleGuid
 var azureAutomationVmAllocationSchedule = 'vmstartrunbookschedule-ade-${aliasRegion}-001'
 var vmAllocationLinkSchedule = vmAllocationLinkScheduleGuid
+//this role is needed for azure automation account to stop/start the VMs
+var virtualMachineContributorId =resourceId('Microsoft.Authorization/roleDefinitions','9980e02c-c2be-4d73-94e8-173b1dc7cf3c')
 
 
 // Resource Group - App Configuration
@@ -105,6 +108,7 @@ resource identityResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' =
   name: identityResourceGroupName
   location: azureRegion
 }
+
 
 // Resource Group - Key Vault
 //////////////////////////////////////////////////
@@ -134,6 +138,7 @@ resource azureAutomationResourceGroup 'Microsoft.Resources/resourceGroups@2021-0
   location: azureRegion
 }
 
+ 
 // Module - Network Watcher
 //////////////////////////////////////////////////
 module networkWatcherModule 'azure_network_watcher.bicep' = {
@@ -296,9 +301,11 @@ module identityModule 'azure_identity.bicep' = {
   params: {
     applicationGatewayManagedIdentityName: applicationGatewayManagedIdentityName
     containerRegistryManagedIdentityName: containerRegistryManagedIdentityName
+   // automationAccountManagedIdentityName: automationAccountManagedIdentityName
     location: location
   }
 }
+
 
 // Module - Key Vault
 //////////////////////////////////////////////////
@@ -321,6 +328,7 @@ module keyVaultModule './azure_key_vault.bicep' = {
   }
 }
 
+
 module azureAutomationModule 'azure_automation.bicep' = {
   scope: resourceGroup(azureAutomationResourceGroupName)
   name: 'azureAutomationDeployment'
@@ -340,6 +348,19 @@ module azureAutomationModule 'azure_automation.bicep' = {
     azureAutomationVmDeallocationScheduleName: azureAutomationVmDeallocationSchedule
     vmDeallocationLinkScheduleName: vmDeallocationLinkSchedule
     location: location
+    
   }
 
 }
+//Assign the virtual machine contributor  role to system identity of automation account (AT Subscription scope). 
+//Note: Subscription scope is required the user assigned identity doesn't work
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(subscription().subscriptionId,virtualMachineContributorId)
+  properties: {
+    roleDefinitionId: virtualMachineContributorId
+    principalId: azureAutomationModule.outputs.AutAccountPrincipalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+

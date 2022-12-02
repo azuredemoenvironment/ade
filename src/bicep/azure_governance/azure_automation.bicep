@@ -1,5 +1,8 @@
 // Parameters
 //////////////////////////////////////////////////
+// Target Scope
+//////////////////////////////////////////////////
+
 
 @description('The name of the Azure Automation.')
 param azureAutomationName string
@@ -38,6 +41,11 @@ param deallocationStartTime string
 @description('The location for all resources.')
 param location string
 
+// @description('The managed identity name')
+// param automationAccountManagedIdentityPrincipalIdName string
+
+
+
 // Variables
 //////////////////////////////////////////////////
 var tags = {
@@ -52,9 +60,12 @@ resource azureAutomation 'Microsoft.Automation/automationAccounts@2022-08-08' = 
   location:location
   tags: tags
   identity: {
-    type: 'SystemAssigned'
-    }
-    properties: {
+   type: 'SystemAssigned'
+    // userAssignedIdentities: {
+    //   '${automationAccountManagedIdentityPrincipalIdName}':{}
+    // }
+  }      
+   properties: {
     encryption: {
       keySource: 'Microsoft.Automation'
       identity: {}
@@ -65,20 +76,10 @@ resource azureAutomation 'Microsoft.Automation/automationAccounts@2022-08-08' = 
    }
 
    }
-  }
-
-  //Azure Automation Role Assignment
-   var virtualMachineContributorId = resourceId('Microsoft.Authorization/roleDefinitions', '9980e02c-c2be-4d73-94e8-173b1dc7cf3c')
-   resource vmRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-    scope: azureAutomation
-    name: guid(azureAutomation.id, virtualMachineContributorId)
-      properties: {
-      principalId: azureAutomation.identity.principalId
-      roleDefinitionId: virtualMachineContributorId
-      principalType: 'ServicePrincipal'
-    }
-   }
+  } 
+  output AutAccountPrincipalId string = azureAutomation.identity.principalId
   
+
 //AppScaleUpRunbook
 
   resource azureAutomationAppScaleUpRunbook 'Microsoft.Automation/automationAccounts/runbooks@2022-08-08' = {
