@@ -1,23 +1,15 @@
 [OutputType([String])]
 
-param (
-    [Parameter(Mandatory = $false)]
-	[String]$AzureSubscriptionID,
-    
-    [Parameter(Mandatory=$false)] 
-    [String] $ResourceGroupName
-)
+
 #Connect to Azure
 
 Connect-AzAccount -Identity
 
 
-if ($ResourceGroupName) { 
-	$VMs = Get-AzVM -ResourceGroupName $ResourceGroupName
-}
-else { 
-	$VMs = Get-AzVM
-}
+#Getr all the VMs in a subscription
+#Since we are using managed identity and the scope is subscription, the command below will pull all the VMs of that subscription
+$VMs = Get-AzVM
+
 
 # Stop each of the VMs
 foreach ($VM in $VMs) {
