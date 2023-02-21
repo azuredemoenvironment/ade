@@ -1,8 +1,5 @@
 // Parameters
 //////////////////////////////////////////////////
-// Target Scope
-//////////////////////////////////////////////////
-
 
 @description('The name of the Azure Automation.')
 param azureAutomationName string
@@ -43,7 +40,6 @@ param location string
 
 // @description('The managed identity name')
 // param automationAccountManagedIdentityPrincipalIdName string
-
 
 
 // Variables
