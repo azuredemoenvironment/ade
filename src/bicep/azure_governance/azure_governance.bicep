@@ -39,14 +39,20 @@ param resourcePassword string
 @description('The allocation dateTime in UTC')
 param allocationStartTime string 
 
-@description('The deallocation dateTime in UTC')
+@description('The deAllocation dateTime in UTC')
 param deallocationStartTime string 
 
 @description('The VM deallocation job schedule guid')
 param vmDeallocationLinkScheduleGuid string = newGuid() //because of an existing issue, guid solves the deployment issue with job schedule
 
 @description('The VM Allocation job schedule guid')
-param vmAllocationLinkScheduleGuid string = newGuid() //because of an existing issue, guid solves the deployment issue with job schedule
+param vmAllocationLinkScheduleGuid string = newGuid() //because of an existing issue, guid solves the deployment issue with job schedule\
+
+@description('The App ScaleDown job schedule guid')
+param appScaleDownLinkScheduleGuid string = newGuid() //because of an existing issue, guid solves the deployment issue with job schedule
+
+@description('The App ScaleUp job schedule guid')
+param appScaleUpLinkScheduleGuid string = newGuid() //because of an existing issue, guid solves the deployment issue with job schedule
 
 
 // Global Variables
@@ -85,6 +91,10 @@ var nsgFlowLogsStorageAccount = {
 var azureAutomationName = 'aa-ade-${aliasRegion}-001'
 var azureAutomationAppScaleUpRunbook = 'appscaleuprunbook-ade-${aliasRegion}-001'
 var azureAutomationAppScaleDownRunbook = 'appscaledownrunbook-ade-${aliasRegion}-001'
+var azureAutomationAppScaleDownSchedule = 'appscaledownrunbookschedule-ade-${aliasRegion}-001'
+var azureAutomationAppScaleUpSchedule = 'appscaleuprunbookschedule-ade-${aliasRegion}-001'
+var appScaleDownLinkSchedule = appScaleDownLinkScheduleGuid
+var appScaleUpLinkSchedule = appScaleUpLinkScheduleGuid
 var azureAutomationVmStopRunbook = 'vmstoprunbook-ade-${aliasRegion}-001'
 var azureAutomationVmStartRunbook = 'vmstartrunbook-ade-${aliasRegion}-001'
 var azureAutomationVmDeallocationSchedule = 'vmstoprunbookschedule-ade-${aliasRegion}-001'
@@ -93,6 +103,9 @@ var azureAutomationVmAllocationSchedule = 'vmstartrunbookschedule-ade-${aliasReg
 var vmAllocationLinkSchedule = vmAllocationLinkScheduleGuid
 //this role is needed for azure automation account to stop/start the VMs
 var virtualMachineContributorId =resourceId('Microsoft.Authorization/roleDefinitions','9980e02c-c2be-4d73-94e8-173b1dc7cf3c')
+
+//this role is needed for azure automation account to autoscale app services plan
+var ContributorId =resourceId('Microsoft.Authorization/roleDefinitions','b24988ac-6180-42a0-ab88-20f7382dd24c')
 
 
 // Resource Group - App Configuration
@@ -339,8 +352,12 @@ module azureAutomationModule 'azure_automation.bicep' = {
     azureAutomationName: azureAutomationName
     allocationStartTime: allocationStartTime
     deallocationStartTime: deallocationStartTime
-    azureAutomationAppScaleUpRunbookName:  azureAutomationAppScaleUpRunbook
     azureAutomationAppScaleDownRunbookName: azureAutomationAppScaleDownRunbook
+    azureAutomationAppScaleDownScheduleName: azureAutomationAppScaleDownSchedule
+    appScaleDownLinkScheduleName: appScaleDownLinkSchedule
+    azureAutomationAppScaleUpRunbookName:  azureAutomationAppScaleUpRunbook
+    azureAutomationAppScaleUpScheduleName: azureAutomationAppScaleUpSchedule
+    appScaleUpLinkScheduleName: appScaleUpLinkSchedule
     azureAutomationVmStartRunbookName: azureAutomationVmStartRunbook
     azureAutomationVmAllocationScheduleName: azureAutomationVmAllocationSchedule
     vmAllocationLinkScheduleName: vmAllocationLinkSchedule
@@ -362,5 +379,17 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
     principalType: 'ServicePrincipal'
   }
 }
+
+//Assign the web plan contributor  role to system identity of automation account (AT Subscription scope). 
+//Note: Subscription scope is required the user assigned identity doesn't work
+resource roleAssignmentApp 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(subscription().subscriptionId,ContributorId)
+  properties: {
+    roleDefinitionId: ContributorId
+    principalId: azureAutomationModule.outputs.AutAccountPrincipalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
 
 

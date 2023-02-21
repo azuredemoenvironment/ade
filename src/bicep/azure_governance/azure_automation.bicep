@@ -4,11 +4,23 @@
 @description('The name of the Azure Automation.')
 param azureAutomationName string
 
+@description('The name of the Azure Automation App Scale Down Runbook.')
+param azureAutomationAppScaleDownRunbookName string
+
+@description('The name of the Azure Automation App Scale Down Schedule.')
+param azureAutomationAppScaleDownScheduleName string
+
+@description('The name of the Azure Automation App Scale Down Job.')
+param appScaleDownLinkScheduleName string
+
 @description('The name of the Azure Automation App Scale Up Runbook.')
 param azureAutomationAppScaleUpRunbookName string
 
-@description('The name of the Azure Automation App Scale Down Runbook.')
-param azureAutomationAppScaleDownRunbookName string
+@description('The name of the Azure Automation App Scale Up Schedule.')
+param azureAutomationAppScaleUpScheduleName string
+
+@description('The name of the Azure Automation App Scale Up Job.')
+param appScaleUpLinkScheduleName string
 
 @description('The name of the Azure Automation VM Deallocation Runbook.')
 param azureAutomationVmStopRunbookName string
@@ -22,10 +34,10 @@ param vmDeallocationLinkScheduleName string
 @description('The name of the Azure Automation VM Allocation Runbook.')
 param azureAutomationVmStartRunbookName string
 
-@description('The name of the Azure Automation VM Deallocation Schedule.')
+@description('The name of the Azure Automation VM Allocation Schedule.')
 param azureAutomationVmAllocationScheduleName string
 
-@description('The name of the Azure Automation VM Deallocation Job.')
+@description('The name of the Azure Automation VM Allocation Job.')
 param vmAllocationLinkScheduleName string
 
 @description('The allocation dateTime in UTC')
@@ -74,7 +86,52 @@ resource azureAutomation 'Microsoft.Automation/automationAccounts@2022-08-08' = 
    }
   } 
   output AutAccountPrincipalId string = azureAutomation.identity.principalId
+
+
+//AppScaleDownRunbook
+
+resource azureAutomationAppScaleDownRunbook 'Microsoft.Automation/automationAccounts/runbooks@2022-08-08' = {
+  name: azureAutomationAppScaleDownRunbookName
+  location: location
+  parent: azureAutomation
+  properties: {
+   runbookType: 'PowerShell'
+   logVerbose: true
+   logProgress: true
+   publishContentLink: {
+    uri:'https://raw.githubusercontent.com/azuredemoenvironment/ade/sjkaursb93/217-azure-runbook-scaleupdown/scripts/azure_automation/azure_apps_vertical_scaledown.ps1'
+   }
+}
+}
   
+//AppScaleDownSchedule
+resource azureAutomationAppScaleDownSchedule 'Microsoft.Automation/automationAccounts/schedules@2022-08-08' = {
+  name: azureAutomationAppScaleDownScheduleName
+  parent: azureAutomation
+  properties: {
+    timeZone: 'Etc/UTC'
+    startTime: deallocationStartTime
+    interval: 1
+    frequency: 'Day'   
+  } 
+
+}
+
+//AppScaleDownScheduleWithRunbook
+resource appScaleDownLinkSchedule 'Microsoft.Automation/automationAccounts/jobSchedules@2022-08-08' = {
+  name: appScaleDownLinkScheduleName
+  parent: azureAutomation
+    properties: {
+      runbook: {
+        name: azureAutomationAppScaleDownRunbookName
+      }
+      schedule: {
+        name: azureAutomationAppScaleDownScheduleName
+      }
+    
+  }
+
+}
 
 //AppScaleUpRunbook
 
@@ -86,22 +143,41 @@ resource azureAutomation 'Microsoft.Automation/automationAccounts@2022-08-08' = 
      runbookType: 'PowerShell'
      logVerbose: true
      logProgress: true
+     publishContentLink: {
+      uri:'https://raw.githubusercontent.com/azuredemoenvironment/ade/sjkaursb93/217-azure-runbook-scaleupdown/scripts/azure_automation/azure_apps_vertical_scaleup.ps1'
+     }
     }
 }
-  
-//appscaledownrunbook
+ 
 
-resource azureAutomationAppScaleDownRunbook 'Microsoft.Automation/automationAccounts/runbooks@2022-08-08' = {
-  name: azureAutomationAppScaleDownRunbookName
-  location: location
+//AppScaleUpSchedule
+resource azureAutomationAppScaleUpSchedule 'Microsoft.Automation/automationAccounts/schedules@2022-08-08' = {
+  name: azureAutomationAppScaleUpScheduleName
   parent: azureAutomation
   properties: {
-   runbookType: 'PowerShell'
-   logVerbose: true
-   logProgress: true
+    timeZone: 'Etc/UTC'
+    startTime: allocationStartTime
+    interval: 1
+    frequency: 'Day'   
+  } 
+
 }
+
+//AppScaleUpScheduleWithRunbook
+resource appScaleUpLinkSchedule 'Microsoft.Automation/automationAccounts/jobSchedules@2022-08-08' = {
+  name: appScaleUpLinkScheduleName
+  parent: azureAutomation
+    properties: {
+      runbook: {
+        name: azureAutomationAppScaleUpRunbookName
+      }
+      schedule: {
+        name: azureAutomationAppScaleUpScheduleName
+      }
+    
+  }
+
 }
-  
    
 //VmDeAllocationRunbook
 resource azureAutomationVmStopRunbook 'Microsoft.Automation/automationAccounts/runbooks@2022-08-08' = {
@@ -117,6 +193,7 @@ resource azureAutomationVmStopRunbook 'Microsoft.Automation/automationAccounts/r
    }
 }
 }
+
 //VmDeallocationSchedule
 resource azureAutomationVmDeallocationSchedule 'Microsoft.Automation/automationAccounts/schedules@2022-08-08' = {
   name: azureAutomationVmDeallocationScheduleName
