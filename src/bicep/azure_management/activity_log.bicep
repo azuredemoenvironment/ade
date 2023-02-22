@@ -7,8 +7,8 @@ targetScope = 'subscription'
 @description('The name of the Activity Log Diagnostic Settings.')
 param activityLogDiagnosticSettingsName string
 
-@description('The ID of the Diagnostics Storage Account.')
-param diagnosticsStorageAccountId string
+@description('The ID of the Storage Account.')
+param storageAccountId string
 
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
@@ -22,7 +22,7 @@ resource subscriptionActivityLog 'Microsoft.Insights/diagnosticSettings@2021-05-
   name: activityLogDiagnosticSettingsName
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
+    storageAccountId: storageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [

@@ -123,10 +123,6 @@ resource appDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-previe
         enabled: true
       }
       {
-        category: 'AppServiceFileAuditLogs'
-        enabled: true
-      }
-      {
         category: 'AppServiceAuditLogs'
         enabled: true
       }

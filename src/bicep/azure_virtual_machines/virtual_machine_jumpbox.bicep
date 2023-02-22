@@ -43,15 +43,13 @@ param managementSubnetId string
 @description('The base URI for deployment scripts.')
 param scriptsBaseUri string
 
+@description('The list of Resource tags')
+param tags object
+
 // Variables
 //////////////////////////////////////////////////
 var scriptLocation = '${scriptsBaseUri}/azure_virtual_machines/jumpboxvm.ps1'
 var scriptName = 'jumpboxvm.ps1'
-var tags = {
-  environment: 'production'
-  function: 'jumpbox'
-  costCenter: 'it'
-}
 
 // Resource - Public Ip Address
 //////////////////////////////////////////////////

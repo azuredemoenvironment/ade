@@ -8,11 +8,11 @@
         "containerResourceGroupName": {
             "value": "@@containerResourceGroupName@@"
         },
-        "ownerName": {
-            "value": "@@ownerName@@"
+        "scriptsBaseUri": {
+            "value": "@@scriptsBaseUri@@"
         },       
-        "rootDomainName": {
-            "value": "@@rootDomainName@@"
+        "securityResourceGroupName": {
+            "value": "@@securityResourceGroupName@@"
         }
     }
 }

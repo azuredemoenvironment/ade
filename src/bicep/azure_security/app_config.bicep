@@ -3,8 +3,11 @@
 @description('The name of the App Configuration.')
 param appConfigName string
 
-@description('The ID of the Diagnostics Storage Account.')
-param diagnosticsStorageAccountId string
+@description('The purge protection setting of the App Configuration.')
+param appConfigPurgeProtection bool
+
+@description('The sku of the App Configuration.')
+param appConfigSku string
 
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
@@ -14,6 +17,9 @@ param location string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
+
+@description('The ID of the Storage Account.')
+param storageAccountId string
 
 @description('The list of Resource tags')
 param tags object
@@ -25,11 +31,11 @@ resource appConfig 'Microsoft.AppConfiguration/configurationStores@2022-05-01' =
   location: location
   tags: tags
   sku: {
-    name: 'Standard'
+    name: appConfigSku
   }
   properties: {
     createMode: 'Default'
-    enablePurgeProtection: false
+    enablePurgeProtection: appConfigPurgeProtection
   }
 }
 
@@ -40,7 +46,7 @@ resource appConfigDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-
   name: '${appConfig.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
+    storageAccountId: storageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [

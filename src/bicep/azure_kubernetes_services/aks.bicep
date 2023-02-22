@@ -40,7 +40,7 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-06-01' = {
     type: 'SystemAssigned'
   }
   properties: {
-    kubernetesVersion: '1.22.11'
+    kubernetesVersion: '1.23.12'
     nodeResourceGroup: aksNodeResourceGroupName
     enableRBAC: true
     dnsPrefix: aksClusterDNSName

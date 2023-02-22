@@ -1,7 +1,10 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the Application Insights instance.')
-param applicationInsightsName string
+@description('The name of the Automation Account.')
+param automationAccountName string
+
+@description('The sku of the Automation Account.')
+param automationAccountSku string
 
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
@@ -15,27 +18,34 @@ param logAnalyticsWorkspaceId string
 @description('The ID of the Storage Account.')
 param storageAccountId string
 
-@description('The list of Resource tags')
+@description('The list of tags.')
 param tags object
 
-// Resource - Application Insights
+// Resource - Automation Account
 //////////////////////////////////////////////////
-resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: applicationInsightsName
-  location: location
+resource automationAccount 'Microsoft.Automation/automationAccounts@2022-08-08' = {
+  name: automationAccountName
+  location:location
   tags: tags
-  kind: 'web'
+  identity: {
+    type: 'SystemAssigned'
+  }      
   properties: {
-    Application_Type: 'web'
-    WorkspaceResourceId: logAnalyticsWorkspaceId
+    encryption: {
+      keySource: 'Microsoft.Automation'
+    }
+    publicNetworkAccess: false
+    sku: {
+      name: automationAccountSku
+    }
   }
 }
 
-// Resource - Application Insights - Diagnostic Settings
+// Resource - Automation Account - Diagnostic Settings
 //////////////////////////////////////////////////
-resource applicationInsightsDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: applicationInsights
-  name: '${applicationInsights.name}-diagnostics'
+resource automationAccountDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: automationAccount
+  name: '${automationAccount.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: storageAccountId
@@ -66,4 +76,4 @@ resource applicationInsightsDiagnostics 'microsoft.insights/diagnosticSettings@2
 
 // Outputs
 //////////////////////////////////////////////////
-output applicationInsightsConnectionString string = applicationInsights.properties.ConnectionString
+output automationAccountPrincipalId string = automationAccount.identity.principalId

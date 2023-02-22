@@ -3,23 +3,26 @@
 @description('The location for all resources.')
 param location string
 
-@description('The name of the Log Analytics Workspace')
+@description('The name of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceName string
+
+@description('The value in days for Log Analytics retention.')
+param logAnalyticsWorkspaceRetentionInDays int
 
 @description('The array of properties for the Log Analytics Workspace Solutions.')
 param logAnalyticsWorkspaceSolutions array
 
-@description('The list of Resource tags')
+@description('The list of tags.')
 param tags object
 
 // Resource - Log Analytics Workspace
 //////////////////////////////////////////////////
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' = {
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
   name: logAnalyticsWorkspaceName
   location: location
   tags: tags
   properties: {
-    retentionInDays: 30
+    retentionInDays: logAnalyticsWorkspaceRetentionInDays
     sku: {
       name: 'PerGB2018'
     }
@@ -53,7 +56,7 @@ resource logAnalyticsWorkspaceDiagnostics 'Microsoft.Insights/diagnosticSettings
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
-        category: 'Audit'
+        categoryGroup: 'allLogs'
         enabled: true
       }
     ]

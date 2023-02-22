@@ -6,43 +6,52 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
+@description('The access tier of the Storage Account.')
+param storageAccountAccessTier string
+
+@description('The kind of the Storage Account.')
+param storageAccountKind string
+
+@description('The sku of the storage account.')
+param storageAccountSku string
+
 @description('The name of the Storage Account.')
 param storageAccountName string
 
-@description('The list of Resource tags')
+@description('The list of tags.')
 param tags object
 
 // Resource - Storage Account
 //////////////////////////////////////////////////
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: storageAccountName
   location: location
   tags: tags
-  kind: 'StorageV2'
+  kind: storageAccountKind
   sku: {
-    name: 'Standard_LRS'
+    name: storageAccountSku
   }
   properties: {
-    accessTier: 'Hot'
+    accessTier: storageAccountAccessTier
     supportsHttpsTrafficOnly: true
   }
-  resource blobServices 'blobServices@2021-09-01' = {
+  resource blobServices 'blobServices@2022-09-01' = {
     name: 'default'
   }
-  resource tableServices 'tableServices@2021-09-01' = {
+  resource tableServices 'tableServices@2022-09-01' = {
     name: 'default'
   }
-  resource fileServices 'fileServices@2021-09-01' = {
+  resource fileServices 'fileServices@2022-09-01' = {
     name: 'default'
   }
-  resource queueServices 'queueServices@2021-09-01' = {
+  resource queueServices 'queueServices@2022-09-01' = {
     name: 'default'
   }
 }
 
 // Resource - Storage Account - Diagnostic Settings
 //////////////////////////////////////////////////
-resource storageAccountDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+resource storageAccountDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   scope: storageAccount
   name: '${storageAccount.name}-diagnostics'
   properties: {

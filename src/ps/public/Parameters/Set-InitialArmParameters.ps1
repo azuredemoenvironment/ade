@@ -17,30 +17,41 @@ function Set-InitialArmParameters {
     )
     
     # Initial Parameter Setup
+    $workload = "ade-$alias"
+    # TODO: This needs to be based on user input
+    $environment = "prod"
     $azureRegionShortName = Get-RegionShortName $azureRegion
-    $appEnvironment = "ade-$alias-$azureRegionShortName".ToLowerInvariant()
+    $appEnvironment = "$workload-$environment-$azureRegionShortName".ToLowerInvariant()
+
+
     $acrName = "acr-$appEnvironment-001".replace('-', '')
+    $allocationStartTime = ((Get-Date -Hour 8).AddDays(1)).ToUniversalTime() -f 'yyyy-mm-ddThh:mm:ss+00:00'
+    
     $certificateBase64String = ''
     if ($secureCertificatePassword -ne $null -and $wildcardCertificatePath -eq $null) {
         $certificateBase64String = Convert-WildcardCertificateToBase64String $secureCertificatePassword $wildcardCertificatePath
     }
+    $deallocationStartTime = (Get-Date -Hour 21).ToUniversalTime() -f 'yyyy-mm-ddThh:mm:ss+00:00'  
     $ownerName = $(az account show --query "user.name" --output tsv)
     $plainTextResourcePassword = ''
     if ($secureResourcePassword -ne $null) {
         $plainTextResourcePassword = ConvertFrom-SecureString -SecureString $secureResourcePassword -AsPlainText
     }
-    $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
+    $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content    
 
     Write-Log 'Generating ARM Parameters'
 
     $armParameters = @{
         # Standard Parameters
+        'allocationStartTime'                      = $allocationStartTime
         'appEnvironment'                           = $appEnvironment
         'azurePairedRegion'                        = $azurePairedRegion
         'azureRegion'                              = $azureRegion
         'contactEmailAddress'                      = $email
         'deployAzureFirewall'                      = 'false'
+        'deallocationStartTime'                    = $deallocationStartTime
         'deployVpnGateway'                         = 'false'
+        'environment'                              = $environment
         'module'                                   = $module
         'overwriteParameterFiles'                  = $overwriteParameterFiles 
         'rootDomainName'                           = $rootDomainName
@@ -104,21 +115,21 @@ function Set-InitialArmParameters {
         # Resource Group Names
         'adeAppAksNodeResourceGroupName'           = "rg-$appEnvironment-adeappaks-node"
         'adeAppAksResourceGroupName'               = "rg-$appEnvironment-adeappaks"
-        # 'adeAppServicesResourceGroupName'       = "rg-$appEnvironment-adeappweb"
-        # 'adeAppLoadTestingResourceGroupName'       = "rg-$appEnvironment-adeapploadtesting"
-        # 'adeAppSqlResourceGroupName'               = "rg-$appEnvironment-adeappdb"
-        # 'adeAppVmResourceGroupName'                = "rg-$appEnvironment-adeappvm"
-        # 'adeAppVmssResourceGroupName'              = "rg-$appEnvironment-adeappvmss"    
+        # 'adeAppServicesResourceGroupName'        = "rg-$appEnvironment-adeappweb"
+        # 'adeAppLoadTestingResourceGroupName'     = "rg-$appEnvironment-adeapploadtesting"
+        # 'adeAppSqlResourceGroupName'             = "rg-$appEnvironment-adeappdb"
+        # 'adeAppVmResourceGroupName'              = "rg-$appEnvironment-adeappvm"
+        # 'adeAppVmssResourceGroupName'            = "rg-$appEnvironment-adeappvmss"    
         'applicationGatewayResourceGroupName'      = "rg-$appEnvironment-applicationgateway"
-        # 'appServicePlanResourceGroupName'          = "rg-$appEnvironment-appserviceplan"
+        # 'appServicePlanResourceGroupName'        = "rg-$appEnvironment-appserviceplan"
         'appServiceResourceGroupName'              = "rg-$appEnvironment-appservice"    
-        # 'containerRegistryResourceGroupName'       = "rg-$appEnvironment-containerregistry"
+        # 'containerRegistryResourceGroupName'     = "rg-$appEnvironment-containerregistry"
         'containerResourceGroupName'               = "rg-$appEnvironment-container"
         "databaseResourceGroupName"                = "rg-$appEnvironment-database"
         'dnsResourceGroupName'                     = "rg-$appEnvironment-dns"
         'identityResourceGroupName'                = "rg-$appEnvironment-identity"     
-        # 'inspectorGadgetResourceGroupName'         = "rg-$appEnvironment-inspectorgadget"
-        # 'jumpboxResourceGroupName'                 = "rg-$appEnvironment-jumpbox"   
+        # 'inspectorGadgetResourceGroupName'       = "rg-$appEnvironment-inspectorgadget"
+        # 'jumpboxResourceGroupName'               = "rg-$appEnvironment-jumpbox"   
         'managementResourceGroupName'              = "rg-$appEnvironment-management"
         'networkingResourceGroupName'              = "rg-$appEnvironment-networking"
         'networkWatcherResourceGroupName'          = "NetworkWatcherRG"

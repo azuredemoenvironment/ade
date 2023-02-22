@@ -12,7 +12,7 @@ function Remove-AzureResourceGroups {
         # $armParameters.inspectorGadgetResourceGroupName
         # $armParameters.adeAppServicesResourceGroupName
         # $armParameters.appServicePlanResourceGroupName         
-        $armParameters.adeAppLoadTestingResourceGroupName
+        # $armParameters.adeAppLoadTestingResourceGroupName
         # $armParameters.adeAppVmssResourceGroupName
         # $armParameters.adeAppVmResourceGroupName
         # $armParameters.jumpboxResourceGroupName

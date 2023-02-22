@@ -1,6 +1,6 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The application environment (workoad, environment, location).')
+@description('The application environment (workload, environment, location).')
 param appEnvironment string
 
 @description('The Base64 encoded certificate for Azure resources.')
@@ -8,6 +8,14 @@ param certificateBase64String string
 
 @description('The date of the resource deployment.')
 param deploymentDate string = utcNow('yyyy-MM-dd')
+
+@description('The name of the application environment.')
+@allowed([
+  'dev'
+  'prod'
+  'test'
+])
+param environment string
 
 @description('The name of the Identity Resource Group.')
 param identityResourceGroupName string
@@ -29,9 +37,38 @@ param resourcePassword string
 //////////////////////////////////////////////////
 // Resources
 var appConfigName = 'appcs-${appEnvironment}-001'
-var keyVaultName = 'kv-${appEnvironment}-001'
+var appConfigPurgeProtection = false
+var appConfigSku = 'Standard'
+var applicationGatewayManagedIdentityPrincipalIdSecretsPermissions = [
+  'get'
+]
+var containerRegistryManagedIdentityPrincipalIdCertificatesPermissions = [
+  'get'
+]
+var containerRegistryManagedIdentityPrincipalIdKeysPermissions = [
+  'get'
+  'unwrapKey'
+  'wrapKey'
+]
+var containerRegistryManagedIdentityPrincipalIdSecretsPermissions = [
+  'get'
+]
+var keyVaultProperties = {
+  name: 'kv-${appEnvironment}-001'
+  skuName: 'standard'
+  family: 'A'
+  enabledForDeployment: true
+  enabledForDiskEncryption: true
+  enabledForTemplateDeployment: true
+  enableSoftDelete: true
+  softDeleteRetentionInDays: 7
+  enablePurgeProtection: true
+  publicNetworkAccess: 'enabled'
+}
+// var keyVaultName = 'kv-${appEnvironment}-001'
 var tags = {
   deploymentDate: deploymentDate
+  environment: environment
   owner: ownerName
 }
 
@@ -72,7 +109,7 @@ resource containerRegistryManagedIdentity 'Microsoft.ManagedIdentity/userAssigne
 
 // Existing Resource - Storage Account - Diagnostics
 //////////////////////////////////////////////////
-resource diagnosticsStorageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' existing = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
   name: replace('sa-${appEnvironment}-diags', '-', '')
 }
@@ -83,10 +120,12 @@ module appConfigModule './app_config.bicep' = {
   name: 'appConfigDeployment'
   params: {
     appConfigName: appConfigName
-    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    appConfigPurgeProtection: appConfigPurgeProtection
+    appConfigSku: appConfigSku
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location: location    
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    storageAccountId: storageAccount.id
     tags: tags
   }
 }
@@ -106,15 +145,29 @@ module appConfigApplicationInsightsModule './app_config_application_insights.bic
 module keyVaultModule './key_vault.bicep' = {
   name: 'keyVaultDeployment'
   params: {
-    applicationGatewayManagedIdentityPrincipalID: applicationGatewayManagedIdentity.properties.principalId
     certificateBase64String: certificateBase64String
-    containerRegistryManagedIdentityPrincipalID: containerRegistryManagedIdentity.properties.principalId
-    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
-    keyVaultName: keyVaultName
+    keyVaultProperties: keyVaultProperties
+    // keyVaultName: keyVaultName
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     resourcePassword: resourcePassword
+    storageAccountId: storageAccount.id
     tags: tags
+  }
+}
+
+// Module - Key Vault - Access Policies
+//////////////////////////////////////////////////
+module keyVaultAccessPoliciesModule 'key_vault_access_policies.bicep' = {
+  name: 'keyVaultAccessPoliciesDeployment'
+  params: {
+    applicationGatewayManagedIdentityPrincipalId: applicationGatewayManagedIdentity.properties.principalId
+    applicationGatewayManagedIdentityPrincipalIdSecretsPermissions: applicationGatewayManagedIdentityPrincipalIdSecretsPermissions
+    containerRegistryManagedIdentityPrincipalId: containerRegistryManagedIdentity.properties.principalId
+    containerRegistryManagedIdentityPrincipalIdCertificatesPermissions: containerRegistryManagedIdentityPrincipalIdCertificatesPermissions
+    containerRegistryManagedIdentityPrincipalIdKeysPermissions: containerRegistryManagedIdentityPrincipalIdKeysPermissions
+    containerRegistryManagedIdentityPrincipalIdSecretsPermissions: containerRegistryManagedIdentityPrincipalIdSecretsPermissions
+    keyVaultName: keyVaultProperties.name
   }
 }

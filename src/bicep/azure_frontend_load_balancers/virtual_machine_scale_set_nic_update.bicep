@@ -196,6 +196,8 @@ resource adeWebVmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = {
   }
 }
 
+resource nicUpdate 'Microsoft.Compute.'
+
 // Resource - Auto Scale Setting
 //////////////////////////////////////////////////
 resource adeWebVmssAutoScaleSettings 'microsoft.insights/autoscalesettings@2015-04-01' = {

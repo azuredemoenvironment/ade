@@ -11,7 +11,7 @@ function Deploy-AzureKubernetesServices {
     ##################################################
     $resourceGroupName = $armParameters.containerResourceGroupName    
 
-    # Deploy the Azure Kubernetes Services Bicep template at the subscription scope.
+    # Deploy the Azure Kubernetes Services Bicep at the Resource Group Scope.
     ##################################################
     Deploy-ArmTemplate 'Azure Kubernetes Services' $armParameters $resourceGroupName -bicep
 

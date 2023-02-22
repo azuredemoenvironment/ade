@@ -6,7 +6,7 @@ param appConfigName string
 @description('The array of properties for the Ade App App Services.')
 param appServices array
 
-// Resource - App Configuration - Key Virtual Machine Backing Service Connection String
+// Resource - App Configuration - Key Values - App Service Connection String
 //////////////////////////////////////////////////
 resource appConfigKeyVirtualMachineBackingServiceConnectionStrings 'Microsoft.AppConfiguration/configurationStores/keyValues@2022-05-01' = [for (appService, i) in appServices: {
   name: '${appConfigName}/Ade:${appService.appShortName}Uri$appservices'

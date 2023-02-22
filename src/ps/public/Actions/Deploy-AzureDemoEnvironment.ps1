@@ -31,7 +31,7 @@ function Deploy-AzureDemoEnvironment {
     
     # Core Services
     ###################################
-    # Deploy-AzureManagement $armParameters
+    Deploy-AzureManagement $armParameters
     # Deploy-AzureIdentity $armParameters
     # Deploy-AzureSecurity $armParameters
     # Deploy-AzureNetworking $armParameters
@@ -45,7 +45,7 @@ function Deploy-AzureDemoEnvironment {
     # ###################################
     # Deploy-AzureVirtualMachines $armParameters
     # Deploy-AzureAppServices $armParameters
-    Deploy-AzureKubernetesServices $armParameters
+    # Deploy-AzureKubernetesServices $armParameters
     # Deploy-AzureContainerInstances $armParameters
     # Deploy-AdeApplicationToVirtualMachines $armParameters
 
@@ -55,7 +55,6 @@ function Deploy-AzureDemoEnvironment {
     
     # # Service Cleanup
     # ###################################
-    # Deploy-AzureAppServicePlanScaleDown $armParameters
     # Set-AzureContainerInstancesToStopped $armParameters
 
     # # Additional Core Services

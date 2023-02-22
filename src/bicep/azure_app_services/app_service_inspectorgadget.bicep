@@ -91,10 +91,6 @@ resource inspectorGadgetAppServiceDiagnostics 'Microsoft.insights/diagnosticSett
         enabled: true
       }
       {
-        category: 'AppServiceFileAuditLogs'
-        enabled: true
-      }
-      {
         category: 'AppServiceAuditLogs'
         enabled: true
       }

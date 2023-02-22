@@ -236,7 +236,7 @@ module adeAppServicesModule 'app_service_adeapp.bicep' = {
 
 // Module - Webhooks - Ade App(s)
 //////////////////////////////////////////////////
-module adeAppWebHooksModule 'azure_app_service_adeapp_webhooks.bicep' = {
+module adeAppWebHooksModule 'app_service_webhooks.bicep' = {
   scope: resourceGroup(containerResourceGroupName)
   name: 'adeAppWebHooksDeployment'
   params: {
@@ -249,7 +249,7 @@ module adeAppWebHooksModule 'azure_app_service_adeapp_webhooks.bicep' = {
 
 // Module - App Config - Ade App(s)
 //////////////////////////////////////////////////
-module appConfigAppServices './azure_app_config_app_services.bicep' = {
+module appConfigAppServices 'app_service_app_config.bicep' = {
   scope: resourceGroup(securityResourceGroupName)
   name: 'azureAppServicesAdeAppConfigDeployment'
   params: {

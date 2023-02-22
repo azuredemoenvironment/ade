@@ -5,6 +5,9 @@
         "appEnvironment": {
             "value": "@@appEnvironment@@"
         },
+        "environment": {
+            "value": "@@environment@@"
+        },
         "ownerName": {
             "value": "@@ownerName@@"
         }

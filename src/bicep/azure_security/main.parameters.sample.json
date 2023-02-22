@@ -8,6 +8,9 @@
         "certificateBase64String": {
             "value": "@@certificateBase64String@@"
         },
+        "environment": {
+            "value": "@@environment@@"
+        },
         "identityResourceGroupName": {
             "value": "@@identityResourceGroupName@@"
         },

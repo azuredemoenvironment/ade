@@ -252,6 +252,7 @@ module jumpBoxModule './virtual_machine_jumpbox.bicep' = {
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
     managementSubnetId: virtualNetwork001::managementSubnet.id
     scriptsBaseUri: scriptsBaseUri
+    tags: tags
   }
 }
 

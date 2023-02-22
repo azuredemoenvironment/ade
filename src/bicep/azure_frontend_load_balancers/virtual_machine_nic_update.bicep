@@ -6,9 +6,6 @@ param adeAppApiGatewayBackendPoolId string
 @description('The ID of the  App Api Gateway Virtual Machine Backend Pool.')
 param adeAppApiGatewayVmBackendPoolId string
 
-@description('The array of properties for the  Web Virtual Machines.')
-param adeWebVirtualMachines array
-
 @description('The ID of the  App Frontend Backend Pool.')
 param adeAppFrontendBackendPoolId string
 
@@ -30,18 +27,16 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-// Variables
-//////////////////////////////////////////////////
-var tags = {
-  environment: 'production'
-  function: 'adeWebVm'
-  costCenter: 'it'
-}
+@description('The list of Resource tags')
+param tags object
+
+@description('The array of properties for the Virtual Machines.')
+param virtualMachines array
 
 // Resource - Network Interface -  Web Vm
 //////////////////////////////////////////////////
-resource adeWebVmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
-  name: adeWebVirtualMachine.nicName
+resource vmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (virtualMachine, i) in virtualMachines: {
+  name: virtualMachine.nicName
   location: location
   tags: tags
   properties: {
@@ -75,9 +70,9 @@ resource adeWebVmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (ad
 
 // Resource - Network Interface - Diagnostic Settings
 //////////////////////////////////////////////////
-resource adeWebVmNicDiagnosticSetting 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (adeWebVirtualMachine, i) in adeWebVirtualMachines: {
-  scope: adeWebVmNic[i]
-  name: '${adeWebVirtualMachine.nicName}-diagnostics'
+resource adeWebVmNicDiagnosticSetting 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (virtualMachine, i) in virtualMachines: {
+  scope: vmNic[i]
+  name: '${virtualMachine.nicName}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     storageAccountId: diagnosticsStorageAccountId

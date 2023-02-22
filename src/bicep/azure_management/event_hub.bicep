@@ -3,8 +3,23 @@
 @description('The name of the Event Hub.')
 param eventHubName string
 
+@description('The autoinflate setting of the Event Hub Namespace.')
+param eventHubNamespaceAutoInflate bool
+
 @description('The name of the Event Hub Namespace.')
 param eventHubNamespaceName string
+
+@description('The sku of the Event Hub Namespace.')
+param eventHubNamespaceSku string
+
+@description('The sku capacity of the Event Hub Namespace.')
+param eventHubNamespaceSkuCapacity int
+
+@description('The value in days for Event Hub message retention.')
+param eventHubMessageRetention int
+
+@description('The number of Event Hub partitions.')
+param eventHubPartitions int
 
 @description('The location for all resources.')
 param location string
@@ -17,35 +32,33 @@ param tags object
 
 // Resource - Event Hub Namespace
 //////////////////////////////////////////////////
-resource eventHubNamespace 'Microsoft.EventHub/namespaces@2021-11-01' = {
+resource eventHubNamespace 'Microsoft.EventHub/namespaces@2022-10-01-preview' = {
   name: eventHubNamespaceName
   location: location
   tags: tags
   sku: {
-    name: 'Basic'
-    tier: 'Basic'
-    capacity: 1
+    name: eventHubNamespaceSku
+    tier: eventHubNamespaceSku
+    capacity: eventHubNamespaceSkuCapacity
   }
   properties: {
-    isAutoInflateEnabled: false
-    zoneRedundant: true
-    maximumThroughputUnits: 0
+    isAutoInflateEnabled: eventHubNamespaceAutoInflate
   }
 }
 
 // Resource - Event Hub
 //////////////////////////////////////////////////
-resource eventHub 'Microsoft.EventHub/namespaces/eventhubs@2021-11-01' = {
+resource eventHub 'Microsoft.EventHub/namespaces/eventhubs@2022-10-01-preview' = {
   name: '${eventHubNamespace.name}/${eventHubName}'
   properties: {
-    messageRetentionInDays: 1
-    partitionCount: 2
+    messageRetentionInDays: eventHubMessageRetention
+    partitionCount: eventHubPartitions
   }
 }
 
 // Resource - Event Hub Authorization Rule
 //////////////////////////////////////////////////
-resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2021-11-01' = {
+resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2022-10-01-preview' = {
   name: '${eventHubNamespace.name}/RootManageSharedAccessKey'
   properties: {
     rights: [
@@ -58,7 +71,7 @@ resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/autho
 
 // Resource - Event Hub Namespace - Diagnostic Settings
 //////////////////////////////////////////////////
-resource eventHubNamespaceDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+resource eventHubNamespaceDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   scope: eventHubNamespace
   name: '${eventHubNamespace.name}-diagnostics'
   properties: {
@@ -66,46 +79,22 @@ resource eventHubNamespaceDiagnostics 'microsoft.insights/diagnosticSettings@202
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
-        category: 'ArchiveLogs'
+        categoryGroup: 'allLogs'
         enabled: true
-      }
-      {
-        category: 'OperationalLogs'
-        enabled: true
-      }
-      {
-        category: 'AutoScaleLogs'
-        enabled: true
-      }
-      {
-        category: 'KafkaCoordinatorLogs'
-        enabled: true
-      }
-      {
-        category: 'KafkaUserErrorLogs'
-        enabled: true
-      }
-      {
-        category: 'EventHubVNetConnectionEvent'
-        enabled: true
-      }
-      {
-        category: 'CustomerManagedKeyUserLogs'
-        enabled: true
-      }
-      {
-        category: 'RuntimeAuditLogs'
-        enabled: true
-      }
-      {
-        category: 'ApplicationMetricsLogs'
-        enabled: true
+        retentionPolicy: {
+          enabled: true
+          days: 7
+        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
+        retentionPolicy: {
+          enabled: true
+          days: 7
+        }
       }
     ]
   }
