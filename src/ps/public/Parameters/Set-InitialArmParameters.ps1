@@ -22,16 +22,11 @@ function Set-InitialArmParameters {
     $environment = "prod"
     $azureRegionShortName = Get-RegionShortName $azureRegion
     $appEnvironment = "$workload-$environment-$azureRegionShortName".ToLowerInvariant()
-
-
     $acrName = "acr-$appEnvironment-001".replace('-', '')
-    $allocationStartTime = ((Get-Date -Hour 8).AddDays(1)).ToUniversalTime() -f 'yyyy-mm-ddThh:mm:ss+00:00'
-    
     $certificateBase64String = ''
     if ($secureCertificatePassword -ne $null -and $wildcardCertificatePath -eq $null) {
         $certificateBase64String = Convert-WildcardCertificateToBase64String $secureCertificatePassword $wildcardCertificatePath
     }
-    $deallocationStartTime = (Get-Date -Hour 21).ToUniversalTime() -f 'yyyy-mm-ddThh:mm:ss+00:00'  
     $ownerName = $(az account show --query "user.name" --output tsv)
     $plainTextResourcePassword = ''
     if ($secureResourcePassword -ne $null) {
@@ -43,13 +38,11 @@ function Set-InitialArmParameters {
 
     $armParameters = @{
         # Standard Parameters
-        'allocationStartTime'                      = $allocationStartTime
         'appEnvironment'                           = $appEnvironment
         'azurePairedRegion'                        = $azurePairedRegion
         'azureRegion'                              = $azureRegion
         'contactEmailAddress'                      = $email
         'deployAzureFirewall'                      = 'false'
-        'deallocationStartTime'                    = $deallocationStartTime
         'deployVpnGateway'                         = 'false'
         'environment'                              = $environment
         'module'                                   = $module

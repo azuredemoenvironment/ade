@@ -12,7 +12,7 @@ param logAnalyticsWorkspaceRetentionInDays int
 @description('The array of properties for the Log Analytics Workspace Solutions.')
 param logAnalyticsWorkspaceSolutions array
 
-@description('The list of tags.')
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Log Analytics Workspace

@@ -1,14 +1,7 @@
-// Target Scope
-//////////////////////////////////////////////////
-targetScope = 'subscription'
-
 // Parameters
 //////////////////////////////////////////////////
-@description('The principal ID of the Automation Account.')
+@description('The Principal ID of the Automation Account.')
 param automationAccountPrincipalId string
-
-@description('The principal ID of the Automation Account.')
-param automationAccountPrincipalIdType string
 
 @description('The Id of the Contributor role definition.')
 param contributorRoleDefinitionId string
@@ -20,6 +13,6 @@ resource roleAssignmentApp 'Microsoft.Authorization/roleAssignments@2022-04-01' 
   properties: {
     roleDefinitionId: contributorRoleDefinitionId
     principalId: automationAccountPrincipalId
-    principalType: automationAccountPrincipalIdType
+    principalType: 'ServicePrincipal'
   }
 }

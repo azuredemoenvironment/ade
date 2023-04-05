@@ -1,8 +1,5 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The allocation dateTime in UTC')
-param allocationStartTime string 
-
 @description('The application environment (workload, environment, location).')
 param appEnvironment string
 
@@ -18,11 +15,11 @@ param automationJobScheduleVirtualMachineAllocateName string = newGuid()
 @description('The VM deallocation job schedule guid')
 param automationJobScheduleVirtualMachineDeallocateName string = newGuid()
 
-@description('The deallocation dateTime in UTC')
-param deallocationStartTime string 
+@description('The current date.')
+param currentDate string = utcNow('yyyy-MM-dd')
 
-@description('The date of the resource deployment.')
-param deploymentDate string = utcNow('yyyy-MM-dd')
+@description('The current time.')
+param currentTime string = utcNow('yyyy-MM-ddTHH:mm:ss')
 
 @description('The name of the application environment.')
 @allowed([
@@ -32,22 +29,6 @@ param deploymentDate string = utcNow('yyyy-MM-dd')
 ])
 param environment string
 
-@description('The list of allowed locations for resource deployment. Used in Azure Policy module.')
-param listOfAllowedLocations array
-
-@description('The list of allowed virtual machine SKUs. Used in Azure Policy module.')
-param listOfAllowedSKUs array = [
-  'Standard_B1ls'
-  'Standard_B1ms'
-  'Standard_B1s'
-  'Standard_B2ms'
-  'Standard_B2s'
-  'Standard_B4ms'
-  'Standard_B4s'
-  'Standard_D2s_v3'
-  'Standard_D4s_v3'
-]
-
 @description('The location for all resources.')
 param location string = resourceGroup().location
 
@@ -56,32 +37,15 @@ param ownerName string
 
 // Variables
 //////////////////////////////////////////////////
-var activityLogDiagnosticSettingsName = 'subscriptionactivitylog'
-var allowedLocations = '/providers/Microsoft.Authorization/policyDefinitions/e56962a6-4747-49cd-b67b-bf8b01975c4c'
-var allowedLocationsForResourceGroups = '/providers/Microsoft.Authorization/policyDefinitions/e765b5de-1225-4ba3-bd56-1ac6695af988'
-var allowedVirtualMachineSizeSkus = '/providers/Microsoft.Authorization/policyDefinitions/cccc23c7-8427-4f53-ad12-b6a63eb452b3'
-var applicationInsightsName = 'appinsights-${appEnvironment}-001'
-var auditVirtualMachinesWithoutDisasterRecoveryConfigured = '/providers/Microsoft.Authorization/policyDefinitions/0015ea4d-51ff-4ce3-8d8c-f3f8f0179a56'
-var automationAccountName = 'aa-${appEnvironment}-001'
-var automationAccountSku = 'Basic'
-var automationRunbookAppServiceScaleDownName = 'runbook-app-service-scale-down'
-var automationRunbookAppServiceScaleUpName = 'runbook-app-service-scale-up'
-var automationRunbookVirtualMachineAllocateName = 'runbook-virtual-machine-allocate'
-var automationRunbookVirtualMachineDeallocateName = 'runbook-virtual-machine-deallocate'
-var automationScheduleAppServiceScaleDownName = 'runbook-schedule-app-service-scale-down'
-var automationScheduleAppServiceScaleUpName = 'runbook-schedule-app-service-scale-up'
-var automationScheduleVirtualMachineAllocateName = 'runbook-schedule-virtual-machine-allocate'
-var automationScheduleVirtualMachineDeallocateName = 'runbook-schedule-virtual-machine-deallocate'
-var contributorRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions','b24988ac-6180-42a0-ab88-20f7382dd24c')
-var eventHubMessageRetention = 1
-var eventHubName = 'diagnostics'
-var eventHubNamespaceAutoInflate = false
-var eventHubNamespaceName = 'evh-${appEnvironment}-diagnostics'
-var eventHubNamespaceSku = 'Basic'
-var eventHubNamespaceSkuCapacity = 1
-var eventHubPartitions = 1
-var initiativeDefinitionName = 'policy-${appEnvironment}-adeinitiative'
-var logAnalyticsWorkspaceName = 'log-${appEnvironment}-001'
+var tags = {
+  deploymentDate: currentDate
+  environment: environment
+  owner: ownerName
+}
+
+// Variables - Log Analytics
+//////////////////////////////////////////////////
+var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
 var logAnalyticsWorkspaceRetentionInDays = 30
 var logAnalyticsWorkspaceSolutions = [
   {
@@ -97,15 +61,116 @@ var logAnalyticsWorkspaceSolutions = [
     galleryName: 'VMInsights'
   }
 ]
-var storageAccountAccessTier = 'Hot'
-var storageAccountKind = 'StorageV2'
-var storageAccountName = replace('sa-${appEnvironment}-diags', '-', '')
-var storageAccountSku = 'Standard_LRS'
-var tags = {
-  deploymentDate: deploymentDate
-  environment: environment
-  owner: ownerName
+
+// Variables - Storage Account
+//////////////////////////////////////////////////
+var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
+var storageAccountProperties = {
+  accessTier: 'Hot'
+  httpsOnly: true
+  kind: 'StorageV2'
+  sku: 'Standard_GRS'
 }
+
+// Variables - Event Hub
+//////////////////////////////////////////////////
+var eventHubName = 'evh-${appEnvironment}-diagnostics'
+var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
+var eventHubNamespaceProperties = {
+  autoInflate: false
+  authorizationRuleName: 'RootManageSharedAccessKey'
+  messageRetention: 1
+  partitions: 1
+  rights: ['Listen', 'Manage', 'Send']
+  sku: 'Basic'
+  skuCapacity: 1
+}
+
+// Variables - Application Insights
+//////////////////////////////////////////////////
+var applicationInsightsName = 'appinsights-${appEnvironment}'
+
+// Variables - Automation
+//////////////////////////////////////////////////
+var allocationStartTime = '08:00:00'
+var allocationTime = dateTimeAdd('${currentDate}T${allocationStartTime}', dateTimeToEpoch('${currentDate}T${allocationStartTime}') > nowTicks + offsetInSeconds ? 'P0D' : 'P1D')
+var automationAccountName = 'aa-${appEnvironment}'
+var automationAccountPrincipalIdType = 'ServicePrincipal'
+var automationAccountProperties = {
+  identityType: 'SystemAssigned'
+  keySource: 'Microsoft.Automation'
+  publicNetworkAccess: false
+  sku: 'Basic'
+}
+var automationRunbooks = [
+  {
+    frequency: 'Day'
+    interval: 1
+    jobScheduleName: automationJobScheduleAppServiceScaleDownName
+    logProgress: true
+    logVerbose: true
+    runbookName: 'runbook-app-service-scale-down'
+    runbookType: 'PowerShell'
+    scheduleName: 'runbook-schedule-app-service-scale-down'
+    startTime: deallocationTime
+    timeZone: 'Etc/UTC'
+    uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/joshuawaddell/issue/189-Refactoring-and-Standardization-of-Names-Terms-Types-etc-after-v20-Merge/scripts/automation_runbooks/app_service_scale_down.ps1'
+  }
+  {
+    frequency: 'Day'
+    interval: 1
+    jobScheduleName: automationJobScheduleAppServiceScaleUpName
+    logProgress: true
+    logVerbose: true
+    runbookName: 'runbook-app-service-scale-up'
+    runbookType: 'PowerShell'
+    scheduleName: 'runbook-schedule-app-service-scale-up'
+    startTime: allocationTime
+    timeZone: 'Etc/UTC'
+    uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/joshuawaddell/issue/189-Refactoring-and-Standardization-of-Names-Terms-Types-etc-after-v20-Merge/scripts/automation_runbooks/app_service_scale_up.ps1'
+  }
+  {
+    frequency: 'Day'
+    interval: 1
+    jobScheduleName: automationJobScheduleVirtualMachineAllocateName
+    logProgress: true
+    logVerbose: true
+    runbookName: 'runbook-virtual-machine-allocate'
+    runbookType: 'PowerShell'
+    scheduleName: 'runbook-schedule-virtual-machine-allocate'
+    startTime: allocationTime
+    timeZone: 'Etc/UTC'
+    uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/joshuawaddell/issue/189-Refactoring-and-Standardization-of-Names-Terms-Types-etc-after-v20-Merge/scripts/automation_runbooks/virtual_machine_allocate.ps1'
+  }
+  {
+    frequency: 'Day'
+    interval: 1
+    jobScheduleName: automationJobScheduleVirtualMachineDeallocateName
+    logProgress: true
+    logVerbose: true
+    runbookName: 'runbook-virtual-machine-deallocate'
+    runbookType: 'PowerShell'
+    scheduleName: 'runbook-schedule-virtual-machine-deallocate'
+    startTime: deallocationTime
+    timeZone: 'Etc/UTC'
+    uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/joshuawaddell/issue/189-Refactoring-and-Standardization-of-Names-Terms-Types-etc-after-v20-Merge/scripts/automation_runbooks/virtual_machine_deallocate.ps1'    
+  }
+]
+var contributorRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions','b24988ac-6180-42a0-ab88-20f7382dd24c')
+var deallocationStopTime = '21:00:00'
+var deallocationTime = dateTimeAdd('${currentDate}T${deallocationStopTime}', dateTimeToEpoch('${currentDate}T${deallocationStopTime}') > nowTicks + offsetInSeconds ? 'P0D' : 'P1D')
+var nowTicks = dateTimeToEpoch(currentTime)
+var offsetInSeconds = 300
+
+// Variables - Activity Log
+//////////////////////////////////////////////////
+var activityLogDiagnosticSettingsName = 'subscriptionactivitylog'
+
+// Variables - Azure Policy
+//////////////////////////////////////////////////
+var auditVirtualMachinesWithoutDisasterRecoveryConfiguredGuid = '/providers/Microsoft.Authorization/policyDefinitions/0015ea4d-51ff-4ce3-8d8c-f3f8f0179a56'
+var initiativeDefinitionName = 'policy-${appEnvironment}-adeinitiative'
+var initiativeDefinitionEnforcementMode = 'Default'
 
 // Module - Log Analytics Workspace
 //////////////////////////////////////////////////
@@ -120,17 +185,15 @@ module logAnalyticsModule 'log_analytics.bicep' = {
   }
 }
 
-// Module - Storage Account - Diagnostics
+// Module - Storage Account
 //////////////////////////////////////////////////
-module storageAccountDiagnosticsModule 'storage_account.bicep' = {
-  name: 'storageAccountDiagnosticsDeployment'
+module storageAccountModule 'storage_account.bicep' = {
+  name: 'storageAccountDeployment'
   params: {
     location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
-    storageAccountAccessTier: storageAccountAccessTier
-    storageAccountKind: storageAccountKind
+    storageAccountProperties: storageAccountProperties
     storageAccountName: storageAccountName
-    storageAccountSku: storageAccountSku
     tags: tags
   }
 }
@@ -140,13 +203,9 @@ module storageAccountDiagnosticsModule 'storage_account.bicep' = {
 module eventHubDiagnosticsModule 'event_hub.bicep' = {
   name: 'eventHubDiagnosticsDeployment'
   params: {
-    eventHubMessageRetention: eventHubMessageRetention
     eventHubName: eventHubName
-    eventHubNamespaceAutoInflate: eventHubNamespaceAutoInflate
     eventHubNamespaceName: eventHubNamespaceName
-    eventHubNamespaceSku: eventHubNamespaceSku
-    eventHubNamespaceSkuCapacity: eventHubNamespaceSkuCapacity
-    eventHubPartitions: eventHubPartitions
+    eventHubNamespaceProperties: eventHubNamespaceProperties
     location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
     tags: tags
@@ -162,56 +221,35 @@ module applicationInsightsModule './application_insights.bicep' = {
     eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
     location: location    
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
-    storageAccountId: storageAccountDiagnosticsModule.outputs.storageAccountId
+    storageAccountId: storageAccountModule.outputs.storageAccountId
     tags: tags
   }
 }
 
-// Module - Automation Account
+// Module - Automation
 //////////////////////////////////////////////////
-module automationAccountModule 'automation.bicep' = {
-  name: 'automationAccountDeployment'
+module automationModule 'automation.bicep' = {
+  name: 'automationDeployment'
   params: {
     automationAccountName: automationAccountName
-    automationAccountSku: automationAccountSku
+    automationAccountProperties: automationAccountProperties
+    automationRunbooks: automationRunbooks
     eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
-    location: location
+    location: location    
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
-    storageAccountId: storageAccountDiagnosticsModule.outputs.storageAccountId
+    storageAccountId: storageAccountModule.outputs.storageAccountId
     tags: tags
   }
 }
 
-// Module - Automation Runbooks
-//////////////////////////////////////////////////
-module automationRunbooksModule 'automation_runbooks.bicep' = {
-  name: 'automationRunbooksDeployment'
-  params: {
-    allocationStartTime: allocationStartTime
-    automationAccountName: automationAccountName
-    automationJobScheduleAppServiceScaleDownName: automationJobScheduleAppServiceScaleDownName
-    automationJobScheduleAppServiceScaleUpName: automationJobScheduleAppServiceScaleUpName
-    automationJobScheduleVirtualMachineAllocateName: automationJobScheduleVirtualMachineAllocateName
-    automationJobScheduleVirtualMachineDeallocateName: automationJobScheduleVirtualMachineDeallocateName
-    automationRunbookAppServiceScaleDownName: automationRunbookAppServiceScaleDownName
-    automationRunbookAppServiceScaleUpName: automationRunbookAppServiceScaleUpName
-    automationRunbookVirtualMachineAllocateName: automationRunbookVirtualMachineAllocateName
-    automationRunbookVirtualMachineDeallocateName: automationRunbookVirtualMachineDeallocateName
-    automationScheduleAppServiceScaleDownName: automationScheduleAppServiceScaleDownName
-    automationScheduleAppServiceScaleUpName: automationScheduleAppServiceScaleUpName
-    automationScheduleVirtualMachineAllocateName: automationScheduleVirtualMachineAllocateName
-    automationScheduleVirtualMachineDeallocateName: automationScheduleVirtualMachineDeallocateName
-    deallocationStartTime: deallocationStartTime
-    location: location
-  }
-}
-
-// Module - Automation Role Assignment
+// Module - Automation - Role Assignment
 //////////////////////////////////////////////////
 module automationRoleAssignmentModule 'automation_role_assignment.bicep' = {
+  scope: subscription()
   name: 'automationRoleAssignmentDeployment'
   params: {
-    automationAccountPrincipalId: automationAccountModule.outputs.automationAccountPrincipalId
+    automationAccountPrincipalId: automationModule.outputs.automationAccountPrincipalId
+    automationAccountPrincipalIdType: automationAccountPrincipalIdType
     contributorRoleDefinitionId: contributorRoleDefinitionId
   }
 }
@@ -225,22 +263,19 @@ module activityLogModule './activity_log.bicep' = {
     activityLogDiagnosticSettingsName: activityLogDiagnosticSettingsName
     eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
-    storageAccountId: storageAccountDiagnosticsModule.outputs.storageAccountId
+    storageAccountId: storageAccountModule.outputs.storageAccountId
   }
 }
 
 // Module - Policy
-//////////////////////////////////////////////////
+// //////////////////////////////////////////////////
 module policyModule 'policy.bicep' = {
   scope: subscription()
   name: 'policyDeployment'
   params: {
-    allowedLocations: allowedLocations
-    allowedLocationsForResourceGroups: allowedLocationsForResourceGroups
-    allowedVirtualMachineSizeSkus: allowedVirtualMachineSizeSkus
-    auditVirtualMachinesWithoutDisasterRecoveryConfigured: auditVirtualMachinesWithoutDisasterRecoveryConfigured
+    auditVirtualMachinesWithoutDisasterRecoveryConfigured: auditVirtualMachinesWithoutDisasterRecoveryConfiguredGuid
+    initiativeDefinitionEnforcementMode: initiativeDefinitionEnforcementMode
     initiativeDefinitionName: initiativeDefinitionName
-    listOfAllowedLocations: listOfAllowedLocations
-    listOfAllowedSKUs: listOfAllowedSKUs
+
   }
 }

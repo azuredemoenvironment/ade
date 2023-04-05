@@ -58,7 +58,7 @@ resource automationRunbookAppServiceScaleDown 'Microsoft.Automation/automationAc
     logVerbose: true
     logProgress: true
     publishContentLink: {
-      uri:'https://raw.githubusercontent.com/azuredemoenvironment/ade/scripts/automation_runbooks/app_service_scale_down.ps1'
+      uri:'https://raw.githubusercontent.com/azuredemoenvironment/ade/joshuawaddell/issue/189-Refactoring-and-Standardization-of-Names-Terms-Types-etc-after-v20-Merge/scripts/automation_runbooks/app_service_scale_down.ps1'
     }
   }
 }
@@ -81,10 +81,10 @@ resource automationJobScheduleAppServiceScaleDown 'Microsoft.Automation/automati
   name: '${automationAccountName}/${automationJobScheduleAppServiceScaleDownName}'
   properties: {
     runbook: {
-      name: automationRunbookAppServiceScaleDownName
+      name: automationRunbookAppServiceScaleDown.id
     }
     schedule: {
-      name: automationScheduleAppServiceScaleDownName
+      name: automationScheduleAppServiceScaleDown.id
     }
   }
 }
@@ -99,7 +99,7 @@ resource automationRunbookAppServiceScaleUp 'Microsoft.Automation/automationAcco
     logVerbose: true
     logProgress: true
     publishContentLink: {
-      uri:'https://raw.githubusercontent.com/azuredemoenvironment/ade/scripts/automation_runbooks/app_service_scale_up.ps1'
+      uri:'https://raw.githubusercontent.com/azuredemoenvironment/ade/joshuawaddell/issue/189-Refactoring-and-Standardization-of-Names-Terms-Types-etc-after-v20-Merge/scripts/automation_runbooks/app_service_scale_up.ps1'
     }
   }
 }
@@ -122,10 +122,10 @@ resource automationJobScheduleAppServiceScaleUp 'Microsoft.Automation/automation
   name: '${automationAccountName}/${automationJobScheduleAppServiceScaleUpName}'
   properties: {
     runbook: {
-      name: automationRunbookAppServiceScaleUpName
+      name: automationRunbookAppServiceScaleUp.id
     }
     schedule: {
-      name: automationScheduleAppServiceScaleUpName
+      name: automationScheduleAppServiceScaleUp.id
     }
   }
 }
@@ -138,7 +138,7 @@ resource automationRunbookVirtualMachineAllocate 'Microsoft.Automation/automatio
   properties: {
     runbookType: 'PowerShell'
     publishContentLink: {
-      uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/scripts/azure_automation/virtual_machine_allocate.ps1'
+      uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/joshuawaddell/issue/189-Refactoring-and-Standardization-of-Names-Terms-Types-etc-after-v20-Merge/scripts/automation_runbooks/virtual_machine_allocate.ps1'
     }
   }
 }
@@ -161,10 +161,10 @@ resource automationJobScheduleVirtualMachineAllocate 'Microsoft.Automation/autom
   name: '${automationAccountName}/${automationJobScheduleVirtualMachineAllocateName}'
   properties: {
     runbook: {
-      name: automationRunbookVirtualMachineAllocateName
+      name: automationRunbookVirtualMachineAllocate.id
     }
     schedule: {
-      name: automationScheduleVirtualMachineAllocateName
+      name: automationScheduleVirtualMachineAllocate.id
     }
   }
 }
@@ -177,7 +177,7 @@ resource automationRunbookVirtualMachineDeallocate 'Microsoft.Automation/automat
   properties: {
     runbookType: 'PowerShell'
     publishContentLink: {
-      uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/scripts/azure_automation/virtual_machine_deallocate.ps1'
+      uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/joshuawaddell/issue/189-Refactoring-and-Standardization-of-Names-Terms-Types-etc-after-v20-Merge/scripts/automation_runbooks/virtual_machine_deallocate.ps1'
     }
   }
 }
@@ -200,10 +200,10 @@ resource automationJobScheduleVirtualMachineDeallocate 'Microsoft.Automation/aut
   name: '${automationAccountName}/${automationJobScheduleVirtualMachineDeallocateName}'
   properties: {
     runbook: {
-      name: automationRunbookVirtualMachineDeallocateName
+      name: automationRunbookVirtualMachineDeallocate.id
     }
     schedule: {
-      name: automationScheduleVirtualMachineDeallocateName
+      name: automationScheduleVirtualMachineDeallocate.id
     }
   }
 }

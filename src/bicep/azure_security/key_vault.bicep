@@ -3,15 +3,16 @@
 @description('The base64 encoded certificate for Azure resources.')
 param certificateBase64String string
 
-@description('The ID of the Storage Account.')
-param storageAccountId string
+@description('The certificate secret name.')
+param certificateSecretName string
 
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
 
-// @description('The name of the Key Vault.')
-// param keyVaultName string
+@description('The name of the Key Vault.')
+param keyVaultName string
 
+@description('The properties of the Key Vault.')
 param keyVaultProperties object
 
 @description('The location for all resources.')
@@ -24,13 +25,19 @@ param logAnalyticsWorkspaceId string
 @secure()
 param resourcePassword string
 
-@description('The list of Resource tags')
+@description('The resource password secret name.')
+param resourcePasswordSecretName string
+
+@description('The ID of the Storage Account.')
+param storageAccountId string
+
+@description('The list of resource tags')
 param tags object
 
 // Resource - Key Vault
 //////////////////////////////////////////////////
-resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
-  name: keyVaultProperties.name
+resource keyVault 'Microsoft.KeyVault/vaults@2022-11-01' = {
+  name: keyVaultName
   location: location
   tags: tags
   properties: {
@@ -46,36 +53,15 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
     enablePurgeProtection: keyVaultProperties.enablePurgeProtection
     tenantId: subscription().tenantId
     publicNetworkAccess: keyVaultProperties.publicNetworkAccess
+    accessPolicies: []
   }
 }
-
-// Resource - Key Vault
-//////////////////////////////////////////////////
-// resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
-//   name: keyVaultName
-//   location: location
-//   tags: tags
-//   properties: {
-//     sku: {
-//       name: 'standard'
-//       family: 'A'
-//     }
-//     enabledForDeployment: true
-//     enabledForDiskEncryption: true
-//     enabledForTemplateDeployment: true
-//     enableSoftDelete: true
-//     softDeleteRetentionInDays: 7
-//     enablePurgeProtection: true
-//     tenantId: subscription().tenantId
-//     publicNetworkAccess: 'enabled'
-//   }
-// }
 
 // Resource - Key Vault - Secret - Certificate
 //////////////////////////////////////////////////
 resource certificateBase64StringSecret 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
   parent: keyVault
-  name: 'certificate'
+  name: certificateSecretName
   properties: {
     value: certificateBase64String
   }
@@ -83,9 +69,9 @@ resource certificateBase64StringSecret 'Microsoft.KeyVault/vaults/secrets@2021-1
 
 // Resource - Key Vault - Secret - Resource Password
 //////////////////////////////////////////////////
-resource resourcePasswordSecret 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
+resource resourcePasswordSecret 'Microsoft.KeyVault/vaults/secrets@2022-11-01' = {
   parent: keyVault
-  name: 'resourcePassword'
+  name: resourcePasswordSecretName
   properties: {
     value: resourcePassword
   }
@@ -93,7 +79,7 @@ resource resourcePasswordSecret 'Microsoft.KeyVault/vaults/secrets@2021-11-01-pr
 
 // Resource - Key Vault - Diagnostic Settings
 //////////////////////////////////////////////////
-resource keyVaultDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+resource keyVaultDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   scope: keyVault
   name: '${keyVault.name}-diagnostics'
   properties: {
@@ -115,3 +101,7 @@ resource keyVaultDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-p
     ]
   }
 }
+
+// Outputs
+//////////////////////////////////////////////////
+output keyVaultName string = keyVault.name

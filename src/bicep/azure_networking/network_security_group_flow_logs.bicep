@@ -12,10 +12,8 @@ param networkSecurityGroupProperties array
 @description('The ID of the Network Security Group Flow Logs Storage Account.')
 param nsgFlowLogsStorageAccountId string
 
-// Variables
-//////////////////////////////////////////////////
-
 // Resource - Network Security Group Flow Logs
+//////////////////////////////////////////////////
 resource nsgFlowLog 'Microsoft.Network/networkWatchers/flowLogs@2022-01-01' = [for networkSecurityGroupProperty in networkSecurityGroupProperties: {
   name: 'NetworkWatcher_${location}/${networkSecurityGroupProperty.name}'
   location: location

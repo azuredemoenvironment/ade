@@ -13,6 +13,7 @@ function Deploy-AzureManagement {
     $resourceGroupName = $armParameters.managementResourceGroupName
 
     # Create the Azure Management Resource Group
+    ##################################################
     az group create -n $resourceGroupName -l $azureRegion
 
     # Deploy the Azure Management Bicep Template at the Resource Group Scope.

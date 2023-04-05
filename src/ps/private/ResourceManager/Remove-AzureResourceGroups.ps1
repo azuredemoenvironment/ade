@@ -26,7 +26,7 @@ function Remove-AzureResourceGroups {
         # $armParameters.keyVaultResourceGroupName
         # $armParameters.appConfigResourceGroupName
         $armParameters.securityResourceGroupName
-        $armParameters.identityResourceGroupName
+        # $armParameters.identityResourceGroupName
         # $armParameters.monitorResourceGroupName
         $armParameters.managementResourceGroupName
     )

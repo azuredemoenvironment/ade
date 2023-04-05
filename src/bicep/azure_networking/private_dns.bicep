@@ -37,10 +37,11 @@ resource azureSqlPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' =
   tags: tags
 }
 
-// Resource Virtual Network Link - Privatelink.Azurewebsites.Net To Virtual Network 001
+// Resource - Private Dns Zone - Virtual Network Link - privatelink.azurewebsites.net to Virtual Network
 //////////////////////////////////////////////////
 resource vnetLink01 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  name: '${appServicePrivateDnsZone.name}/${virtualNetwork001Name}-link'
+  parent: appServicePrivateDnsZone
+  name: '${virtualNetwork001Name}-link'
   location: 'global'
   properties: {
     registrationEnabled: false
@@ -53,7 +54,8 @@ resource vnetLink01 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-
 // Resource Virtual Network Link - Privatelink.Azurewebsites.Net To Virtual Network 002
 //////////////////////////////////////////////////
 resource vnetLink02 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  name: '${appServicePrivateDnsZone.name}/${virtualNetwork002Name}-link'
+  parent: appServicePrivateDnsZone
+  name: '${virtualNetwork002Name}-link'
   location: 'global'
   properties: {
     registrationEnabled: false
@@ -66,7 +68,8 @@ resource vnetLink02 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-
 // Resource Virtual Network Link - Privatelink.Database.Windows.Net To Virtual Network 001
 //////////////////////////////////////////////////
 resource vnetLink11 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  name: '${azureSqlPrivateDnsZone.name}/${virtualNetwork001Name}-link'
+  parent: azureSqlPrivateDnsZone
+  name: '${virtualNetwork001Name}-link'
   location: 'global'
   properties: {
     registrationEnabled: false
@@ -79,7 +82,8 @@ resource vnetLink11 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-
 // Resource Virtual Network Link - Privatelink.Database.Windows.Net To Virtual Network 002
 //////////////////////////////////////////////////
 resource vnetLink12 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  name: '${azureSqlPrivateDnsZone.name}/${virtualNetwork002Name}-link'
+  parent: azureSqlPrivateDnsZone
+  name: '${virtualNetwork002Name}-link'
   location: 'global'
   properties: {
     registrationEnabled: false

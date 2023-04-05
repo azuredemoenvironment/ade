@@ -3,11 +3,11 @@
 @description('The name of the Automation Account.')
 param automationAccountName string
 
-@description('The array of Automation Runbooks.')
-param automationRunbooks array
-
 @description('The properties of the Automation Account')
 param automationAccountProperties object
+
+// @description('The sku of the Automation Account.')
+// param automationAccountSku string
 
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
@@ -21,7 +21,7 @@ param logAnalyticsWorkspaceId string
 @description('The ID of the Storage Account.')
 param storageAccountId string
 
-@description('The list of resource tags.')
+@description('The list of tags.')
 param tags object
 
 // Resource - Automation Account
@@ -76,50 +76,6 @@ resource automationAccountDiagnostics 'microsoft.insights/diagnosticSettings@202
     ]
   }
 }
-
-// Resource - Automation Runbook
-//////////////////////////////////////////////////
-resource runbook 'Microsoft.Automation/automationAccounts/runbooks@2022-08-08' = [for (automationRunbook, i) in automationRunbooks: {
-  parent: automationAccount
-  name: automationRunbook.runbookName
-  location: location
-  properties: {
-    runbookType: automationRunbook.runbookType
-    logVerbose: automationRunbook.logVerbose
-    logProgress: automationRunbook.logProgress
-    publishContentLink: {
-      uri: automationRunbook.uri
-    }
-  }
-}]
-
-// Resource - Automation Schedule
-//////////////////////////////////////////////////
-resource schedule 'Microsoft.Automation/automationAccounts/schedules@2022-08-08' = [for (automationRunbook, i) in automationRunbooks: {
-  parent: automationAccount
-  name: automationRunbook.scheduleName 
-  properties: {
-    frequency: automationRunbook.frequency
-    interval: automationRunbook.interval
-    startTime: automationRunbook.startTime
-    timeZone: automationRunbook.timeZone
-  }
-}]
-
-// Resource - Automation Job Schedule - App Service Scale Down
-//////////////////////////////////////////////////
-resource jobSchedule 'Microsoft.Automation/automationAccounts/jobSchedules@2022-08-08' = [for (automationRunbook, i) in automationRunbooks: {
-  parent: automationAccount
-  name: automationRunbook.jobScheduleName
-  properties: {
-    runbook: {
-      name: runbook[i].name
-    }
-    schedule: {
-      name: schedule[i].name
-    }
-  }
-}]
 
 // Outputs
 //////////////////////////////////////////////////

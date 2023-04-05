@@ -21,7 +21,7 @@ param logAnalyticsWorkspaceId string
 @description('The ID of the Storage Account.')
 param storageAccountId string
 
-@description('The list of Resource tags')
+@description('The list of resource tags')
 param tags object
 
 // Resource - App Configuration
@@ -71,7 +71,8 @@ resource appConfigDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-
 // Resource - App Configuration - ASP.NET Core Environment
 //////////////////////////////////////////////////
 resource appConfigKeyAspNetCoreEnvironment 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = {
-  name: '${appConfig.name}/ASPNETCORE_ENVIRONMENT'
+  parent: appConfig
+  name: 'ASPNETCORE_ENVIRONMENT'
   properties: {
     value: 'Development'
   }

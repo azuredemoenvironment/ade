@@ -28,6 +28,7 @@ function Deploy-AzureSecurity {
     }
 
     # Create the Azure Security Resource Group
+    ##################################################
     az group create -n $resourceGroupName -l $azureRegion
 
     # Deploy the Azure Security Bicep Template at the Resource Group Scope.
@@ -41,6 +42,7 @@ function Deploy-AzureSecurity {
     Write-Status "Configuring Azure Key Vault $keyVaultName"
 
     # Set the Azure KeyVault resource id for future deployments.
+    ##################################################
     Set-AzureKeyVaultResourceId $armParameters
 
     Write-Status "Finished Configuring Azure Key Vault $keyVaultName"

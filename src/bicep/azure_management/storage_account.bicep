@@ -6,19 +6,13 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The access tier of the Storage Account.')
-param storageAccountAccessTier string
-
-@description('The kind of the Storage Account.')
-param storageAccountKind string
-
-@description('The sku of the storage account.')
-param storageAccountSku string
+@description('The properties of the Storage Account.')
+param storageAccountProperties object
 
 @description('The name of the Storage Account.')
 param storageAccountName string
 
-@description('The list of tags.')
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Storage Account
@@ -27,13 +21,13 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: storageAccountName
   location: location
   tags: tags
-  kind: storageAccountKind
+  kind: storageAccountProperties.kind
   sku: {
-    name: storageAccountSku
+    name: storageAccountProperties.sku
   }
   properties: {
-    accessTier: storageAccountAccessTier
-    supportsHttpsTrafficOnly: true
+    accessTier: storageAccountProperties.accessTier
+    supportsHttpsTrafficOnly: storageAccountProperties.httpsOnly
   }
   resource blobServices 'blobServices@2022-09-01' = {
     name: 'default'

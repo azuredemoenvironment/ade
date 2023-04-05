@@ -11,9 +11,6 @@
         "environment": {
             "value": "@@environment@@"
         },
-        "identityResourceGroupName": {
-            "value": "@@identityResourceGroupName@@"
-        },
         "managementResourceGroupName": {
             "value": "@@managementResourceGroupName@@"
         },

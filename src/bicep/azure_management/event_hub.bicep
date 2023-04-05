@@ -3,23 +3,11 @@
 @description('The name of the Event Hub.')
 param eventHubName string
 
-@description('The autoinflate setting of the Event Hub Namespace.')
-param eventHubNamespaceAutoInflate bool
-
 @description('The name of the Event Hub Namespace.')
 param eventHubNamespaceName string
 
-@description('The sku of the Event Hub Namespace.')
-param eventHubNamespaceSku string
-
-@description('The sku capacity of the Event Hub Namespace.')
-param eventHubNamespaceSkuCapacity int
-
-@description('The value in days for Event Hub message retention.')
-param eventHubMessageRetention int
-
-@description('The number of Event Hub partitions.')
-param eventHubPartitions int
+@description('The properties of the Event Hub Namespace.')
+param eventHubNamespaceProperties object
 
 @description('The location for all resources.')
 param location string
@@ -27,7 +15,7 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The list of Resource tags')
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Event Hub Namespace
@@ -37,29 +25,31 @@ resource eventHubNamespace 'Microsoft.EventHub/namespaces@2022-10-01-preview' = 
   location: location
   tags: tags
   sku: {
-    name: eventHubNamespaceSku
-    tier: eventHubNamespaceSku
-    capacity: eventHubNamespaceSkuCapacity
+    name: eventHubNamespaceProperties.sku
+    tier: eventHubNamespaceProperties.sku
+    capacity: eventHubNamespaceProperties.skuCapacity
   }
   properties: {
-    isAutoInflateEnabled: eventHubNamespaceAutoInflate
+    isAutoInflateEnabled: eventHubNamespaceProperties.autoInflate
   }
 }
 
 // Resource - Event Hub
 //////////////////////////////////////////////////
 resource eventHub 'Microsoft.EventHub/namespaces/eventhubs@2022-10-01-preview' = {
-  name: '${eventHubNamespace.name}/${eventHubName}'
+  parent: eventHubNamespace
+  name: eventHubName
   properties: {
-    messageRetentionInDays: eventHubMessageRetention
-    partitionCount: eventHubPartitions
+    messageRetentionInDays: eventHubNamespaceProperties.messageRetention
+    partitionCount: eventHubNamespaceProperties.partitions
   }
 }
 
 // Resource - Event Hub Authorization Rule
 //////////////////////////////////////////////////
 resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2022-10-01-preview' = {
-  name: '${eventHubNamespace.name}/RootManageSharedAccessKey'
+  parent: eventHubNamespace
+  name: eventHubNamespaceProperties.authorizationRuleName
   properties: {
     rights: [
       'Listen'
@@ -81,20 +71,12 @@ resource eventHubNamespaceDiagnostics 'Microsoft.Insights/diagnosticSettings@202
       {
         categoryGroup: 'allLogs'
         enabled: true
-        retentionPolicy: {
-          enabled: true
-          days: 7
-        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
-        retentionPolicy: {
-          enabled: true
-          days: 7
-        }
       }
     ]
   }
