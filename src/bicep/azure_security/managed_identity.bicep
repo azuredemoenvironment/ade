@@ -14,7 +14,7 @@ param tags object
 
 // Resource - Managed Identity - Application Gateway
 //////////////////////////////////////////////////
-resource applicationGatewayManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
+resource applicationGatewayManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: applicationGatewayManagedIdentityName
   location: location
   tags: tags
@@ -22,7 +22,7 @@ resource applicationGatewayManagedIdentity 'Microsoft.ManagedIdentity/userAssign
 
 // Resource - Managed Identity - Container Registry
 //////////////////////////////////////////////////
-resource containerRegistryManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
+resource containerRegistryManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: containerRegistryManagedIdentityName
   location: location
   tags: tags

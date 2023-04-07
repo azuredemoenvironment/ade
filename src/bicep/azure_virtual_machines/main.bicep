@@ -6,8 +6,8 @@ param adminUserName string
 @description('The application environment (workload, environment, location).')
 param appEnvironment string
 
-@description('The date of the resource deployment.')
-param deploymentDate string = utcNow('yyyy-MM-dd')
+@description('The current date.')
+param currentDate string = utcNow('yyyy-MM-dd')
 
 @description('The location for all resources.')
 param location string = resourceGroup().location
@@ -21,39 +21,58 @@ param networkingResourceGroupName string
 @description('The name of the owner of the deployment.')
 param ownerName string
 
-@description('The base URI for deployment scripts.')
-param scriptsBaseUri string
-
 @description('The name of the Security Resource Group.')
 param securityResourceGroupName string
 
 // Variables
 //////////////////////////////////////////////////
-var jumpboxName = 'vm-jumpbox01'
-var jumpboxNICName = 'nic-${appEnvironment}-jumpbox01'
-var jumpboxOSDiskName = 'osdisk-${appEnvironment}-jumpbox01'
-var jumpboxPublicIpAddressName = 'pip-${appEnvironment}-jumpbox01'
 var tags = {
-  deploymentDate: deploymentDate
+  deploymentDate: currentDate
   owner: ownerName
 }
+
+// Variables - Proximity Placement Group
+//////////////////////////////////////////////////
+var proximityPlacementGroups = [
+  {
+    name: 'ppg-${appEnvironment}-adeApp-az1'
+    proximityPlacementGroupType: 'Standard'
+  }
+  {
+    name: 'ppg-${appEnvironment}-adeApp-az2'
+  }
+  {
+    name: 'ppg-${appEnvironment}-adeApp-az3'
+  }
+]
+
+// Variables - Load Balancer
+//////////////////////////////////////////////////
 
 // Variable Arrays
 //////////////////////////////////////////////////
 var loadBalancers = [
   {
     name: 'lbi-${appEnvironment}-adeapp-vm'
+    sku: {
+      name: 'Standard'
+    }
     properties: {
       frontendIPConfigurations: [
         {
           name: 'fip-lbi-${appEnvironment}-adeapp-vm'
           properties: {
             subnet: {
-              id: virtualNetwork002::adeAppVmSubnet.id
+              id: spokeVirtualNetwork::adeAppVmSubnet.id
             }
             privateIpAddress: '10.102.2.4'
             privateIPAllocationMethod: 'Static'
           }
+        }
+      ]
+      backendAddressPools: [
+        {
+          name: 'bep-lbi-${appEnvironment}-adeapp-vm'
         }
       ]
     }    
@@ -66,11 +85,16 @@ var loadBalancers = [
           name: 'fip-lbi-${appEnvironment}-adeapp-vmss'
           properties: {
             subnet: {
-              id: virtualNetwork002::adeAppVmssSubnet.id
+              id: spokeVirtualNetwork::adeAppVmssSubnet.id
             }
             privateIpAddress: '10.102.12.4'
             privateIPAllocationMethod: 'Static'
           }
+        }
+      ]
+      backendAddressPools: [
+        {
+          name: 'bep-lbi-${appEnvironment}-adeapp-vmss'
         }
       ]
     }    
@@ -78,20 +102,36 @@ var loadBalancers = [
 ]
 var loadBalancerBackendServices = [
   {
-    name: 'DataIngestorService'
+    probeName: 'probe-DataIngestorService'
+    protocol: 'Http'
+    requestPath: '/swagger/index.html'
     port: 5000
+    intervalInSeconds: 15
+    numberOfProbes: 2
   }
   {
-    name: 'DataReporterService'
+    probeName: 'probe-DataReporterService'
+    protocol: 'Http'
+    requestPath: '/swagger/index.html'
     port: 5001
+    intervalInSeconds: 15
+    numberOfProbes: 2
   }
   {
-    name: 'UserService'
+    probeName: 'probe-UserService'
+    protocol: 'Http'
+    requestPath: '/swagger/index.html'
     port: 5002
+    intervalInSeconds: 15
+    numberOfProbes: 2
   }
   {
-    name: 'EventIngestorService'
+    probeName: 'probe-EventIngestorService'
+    protocol: 'Http'
+    requestPath: '/swagger/index.html'
     port: 5003
+    intervalInSeconds: 15
+    numberOfProbes: 2
   }
 ]
 var virtualMachines = [
@@ -102,7 +142,7 @@ var virtualMachines = [
     nicName: 'nic-${appEnvironment}-adeapp01'
     osDiskName: 'disk-${appEnvironment}-adeapp01-os'
     proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupProperties[0].resourceId
-    subnetId: virtualNetwork002::adeAppVmSubnet.id
+    subnetId: spokeVirtualNetwork::adeAppVmSubnet.id
   }
   {
     name: 'vm-${appEnvironment}-adeapp02'
@@ -111,7 +151,7 @@ var virtualMachines = [
     nicName: 'nic-${appEnvironment}-adeapp02'
     osDiskName: 'disk-${appEnvironment}-adeapp02-os'
     proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupProperties[1].resourceId
-    subnetId: virtualNetwork002::adeAppVmSubnet.id
+    subnetId: spokeVirtualNetwork::adeAppVmSubnet.id
   }
   {
     name: 'vm-${appEnvironment}-adeapp03'
@@ -120,7 +160,7 @@ var virtualMachines = [
     nicName: 'nic-${appEnvironment}-adeapp03'
     osDiskName: 'disk-${appEnvironment}-adeapp03-os'
     proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupProperties[2].resourceId
-    subnetId: virtualNetwork002::adeAppVmSubnet.id
+    subnetId: spokeVirtualNetwork::adeAppVmSubnet.id
   }
   {
     name: 'vm-${appEnvironment}-adeweb01'
@@ -129,7 +169,7 @@ var virtualMachines = [
     nicName: 'nic-${appEnvironment}-adeweb01'
     osDiskName: 'disk-${appEnvironment}-adeweb01-os'
     proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupProperties[0].resourceId
-    subnetId: virtualNetwork002::adeWebVmSubnet.id
+    subnetId: spokeVirtualNetwork::adeWebVmSubnet.id
   }
   {
     name: 'vm-${appEnvironment}-adeweb02'
@@ -138,7 +178,7 @@ var virtualMachines = [
     nicName: 'nic-${appEnvironment}-adeweb02'
     osDiskName: 'disk-${appEnvironment}-adeweb02-os'
     proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupProperties[1].resourceId
-    subnetId: virtualNetwork002::adeWebVmSubnet.id
+    subnetId: spokeVirtualNetwork::adeWebVmSubnet.id
   }
   {
     name: 'vm-${appEnvironment}-adeweb03'
@@ -147,113 +187,83 @@ var virtualMachines = [
     nicName: 'nic-${appEnvironment}-adeweb03'
     osDiskName: 'disk-${appEnvironment}-adeweb03-os'
     proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupProperties[2].resourceId
-    subnetId: virtualNetwork002::adeWebVmSubnet.id
+    subnetId: spokeVirtualNetwork::adeWebVmSubnet.id
   }
 ]
-var proximityPlacementGroups = [
-  {
-    name: 'ppg-${appEnvironment}-adeApp-az1'
-  }
-  {
-    name: 'ppg-${appEnvironment}-adeApp-az2'
-  }
-  {
-    name: 'ppg-${appEnvironment}-adeApp-az3'
-  }
-]
+
 var virtualMachineScaleSets = [
   {
     name: 'vmss-${appEnvironment}-adeapp-vmss'
     nicName: 'nic-${appEnvironment}-adeapp-vmss'
-    subnetId: virtualNetwork002::adeAppVmssSubnet.id
+    subnetId: spokeVirtualNetwork::adeAppVmssSubnet.id
     loadBalancerBackendPoolId: loadBalancerModule.outputs.loadBalancerProperties[1].resourceId
   }
   {
     name: 'vmss-${appEnvironment}-adeweb-vmss'
     nicName: 'nic-${appEnvironment}-adeweb-vmss'
-    subnetId: virtualNetwork002::adeWebVmssSubnet.id
+    subnetId: spokeVirtualNetwork::adeWebVmssSubnet.id
     loadBalancerBackendPoolId: null
   }
 ]
 
+// Variables - Existing Resources
+//////////////////////////////////////////////////
+var adeAppVmssSubnetName = 'snet-${appEnvironment}-adeApp-vmss'
+var adeAppVmSubnetName = 'snet-${appEnvironment}-adeApp-vm'
+var adeWebVmssSubnetName = 'snet-${appEnvironment}-adeWeb-vmss'
+var adeWebVmSubnetName = 'snet-${appEnvironment}-adeWeb-vm'
+var eventHubNamespaceAuthorizationRuleName = 'RootManageSharedAccessKey'
+var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
+var keyVaultName = 'kv-${appEnvironment}'
+var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
+var spokeVirtualNetworkName = 'vnet-${appEnvironment}-spoke'
+var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
+
 // Existing Resource - Event Hub Authorization Rule
 //////////////////////////////////////////////////
-resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2021-11-01' existing = {
+resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2022-10-01-preview' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: 'evh-${appEnvironment}-diagnostics/RootManageSharedAccessKey'
+  name: '${eventHubNamespaceName}/${eventHubNamespaceAuthorizationRuleName}'
 }
 
 // Existing Resource - Key Vault
 //////////////////////////////////////////////////
-resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing = {
+resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
   scope: resourceGroup(securityResourceGroupName)
-  name: 'kv-${appEnvironment}-001'
+  name: keyVaultName
 }
 
 // Existing Resource - Log Analytics Workspace
 //////////////////////////////////////////////////
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' existing = {
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: 'log-${appEnvironment}-001'
+  name: logAnalyticsWorkspaceName
 }
 
 // Existing Resource - Storage Account - Diagnostics
 //////////////////////////////////////////////////
-resource diagnosticsStorageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' existing = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: replace('sa-${appEnvironment}-diags', '-', '')
+  name: storageAccountName
 }
 
-// Existing Resource - Virtual Network - Virtual Network 001
+// Existing Resource - Virtual Network - Spoke
 //////////////////////////////////////////////////
-resource virtualNetwork001 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
+resource spokeVirtualNetwork 'Microsoft.Network/virtualNetworks@2022-09-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
-  name: 'vnet-${appEnvironment}-001'
-  resource managementSubnet 'subnets@2020-07-01' existing = {
-    name: 'snet-${appEnvironment}-management'
+  name: spokeVirtualNetworkName
+  resource adeAppVmssSubnet 'subnets@2022-09-01' existing = {
+    name: adeAppVmssSubnetName
   }
-}
-
-// Existing Resource - Virtual Network - Virtual Network 002
-//////////////////////////////////////////////////
-resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
-  scope: resourceGroup(networkingResourceGroupName)
-  name: 'vnet-${appEnvironment}-002'
-  resource adeAppVmssSubnet 'subnets@2020-07-01' existing = {
-    name: 'snet-${appEnvironment}-adeapp-vmss'
+  resource adeAppVmSubnet 'subnets@2022-09-01' existing = {
+    name: adeAppVmSubnetName
   }
-  resource adeAppVmSubnet 'subnets@2020-07-01' existing = {
-    name: 'snet-${appEnvironment}-adeapp-vm'
+  resource adeWebVmssSubnet 'subnets@2022-09-01' existing = {
+    name: adeWebVmssSubnetName
   }
-  resource adeWebVmssSubnet 'subnets@2020-07-01' existing = {
-    name: 'snet-${appEnvironment}-adeweb-vmss'
-  }
-  resource adeWebVmSubnet 'subnets@2020-07-01' existing = {
-    name: 'snet-${appEnvironment}-adeweb-vm'
-  }  
-}
-
-// Module - Jumpbox
-//////////////////////////////////////////////////
-module jumpBoxModule './virtual_machine_jumpbox.bicep' = {
-  name: 'jumpBoxDeployment'
-  params: {
-    adminPassword: keyVault.getSecret('resourcePassword')
-    adminUserName: adminUserName
-    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
-    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
-    jumpboxName: jumpboxName
-    jumpboxNICName: jumpboxNICName
-    jumpboxOSDiskName: jumpboxOSDiskName
-    jumpboxPublicIpAddressName: jumpboxPublicIpAddressName
-    location: location
-    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
-    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
-    managementSubnetId: virtualNetwork001::managementSubnet.id
-    scriptsBaseUri: scriptsBaseUri
-    tags: tags
-  }
+  resource adeWebVmSubnet 'subnets@2022-09-01' existing = {
+    name: adeWebVmSubnetName
+  } 
 }
 
 // Module - Proximity Placement Group
@@ -272,12 +282,12 @@ module proximityPlacementGroupModule 'proximity_placement_group.bicep' = {
 module loadBalancerModule 'load_balancer.bicep' = {
   name: 'loadBalancerDeployment'
   params: {
-    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     loadBalancerBackendServices: loadBalancerBackendServices
     loadBalancers: loadBalancers
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    storageAccountId: storageAccount.id
     tags: tags
   }
 }
@@ -289,12 +299,12 @@ module virtualMachineModule 'virtual_machine.bicep' = {
   params: {
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
-    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location: location
     logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey 
+    storageAccountId: storageAccount.id
     tags: tags
     virtualMachines: virtualMachines
   }

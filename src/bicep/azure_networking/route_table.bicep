@@ -14,7 +14,7 @@ param tags object
 
 // Resource - Route Table
 //////////////////////////////////////////////////
-resource routeTable 'Microsoft.Network/routeTables@2022-01-01' = {
+resource routeTable 'Microsoft.Network/routeTables@2022-09-01' = {
   name: routeTableName
   location: location
   tags: tags

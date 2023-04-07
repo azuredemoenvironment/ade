@@ -32,7 +32,7 @@ param tags object
 
 // Resource - Public Ip Address
 //////////////////////////////////////////////////
-resource publicIpAddress 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
+resource publicIpAddress 'Microsoft.Network/publicIPAddresses@2022-09-01' = {
   name: publicIpAddressProperties.name
   location: location
   tags: tags
@@ -80,7 +80,7 @@ resource publicIpAddressDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-
 
 // Resource - Firewall
 //////////////////////////////////////////////////
-resource firewall 'Microsoft.Network/azureFirewalls@2022-01-01' = {
+resource firewall 'Microsoft.Network/azureFirewalls@2022-09-01' = {
   name: firewallProperties.name
   location: location
   tags: tags

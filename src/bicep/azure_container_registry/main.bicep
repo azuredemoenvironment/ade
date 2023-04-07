@@ -46,28 +46,28 @@ var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscrip
 
 // Existing Resource - Event Hub Authorization Rule
 //////////////////////////////////////////////////
-resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2021-11-01' existing = {
+resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2022-10-01-preview' existing = {
   scope: resourceGroup(managementResourceGroupName)
   name: '${eventHubNamespaceName}/${eventHubNamespaceAuthorizationRuleName}'
 }
 
 // Existing Resource - Log Analytics Workspace
 //////////////////////////////////////////////////
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' existing = {
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
   name: logAnalyticsWorkspaceName
 }
 
 // Existing Resource - Managed Identity - Container Registry
 //////////////////////////////////////////////////
-resource containerRegistryManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
+resource containerRegistryManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
   scope: resourceGroup(securityResourceGroupName)
   name: containerRegistryManagedIdentityName
 }
 
 // Existing Resource - Storage Account - Diagnostics
 //////////////////////////////////////////////////
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' existing = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
   name: storageAccountName
 }

@@ -6,8 +6,8 @@ param appEnvironment string
 @description('The name of the admin user.')
 param adminUserName string
 
-@description('The date of the resource deployment.')
-param deploymentDate string = utcNow('yyyy-MM-dd')
+@description('The current date.')
+param currentDate string = utcNow('yyyy-MM-dd')
 
 @description('The location for all resources.')
 param location string = resourceGroup().location
@@ -26,84 +26,131 @@ param securityResourceGroupName string
 
 // Variables
 //////////////////////////////////////////////////
-var adeAppSqlDatabaseName = 'sqldb-${appEnvironment}-adeapp'
-var adeAppSqlServerName = 'sql-${appEnvironment}-adeapp'
-var adeAppSqlServerPrivateEndpointName = 'pl-${appEnvironment}-adeappsql'
-var inspectorGadgetSqlDatabaseName = 'sqldb-${appEnvironment}-inspectorgadget'
-var inspectorGadgetSqlServerName = 'sql-${appEnvironment}-inspectorgadget'
-var inspectorGadgetSqlServerPrivateEndpointName = 'pl-${appEnvironment}-inspectorgadgetsql'
 var tags = {
-  deploymentDate: deploymentDate
+  deploymentDate: currentDate
   owner: ownerName
 }
 
+// Variables - Sql App
+//////////////////////////////////////////////////
+var adeAppSqlDatabaseName = 'sqldb-${appEnvironment}-adeapp'
+var adeAppSqlServerName = 'sql-${appEnvironment}-adeapp'
+var adeAppSqlServerPrivateEndpointName = 'pl-${appEnvironment}-adeappsql'
+var adeAppSqlServerPrivateEndpointNicName = 'nic-${appEnvironment}-adeAppSql'
+var adeAppSqlProperties = {
+  sqlDatabaseName: adeAppSqlDatabaseName
+  sqlServerName: adeAppSqlServerName  
+  publicNetworkAccess: 'Disabled'
+  version: '12.0'
+  skuName: 'GP_S_Gen5'
+  skuTier: 'GeneralPurpose'
+  skuFamily: 'Gen5'
+  skuCapacity: 40
+  privateEndpointName: adeAppSqlServerPrivateEndpointName
+  privateEndpointNicName: adeAppSqlServerPrivateEndpointNicName
+  privateEndpointPrivateIpAddress: '10.102.160.4'
+  privateEndpointSubnetId: spokeVirtualNetwork::adeAppSqlSubnet.id
+  privateDnsZoneId: azureSqlPrivateDnsZone.id
+}
+
+// Variables - Inspector Gadget
+//////////////////////////////////////////////////
+var inspectorGadgetSqlDatabaseName = 'sqldb-${appEnvironment}-inspectorgadget'
+var inspectorGadgetSqlServerName = 'sql-${appEnvironment}-inspectorgadget'
+var inspectorGadgetSqlServerPrivateEndpointName = 'pl-${appEnvironment}-inspectorgadgetsql'
+var inspectorGadgetSqlServerPrivateEndpointNicName = 'nic-${appEnvironment}-inspectorgadgetsql'
+var inspectorGadgetSqlProperties = {
+  sqlDatabaseName: inspectorGadgetSqlDatabaseName
+  sqlServerName: inspectorGadgetSqlServerName
+  publicNetworkAccess: 'Disabled'
+  version: '12.0'
+  skuName: 'GP_S_Gen5'
+  skuTier: 'GeneralPurpose'
+  skuFamily: 'Gen5'
+  skuCapacity: 40
+  privateEndpointName: inspectorGadgetSqlServerPrivateEndpointName
+  privateEndpointNicName: inspectorGadgetSqlServerPrivateEndpointNicName
+  privateEndpointPrivateIpAddress: '10.102.161.4'
+  privateEndpointSubnetId: spokeVirtualNetwork::inspectorGadgetSqlSubnet.id
+  privateDnsZoneId: azureSqlPrivateDnsZone.id
+}
+
+// Variables - Existing Resources
+//////////////////////////////////////////////////
+var adeAppSqlSubnetName = 'snet-${appEnvironment}-adeAppSql'
+var appConfigName = 'appcs-${appEnvironment}'
+var azureSqlPrivateDnsZoneName = 'privatelink${environment().suffixes.sqlServerHostname}'
+var eventHubNamespaceAuthorizationRuleName = 'RootManageSharedAccessKey'
+var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
+var inspectorGadgetSqlSubnetName = 'snet-${appEnvironment}-inspectorGadgetSql'
+var keyVaultName = 'kv-${appEnvironment}'
+var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
+var spokeVirtualNetworkName = 'vnet-${appEnvironment}-spoke'
+var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
+
 // Existing Resource - App Config
 //////////////////////////////////////////////////
-resource appConfig 'Microsoft.AppConfiguration/configurationStores@2020-07-01-preview' existing = {
+resource appConfig 'Microsoft.AppConfiguration/configurationStores@2023-03-01' existing = {
   scope: resourceGroup(securityResourceGroupName)
-  name: 'appcs-${appEnvironment}-001'
+  name: appConfigName
 }
 
 // Existing Resource - Event Hub Authorization Rule
 //////////////////////////////////////////////////
-resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2021-11-01' existing = {
+resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2022-10-01-preview' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: 'evh-${appEnvironment}-diagnostics/RootManageSharedAccessKey'
+  name: '${eventHubNamespaceName}/${eventHubNamespaceAuthorizationRuleName}'
 }
 
 // Existing Resource - Key Vault
 //////////////////////////////////////////////////
-resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing = {
+resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
   scope: resourceGroup(securityResourceGroupName)
-  name: 'kv-${appEnvironment}-001'
+  name: keyVaultName
 }
 
 // Existing Resource - Log Analytics Workspace
 //////////////////////////////////////////////////
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' existing = {
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: 'log-${appEnvironment}-001'
+  name: logAnalyticsWorkspaceName
 }
 
 // Existing Resource - Private Dns Zone
 resource azureSqlPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
-  name: 'privatelink${environment().suffixes.sqlServerHostname}'
+  name: azureSqlPrivateDnsZoneName
 }
 
 // Existing Resource - Storage Account - Diagnostics
 //////////////////////////////////////////////////
-resource diagnosticsStorageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' existing = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: replace('sa-${appEnvironment}-diags', '-', '')
+  name: storageAccountName
 }
 
-// Existing Resource - Virtual Network - Virtual Network 002
+// Existing Resource - Virtual Network - Spoke
 //////////////////////////////////////////////////
-resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
+resource spokeVirtualNetwork 'Microsoft.Network/virtualNetworks@2022-09-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
-  name: 'vnet-${appEnvironment}-002'
-  resource adeAppSqlSubnet 'subnets@2020-07-01' existing = {
-    name: 'snet-${appEnvironment}-adeAppSql'
+  name: spokeVirtualNetworkName
+  resource adeAppSqlSubnet 'subnets@2022-09-01' existing = {
+    name: adeAppSqlSubnetName
   }
-  resource inspectorGadgetSqlSubnet 'subnets@2020-07-01' existing = {
-    name: 'snet-${appEnvironment}-inspectorGadgetSql'
+  resource inspectorGadgetSqlSubnet 'subnets@2022-09-01' existing = {
+    name: inspectorGadgetSqlSubnetName
   }
 }
 
-// Module - Sql -  App
+// Module - Sql - App
 //////////////////////////////////////////////////
-module adeAppSqlModule 'sql_adeapp.bicep' = {
+module adeAppSqlModule 'sql.bicep' = {
   name: 'adeAppSqlDeployment'
   params: {
-    adeAppSqlDatabaseName: adeAppSqlDatabaseName
-    adeAppSqlServerName: adeAppSqlServerName
-    adeAppSqlServerPrivateEndpointName: adeAppSqlServerPrivateEndpointName
-    adeAppSqlSubnetId: virtualNetwork002::adeAppSqlSubnet.id
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
-    azureSqlPrivateDnsZoneId: azureSqlPrivateDnsZone.id
-    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    sqlProperties: adeAppSqlProperties
+    storageAccountId: storageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location: location    
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
@@ -113,34 +160,44 @@ module adeAppSqlModule 'sql_adeapp.bicep' = {
 
 // Module - Sql - Inspector Gadget
 //////////////////////////////////////////////////
-module inspectorGadgetSqlModule 'sql_inspectorgadget.bicep' = {
+module inspectorGadgetSqlModule 'sql.bicep' = {
   name: 'inspectorGadgetSqlDeployment'
   params: {
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
-    azureSqlPrivateDnsZoneId: azureSqlPrivateDnsZone.id
-    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    sqlProperties: inspectorGadgetSqlProperties
+    storageAccountId: storageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
-    inspectorGadgetSqlDatabaseName: inspectorGadgetSqlDatabaseName
-    inspectorGadgetSqlServerName: inspectorGadgetSqlServerName
-    inspectorGadgetSqlServerPrivateEndpointName: inspectorGadgetSqlServerPrivateEndpointName
-    inspectorGadgetSqlSubnetId: virtualNetwork002::inspectorGadgetSqlSubnet.id
     location: location    
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     tags: tags
   }
 }
 
-// Module - App Config -  App - Sql Database
+// Module - App Config - Ade App - Sql Database
 //////////////////////////////////////////////////
-module adeAppSqlAppConfigModule './sql_adeapp_app_config.bicep' = {
+module adeAppSqlAppConfigModule './sql_app_config.bicep' = {
   scope: resourceGroup(securityResourceGroupName)
   name: 'adeAppSqlAppConfigDeployment'
   params: {
-    adeAppSqlDatabaseName: adeAppSqlDatabaseName
-    adeAppSqlServerAdministratorLogin: adeAppSqlModule.outputs.adeAppSqlServerAdministratorLogin
-    adeAppSqlServerFqdn: adeAppSqlModule.outputs.adeAppSqlServerFqdn
     adminPassword: keyVault.getSecret('resourcePassword')
     appConfigName: appConfig.name    
+    sqlDatabaseName: adeAppSqlDatabaseName
+    sqlServerAdministratorLogin: adeAppSqlModule.outputs.sqlServerAdministratorLogin
+    sqlServerFqdn: adeAppSqlModule.outputs.sqlServerFqdn
+  }
+}
+
+// Module - App Config - Inspector Gadget - Sql Database
+//////////////////////////////////////////////////
+module inspectorGadgetSqlAppConfigModule './sql_app_config.bicep' = {
+  scope: resourceGroup(securityResourceGroupName)
+  name: 'inspectorGadgetSqlAppConfigDeployment'
+  params: {
+    adminPassword: keyVault.getSecret('resourcePassword')
+    appConfigName: appConfig.name    
+    sqlDatabaseName: inspectorGadgetSqlDatabaseName
+    sqlServerAdministratorLogin: inspectorGadgetSqlModule.outputs.sqlServerAdministratorLogin
+    sqlServerFqdn: inspectorGadgetSqlModule.outputs.sqlServerFqdn
   }
 }

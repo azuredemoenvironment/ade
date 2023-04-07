@@ -20,7 +20,7 @@ param tags object
 
 // Resource - Network Security Group
 //////////////////////////////////////////////////
-resource nsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = [for (networkSecurityGroup, i) in networkSecurityGroups: {
+resource nsg 'Microsoft.Network/networkSecurityGroups@2022-09-01' = [for (networkSecurityGroup, i) in networkSecurityGroups: {
   name: networkSecurityGroup.name
   location: location
   tags: tags

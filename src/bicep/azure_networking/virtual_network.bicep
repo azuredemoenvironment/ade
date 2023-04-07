@@ -33,9 +33,9 @@ param storageAccountId string
 @description('The list of resource tags.')
 param tags object
 
-// Resource - Virtual Network
+// Resource - Virtual Network - Hub
 //////////////////////////////////////////////////
-resource hubVirtualNetwork 'Microsoft.Network/virtualNetworks@2022-01-01' = {
+resource hubVirtualNetwork 'Microsoft.Network/virtualNetworks@2022-09-01' = {
   name: hubVirtualNetworkName
   location: location
   tags: tags
@@ -61,7 +61,7 @@ resource hubVirtualNetwork 'Microsoft.Network/virtualNetworks@2022-01-01' = {
   }
 }
 
-// Resource - hub Virtual Network - Diagnostic Settings
+// Resource - Virtual Network - Hub - Diagnostic Settings
 //////////////////////////////////////////////////
 resource hubVirtualNetworkDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: hubVirtualNetwork
@@ -86,9 +86,9 @@ resource hubVirtualNetworkDiagnostics 'microsoft.insights/diagnosticSettings@202
   }
 }
 
-// Resource - Virtual Network 002
+// Resource - Virtual Network - Spoke
 //////////////////////////////////////////////////
-resource spokeVirtualNetwork 'Microsoft.Network/virtualNetworks@2022-01-01' = {
+resource spokeVirtualNetwork 'Microsoft.Network/virtualNetworks@2022-09-01' = {
   name: spokeVirtualNetworkName
   location: location
   tags: tags
@@ -105,7 +105,7 @@ resource spokeVirtualNetwork 'Microsoft.Network/virtualNetworks@2022-01-01' = {
   }
 }
 
-// Resource - Virtual Network 002 - Diagnostic Settings
+// Resource - Virtual Network - Spoke - Diagnostic Settings
 //////////////////////////////////////////////////
 resource spokeVirtualNetworkDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   scope: spokeVirtualNetwork

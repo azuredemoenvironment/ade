@@ -13,6 +13,7 @@ function Deploy-AzureDatabases {
     $resourceGroupName = $armParameters.databaseResourceGroupName
 
     # Create the Azure Database Resource Group
+    ##################################################
     az group create -n $resourceGroupName -l $azureRegion
 
     # Deploy the Azure Database Bicep Template at the Resource Group Scope.

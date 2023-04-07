@@ -8,7 +8,7 @@ param applicationInsightsConnectionString string
 
 // Resource - App Configuration - Application Insights Connection String
 //////////////////////////////////////////////////
-resource appConfigKeyAppInsightsConnectionString 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = {
+resource appConfigKeyAppInsightsConnectionString 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
   name: '${appConfigName}/ApplicationInsights:ConnectionString'
   properties: {
     value: applicationInsightsConnectionString

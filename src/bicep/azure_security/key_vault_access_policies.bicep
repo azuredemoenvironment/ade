@@ -23,7 +23,7 @@ param keyVaultName string
 
 // Resource - Key Vault - Access Policies
 //////////////////////////////////////////////////
-resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2022-11-01' = {
+resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2023-02-01' = {
   name: '${keyVaultName}/add'
   properties: {
     accessPolicies: [

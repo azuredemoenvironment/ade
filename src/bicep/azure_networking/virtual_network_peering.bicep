@@ -17,7 +17,7 @@ param spokeVirtualNetworkName string
 
 // Resource - Virtual Network Peering - Hub to Spoke
 //////////////////////////////////////////////////
-resource vnetPeeringHubToSpoke 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2022-01-01' = {
+resource vnetPeeringHubToSpoke 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2022-09-01' = {
   name: '${hubVirtualNetworkName}/${hubVirtualNetworkName}-${spokeVirtualNetworkName}'
   properties: {
     allowVirtualNetworkAccess: peeringProperties.allowVirtualNetworkAccess
@@ -32,7 +32,7 @@ resource vnetPeeringHubToSpoke 'Microsoft.Network/virtualNetworks/virtualNetwork
 
 // Resource - Virtual Network Peering - Spoke to Hub
 //////////////////////////////////////////////////
-resource vnetPeeringSpokeToHub 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2022-01-01' = {
+resource vnetPeeringSpokeToHub 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2022-09-01' = {
   name: '${spokeVirtualNetworkName}/${spokeVirtualNetworkName}-${hubVirtualNetworkName}'
   properties: {
     allowVirtualNetworkAccess: peeringProperties.allowVirtualNetworkAccess

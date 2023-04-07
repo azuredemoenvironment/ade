@@ -26,7 +26,7 @@ param tags object
 
 // Resource - App Configuration
 //////////////////////////////////////////////////
-resource appConfig 'Microsoft.AppConfiguration/configurationStores@2022-05-01' = {
+resource appConfig 'Microsoft.AppConfiguration/configurationStores@2023-03-01' = {
   name: appConfigName
   location: location
   tags: tags
@@ -74,7 +74,7 @@ resource appConfigDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-
 
 // Resource - App Configuration - ASP.NET Core Environment
 //////////////////////////////////////////////////
-resource appConfigKeyAspNetCoreEnvironment 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = {
+resource appConfigKeyAspNetCoreEnvironment 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
   parent: appConfig
   name: 'ASPNETCORE_ENVIRONMENT'
   properties: {

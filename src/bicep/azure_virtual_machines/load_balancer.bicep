@@ -23,28 +23,24 @@ param loadBalancers array
 
 // Resource - Load Balancer
 //////////////////////////////////////////////////
-resource lb 'Microsoft.Network/loadBalancers@2020-11-01' = [for (loadBalancer, i) in loadBalancers: {
+resource lb 'Microsoft.Network/loadBalancers@2022-09-01' = [for (loadBalancer, i) in loadBalancers: {
   name: loadBalancer.name
   location: location
   tags: tags
   sku: {
-    name: 'Standard'
+    name: loadBalancer.sku.name
   }
   properties: {
     frontendIPConfigurations: loadBalancer.properties.frontendIPConfigurations
-    backendAddressPools: [
-      {
-        name: 'bep-${loadBalancer.name}'
-      }
-    ]
+    backendAddressPools: loadBalancer.properties.backendAddressPools
     probes: [for (loadBalancerBackendService, i) in loadBalancerBackendServices: {
-      name: 'probe-${loadBalancerBackendService.name}'
+      name: loadBalancerBackendService.name
       properties: {
-        protocol: 'Http'
-        requestPath: '/swagger/index.html'
+        protocol: loadBalancerBackendService.protocol
+        requestPath: loadBalancerBackendService.requestPath
         port: loadBalancerBackendService.port
-        intervalInSeconds: 15
-        numberOfProbes: 2
+        intervalInSeconds: loadBalancerBackendService.intervalInSeconds
+        numberOfProbes: loadBalancerBackendService.numberOfProbes
       }
     }]
     loadBalancingRules: [for (loadBalancerBackendService, i) in loadBalancerBackendServices: {

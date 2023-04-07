@@ -29,7 +29,7 @@ param tags object
 
 // Resource - Container Registry
 //////////////////////////////////////////////////
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-09-01' = {
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
   name: containerRegistryProperties.name
   location: location
   tags: tags

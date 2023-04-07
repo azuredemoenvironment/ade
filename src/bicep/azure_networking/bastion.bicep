@@ -29,7 +29,7 @@ param tags object
 
 // Resource - Public Ip Address
 //////////////////////////////////////////////////
-resource publicIpAddress 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
+resource publicIpAddress 'Microsoft.Network/publicIPAddresses@2022-09-01' = {
   name: publicIpAddressProperties.name
   location: location
   tags: tags
@@ -77,7 +77,7 @@ resource publicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2021-
 
 // Resource - Bastion
 //////////////////////////////////////////////////
-resource bastion 'Microsoft.Network/bastionHosts@2022-01-01' = {
+resource bastion 'Microsoft.Network/bastionHosts@2022-09-01' = {
   name: bastionName
   location: location
   tags: tags

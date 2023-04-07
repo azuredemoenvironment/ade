@@ -10,9 +10,6 @@ param adminUserName string
 @description('The ID of the Azure Sql Private Dns Zone.')
 param azureSqlPrivateDnsZoneId string
 
-@description('The ID of the Diagnostics Storage Account.')
-param diagnosticsStorageAccountId string
-
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
 
@@ -33,6 +30,9 @@ param location string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
+
+@description('The ID of the Storage Account.')
+param storageAccountId string
 
 @description('The list of Resource tags')
 param tags object
@@ -80,7 +80,7 @@ resource inspectorGadgetSqlDatabaseDiagnostics 'microsoft.insights/diagnosticSet
   name: '${inspectorGadgetSqlDatabase.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
+    storageAccountId: storageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
