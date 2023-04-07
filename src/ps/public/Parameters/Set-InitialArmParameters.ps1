@@ -42,8 +42,7 @@ function Set-InitialArmParameters {
         'azurePairedRegion'                        = $azurePairedRegion
         'azureRegion'                              = $azureRegion
         'contactEmailAddress'                      = $email
-        'deployAzureFirewall'                      = 'false'
-        'deployVpnGateway'                         = 'false'
+        'deployFirewall'                           = 'true'
         'environment'                              = $environment
         'module'                                   = $module
         'overwriteParameterFiles'                  = $overwriteParameterFiles 
@@ -70,7 +69,7 @@ function Set-InitialArmParameters {
 
         # Required for Deploy-AzureGovernance.ps1               
         'keyVaultKeyName'                          = "containerRegistry"
-        'keyVaultName'                             = "kv-$appEnvironment-001"
+        'keyVaultName'                             = "kv-$appEnvironment"
 
         # Required for Remove-AzureActivityLogDiagnostics.ps1
         'activityLogDiagnosticsName'               = "subscriptionActivityLog"

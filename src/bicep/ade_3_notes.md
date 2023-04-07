@@ -37,6 +37,9 @@
 
 ## Azure Identity
 
+- Merge into Security Deployment
+- Additional identities
+
 ## Azure Security
 
 ### App Config
@@ -47,6 +50,8 @@
 ## Azure Networking
 
 ## Azure Container Registry
+
+- Consider implementing Private Endpoints and Managed Identity authentication
 
 ## Azure Databases
 

@@ -75,10 +75,10 @@ var containerRegistryManagedIdentityPrincipalIdSecretsPermissions = ['get']
 
 // Variables - Existing Resources
 //////////////////////////////////////////////////
-var applicationInsightsName = 'appinsights-${appEnvironment}-001'
+var applicationInsightsName = 'appinsights-${appEnvironment}'
 var eventHubNamespaceAuthorizationRuleName = 'RootManageSharedAccessKey'
 var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
-var logAnalyticsWorkspaceName = 'log-${appEnvironment}-001'
+var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
 var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
 
 // Existing Resource - Application Insights

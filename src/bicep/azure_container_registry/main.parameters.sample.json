@@ -5,14 +5,15 @@
         "appEnvironment": {
             "value": "@@appEnvironment@@"
         },
-        "identityResourceGroupName": {
-            "value": "@@identityResourceGroupName@@"
-        },
         "managementResourceGroupName": {
             "value": "@@managementResourceGroupName@@"
         },
         "ownerName": {
             "value": "@@ownerName@@"
+        },
+        
+        "securityResourceGroupName": {
+            "value": "@@securityResourceGroupName@@"
         }
     }
 }

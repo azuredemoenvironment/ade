@@ -6,19 +6,19 @@ param appServicePrivateDnsZoneName string
 @description('The name of the Azure Sql Private DNS Zone.')
 param azureSqlPrivateDnsZoneName string
 
-@description('The ID of Virtual Network 001.')
-param virtualNetwork001Id string
+@description('The ID of the hub Virtual Network.')
+param hubVirtualNetworkId string
 
-@description('The name of Virtual Network 001.')
-param virtualNetwork001Name string
+@description('The name of the hub Virtual Network.')
+param hubVirtualNetworkName string
 
-@description('The ID of Virtual Network 002.')
-param virtualNetwork002Id string
+@description('The ID of the spoke Virtual Network.')
+param spokeVirtualNetworkId string
 
-@description('The name of Virtual Network 002.')
-param virtualNetwork002Name string
+@description('The name of the spoke Virtual Network.')
+param spokeVirtualNetworkName string
 
-@description('The list of Resource tags')
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Private Dns Zone - Privatelink.Azurewebsites.Net
@@ -41,12 +41,12 @@ resource azureSqlPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' =
 //////////////////////////////////////////////////
 resource vnetLink01 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
   parent: appServicePrivateDnsZone
-  name: '${virtualNetwork001Name}-link'
+  name: '${hubVirtualNetworkName}-link'
   location: 'global'
   properties: {
     registrationEnabled: false
     virtualNetwork: {
-      id: virtualNetwork001Id
+      id: hubVirtualNetworkId
     }
   }
 }
@@ -55,40 +55,40 @@ resource vnetLink01 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-
 //////////////////////////////////////////////////
 resource vnetLink02 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
   parent: appServicePrivateDnsZone
-  name: '${virtualNetwork002Name}-link'
+  name: '${spokeVirtualNetworkName}-link'
   location: 'global'
   properties: {
     registrationEnabled: false
     virtualNetwork: {
-      id: virtualNetwork002Id
+      id: spokeVirtualNetworkId
     }
   }
 }
 
-// Resource Virtual Network Link - Privatelink.Database.Windows.Net To Virtual Network 001
+// Resource Virtual Network Link - Privatelink.Database.Windows.Net to hub Virtual Network
 //////////////////////////////////////////////////
 resource vnetLink11 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
   parent: azureSqlPrivateDnsZone
-  name: '${virtualNetwork001Name}-link'
+  name: '${hubVirtualNetworkName}-link'
   location: 'global'
   properties: {
     registrationEnabled: false
     virtualNetwork: {
-      id: virtualNetwork001Id
+      id: hubVirtualNetworkId
     }
   }
 }
 
-// Resource Virtual Network Link - Privatelink.Database.Windows.Net To Virtual Network 002
+// Resource Virtual Network Link - Privatelink.Database.Windows.Net to spoke Virtual Network
 //////////////////////////////////////////////////
 resource vnetLink12 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
   parent: azureSqlPrivateDnsZone
-  name: '${virtualNetwork002Name}-link'
+  name: '${spokeVirtualNetworkName}-link'
   location: 'global'
   properties: {
     registrationEnabled: false
     virtualNetwork: {
-      id: virtualNetwork002Id
+      id: spokeVirtualNetworkId
     }
   }
 }

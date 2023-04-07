@@ -1,34 +1,35 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the Route Table.')
-param internetRouteTableName string
-
 @description('The location for all resources.')
 param location string
 
-@description('The list of Resource tags')
+@description('The array of routes.')
+param routes array
+
+@description('The name of the Route Table.')
+param routeTableName string
+
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Route Table
 //////////////////////////////////////////////////
-resource internetRouteTable 'Microsoft.Network/routeTables@2022-01-01' = {
-  name: internetRouteTableName
+resource routeTable 'Microsoft.Network/routeTables@2022-01-01' = {
+  name: routeTableName
   location: location
   tags: tags
   properties: {
-    routes: [
-      {
-        name: 'toInternet'
-        properties: {
-          addressPrefix: '0.0.0.0/0'
-          nextHopType: 'VirtualAppliance'
-          nextHopIpAddress: '10.101.0.4'
-        }
+    routes: [for route in routes: {
+      name: route.name
+      properties: {
+        addressPrefix: route.addressPrefix
+        nextHopType: route.nextHopType
+        nextHopIpAddress: route.nextHopIpAddress
       }
-    ]
+    }]
   }
 }
 
 // Outputs
 //////////////////////////////////////////////////
-output internetRouteTableId string = internetRouteTable.id
+output routeTableId string = routeTable.id

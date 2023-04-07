@@ -1,8 +1,5 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the Automation Account.')
-param automationAccountName string
-
 @description('The array of Automation Runbooks.')
 param automationRunbooks array
 
@@ -27,7 +24,7 @@ param tags object
 // Resource - Automation Account
 //////////////////////////////////////////////////
 resource automationAccount 'Microsoft.Automation/automationAccounts@2022-08-08' = {
-  name: automationAccountName
+  name: automationAccountProperties.name
   location:location
   tags: tags
   identity: {

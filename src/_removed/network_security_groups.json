@@ -1,27 +1,7 @@
 {
-  "networkSecurityGroups": [
+  "networkSecurityGroups": [    
     {
-      "name": "nsg-ade-bfett-eus-adeAppSql",
-      "properties": {}
-    },
-    {
-      "name": "nsg-ade-bfett-eus-adeApp-vmss",
-      "properties": {}
-    },
-    {
-      "name": "nsg-ade-bfett-eus-adeApp-vm",
-      "properties": {}
-    },
-    {
-      "name": "nsg-ade-bfett-eus-adeWeb-vmss",
-      "properties": {}
-    },
-    {
-      "name": "nsg-ade-bfett-eus-adeWeb-vm",
-      "properties": {}
-    },
-    {
-      "name": "nsg-ade-bfett-eus-applicationGateway",
+      "name": "nsg-${appEnvironment}-applicationGateway",
       "properties": {
         "securityRules": [
           {
@@ -69,8 +49,9 @@
         ]
       }
     },
+    
     {
-      "name": "nsg-ade-bfett-eus-bastion",
+      "name": "nsg-${appEnvironment}-bastion",
       "properties": {
         "securityRules": [
           {
@@ -132,49 +113,56 @@
         ]
       }
     },
+    
     {
-      "name": "nsg-ade-bfett-eus-dataIngestorService",
+      "name": "nsg-${appEnvironment}-adeWeb-vm",
+      "properties": {}
+    },
+    
+    {
+      "name": "nsg-${appEnvironment}-adeApp-vm",
+      "properties": {}
+    },
+    
+    {
+      "name": "nsg-${appEnvironment}-adeWeb-vmss",
+      "properties": {}
+    },
+    
+    {
+      "name": "nsg-${appEnvironment}-adeApp-vmss",
+      "properties": {}
+    },
+    
+    {
+      "name": "nsg-${appEnvironment}-userService",
+      "properties": {}
+    },
+    
+    {
+      "name": "nsg-${appEnvironment}-dataIngestorService",
+      "properties": {}
+    },
+    
+    {
+      "name": "nsg-${appEnvironment}-dataReporterService",
+      "properties": {}
+    },
+    
+    {
+      "name": "nsg-${appEnvironment}-eventIngestorService",
       "properties": {}
     },
     {
-      "name": "nsg-ade-bfett-eus-dataReporterService",
+      "name": "nsg-${appEnvironment}-adeAppSql",
       "properties": {}
     },
     {
-      "name": "nsg-ade-bfett-eus-eventIngestorService",
+      "name": "nsg-${appEnvironment}-inspectorGadgetSql",
       "properties": {}
     },
     {
-      "name": "nsg-ade-bfett-eus-inspectorGadgetSql",
-      "properties": {}
-    },
-    {
-      "name": "nsg-ade-bfett-eus-management",
-      "properties": {
-        "securityRules": [
-          {
-            "name": "RDP_Inbound",
-            "properties": {
-              "description": "Allow RDP Access from Current Location",
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "3389",
-              "sourceAddressPrefix": "73.109.46.136",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "nsg-ade-bfett-eus-userService",
-      "properties": {}
-    },
-    {
-      "name": "nsg-ade-bfett-eus-vnetIntegration",
+      "name": "nsg-${appEnvironment}-vnetIntegration",
       "properties": {}
     }
   ]

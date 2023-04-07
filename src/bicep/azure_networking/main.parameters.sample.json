@@ -5,23 +5,14 @@
         "appEnvironment": {
             "value": "@@appEnvironment@@"
         },
-        "deployAzureFirewall": {
-            "value": @@deployAzureFirewall@@
-        },
-        "deployVpnGateway": {
-            "value": @@deployAzureFirewall@@
-        },
-        "localNetworkGatewayAddressPrefix": {
-            "value": "@@localNetworkGatewayAddressPrefix@@"
+        "deployFirewall": {
+            "value": @@deployFirewall@@
         },
         "managementResourceGroupName": {
             "value": "@@managementResourceGroupName@@"
         },
         "ownerName": {
             "value": "@@ownerName@@"
-        },
-        "securityResourceGroupName": {
-            "value": "@@securityResourceGroupName@@"
         },
         "sourceAddressPrefix": {
             "value": "@@sourceAddressPrefix@@"

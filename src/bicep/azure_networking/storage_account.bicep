@@ -6,43 +6,46 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
+@description('The properties of the Storage Account.')
+param storageAccountProperties object
+
 @description('The name of the Storage Account.')
 param storageAccountName string
 
-@description('The list of Resource tags')
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Storage Account
 //////////////////////////////////////////////////
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: storageAccountName
   location: location
   tags: tags
-  kind: 'StorageV2'
+  kind: storageAccountProperties.kind
   sku: {
-    name: 'Standard_LRS'
+    name: storageAccountProperties.sku
   }
   properties: {
-    accessTier: 'Hot'
-    supportsHttpsTrafficOnly: true
+    accessTier: storageAccountProperties.accessTier
+    supportsHttpsTrafficOnly: storageAccountProperties.httpsOnly
   }
-  resource blobServices 'blobServices@2021-09-01' = {
+  resource blobServices 'blobServices@2022-09-01' = {
     name: 'default'
   }
-  resource tableServices 'tableServices@2021-09-01' = {
+  resource tableServices 'tableServices@2022-09-01' = {
     name: 'default'
   }
-  resource fileServices 'fileServices@2021-09-01' = {
+  resource fileServices 'fileServices@2022-09-01' = {
     name: 'default'
   }
-  resource queueServices 'queueServices@2021-09-01' = {
+  resource queueServices 'queueServices@2022-09-01' = {
     name: 'default'
   }
 }
 
 // Resource - Storage Account - Diagnostic Settings
 //////////////////////////////////////////////////
-resource storageAccountDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+resource storageAccountDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   scope: storageAccount
   name: '${storageAccount.name}-diagnostics'
   properties: {

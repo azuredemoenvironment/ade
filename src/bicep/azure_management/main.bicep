@@ -3,16 +3,16 @@
 @description('The application environment (workload, environment, location).')
 param appEnvironment string
 
-@description('The App ScaleDown job schedule guid')
+@description('The App ScaleDown job schedule guid.')
 param automationJobScheduleAppServiceScaleDownName string = newGuid()
 
-@description('The App ScaleUp job schedule guid')
+@description('The App ScaleUp job schedule guid.')
 param automationJobScheduleAppServiceScaleUpName string = newGuid()
 
-@description('The VM Allocation job schedule guid')
+@description('The VM Allocation job schedule guid.')
 param automationJobScheduleVirtualMachineAllocateName string = newGuid()
 
-@description('The VM deallocation job schedule guid')
+@description('The VM deallocation job schedule guid.')
 param automationJobScheduleVirtualMachineDeallocateName string = newGuid()
 
 @description('The current date.')
@@ -66,6 +66,7 @@ var logAnalyticsWorkspaceSolutions = [
 //////////////////////////////////////////////////
 var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
 var storageAccountProperties = {
+  name: storageAccountName
   accessTier: 'Hot'
   httpsOnly: true
   kind: 'StorageV2'
@@ -79,6 +80,8 @@ var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
 var eventHubNamespaceProperties = {
   autoInflate: false
   authorizationRuleName: 'RootManageSharedAccessKey'
+  eventHubName: eventHubName
+  eventHubNamespaceName: eventHubNamespaceName
   messageRetention: 1
   partitions: 1
   rights: ['Listen', 'Manage', 'Send']
@@ -97,6 +100,7 @@ var allocationTime = dateTimeAdd('${currentDate}T${allocationStartTime}', dateTi
 var automationAccountName = 'aa-${appEnvironment}'
 var automationAccountPrincipalIdType = 'ServicePrincipal'
 var automationAccountProperties = {
+  name: automationAccountName
   identityType: 'SystemAssigned'
   keySource: 'Microsoft.Automation'
   publicNetworkAccess: false
@@ -170,7 +174,11 @@ var activityLogDiagnosticSettingsName = 'subscriptionactivitylog'
 //////////////////////////////////////////////////
 var auditVirtualMachinesWithoutDisasterRecoveryConfiguredGuid = '/providers/Microsoft.Authorization/policyDefinitions/0015ea4d-51ff-4ce3-8d8c-f3f8f0179a56'
 var initiativeDefinitionName = 'policy-${appEnvironment}-adeinitiative'
-var initiativeDefinitionEnforcementMode = 'Default'
+var initiativeDefinitionProperties = {
+  name: initiativeDefinitionName
+  description: 'Initiative Definition for the Azure Demo Environment'
+  enforcementMode: 'Default'
+}
 
 // Module - Log Analytics Workspace
 //////////////////////////////////////////////////
@@ -193,7 +201,6 @@ module storageAccountModule 'storage_account.bicep' = {
     location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
     storageAccountProperties: storageAccountProperties
-    storageAccountName: storageAccountName
     tags: tags
   }
 }
@@ -203,8 +210,6 @@ module storageAccountModule 'storage_account.bicep' = {
 module eventHubDiagnosticsModule 'event_hub.bicep' = {
   name: 'eventHubDiagnosticsDeployment'
   params: {
-    eventHubName: eventHubName
-    eventHubNamespaceName: eventHubNamespaceName
     eventHubNamespaceProperties: eventHubNamespaceProperties
     location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
@@ -231,7 +236,6 @@ module applicationInsightsModule './application_insights.bicep' = {
 module automationModule 'automation.bicep' = {
   name: 'automationDeployment'
   params: {
-    automationAccountName: automationAccountName
     automationAccountProperties: automationAccountProperties
     automationRunbooks: automationRunbooks
     eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
@@ -274,8 +278,7 @@ module policyModule 'policy.bicep' = {
   name: 'policyDeployment'
   params: {
     auditVirtualMachinesWithoutDisasterRecoveryConfigured: auditVirtualMachinesWithoutDisasterRecoveryConfiguredGuid
-    initiativeDefinitionEnforcementMode: initiativeDefinitionEnforcementMode
-    initiativeDefinitionName: initiativeDefinitionName
+    initiativeDefinitionProperties: initiativeDefinitionProperties
 
   }
 }

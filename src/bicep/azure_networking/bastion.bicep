@@ -1,16 +1,13 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the Azure Bastion')
-param azureBastionName string
+@description('The name of the Bastion')
+param bastionName string
 
-@description('The name of the Azure Bastion Public IP Address.')
-param azureBastionPublicIpAddressName string
-
-@description('The ID of the Azure Bastion Subnet.')
-param azureBastionSubnetId string
+@description('The ID of the Bastion Subnet.')
+param bastionSubnetId string
 
 @description('The ID of the Diagnostics Storage Account.')
-param diagnosticsStorageAccountId string
+param storageAccountId string
 
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
@@ -21,60 +18,67 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The list of Resource tags')
+// @description('The name of the Firewall Public IP Address.')
+// param publicIpAddressName string
+
+@description('The properties of the Public IP Address')
+param publicIpAddressProperties object
+
+@description('The list of resource tags')
 param tags object
 
 // Resource - Public Ip Address
 //////////////////////////////////////////////////
-resource azureBastionPublicIpAddress 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
-  name: azureBastionPublicIpAddressName
+resource publicIpAddress 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
+  name: publicIpAddressProperties.name
   location: location
   tags: tags
   properties: {
-    publicIPAllocationMethod: 'Static'
+    publicIPAllocationMethod: publicIpAddressProperties.publicIPAllocationMethod
+    publicIPAddressVersion: publicIpAddressProperties.publicIPAddressVersion
   }
   sku: {
-    name: 'Standard'
+    name: publicIpAddressProperties.sku
   }
 }
 
 // Resource - Public Ip Address - Diagnostic Settings
 //////////////////////////////////////////////////
-resource azureBastionPublicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: azureBastionPublicIpAddress
-  name: '${azureBastionPublicIpAddress.name}-diagnostics'
+resource publicIpAddressDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: publicIpAddress
+  name: '${publicIpAddress.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
+    storageAccountId: storageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
-        category: 'DDoSProtectionNotifications'
+        categoryGroup: 'allLogs'
         enabled: true
-      }
-      {
-        category: 'DDoSMitigationFlowLogs'
-        enabled: true
-      }
-      {
-        category: 'DDoSMitigationReports'
-        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
   }
 }
 
-// Resource - Azure Bastion
+// Resource - Bastion
 //////////////////////////////////////////////////
-resource azureBastion 'Microsoft.Network/bastionHosts@2022-01-01' = {
-  name: azureBastionName
+resource bastion 'Microsoft.Network/bastionHosts@2022-01-01' = {
+  name: bastionName
   location: location
   tags: tags
   properties: {
@@ -83,10 +87,10 @@ resource azureBastion 'Microsoft.Network/bastionHosts@2022-01-01' = {
         name: 'ipConf'
         properties: {
           publicIPAddress: {
-            id: azureBastionPublicIpAddress.id
+            id: publicIpAddress.id
           }
           subnet: {
-            id: azureBastionSubnetId
+            id: bastionSubnetId
           }
         }
       }
@@ -94,26 +98,34 @@ resource azureBastion 'Microsoft.Network/bastionHosts@2022-01-01' = {
   }
 }
 
-// Resource - Azure Bastion - Diagnostic Settings
+// Resource - Bastion - Diagnostic Settings
 //////////////////////////////////////////////////
-resource azureBastionDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: azureBastion
-  name: '${azureBastion.name}-diagnostics'
+resource bastionDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: bastion
+  name: '${bastion.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
+    storageAccountId: storageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
-        category: 'BastionAuditLogs'
+        categoryGroup: 'allLogs'
         enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
   }

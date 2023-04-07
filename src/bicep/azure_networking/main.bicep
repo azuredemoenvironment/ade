@@ -3,17 +3,11 @@
 @description('The application environment (workload, environment, location).')
 param appEnvironment string
 
+@description('The current date.')
+param currentDate string = utcNow('yyyy-MM-dd')
+
 @description('Deploy Azure Firewall if value is set to true.')
-param deployAzureFirewall bool = false
-
-@description('The date of the resource deployment.')
-param deploymentDate string = utcNow('yyyy-MM-dd')
-
-@description('Deploy Azure VPN Gateway is value is set to true.')
-param deployVpnGateway bool = false
-
-@description('The address prefix of the on-premises network.')
-param localNetworkGatewayAddressPrefix string
+param deployFirewall bool = true
 
 @description('The location for all resources.')
 param location string = resourceGroup().location
@@ -24,48 +18,233 @@ param managementResourceGroupName string
 @description('The name of the owner of the deployment.')
 param ownerName string
 
-@description('The name of the Security Resource Group.')
-param securityResourceGroupName string
-
 @description('The public IP address of the on-premises network.')
 param sourceAddressPrefix string
 
 // Variables
 //////////////////////////////////////////////////
-var appServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
-var azureBastionName = 'bastion-${appEnvironment}-001'
-var azureBastionPublicIpAddressName = 'pip-${appEnvironment}-bastion001'
-var azureFirewallName = 'fw-${appEnvironment}-001'
-var azureFirewallPublicIpAddressName = 'pip-${appEnvironment}-fw001'
-var azureSqlPrivateDnsZoneName = 'privatelink${environment().suffixes.sqlServerHostname}'
-var connectionName = 'cn-${appEnvironment}-vgw001'
-var internetRouteTableName = 'route-${appEnvironment}-internet'
-var localNetworkGatewayName = 'lgw-${appEnvironment}-vgw001'
-var natGatewayName = 'ngw-${appEnvironment}-001'
-var natGatewayPublicIPPrefixName = 'pipp-${appEnvironment}-ngw001'
-var networkWatcherResourceGroupName = 'NetworkWatcherRG'
-var nsgFlowLogsStorageAccountName = replace('sa-${appEnvironment}-nsgflow', '-', '')
 var tags = {
-  deploymentDate: deploymentDate
+  deploymentDate: currentDate
   owner: ownerName
 }
-var virtualNetwork001Name = 'vnet-${appEnvironment}-001'
-var virtualNetwork001Prefix = '10.101.0.0/16'
-var virtualNetwork002Name = 'vnet-${appEnvironment}-002'
-var virtualNetwork002Prefix = '10.102.0.0/16'
-var vpnGatewayName = 'vpng-${appEnvironment}-001'
-var vpnGatewayPublicIpAddressName = 'pip-${appEnvironment}-vgw001'
 
-// Variable Arrays
+// Variables - Storage Account
 //////////////////////////////////////////////////
-var networkSecurityGroups = loadJsonContent('network_security_groups.json', 'networkSecurityGroups')
-var virtualNetwork001Subnets = [
+var nsgFlowLogsStorageAccountName = replace('sa-nsgflow-${uniqueString(subscription().subscriptionId)}', '-', '')
+var nsgFlowLogsStorageAccountProperties = {
+  accessTier: 'Hot'
+  httpsOnly: true
+  kind: 'StorageV2'
+  sku: 'Standard_GRS'
+}
+
+// Variables - Nat Gateway
+//////////////////////////////////////////////////
+var natGatewayName = 'ngw-${appEnvironment}'
+var natGatewayProperties = {
+  skuName: 'Standard'
+  idleTimeoutInMinutes: 4
+}
+var publicIpPrefixName = 'pipp-${appEnvironment}-ngw'
+var publicIpPrefixProperties = {
+  skuName: 'Standard'
+  prefixLength: 31
+  publicIPAddressVersion: 'IPv4'
+}
+
+// Variables - Network Security Group
+//////////////////////////////////////////////////
+var networkSecurityGroups = [
+  {
+    name: 'nsg-${appEnvironment}-applicationGateway'
+    properties: {
+      securityRules: [
+        {
+          name: 'Gateway_Manager_Inbound'
+          properties: {
+            description: 'Allow Gateway Manager Access'
+            protocol: 'Tcp'
+            sourcePortRange: '*'
+            destinationPortRange: '65200-65535'
+            sourceAddressPrefix: 'GatewayManager'
+            destinationAddressPrefix: '*'
+            access: 'Allow'
+            priority: 100
+            direction: 'Inbound'
+          }
+        }
+        {
+          name: 'HTTP_Inbound'
+          properties: {
+            description: 'Allow HTTP Inbound'
+            protocol: 'Tcp'
+            sourcePortRange: '*'
+            destinationPortRange: '80'
+            sourceAddressPrefix: '*'
+            destinationAddressPrefix: '*'
+            access: 'Allow'
+            priority: 200
+            direction: 'Inbound'
+          }
+        }
+        {
+          name: 'HTTPS_Inbound'
+          properties: {
+            description: 'Allow HTTPS Inbound'
+            protocol: 'Tcp'
+            sourcePortRange: '*'
+            destinationPortRange: '443'
+            sourceAddressPrefix: '*'
+            destinationAddressPrefix: '*'
+            access: 'Allow'
+            priority: 300
+            direction: 'Inbound'
+          }
+        }
+      ]
+    }
+  }
+  {
+    name: 'nsg-${appEnvironment}-bastion'
+    properties: {
+      securityRules: [
+        {
+          name: 'HTTPS_Inbound'
+          properties: {
+            description: 'Allow HTTPS Access from Current Location'
+            protocol: 'Tcp'
+            sourcePortRange: '*'
+            destinationPortRange: '443'
+            sourceAddressPrefix: sourceAddressPrefix
+            destinationAddressPrefix: '*'
+            access: 'Allow'
+            priority: 100
+            direction: 'Inbound'
+          }
+        }
+        {
+          name: 'Gateway_Manager_Inbound'
+          properties: {
+            description: 'Allow Gateway Manager Access'
+            protocol: 'Tcp'
+            sourcePortRange: '*'
+            destinationPortRange: '443'
+            sourceAddressPrefix: 'GatewayManager'
+            destinationAddressPrefix: '*'
+            access: 'Allow'
+            priority: 200
+            direction: 'Inbound'
+          }
+        }
+        {
+          name: 'SSH_RDP_Outbound'
+          properties: {
+            description: 'Allow SSH and RDP Outbound'
+            protocol: '*'
+            sourcePortRange: '*'
+            destinationPortRanges: [
+              '22'
+              '3389'
+            ]
+            sourceAddressPrefix: '*'
+            destinationAddressPrefix: 'VirtualNetwork'
+            access: 'Allow'
+            priority: 100
+            direction: 'Outbound'
+          }
+        }
+        {
+          name: 'Azure_Cloud_Outbound'
+          properties: {
+            description: 'Allow Azure Cloud Outbound'
+            protocol: 'Tcp'
+            sourcePortRange: '*'
+            destinationPortRange: '443'
+            sourceAddressPrefix: '*'
+            destinationAddressPrefix: 'AzureCloud'
+            access: 'Allow'
+            priority: 200
+            direction: 'Outbound'
+          }
+        }
+      ]
+    }
+  }
+  {
+    name: 'nsg-${appEnvironment}-adeWeb-vm'
+    properties: {}
+  }
+  {
+    name: 'nsg-${appEnvironment}-adeApp-vm'
+    properties: {}
+  }
+  {
+    name: 'nsg-${appEnvironment}-adeWeb-vmss'
+    properties: {}
+  }
+  {
+    name: 'nsg-${appEnvironment}-adeApp-vmss'
+    properties: {}
+  }
+  {
+    name: 'nsg-${appEnvironment}-userService'
+    properties: {}
+  }
+  {
+    name: 'nsg-${appEnvironment}-dataIngestorService'
+    properties: {}
+  }
+  {
+    name: 'nsg-${appEnvironment}-dataReporterService'
+    properties: {}
+  }
+  {
+    name: 'nsg-${appEnvironment}-eventIngestorService'
+    properties: {}
+  }
+  {
+    name: 'nsg-${appEnvironment}-adeAppSql'
+    properties: {}
+  }
+  {
+    name: 'nsg-${appEnvironment}-inspectorGadgetSql'
+    properties: {}
+  }
+  {
+    name: 'nsg-${appEnvironment}-vnetIntegration'
+    properties: {}
+  }
+]
+
+// Variables - Route Table
+//////////////////////////////////////////////////
+var routeTableName = 'rt-${appEnvironment}'
+var routes = [
+  {
+    name: 'toInternet'
+    addressPrefix: '0.0.0.0/0'
+    nextHopType: 'VirtualAppliance'
+    nextHopIpAddress: firewallPrivateIpAddress
+  }
+]
+
+// Variables - Virtual Network
+//////////////////////////////////////////////////
+var hubVirtualNetworkName = 'vnet-${appEnvironment}-hub'
+var hubVirtualNetworkPrefix = '10.101.0.0/16'
+var hubVirtualNetworkSubnets = [  
+  {
+    name: 'AzureFirewallSubnet'
+    properties: {
+      addressPrefix: '10.101.1.0/24'
+    }
+  }
   {
     name: 'snet-${appEnvironment}-applicationGateway'
     properties: {
       addressPrefix: '10.101.11.0/24'
       networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[5].resourceId
+        id: networkSecurityGroupModule.outputs.networkSecurityGroupProperties[0].resourceId
       }
       serviceEndpoints: [
         {
@@ -79,14 +258,8 @@ var virtualNetwork001Subnets = [
     properties: {
       addressPrefix: '10.101.21.0/24'
       networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[6].resourceId
+        id: networkSecurityGroupModule.outputs.networkSecurityGroupProperties[1].resourceId
       }
-    }
-  }
-  {
-    name: 'AzureFirewallSubnet'
-    properties: {
-      addressPrefix: '10.101.1.0/24'
     }
   }
   {
@@ -95,47 +268,19 @@ var virtualNetwork001Subnets = [
       addressPrefix: '10.101.255.0/24'
     }
   }
-  {
-    name: 'snet-${appEnvironment}-management'
-    properties: {
-      addressPrefix: '10.101.31.0/24'
-      networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[11].resourceId
-      }
-    }
-  }
 ]
-var virtualNetwork002Subnets = [
+var spokeVirtualNetworkName = 'vnet-${appEnvironment}-spoke'
+var spokeVirtualNetworkPrefix = '10.102.0.0/16'
+var spokeVirtualNetworkSubnets = [  
   {
-    name: 'snet-${appEnvironment}-adeApp-aks'
+    name: 'snet-${appEnvironment}-adeWeb-vm'
     properties: {
-      addressPrefix: '10.102.100.0/23'
-      serviceEndpoints: [
-        {
-          service: 'Microsoft.ContainerRegistry'
-        }
-      ]
-    }
-  }
-  {
-    name: 'snet-${appEnvironment}-adeAppSql'
-    properties: {
-      addressPrefix: '10.102.160.0/24'
-      networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[0].resourceId
-      }
-      privateEndpointNetworkPolicies: 'Enabled'
-    }
-  }
-  {
-    name: 'snet-${appEnvironment}-adeApp-vmss'
-    properties: {
-      addressPrefix: '10.102.12.0/24'
+      addressPrefix: '10.102.1.0/24'
       natGateway: {
         id: natGatewayModule.outputs.natGatewayId
       }
       networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[1].resourceId
+        id: networkSecurityGroupModule.outputs.networkSecurityGroupProperties[2].resourceId
       }
       serviceEndpoints: [
         {
@@ -152,7 +297,7 @@ var virtualNetwork002Subnets = [
         id: natGatewayModule.outputs.natGatewayId
       }
       networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[2].resourceId
+        id: networkSecurityGroupModule.outputs.networkSecurityGroupProperties[3].resourceId
       }
       serviceEndpoints: [
         {
@@ -169,7 +314,7 @@ var virtualNetwork002Subnets = [
         id: natGatewayModule.outputs.natGatewayId
       }
       networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[3].resourceId
+        id: networkSecurityGroupModule.outputs.networkSecurityGroupProperties[4].resourceId
       }
       serviceEndpoints: [
         {
@@ -179,20 +324,41 @@ var virtualNetwork002Subnets = [
     }
   }
   {
-    name: 'snet-${appEnvironment}-adeWeb-vm'
+    name: 'snet-${appEnvironment}-adeApp-vmss'
     properties: {
-      addressPrefix: '10.102.1.0/24'
+      addressPrefix: '10.102.12.0/24'
       natGateway: {
         id: natGatewayModule.outputs.natGatewayId
       }
       networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[4].resourceId
+        id: networkSecurityGroupModule.outputs.networkSecurityGroupProperties[5].resourceId
       }
       serviceEndpoints: [
         {
           service: 'Microsoft.Sql'
         }
       ]
+    }
+  }
+  {
+    name: 'snet-${appEnvironment}-adeApp-aks'
+    properties: {
+      addressPrefix: '10.102.100.0/23'
+      serviceEndpoints: [
+        {
+          service: 'Microsoft.ContainerRegistry'
+        }
+      ]
+    }
+  }
+  {
+    name: 'snet-${appEnvironment}-userService'
+    properties: {
+      addressPrefix: '10.102.151.0/24'
+      networkSecurityGroup: {
+        id: networkSecurityGroupModule.outputs.networkSecurityGroupProperties[6].resourceId
+      }
+      privateEndpointNetworkPolicies: 'Enabled'
     }
   }
   {
@@ -200,7 +366,7 @@ var virtualNetwork002Subnets = [
     properties: {
       addressPrefix: '10.102.152.0/24'
       networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[7].resourceId
+        id: networkSecurityGroupModule.outputs.networkSecurityGroupProperties[7].resourceId
       }
       privateEndpointNetworkPolicies: 'Enabled'
     }
@@ -210,7 +376,7 @@ var virtualNetwork002Subnets = [
     properties: {
       addressPrefix: '10.102.153.0/24'
       networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[8].resourceId
+        id: networkSecurityGroupModule.outputs.networkSecurityGroupProperties[8].resourceId
       }
       privateEndpointNetworkPolicies: 'Enabled'
     }
@@ -220,7 +386,17 @@ var virtualNetwork002Subnets = [
     properties: {
       addressPrefix: '10.102.154.0/24'
       networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[9].resourceId
+        id: networkSecurityGroupModule.outputs.networkSecurityGroupProperties[9].resourceId
+      }
+      privateEndpointNetworkPolicies: 'Enabled'
+    }
+  }
+  {
+    name: 'snet-${appEnvironment}-adeAppSql'
+    properties: {
+      addressPrefix: '10.102.160.0/24'
+      networkSecurityGroup: {
+        id: networkSecurityGroupModule.outputs.networkSecurityGroupProperties[10].resourceId
       }
       privateEndpointNetworkPolicies: 'Enabled'
     }
@@ -230,17 +406,7 @@ var virtualNetwork002Subnets = [
     properties: {
       addressPrefix: '10.102.161.0/24'
       networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[10].resourceId
-      }
-      privateEndpointNetworkPolicies: 'Enabled'
-    }
-  }
-  {
-    name: 'snet-${appEnvironment}-userService'
-    properties: {
-      addressPrefix: '10.102.151.0/24'
-      networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[12].resourceId
+        id: networkSecurityGroupModule.outputs.networkSecurityGroupProperties[11].resourceId
       }
       privateEndpointNetworkPolicies: 'Enabled'
     }
@@ -258,48 +424,93 @@ var virtualNetwork002Subnets = [
         }
       ]
       networkSecurityGroup: {
-        id: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties[13].resourceId
+        id: networkSecurityGroupModule.outputs.networkSecurityGroupProperties[12].resourceId
       }
       privateEndpointNetworkPolicies: 'Enabled'
     }
   }
 ]
 
+// Variables - Firewall
+//////////////////////////////////////////////////
+var firewallName = 'fw-${appEnvironment}'
+var firewallPublicIpAddressName = 'pip-${appEnvironment}-fw'
+var firewallPublicIpAddressProperties = {
+  name: firewallPublicIpAddressName
+  publicIPAllocationMethod: 'Static'
+  publicIPAddressVersion: 'IPv4'
+  sku: 'Standard'
+}
+var firewallPrivateIpAddress = '10.101.0.4'
+var firewallProperties = {
+  name: firewallName
+}
+
+// Variables - Bastion
+//////////////////////////////////////////////////
+var bastionName = 'bastion-${appEnvironment}'
+var bastionPublicIpAddressName = 'pip-${appEnvironment}-bastion'
+var bastionPublicIpAddressProperties = {
+  name: bastionPublicIpAddressName
+  publicIPAllocationMethod: 'Static'
+  publicIPAddressVersion: 'IPv4'
+  sku: 'Standard'
+}
+
+// Variables - Private DNS
+//////////////////////////////////////////////////
+var appServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
+var azureSqlPrivateDnsZoneName = 'privatelink${environment().suffixes.sqlServerHostname}'
+
+// Variables - Virtual Network Peering
+//////////////////////////////////////////////////
+var peeringProperties = {
+  allowVirtualNetworkAccess: true
+  allowForwardedTraffic: false
+  allowGatewayTransit: false
+  useRemoteGateways: false
+}
+
+// Variables - Network Security Group Flow Logs
+//////////////////////////////////////////////////
+var networkWatcherResourceGroupName = 'NetworkWatcherRG'
+
+// Variables - Existing Resources
+//////////////////////////////////////////////////
+var eventHubNamespaceAuthorizationRuleName = 'RootManageSharedAccessKey'
+var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
+var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
+var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
+
 // Existing Resource - Event Hub Authorization Rule
 //////////////////////////////////////////////////
 resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2021-11-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: 'evh-${appEnvironment}-diagnostics/RootManageSharedAccessKey'
-}
-
-// Existing Resource - Key Vault
-//////////////////////////////////////////////////
-resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing = {
-  scope: resourceGroup(securityResourceGroupName)
-  name: 'kv-${appEnvironment}-001'
+  name: '${eventHubNamespaceName}/${eventHubNamespaceAuthorizationRuleName}'
 }
 
 // Existing Resource - Log Analytics Workspace
 //////////////////////////////////////////////////
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: 'log-${appEnvironment}-001'
+  name: logAnalyticsWorkspaceName
 }
 
 // Existing Resource - Storage Account - Diagnostics
 //////////////////////////////////////////////////
-resource diagnosticsStorageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' existing = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: replace('sa-${appEnvironment}-diags', '-', '')
+  name: storageAccountName
 }
 
-// Module - Storage Account - Nsg Flow Logs
+// Module - Storage Account
 //////////////////////////////////////////////////
-module storageAccountNsgFlowLogsModule './storage_account.bicep' = {
-  name: 'storageAccountNsgFlowLogsDeployment'
+module storageAccountModule 'storage_account.bicep' = {
+  name: 'storageAccountDeployment'
   params: {
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    storageAccountProperties: nsgFlowLogsStorageAccountProperties
     storageAccountName: nsgFlowLogsStorageAccountName
     tags: tags
   }
@@ -312,21 +523,23 @@ module natGatewayModule './nat_gateway.bicep' = {
   params: {
     location: location
     natGatewayName: natGatewayName
-    natGatewayPublicIPPrefixName: natGatewayPublicIPPrefixName
+    natGatewayProperties: natGatewayProperties
+    publicIpPrefixName: publicIpPrefixName
+    publicIpPrefixProperties: publicIpPrefixProperties
     tags: tags
   }
 }
 
 // Module - Network Security Group
 //////////////////////////////////////////////////
-module networkSecurityGroupsModule './network_security_group.bicep' = {
+module networkSecurityGroupModule './network_security_group.bicep' = {
   name: 'networkSecurityGroupsDeployment'
   params: {
-    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     networkSecurityGroups: networkSecurityGroups
+    storageAccountId: storageAccount.id
     tags: tags
   }
 }
@@ -336,7 +549,8 @@ module networkSecurityGroupsModule './network_security_group.bicep' = {
 module routeTableModule './route_table.bicep' = {
   name: 'routeTableDeployment'
   params: {
-    internetRouteTableName: internetRouteTableName
+    routes: routes
+    routeTableName: routeTableName
     location: location
     tags: tags
   }
@@ -347,32 +561,34 @@ module routeTableModule './route_table.bicep' = {
 module virtualNetworkModule 'virtual_network.bicep' = {
   name: 'virtualNetworkDeployment'
   params: {
-    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
+    hubVirtualNetworkName: hubVirtualNetworkName
+    hubVirtualNetworkPrefix: hubVirtualNetworkPrefix
+    hubVirtualNetworkSubnets: hubVirtualNetworkSubnets
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    spokeVirtualNetworkName: spokeVirtualNetworkName
+    spokeVirtualNetworkPrefix: spokeVirtualNetworkPrefix
+    spokeVirtualNetworkSubnets: spokeVirtualNetworkSubnets
+    storageAccountId: storageAccount.id
     tags: tags
-    virtualNetwork001Name: virtualNetwork001Name
-    virtualNetwork001Prefix: virtualNetwork001Prefix
-    virtualNetwork001Subnets: virtualNetwork001Subnets
-    virtualNetwork002Name: virtualNetwork002Name
-    virtualNetwork002Prefix: virtualNetwork002Prefix
-    virtualNetwork002Subnets: virtualNetwork002Subnets
   }
 }
 
-// Module - Azure Firewall
+// Module - Firewall
 //////////////////////////////////////////////////
-module azureFirewallModule './firewall.bicep' = if (deployAzureFirewall == true) {
-  name: 'azureFirewallDeployment'
+module firewallModule './firewall.bicep' = if (deployFirewall == true) {
+  name: 'firewallDeployment'
   params: {
-    azureFirewallName: azureFirewallName
-    azureFirewallPublicIpAddressName: azureFirewallPublicIpAddressName
-    azureFirewallSubnetId: virtualNetworkModule.outputs.azureFirewallSubnetId
-    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
+    // firewallName: firewallName
+    firewallProperties: firewallProperties
+    firewallSubnetId: virtualNetworkModule.outputs.firewallSubnetId
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    // publicIpAddressName: firewallPublicIpAddressName
+    publicIpAddressProperties: firewallPublicIpAddressProperties
+    storageAccountId: storageAccount.id
     tags: tags
   }
 }
@@ -382,59 +598,28 @@ module azureFirewallModule './firewall.bicep' = if (deployAzureFirewall == true)
 module azureBastionModule './bastion.bicep' = {
   name: 'azureBastionDeployment'
   params: {
-    azureBastionName: azureBastionName
-    azureBastionPublicIpAddressName: azureBastionPublicIpAddressName
-    azureBastionSubnetId: virtualNetworkModule.outputs.azureBastionSubnetId
-    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
+    bastionName: bastionName
+    bastionSubnetId: virtualNetworkModule.outputs.bastionSubnetId
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    // publicIpAddressName: bastionPublicIpAddressName
+    publicIpAddressProperties: bastionPublicIpAddressProperties
+    storageAccountId: storageAccount.id
     tags: tags
   }
 }
 
-// Module - Azure Vpn Gateway
+// Module - Virtual Network Peering
 //////////////////////////////////////////////////
-module azureVpnGatewayModule './vpn_gateway.bicep' = if (deployVpnGateway == true) {
-  name: 'vpnGatewayDeployment'
-  params: {
-    connectionName: connectionName
-    connectionSharedKey: keyVault.getSecret('resourcePassword')
-    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
-    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
-    gatewaySubnetId: virtualNetworkModule.outputs.gatewaySubnetId
-    localNetworkGatewayAddressPrefix: localNetworkGatewayAddressPrefix
-    localNetworkGatewayName: localNetworkGatewayName
-    location: location
-    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    sourceAddressPrefix: sourceAddressPrefix
-    tags: tags
-    vpnGatewayName: vpnGatewayName
-    vpnGatewayPublicIpAddressName: vpnGatewayPublicIpAddressName
-  }
-}
-
-// Module - Virtual Network Peering (deployVpnGateway == true)
-//////////////////////////////////////////////////
-module vnetPeeringVgwModule './vnet_peering_vgw.bicep' = if (deployVpnGateway == true) {
+module vnetPeeringVgwModule 'virtual_network_peering.bicep' = {
   name: 'vnetPeeringVgwDeployment'
   params: {
-    virtualNetwork001Id: virtualNetworkModule.outputs.virtualNetwork001Id
-    virtualNetwork001Name: virtualNetwork001Name
-    virtualNetwork002Id: virtualNetworkModule.outputs.virtualNetwork002Id
-    virtualNetwork002Name: virtualNetwork002Name
-  }
-}
-
-// Module - Virtual Network Peering (deployVpnGateway == false)
-//////////////////////////////////////////////////
-module vnetPeeringNoVgwModule './vnet_peering_no_vgw.bicep' = if (deployVpnGateway == false) {
-  name: 'vnetPeeringNoVgwDeployment'
-  params: {
-    virtualNetwork001Id: virtualNetworkModule.outputs.virtualNetwork001Id
-    virtualNetwork001Name: virtualNetwork001Name
-    virtualNetwork002Id: virtualNetworkModule.outputs.virtualNetwork002Id
-    virtualNetwork002Name: virtualNetwork002Name
+    hubVirtualNetworkId: virtualNetworkModule.outputs.hubVirtualNetworkId
+    hubVirtualNetworkName: hubVirtualNetworkName
+    peeringProperties: peeringProperties
+    spokeVirtualNetworkId: virtualNetworkModule.outputs.spokeVirtualNetworkId
+    spokeVirtualNetworkName: spokeVirtualNetworkName
   }
 }
 
@@ -445,23 +630,23 @@ module privateDnsModule './private_dns.bicep' = {
   params: {
     appServicePrivateDnsZoneName: appServicePrivateDnsZoneName
     azureSqlPrivateDnsZoneName: azureSqlPrivateDnsZoneName
-    virtualNetwork001Id: virtualNetworkModule.outputs.virtualNetwork001Id
-    virtualNetwork001Name: virtualNetwork001Name
-    virtualNetwork002Id: virtualNetworkModule.outputs.virtualNetwork002Id
-    virtualNetwork002Name: virtualNetwork002Name
+    hubVirtualNetworkId: virtualNetworkModule.outputs.hubVirtualNetworkId
+    hubVirtualNetworkName: hubVirtualNetworkName
+    spokeVirtualNetworkId: virtualNetworkModule.outputs.spokeVirtualNetworkId
+    spokeVirtualNetworkName: spokeVirtualNetworkName
     tags: tags
   }
 }
 
 // Module - Network Security Group Flow Logs
-//////////////////////////////////////////////////
+// //////////////////////////////////////////////////
 module nsgFlowLogsModule './network_security_group_flow_logs.bicep' = {
   scope: resourceGroup(networkWatcherResourceGroupName)
   name: 'nsgFlowLogsDeployment'
   params: {
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    networkSecurityGroupProperties: networkSecurityGroupsModule.outputs.networkSecurityGroupProperties
-    nsgFlowLogsStorageAccountId: storageAccountNsgFlowLogsModule.outputs.storageAccountId
+    networkSecurityGroupProperties: networkSecurityGroupModule.outputs.networkSecurityGroupProperties
+    storageAccountId: storageAccountModule.outputs.storageAccountId
   }
 }

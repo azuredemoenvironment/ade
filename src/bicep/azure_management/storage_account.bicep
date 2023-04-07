@@ -9,16 +9,13 @@ param logAnalyticsWorkspaceId string
 @description('The properties of the Storage Account.')
 param storageAccountProperties object
 
-@description('The name of the Storage Account.')
-param storageAccountName string
-
 @description('The list of resource tags.')
 param tags object
 
 // Resource - Storage Account
 //////////////////////////////////////////////////
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
-  name: storageAccountName
+  name: storageAccountProperties.name
   location: location
   tags: tags
   kind: storageAccountProperties.kind

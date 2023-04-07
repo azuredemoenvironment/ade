@@ -1,11 +1,5 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the Event Hub.')
-param eventHubName string
-
-@description('The name of the Event Hub Namespace.')
-param eventHubNamespaceName string
-
 @description('The properties of the Event Hub Namespace.')
 param eventHubNamespaceProperties object
 
@@ -21,7 +15,7 @@ param tags object
 // Resource - Event Hub Namespace
 //////////////////////////////////////////////////
 resource eventHubNamespace 'Microsoft.EventHub/namespaces@2022-10-01-preview' = {
-  name: eventHubNamespaceName
+  name: eventHubNamespaceProperties.eventHubNamespaceName
   location: location
   tags: tags
   sku: {
@@ -38,7 +32,7 @@ resource eventHubNamespace 'Microsoft.EventHub/namespaces@2022-10-01-preview' = 
 //////////////////////////////////////////////////
 resource eventHub 'Microsoft.EventHub/namespaces/eventhubs@2022-10-01-preview' = {
   parent: eventHubNamespace
-  name: eventHubName
+  name: eventHubNamespaceProperties.eventHubName
   properties: {
     messageRetentionInDays: eventHubNamespaceProperties.messageRetention
     partitionCount: eventHubNamespaceProperties.partitions

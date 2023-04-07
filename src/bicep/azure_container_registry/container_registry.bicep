@@ -3,17 +3,17 @@
 @description('The Id of the Acr Pull Role Definition.')
 param acrPullRoleDefinitionId string
 
-@description('The name of the Container Registry.')
-param containerRegistryName string
+@description('The Principal ID of the Container Registry Managed Identity.')
+param containerRegistryManagedIdentityPrincipalID string
 
-@description('The ID of the Diagnostics Storage Account.')
-param diagnosticsStorageAccountId string
+@description('The properties of the Container Registry.')
+param containerRegistryProperties object
+
+@description('The principal ID type of the Container Registry.')
+param containerRegistryPrincipalIdType string
 
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
-
-@description('The Principal ID of the Container Registry Managed Identity.')
-param containerRegistryManagedIdentityPrincipalID string
 
 @description('The location for all resources.')
 param location string
@@ -21,20 +21,23 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The list of Resource tags')
+@description('The ID of the Storage Account.')
+param storageAccountId string
+
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Container Registry
 //////////////////////////////////////////////////
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-09-01' = {
-  name: containerRegistryName
+  name: containerRegistryProperties.name
   location: location
   tags: tags
   sku: {
-    name: 'Premium'
+    name: containerRegistryProperties.skuName
   }
   properties: {
-    adminUserEnabled: true
+    adminUserEnabled: containerRegistryProperties.adminUserEnabled
   }
 }
 
@@ -45,23 +48,27 @@ resource containerRegistryDiagnostics 'microsoft.insights/diagnosticSettings@202
   scope: containerRegistry
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
+    storageAccountId: storageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
-        category: 'ContainerRegistryRepositoryEvents'
+        categoryGroup: 'allLogs'
         enabled: true
-      }
-      {
-        category: 'ContainerRegistryLoginEvents'
-        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
   }
@@ -74,6 +81,6 @@ resource acrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-
   properties: {
     roleDefinitionId: acrPullRoleDefinitionId
     principalId: containerRegistryManagedIdentityPrincipalID
-    principalType: 'ServicePrincipal'
+    principalType: containerRegistryPrincipalIdType
   }
 }

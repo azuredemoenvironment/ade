@@ -89,14 +89,22 @@ resource keyVaultDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-p
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
-        category: 'AuditEvent'
+        categoryGroup: 'allLogs'
         enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
   }

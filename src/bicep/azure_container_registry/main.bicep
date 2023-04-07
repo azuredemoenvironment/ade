@@ -3,11 +3,8 @@
 @description('The application environment (workload, environment, location).')
 param appEnvironment string
 
-@description('The date of the resource deployment.')
-param deploymentDate string = utcNow('yyyy-MM-dd')
-
-@description('The name of the Identity Resource Group.')
-param identityResourceGroupName string
+@description('The current date.')
+param currentDate string = utcNow('yyyy-MM-dd')
 
 @description('The location for all resources.')
 param location string = resourceGroup().location
@@ -18,41 +15,61 @@ param managementResourceGroupName string
 @description('The name of the owner of the deployment.')
 param ownerName string
 
+@description('The name of the Security Resource Group.')
+param securityResourceGroupName string
+
 // Variables
+//////////////////////////////////////////////////
+var tags = {
+  deploymentDate: currentDate
+  owner: ownerName
+}
+
+// Variables - Container Registry
 //////////////////////////////////////////////////
 var acrPullRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
 var containerRegistryName = replace('acr-${appEnvironment}-001', '-', '')
-var tags = {
-  deploymentDate: deploymentDate
-  owner: ownerName
+var containerRegistryPrincipalIdType = 'ServicePrincipal'
+var containerRegistryProperties = {
+  name: containerRegistryName
+  skuName: 'Premium'
+  adminUserEnabled: true
 }
+
+// Variables - Existing Resources
+//////////////////////////////////////////////////
+var containerRegistryManagedIdentityName = 'id-${appEnvironment}-containerregistry'
+var eventHubNamespaceAuthorizationRuleName = 'RootManageSharedAccessKey'
+var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
+var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
+var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
 
 // Existing Resource - Event Hub Authorization Rule
 //////////////////////////////////////////////////
 resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2021-11-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: 'evh-${appEnvironment}-diagnostics/RootManageSharedAccessKey'
-}
-
-// Existing Resource - Managed Identity - Container Registry
-//////////////////////////////////////////////////
-resource containerRegistryManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
-  scope: resourceGroup(identityResourceGroupName)
-  name: 'id-${appEnvironment}-containerregistry'
+  name: '${eventHubNamespaceName}/${eventHubNamespaceAuthorizationRuleName}'
 }
 
 // Existing Resource - Log Analytics Workspace
 //////////////////////////////////////////////////
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: 'log-${appEnvironment}-001'
+  name: logAnalyticsWorkspaceName
+}
+
+// Existing Resource - Managed Identity - Container Registry
+//////////////////////////////////////////////////
+resource containerRegistryManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
+  scope: resourceGroup(securityResourceGroupName)
+  name: containerRegistryManagedIdentityName
 }
 
 // Existing Resource - Storage Account - Diagnostics
 //////////////////////////////////////////////////
-resource diagnosticsStorageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' existing = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: replace('sa-${appEnvironment}-diags', '-', '')
+  name: storageAccountName
 }
 
 // Module - Container Registry
@@ -61,12 +78,13 @@ module containerRegistryModule './container_registry.bicep' = {
   name: 'containerRegistryDeployment'
   params: {
     acrPullRoleDefinitionId: acrPullRoleDefinitionId
-    containerRegistryName: containerRegistryName
-    diagnosticsStorageAccountId: diagnosticsStorageAccount.id
-    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     containerRegistryManagedIdentityPrincipalID: containerRegistryManagedIdentity.properties.principalId
+    containerRegistryPrincipalIdType: containerRegistryPrincipalIdType
+    containerRegistryProperties: containerRegistryProperties
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    storageAccountId: storageAccount.id
     tags: tags
   }
 }

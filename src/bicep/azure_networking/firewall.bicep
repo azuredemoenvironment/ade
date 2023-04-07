@@ -1,19 +1,16 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the Azure Firewall')
-param azureFirewallName string
-
-@description('The name of the Azure Firewall Public IP Address.')
-param azureFirewallPublicIpAddressName string
-
-@description('The ID of the Azure Firewall Subnet.')
-param azureFirewallSubnetId string
-
-@description('The ID of the Diagnostics Storage Account.')
-param diagnosticsStorageAccountId string
-
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
+
+// @description('The name of the Firewall.')
+// param firewallName string
+
+@description('The properties of the Firewall.')
+param firewallProperties object
+
+@description('The ID of the Firewall Subnet.')
+param firewallSubnetId string
 
 @description('The location for all resources.')
 param location string
@@ -21,60 +18,70 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The list of Resource tags')
+// @description('The name of the Firewall Public IP Address.')
+// param publicIpAddressName string
+
+@description('The properties of the Public IP Address.')
+param publicIpAddressProperties object
+
+@description('The ID of the Storage Account.')
+param storageAccountId string
+
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Public Ip Address
 //////////////////////////////////////////////////
-resource azureFirewallPublicIpAddress 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
-  name: azureFirewallPublicIpAddressName
+resource publicIpAddress 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
+  name: publicIpAddressProperties.name
   location: location
   tags: tags
   properties: {
-    publicIPAllocationMethod: 'Static'
+    publicIPAllocationMethod: publicIpAddressProperties.publicIPAllocationMethod
+    publicIPAddressVersion: publicIpAddressProperties.publicIPAddressVersion
   }
   sku: {
-    name: 'Standard'
+    name: publicIpAddressProperties.sku
   }
 }
 
 // Resource - Public Ip Address - Diagnostic Settings
 //////////////////////////////////////////////////
-resource azureFirewallPublicIpAddressDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: azureFirewallPublicIpAddress
-  name: '${azureFirewallPublicIpAddress.name}-diagnostics'
+resource publicIpAddressDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: publicIpAddress
+  name: '${publicIpAddress.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
+    storageAccountId: storageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
-        category: 'DDoSProtectionNotifications'
+        categoryGroup: 'allLogs'
         enabled: true
-      }
-      {
-        category: 'DDoSMitigationFlowLogs'
-        enabled: true
-      }
-      {
-        category: 'DDoSMitigationReports'
-        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
   }
 }
 
-// Resource - Azure Firewall
+// Resource - Firewall
 //////////////////////////////////////////////////
-resource azureFirewall 'Microsoft.Network/azureFirewalls@2022-01-01' = {
-  name: azureFirewallName
+resource firewall 'Microsoft.Network/azureFirewalls@2022-01-01' = {
+  name: firewallProperties.name
   location: location
   tags: tags
   properties: {
@@ -83,93 +90,46 @@ resource azureFirewall 'Microsoft.Network/azureFirewalls@2022-01-01' = {
         name: 'IpConf'
         properties: {
           publicIPAddress: {
-            id: azureFirewallPublicIpAddress.id
+            id: publicIpAddress.id
           }
           subnet: {
-            id: azureFirewallSubnetId
+            id: firewallSubnetId
           }
         }
       }
     ]
-    applicationRuleCollections: [
-      {
-        name: 'InternetOutbound'
-        properties: {
-          priority: 100
-          action: {
-            type: 'Allow'
-          }
-          rules: [
-            {
-              name: 'Microsoft'
-              protocols: [
-                {
-                  port: 80
-                  protocolType: 'Http'
-                }
-                {
-                  port: 443
-                  protocolType: 'Https'
-                }
-              ]
-              targetFqdns: [
-                '*.microsoft.com'
-                'microsoft.com'
-              ]
-            }
-            {
-              name: 'GitHub'
-              protocols: [
-                {
-                  port: 80
-                  protocolType: 'Http'
-                }
-                {
-                  port: 443
-                  protocolType: 'Https'
-                }
-              ]
-              targetFqdns: [
-                '*.github.com'
-                'github.com'
-                'githubassets.com'
-              ]
-            }
-          ]
-        }
-      }
-    ]
+    applicationRuleCollections: []
   }
 }
 
-// Resource - Azure Firewall - Diagnostic Settings
+// Resource - Firewall - Diagnostic Settings
 //////////////////////////////////////////////////
-resource azureFirewallDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: azureFirewall
-  name: '${azureFirewall.name}-diagnostics'
+resource firewallDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: firewall
+  name: '${firewall.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
+    storageAccountId: storageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
-        category: 'AzureFirewallApplicationRule'
+        categoryGroup: 'allLogs'
         enabled: true
-      }
-      {
-        category: 'AzureFirewallNetworkRule'
-        enabled: true
-      }
-      {
-        category: 'AzureFirewallDnsProxy'
-        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
   }

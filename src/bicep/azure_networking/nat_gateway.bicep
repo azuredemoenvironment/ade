@@ -6,24 +6,30 @@ param location string
 @description('The name of the Nat Gateway.')
 param natGatewayName string
 
-@description('The name of the Nat Gateway Public IP Prefix.')
-param natGatewayPublicIPPrefixName string
+@description('The properties] of the Nat Gateway.')
+param natGatewayProperties object
 
-@description('The list of Resource tags')
+@description('The name of the Public IP Prefix.')
+param publicIpPrefixName string
+
+@description('The properties] of the Public IP Prefix.')
+param publicIpPrefixProperties object
+
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Public Ip Prefix
 //////////////////////////////////////////////////
-resource natGatewaypublicIPPrefix 'Microsoft.Network/publicIPPrefixes@2022-01-01' = {
-  name: natGatewayPublicIPPrefixName
+resource publicIpPrefix 'Microsoft.Network/publicIPPrefixes@2022-01-01' = {
+  name: publicIpPrefixName
   location: location
   tags: tags
   sku: {
-    name: 'Standard'
+    name: publicIpPrefixProperties.skuName
   }
   properties: {
-    prefixLength: 31
-    publicIPAddressVersion: 'IPv4'
+    prefixLength: publicIpPrefixProperties.prefixLength
+    publicIPAddressVersion: publicIpPrefixProperties.publicIPAddressVersion
   }
 }
 
@@ -34,13 +40,13 @@ resource natGateway 'Microsoft.Network/natGateways@2022-01-01' = {
   location: location
   tags: tags
   sku: {
-    name: 'Standard'
+    name: natGatewayProperties.skuName
   }
   properties: {
-    idleTimeoutInMinutes: 4
+    idleTimeoutInMinutes: natGatewayProperties.idleTimeoutInMinutes
     publicIpPrefixes: [
       {
-        id: natGatewaypublicIPPrefix.id
+        id: publicIpPrefix.id
       }
     ]
   }

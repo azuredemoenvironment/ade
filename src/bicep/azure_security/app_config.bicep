@@ -51,18 +51,22 @@ resource appConfigDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
-        category: 'HttpRequest'
+        categoryGroup: 'allLogs'
         enabled: true
-      }
-      {
-        category: 'Audit'
-        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
   }

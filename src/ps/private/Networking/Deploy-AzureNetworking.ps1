@@ -13,6 +13,7 @@ function Deploy-AzureNetworking {
     $resourceGroupName = $armParameters.networkingResourceGroupName
 
     # Create the Azure Networking Resource Group
+    ##################################################
     az group create -n $resourceGroupName -l $azureRegion
 
     # Deploy the Azure Networking Bicep Template at the Resource Group Scope.

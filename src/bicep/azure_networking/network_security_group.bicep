@@ -1,7 +1,7 @@
 // Parameters
 //////////////////////////////////////////////////
 @description('The ID of the Diagnostics Storage Account.')
-param diagnosticsStorageAccountId string
+param storageAccountId string
 
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
@@ -15,7 +15,7 @@ param logAnalyticsWorkspaceId string
 @description('The array of Network Security Group names and properties.')
 param networkSecurityGroups array
 
-@description('The list of Resource tags')
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Network Security Group
@@ -34,17 +34,17 @@ resource nsgDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-previe
   name: '${networkSecurityGroup.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
+    storageAccountId: storageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
-        category: 'NetworkSecurityGroupEvent'
+        categoryGroup: 'allLogs'
         enabled: true
-      }
-      {
-        category: 'NetworkSecurityGroupRuleCounter'
-        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
   }

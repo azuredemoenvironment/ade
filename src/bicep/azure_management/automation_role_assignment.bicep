@@ -7,7 +7,7 @@ targetScope = 'subscription'
 @description('The principal ID of the Automation Account.')
 param automationAccountPrincipalId string
 
-@description('The principal ID of the Automation Account.')
+@description('The principal ID type of the Automation Account.')
 param automationAccountPrincipalIdType string
 
 @description('The Id of the Contributor role definition.')

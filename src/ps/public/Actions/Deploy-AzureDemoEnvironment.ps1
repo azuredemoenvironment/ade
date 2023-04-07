@@ -31,10 +31,9 @@ function Deploy-AzureDemoEnvironment {
     
     # Core Services
     ###################################
-    # Deploy-AzureManagement $armParameters
-    # Deploy-AzureIdentity $armParameters
+    Deploy-AzureManagement $armParameters
     # Deploy-AzureSecurity $armParameters
-    Deploy-AzureNetworking $armParameters
+    # Deploy-AzureNetworking $armParameters
     # Deploy-AzureContainerRegistry $armParameters
     
     # # Data Services
