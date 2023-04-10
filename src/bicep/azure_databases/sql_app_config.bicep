@@ -22,8 +22,8 @@ var sqlServerConnectionString = 'Data Source=tcp:${sqlServerFqdn},1433;Initial C
 
 // Resource - App Configuration -  App Sql Database Connection String
 //////////////////////////////////////////////////
-resource appConfigKeyAdeSqlServerConnectionString 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
-  name: '${appConfigName}/Ade:SqlServerConnectionString'
+resource appConfigKeySqlServerConnectionString 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
+  name: '${appConfigName}/${sqlDatabaseName}:SqlServerConnectionString'
   properties: {
     value: sqlServerConnectionString
   }

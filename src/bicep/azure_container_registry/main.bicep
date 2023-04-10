@@ -28,7 +28,7 @@ var tags = {
 // Variables - Container Registry
 //////////////////////////////////////////////////
 var acrPullRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
-var containerRegistryName = replace('acr-${appEnvironment}-001', '-', '')
+var containerRegistryName = replace('acr-${appEnvironment}', '-', '')
 var containerRegistryPrincipalIdType = 'ServicePrincipal'
 var containerRegistryProperties = {
   name: containerRegistryName
@@ -38,7 +38,7 @@ var containerRegistryProperties = {
 
 // Variables - Existing Resources
 //////////////////////////////////////////////////
-var containerRegistryManagedIdentityName = 'id-${appEnvironment}-containerregistry'
+var containerRegistryManagedIdentityName = 'id-${appEnvironment}-containerRegistry'
 var eventHubNamespaceAuthorizationRuleName = 'RootManageSharedAccessKey'
 var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
 var logAnalyticsWorkspaceName = 'log-${appEnvironment}'

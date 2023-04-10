@@ -84,14 +84,14 @@ var virtualMachineScaleSets = [
 //////////////////////////////////////////////////
 resource appConfig 'Microsoft.AppConfiguration/configurationStores@2020-07-01-preview' existing = {
   scope: resourceGroup(securityResourceGroupName)
-  name: 'appcs-${appEnvironment}-001'
+  name: 'appcs-${appEnvironment}'
 }
 
 // Resource - Container Registry
 //////////////////////////////////////////////////
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' existing = {
   scope: resourceGroup(containerResourceGroupName)
-  name: replace('acr-${appEnvironment}-001', '-', '')
+  name: replace('acr-${appEnvironment}', '-', '')
 }
 
 // Module - Virtual Machine

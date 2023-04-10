@@ -40,8 +40,9 @@ var tags = {
 
 // Variables - Managed Identity
 //////////////////////////////////////////////////
-var applicationGatewayManagedIdentityName = 'id-${appEnvironment}-applicationgateway'
-var containerRegistryManagedIdentityName = 'id-${appEnvironment}-containerregistry'
+var applicationGatewayManagedIdentityName = 'id-${appEnvironment}-applicationGateway'
+var containerRegistryManagedIdentityName = 'id-${appEnvironment}-containerRegistry'
+var virtualMachineManagedIdentityName = 'id-${appEnvironment}-virtualMachine'
 
 // Variables - App Configuration
 //////////////////////////////////////////////////
@@ -69,6 +70,9 @@ var resourcePasswordSecretName = 'resourcePassword'
 // Variables - Key Vault - Access Policies
 //////////////////////////////////////////////////
 var applicationGatewayManagedIdentityPrincipalIdSecretsPermissions = ['get']
+var appServicePrincipalId = 'abfa0a7c-a6b6-4736-8310-5855508787cd'
+var appServicePrincipalIdCertificatePermissions = ['get']
+var appServicePrincipalIdSecretsPermissions = ['get']
 var containerRegistryManagedIdentityPrincipalIdCertificatesPermissions = ['get']
 var containerRegistryManagedIdentityPrincipalIdKeysPermissions = ['get', 'unwrapKey', 'wrapKey']
 var containerRegistryManagedIdentityPrincipalIdSecretsPermissions = ['get']
@@ -118,6 +122,7 @@ module managedIdentityModule 'managed_identity.bicep' = {
     containerRegistryManagedIdentityName: containerRegistryManagedIdentityName
     location: location
     tags: tags
+    virtualMachineManagedIdentityName: virtualMachineManagedIdentityName
   }
 }
 
@@ -173,6 +178,9 @@ module keyVaultAccessPoliciesModule 'key_vault_access_policies.bicep' = {
   params: {
     applicationGatewayManagedIdentityPrincipalId: managedIdentityModule.outputs.applicationGatewayManagedIdentityPrincipalId
     applicationGatewayManagedIdentityPrincipalIdSecretsPermissions: applicationGatewayManagedIdentityPrincipalIdSecretsPermissions
+    appServicePrincipalId: appServicePrincipalId
+    appServicePrincipalIdCertificatePermissions: appServicePrincipalIdCertificatePermissions
+    appServicePrincipalIdSecretsPermissions: appServicePrincipalIdSecretsPermissions    
     containerRegistryManagedIdentityPrincipalId: managedIdentityModule.outputs.containerRegistryManagedIdentityPrincipalId
     containerRegistryManagedIdentityPrincipalIdCertificatesPermissions: containerRegistryManagedIdentityPrincipalIdCertificatesPermissions
     containerRegistryManagedIdentityPrincipalIdKeysPermissions: containerRegistryManagedIdentityPrincipalIdKeysPermissions

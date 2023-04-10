@@ -29,7 +29,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10
   }
 }
 
-// Resource - Log Analytics Workspace Solution
+// Resource - Log Analytics Workspace - Solution
 //////////////////////////////////////////////////
 resource logAnalyticsWorkspaceSolution 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = [for (logAnalyticsWorkspaceSolution, i) in logAnalyticsWorkspaceSolutions: {
   name: logAnalyticsWorkspaceSolution.name

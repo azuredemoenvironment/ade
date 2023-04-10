@@ -7,25 +7,19 @@ param adminPassword string
 @description('The name of the admin user.')
 param adminUserName string
 
-@description('The ID of the Diagnostics Storage Account.')
-param diagnosticsStorageAccountId string
-
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
 
 @description('The location for all resources.')
 param location string
 
-@description('The customer Id of the Log Analytics Workspace.')
-param logAnalyticsWorkspaceCustomerId string
-
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The Workspace Key of the Log Analytics Workspace.')
-param logAnalyticsWorkspaceKey string
+@description('The ID of the Storage Account.')
+param storageAccountId string
 
-@description('The list of Resource tags')
+@description('The list of resource tags.')
 param tags object
 
 @description('The array of properties for Virtual Machines.')
@@ -33,7 +27,7 @@ param virtualMachines array
 
 // Resource - Network Interface
 //////////////////////////////////////////////////
-resource vmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (virtualMachine, i) in virtualMachines: {
+resource vmNic 'Microsoft.Network/networkInterfaces@2022-09-01' = [for (virtualMachine, i) in virtualMachines: {
   name: virtualMachine.nicName
   location: location
   tags: tags
@@ -42,7 +36,7 @@ resource vmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (virtualM
       {
         name: 'ipconfig1'
         properties: {
-          privateIPAllocationMethod: 'Dynamic'
+          privateIPAllocationMethod: virtualMachine.privateIPAllocationMethod
           subnet: {
             id: virtualMachine.subnetId
           }
@@ -59,18 +53,22 @@ resource vmNic 'Microsoft.Network/networkInterfaces@2020-08-01' = [for (virtualM
 
 // Resource - Network Interface - Diagnostic Settings
 //////////////////////////////////////////////////
-resource adeAppVmNicDiagnosticSetting 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (virtualMachine, i) in virtualMachines: {
+resource adeAppVmNicDiagnosticSetting 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [for (virtualMachine, i) in virtualMachines: {
   scope: vmNic[i]
   name: '${virtualMachine.nicName}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
+    storageAccountId: storageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
+        retentionPolicy: {
+          enabled: true
+          days: 7
+        }
       }
     ]
   }
@@ -78,7 +76,7 @@ resource adeAppVmNicDiagnosticSetting 'microsoft.insights/diagnosticSettings@202
 
 // Resource - Virtual Machine
 //////////////////////////////////////////////////
-resource vm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for (virtualMachine, i) in virtualMachines: {
+resource vm 'Microsoft.Compute/virtualMachines@2022-11-01' = [for (virtualMachine, i) in virtualMachines: {
   name: virtualMachine.name
   location: location
   zones: [
@@ -86,28 +84,23 @@ resource vm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for (virtualMachin
   ]
   tags: tags
   identity: {
-    type: 'SystemAssigned'
+    type: virtualMachine.identityType
   }
   properties: {
     proximityPlacementGroup: {
       id: virtualMachine.proximityPlacementGroupId
     }
     hardwareProfile: {
-      vmSize: 'Standard_B1s'
+      vmSize: virtualMachine.vmSize
     }
     storageProfile: {
-      imageReference: {
-        publisher: 'Canonical'
-        offer: 'UbuntuServer'
-        sku: '18.04-LTS'
-        version: 'latest'
-      }
+      imageReference: virtualMachine.imageReference
       osDisk: {
-        osType: 'Linux'
+        osType: virtualMachine.osType
         name: virtualMachine.osDiskName
-        createOption: 'FromImage'
+        createOption: virtualMachine.createOption
         managedDisk: {
-          storageAccountType: 'Standard_LRS'
+          storageAccountType: virtualMachine.storageAccountType
         }
       }
     }
@@ -133,7 +126,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2020-12-01' = [for (virtualMachin
 
 // Resource - Dependency Agent Linux
 //////////////////////////////////////////////////
-resource adeAppVmDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (virtualMachine, i) in virtualMachines: {
+resource dependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (virtualMachine, i) in virtualMachines: {
   parent: vm[i]
   name: 'DependencyAgentLinux'
   location: location
@@ -142,40 +135,41 @@ resource adeAppVmDependencyAgent 'Microsoft.Compute/virtualMachines/extensions@2
     type: 'DependencyAgentLinux'
     typeHandlerVersion: '9.5'
     autoUpgradeMinorVersion: true
-  }
-}]
-
-// Resource - Microsoft Monitoring Agent
-//////////////////////////////////////////////////
-resource adeAppVmMicrosoftMonitoringAgent 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (virtualMachine, i) in virtualMachines: {
-  parent: vm[i]
-  name: 'OMSExtension'
-  location: location
-  properties: {
-    publisher: 'Microsoft.EnterpriseCloud.Monitoring'
-    type: 'OmsAgentForLinux'
-    typeHandlerVersion: '1.4'
-    autoUpgradeMinorVersion: true
     settings: {
-      workspaceId: logAnalyticsWorkspaceCustomerId
-    }
-    protectedSettings: {
-      workspaceKey: logAnalyticsWorkspaceKey
+      enableAMA: 'true'
     }
   }
 }]
 
-// Resource - Guest Configuration
+// Resource - Azure Monitor Agent
 //////////////////////////////////////////////////
-resource windowsVMGuestConfigExtension 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = [for (virtualMachine, i) in virtualMachines: {
+resource azureMonitorAgent 'Microsoft.Compute/virtualMachines/extensions@2022-11-01' = [for (virtualMachine, i) in virtualMachines: {
   parent: vm[i]
-  name: 'AzurePolicyforLinux'
+  name: 'AzureMonitorLinuxAgent'
   location: location
   properties: {
-    publisher: 'Microsoft.GuestConfiguration'
-    type: 'ConfigurationforLinux'
+    publisher: 'Microsoft.Azure.Monitor'
+    type: 'AzureMonitorLinuxAgent'
     typeHandlerVersion: '1.0'
     autoUpgradeMinorVersion: true
     enableAutomaticUpgrade: true
+    settings: {
+      authentication: {
+        managedIdentity: {
+          'identifier-name': 'mi_res_id'
+          'identifier-value': virtualMachine.managedIdentityId
+        }
+      }
+    }
+  }
+}]
+
+// Resource - Data Collection Rule Association
+//////////////////////////////////////////////////
+resource dataCollectionRuleAssociation 'Microsoft.Insights/dataCollectionRuleAssociations@2022-06-01' = [for (virtualMachine, i) in virtualMachines: {
+  name: 'VMInsightsDataCollectionRuleAssociation'
+  scope: vm[i]
+  properties: {
+    dataCollectionRuleId: virtualMachine.dataCollectionRuleId
   }
 }]

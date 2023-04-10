@@ -14,6 +14,9 @@
         "ownerName": {
             "value": "@@ownerName@@"
         },
+        "rootDomainName": {
+            "value": "@@rootDomainName@@"
+        },
         "sourceAddressPrefix": {
             "value": "@@sourceAddressPrefix@@"
         }              

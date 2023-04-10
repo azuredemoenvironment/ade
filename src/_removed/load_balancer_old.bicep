@@ -3,23 +3,26 @@
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
 
-@description('The array of properties for Load Balancer.')
-param loadBalancers array
-
-@description('The array of properties for Load Balancer services.')
-param loadBalancerServices array
-
 @description('The location for all resources.')
 param location string
 
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The ID of the Storage Account.')
-param storageAccountId string
-
 @description('The list of resource tags.')
 param tags object
+
+@description('The array of properties for Load Balancer Load Balancing Rules.')
+param loadBalancerLoadBalancingRules array
+
+@description('The array of properties for Load Balancer Probes.')
+param loadBalancerProbes array
+
+@description('The array of properties for Load Balancer.')
+param loadBalancers array
+
+@description('The ID of the Storage Account.')
+param storageAccountId string
 
 // Resource - Load Balancer
 //////////////////////////////////////////////////
@@ -33,32 +36,32 @@ resource lb 'Microsoft.Network/loadBalancers@2022-09-01' = [for (loadBalancer, i
   properties: {
     frontendIPConfigurations: loadBalancer.properties.frontendIPConfigurations
     backendAddressPools: loadBalancer.properties.backendAddressPools
-    probes: [for (loadBalancerService, i) in loadBalancerServices: {
-      name: loadBalancerService.probeName
+    probes: [for (loadBalancerProbe, i) in loadBalancerProbes: {
+      name: loadBalancerProbe.name
       properties: {
-        protocol: loadBalancerService.probeProtocol
-        requestPath: loadBalancerService.requestPath
-        port: loadBalancerService.port
-        intervalInSeconds: loadBalancerService.intervalInSeconds
-        numberOfProbes: loadBalancerService.numberOfProbes
+        protocol: loadBalancerProbe.protocol
+        requestPath: loadBalancerProbe.requestPath
+        port: loadBalancerProbe.port
+        intervalInSeconds: loadBalancerProbe.intervalInSeconds
+        numberOfProbes: loadBalancerProbe.numberOfProbes
       }
     }]
-    loadBalancingRules: [for (loadBalancerService, i) in loadBalancerServices: {
-      name: loadBalancerService.loadBalancingRuleName
+    loadBalancingRules: [for (loadBalancerLoadBalancingRule, i) in loadBalancerLoadBalancingRules: {
+      name: 'lbr-${loadBalancerLoadBalancingRule.name}'
       properties: {
         frontendIPConfiguration: {
-          id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancer.name, 'frontendIPConfiguration')
+          id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancer.name, loadBalancer.properties.frontendIPConfigurations.name)
         }
         backendAddressPool: {
-          id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancer.name, 'backendAddressPool')
+          id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancer.name, loadBalancer.properties.backendAddressPools.name)
         }
         probe: {
-          id: resourceId('Microsoft.Network/loadBalancers/probes', loadBalancer.name, loadBalancerService.probeName)
+          id: resourceId('Microsoft.Network/loadBalancers/probes', loadBalancer.name, loadBalancerLoadBalancingRule.healthProbeName)
         }
-        protocol: loadBalancerService.loadBalancingRuleProtocol
-        frontendPort: loadBalancerService.port
-        backendPort: loadBalancerService.port
-        idleTimeoutInMinutes: loadBalancerService.idleTimeoutInMinutes
+        protocol: loadBalancerLoadBalancingRule.protocol
+        frontendPort: loadBalancerLoadBalancingRule.port
+        backendPort: loadBalancerLoadBalancingRule.port
+        idleTimeoutInMinutes: loadBalancerLoadBalancingRule.idleTimeoutInMinutes
       }
     }]
   }
@@ -78,28 +81,16 @@ resource lbDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview
       {
         category: 'LoadBalancerAlertEvent'
         enabled: true
-        retentionPolicy: {
-          enabled: true
-          days: 7
-        }
       }
       {
         category: 'LoadBalancerProbeHealthStatus'
         enabled: true
-        retentionPolicy: {
-          enabled: true
-          days: 7
-        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
-        retentionPolicy: {
-          enabled: true
-          days: 7
-        }
       }
     ]
   }
@@ -108,5 +99,5 @@ resource lbDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview
 // Outputs
 //////////////////////////////////////////////////
 output loadBalancerProperties array = [for (loadBalancer, i) in loadBalancers: {
-  resourceId: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancer.name, 'backendAddressPool')
+  resourceId: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancer.name, 'bep-${loadBalancer.name}')
 }]

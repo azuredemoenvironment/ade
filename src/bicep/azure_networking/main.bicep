@@ -18,6 +18,9 @@ param managementResourceGroupName string
 @description('The name of the owner of the deployment.')
 param ownerName string
 
+@description('The value for Root Domain Name.')
+param rootDomainName string
+
 @description('The public IP address of the on-premises network.')
 param sourceAddressPrefix string
 
@@ -620,6 +623,15 @@ module vnetPeeringVgwModule 'virtual_network_peering.bicep' = {
     peeringProperties: peeringProperties
     spokeVirtualNetworkId: virtualNetworkModule.outputs.spokeVirtualNetworkId
     spokeVirtualNetworkName: spokeVirtualNetworkName
+  }
+}
+
+// Module - Public Dns
+//////////////////////////////////////////////////
+module publicDnsModule 'public_dns.bicep' = {
+  name: 'publicDnsDeployment'
+  params: {
+    rootDomainName: rootDomainName
   }
 }
 

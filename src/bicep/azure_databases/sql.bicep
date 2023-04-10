@@ -22,7 +22,7 @@ param sqlProperties object
 @description('The ID of the Storage Account.')
 param storageAccountId string
 
-@description('The list of Resource tags')
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Sql Server
@@ -98,7 +98,9 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2022-09-01' = {
       {
         name: 'ipconfig1'
         properties: {
-          privateIPAddress: sqlProperties.privateIPAddress
+          groupId: 'sqlServer'
+          memberName: 'sqlServer'
+          privateIPAddress: sqlProperties.privateEndpointPrivateIpAddress
         }
       }
     ]

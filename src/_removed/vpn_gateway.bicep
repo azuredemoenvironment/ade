@@ -31,7 +31,7 @@ param logAnalyticsWorkspaceId string
 @description('The public IP address of the on-premises network.')
 param sourceAddressPrefix string
 
-@description('The list of Resource tags')
+@description('The list of resource tags.')
 param tags object
 
 @description('The name of the VPN Gateway.')

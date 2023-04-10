@@ -9,8 +9,11 @@ param containerRegistryManagedIdentityName string
 @description('The location for all resources.')
 param location string
 
-@description('The list of resource tags')
+@description('The list of resource tags.')
 param tags object
+
+@description('The name of the Virtual Machine Managed Identity.')
+param virtualMachineManagedIdentityName string
 
 // Resource - Managed Identity - Application Gateway
 //////////////////////////////////////////////////
@@ -28,7 +31,16 @@ resource containerRegistryManagedIdentity 'Microsoft.ManagedIdentity/userAssigne
   tags: tags
 }
 
+// Resource - Managed Identity - Virtual Machine
+//////////////////////////////////////////////////
+resource virtualMachineManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  name: virtualMachineManagedIdentityName
+  location: location
+  tags: tags
+}
+
 // Outputs
 //////////////////////////////////////////////////
 output applicationGatewayManagedIdentityPrincipalId string = applicationGatewayManagedIdentity.properties.principalId
 output containerRegistryManagedIdentityPrincipalId string = containerRegistryManagedIdentity.properties.principalId
+output virtualMachineManagedIdentityPrincipalId string = virtualMachineManagedIdentity.properties.principalId

@@ -22,7 +22,7 @@ function Set-InitialArmParameters {
     $environment = "prod"
     $azureRegionShortName = Get-RegionShortName $azureRegion
     $appEnvironment = "$workload-$environment-$azureRegionShortName".ToLowerInvariant()
-    $acrName = "acr-$appEnvironment-001".replace('-', '')
+    $acrName = "acr-$appEnvironment".replace('-', '')
     $certificateBase64String = ''
     if ($secureCertificatePassword -ne $null -and $wildcardCertificatePath -eq $null) {
         $certificateBase64String = Convert-WildcardCertificateToBase64String $secureCertificatePassword $wildcardCertificatePath
@@ -54,14 +54,14 @@ function Set-InitialArmParameters {
         'adminUserName'                            = $resourceUserName
         'certificateBase64String'                  = $certificateBase64String
         'localNetworkGatewayAddressPrefix'         = $localNetworkRange
-        'logAnalyticsWorkspaceName'                = "log-$appEnvironment-001"
+        'logAnalyticsWorkspaceName'                = "log-$appEnvironment"
         'ownerName'                                = $ownerName
         'resourcePassword'                         = $plainTextResourcePassword
         'sourceAddressPrefix'                      = $sourceAddressPrefix
         'sslCertificateName'                       = $rootDomainName
 
         # Required for Deploy-AzureAppServicePlanScaleDown.ps1
-        'appServicePlanName'                       = "plan-$appEnvironment-001"
+        'appServicePlanName'                       = "plan-$appEnvironment"
 
         # Required for Deploy-AzureContainerRegistry.ps1
         'acrName'                                  = $acrName
@@ -87,9 +87,9 @@ function Set-InitialArmParameters {
         'adeLoadTestingRedisContainerGroupName'    = "ci-$appEnvironment-adeloadtesting-redis"
         
         # Required for Set-AzureFirewallToAllocated.ps1 and Set-AzureFirewallToDeallocated.ps1
-        'azureFirewallPublicIpAddressName'         = "pip-$appEnvironment-fw001"
-        'azureFirewallName'                        = "fw-$appEnvironment-001"        
-        'virtualNetwork001Name'                    = "vnet-$appEnvironment-001"
+        'azureFirewallPublicIpAddressName'         = "pip-$appEnvironment-fw"
+        'azureFirewallName'                        = "fw-$appEnvironment"        
+        'hubVirtualNetworkName'                    = "vnet-$appEnvironment"
 
         # Required for Set-AzureVmssToAllocated.ps1 and Set-AzureVmssToAllocated.ps1
         'adeAppVmssName'                           = "vmss-$appEnvironment-adeapp-vmss"

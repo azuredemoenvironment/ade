@@ -89,6 +89,10 @@ var eventHubNamespaceProperties = {
   skuCapacity: 1
 }
 
+// Variables - Data Collection Rule
+//////////////////////////////////////////////////
+var dataCollectionRuleName = 'dcr-${appEnvironment}-vmInsights'
+
 // Variables - Application Insights
 //////////////////////////////////////////////////
 var applicationInsightsName = 'appinsights-${appEnvironment}'
@@ -211,6 +215,18 @@ module eventHubDiagnosticsModule 'event_hub.bicep' = {
   name: 'eventHubDiagnosticsDeployment'
   params: {
     eventHubNamespaceProperties: eventHubNamespaceProperties
+    location: location
+    logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
+    tags: tags
+  }
+}
+
+// Module - Data Collection Rule
+//////////////////////////////////////////////////
+module dataCollectionRuleModule 'data_collection_rule.bicep' = {
+  name: 'dataCollectionRuleDeployment'
+  params: {
+    dataCollectionRuleName: dataCollectionRuleName
     location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
     tags: tags

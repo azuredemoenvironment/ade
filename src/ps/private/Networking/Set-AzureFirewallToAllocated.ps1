@@ -6,11 +6,11 @@ function Set-AzureFirewallToAllocated {
     Write-ScriptSection "Setting Azure Firewall to Allocated"
 
     $networkingResourceGroupName = $armParameters.networkingResourceGroupName
-    $virtualNetwork001Name = $armParameters.virtualNetwork001Name
+    $hubVirtualNetworkName = $armParameters.hubVirtualNetworkName
     $azureFirewallName = $armParameters.azureFirewallName
     $azureFirewallPublicIpAddressName = $armParameters.azureFirewallPublicIpAddressName
 
-    $virtualNetwork = Get-AzVirtualNetwork -ResourceGroupName $networkingResourceGroupName -Name $virtualNetwork001Name
+    $virtualNetwork = Get-AzVirtualNetwork -ResourceGroupName $networkingResourceGroupName -Name $hubVirtualNetworkName
     $azureFirewallPublicIp = Get-AzPublicIpAddress -Name $azureFirewallPublicIpAddressName -ResourceGroupName $networkingResourceGroupName
     $azureFirewall = Get-AzFirewall -Name $azureFirewallName -ResourceGroupName $networkingResourceGroupName
     $azureFirewall.Allocate($virtualNetwork, $azureFirewallPublicIp)

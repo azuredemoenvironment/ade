@@ -6,8 +6,8 @@ param appEnvironment string
 @description('The name of the Container Resource Group.')
 param containerResourceGroupName string
 
-@description('The date of the resource deployment.')
-param deploymentDate string = utcNow('yyyy-MM-dd')
+@description('The current date.')
+param currentDate string = utcNow('yyyy-MM-dd')
 
 @description('The location for all resources.')
 param location string = resourceGroup().location
@@ -23,40 +23,58 @@ param ownerName string
 
 // Variables
 //////////////////////////////////////////////////
+var tags = {
+  deploymentDate: currentDate
+  owner: ownerName
+}
+
+// Variables - Aks Cluster
+//////////////////////////////////////////////////
+var aksClusterDNSName = 'aks-${appEnvironment}-dns'
+var aksClusterName = 'aks-${appEnvironment}'
+var aksClusterProperties = {
+  name: aksClusterName
+  identityType: 'SystemAssigned'
+  
+}
+
 var acrPullRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
-var aksClusterDNSName = 'aks-${appEnvironment}-001-dns'
-var aksClusterName = 'aks-${appEnvironment}-001'
 var aksDNSServiceIPAddress = '192.168.0.10'
 var aksDockerBridgeAddress = '172.17.0.1/16'
 var aksNodeResourceGroupName = '${containerResourceGroupName}-node'
 var aksServiceAddressPrefix = '192.168.0.0/24'
 var networkContributorRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', '4d97b98b-1d4f-4787-a291-c67834d212e7')
-var tags = {
-  deploymentDate: deploymentDate
-  owner: ownerName
-}
 
+// Variables - Existing Resources
+//////////////////////////////////////////////////
+var containerRegistryName = replace('acr-${appEnvironment}', '-', '')
+var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
+var spokeVirtualNetworkName = 'vnet-${appEnvironment}-spoke'
+var adeAppAksSubnetName = 'snet-${appEnvironment}-adeApp-aks'
+
+// Existing Resource - Container Registry
+//////////////////////////////////////////////////
 // Existing Resource - Container Registry
 //////////////////////////////////////////////////
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-01' existing = {
   scope: resourceGroup(containerResourceGroupName)
-  name: replace('acr-${appEnvironment}-001', '-', '')
+  name: containerRegistryName
 }
 
 // Existing Resource - Log Analytics Workspace
 //////////////////////////////////////////////////
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' existing = {
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
-  name: 'log-${appEnvironment}-001'
+  name: logAnalyticsWorkspaceName
 }
 
-// Existing Resource - Virtual Network - Virtual Network 002
+// Existing Resource - Virtual Network - Spoke
 //////////////////////////////////////////////////
-resource virtualNetwork002 'Microsoft.Network/virtualNetworks@2020-07-01' existing = {
+resource spokeVirtualNetwork 'Microsoft.Network/virtualNetworks@2022-09-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
-  name: 'vnet-${appEnvironment}-002'
-  resource aksSubnet 'subnets@2020-07-01' existing = {
-    name: 'snet-${appEnvironment}-adeapp-aks'
+  name: spokeVirtualNetworkName
+  resource adeAppAksSubnet 'subnets@2022-09-01' existing = {
+    name: adeAppAksSubnetName
   }
 }
 
@@ -71,7 +89,7 @@ module aksModule 'aks.bicep' = {
     aksDockerBridgeAddress: aksDockerBridgeAddress
     aksNodeResourceGroupName: aksNodeResourceGroupName
     aksServiceAddressPrefix: aksServiceAddressPrefix
-    aksSubnetId: virtualNetwork002::aksSubnet.id
+    aksSubnetId: spokeVirtualNetwork::adeAppAksSubnet.id
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     tags: tags
@@ -85,7 +103,7 @@ module aksRbacNetworkContributor 'aks_rbac_network_contributor.bicep' = {
   name: 'aksClusterRbacNetworkContributorDeployment'
   params: {
     aksClusterPrincipalId: aksModule.outputs.aksClusterPrincipalId
-    aksSubnetId: virtualNetwork002::aksSubnet.id
+    aksSubnetId: spokeVirtualNetwork::adeAppAksSubnet.id
     networkContributorRoleDefinitionId: networkContributorRoleDefinitionId
   }
 }

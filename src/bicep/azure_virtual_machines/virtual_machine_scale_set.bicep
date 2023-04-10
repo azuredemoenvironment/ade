@@ -10,13 +10,7 @@ param adminUserName string
 @description('The location for all resources.')
 param location string
 
-@description('The customer Id of the Log Analytics Workspace.')
-param logAnalyticsWorkspaceCustomerId string
-
-@description('The Workspace Key of the Log Analytics Workspace.')
-param logAnalyticsWorkspaceKey string
-
-@description('The list of Resource tags')
+@description('The list of resource tags.')
 param tags object
 
 @description('The array of properties for Virtual Machine Scale Sets.')
@@ -34,20 +28,20 @@ resource vmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = [for (vir
   ]
   tags: tags
   sku: {
-    name: 'Standard_B2ms'
-    tier: 'Standard'
-    capacity: 1
+    name: virtualMachineScaleSet.skuName
+    tier: virtualMachineScaleSet.tier
+    capacity: virtualMachineScaleSet.capacity
   }
   identity: {
-    type: 'SystemAssigned'
+    type: virtualMachineScaleSet.identityType
   }
   properties: {
-    overprovision: true
+    overprovision: virtualMachineScaleSet.overprovision
     upgradePolicy: {
-      mode: 'Automatic'
+      mode: virtualMachineScaleSet.upgradePolicyMode
     }
-    singlePlacementGroup: false
-    zoneBalance: true
+    singlePlacementGroup: virtualMachineScaleSet.singlePlacementGroup
+    zoneBalance: virtualMachineScaleSet.zoneBalance
     virtualMachineProfile: {
       osProfile: {
         computerNamePrefix: virtualMachineScaleSet.name
@@ -55,16 +49,10 @@ resource vmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = [for (vir
         adminPassword: adminPassword
       }
       storageProfile: {
+        imageReference: virtualMachineScaleSet.imageReference
         osDisk: {
-          caching: 'ReadWrite'
-          createOption: 'FromImage'
-        }
-        imageReference: {
-          publisher: 'Canonical'
-          offer: 'UbuntuServer'
-          sku: '18.04-LTS'
-          version: 'latest'
-        }
+          createOption: virtualMachineScaleSet.createOption
+        }        
       }
       networkProfile: {
         networkInterfaceConfigurations: [
@@ -91,45 +79,55 @@ resource vmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = [for (vir
           }
         ]
       }
-      extensionProfile: {
-        extensions: [
-          {
-            name: 'DependencyAgentLinux'
-            properties: {
-              publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
-              type: 'DependencyAgentLinux'
-              typeHandlerVersion: '9.5'
-              autoUpgradeMinorVersion: true
-            }
-          }
-          {
-            name: 'OMSExtension'
-            properties: {
-              publisher: 'Microsoft.EnterpriseCloud.Monitoring'
-              type: 'OmsAgentForLinux'
-              typeHandlerVersion: '1.4'
-              autoUpgradeMinorVersion: true
-              settings: {
-                workspaceId: logAnalyticsWorkspaceCustomerId
-              }
-              protectedSettings: {
-                workspaceKey: logAnalyticsWorkspaceKey
-              }
-            }
-          }
-          {
-            name: 'AzurePolicyforLinux'
-            properties: {
-              publisher: 'Microsoft.GuestConfiguration'
-              type: 'ConfigurationforLinux'
-              typeHandlerVersion: '1.0'
-              autoUpgradeMinorVersion: true
-              enableAutomaticUpgrade: true
-            }
-          }
-        ]
+    }
+  }
+}]
+
+// Resource - Dependency Agent Linux
+//////////////////////////////////////////////////
+resource dependencyAgent 'Microsoft.Compute/virtualMachineScaleSets/extensions@2020-12-01' = [for (virtualMachineScaleSet, i) in virtualMachineScaleSets: {
+  parent: vmss[i]
+  name: 'DependencyAgentLinux'
+  properties: {
+    publisher: 'Microsoft.Azure.Monitoring.DependencyAgent'
+    type: 'DependencyAgentLinux'
+    typeHandlerVersion: '9.5'
+    autoUpgradeMinorVersion: true
+    settings: {
+      enableAMA: 'true'
+    }
+  }
+}]
+
+// Resource - Azure Monitor Agent
+//////////////////////////////////////////////////
+resource azureMonitorAgent 'Microsoft.Compute/virtualMachineScaleSets/extensions@2022-11-01' = [for (virtualMachineScaleSet, i) in virtualMachineScaleSets: {
+  parent: vmss[i]
+  name: 'AzureMonitorLinuxAgent'
+  properties: {
+    publisher: 'Microsoft.Azure.Monitor'
+    type: 'AzureMonitorLinuxAgent'
+    typeHandlerVersion: '1.0'
+    autoUpgradeMinorVersion: true
+    enableAutomaticUpgrade: true
+    settings: {
+      authentication: {
+        managedIdentity: {
+          'identifier-name': 'mi_res_id'
+          'identifier-value': virtualMachineScaleSet.managedIdentityId
+        }
       }
     }
+  }
+}]
+
+// Resource - Data Collection Rule Association
+//////////////////////////////////////////////////
+resource dataCollectionRuleAssociation 'Microsoft.Insights/dataCollectionRuleAssociations@2022-06-01' = [for (virtualMachineScaleSet, i) in virtualMachineScaleSets: {
+  name: 'VMInsightsDataCollectionRuleAssociation'
+  scope: vmss[i]
+  properties: {
+    dataCollectionRuleId: virtualMachineScaleSet.dataCollectionRuleId
   }
 }]
 
@@ -154,7 +152,6 @@ resource vmssAutoScaleSettings 'microsoft.insights/autoscalesettings@2015-04-01'
           {
             metricTrigger: {
               metricName: 'Percentage CPU'
-              metricNamespace: ''
               metricResourceUri: vmss[i].id
               timeGrain: 'PT1M'
               timeWindow: 'PT5M'
@@ -173,7 +170,6 @@ resource vmssAutoScaleSettings 'microsoft.insights/autoscalesettings@2015-04-01'
           {
             metricTrigger: {
               metricName: 'Percentage CPU'
-              metricNamespace: ''
               metricResourceUri: vmss[i].id
               timeGrain: 'PT1M'
               timeWindow: 'PT5M'

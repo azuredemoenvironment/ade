@@ -24,7 +24,7 @@ param logAnalyticsWorkspaceId string
 @description('The properties of the Public IP Address')
 param publicIpAddressProperties object
 
-@description('The list of resource tags')
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Public Ip Address

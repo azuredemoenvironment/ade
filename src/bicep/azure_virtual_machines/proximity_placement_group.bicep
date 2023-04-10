@@ -6,7 +6,7 @@ param location string
 @description('The array of Proximity Placement Groups.')
 param proximityPlacementGroups array
 
-@description('The list of Resource tags')
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Proximity Placement Group

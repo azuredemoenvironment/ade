@@ -1,10 +1,7 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the App Service Plan.')
-param appServicePlanName string
-
-@description('The ID of the Diagnostics Storage Account.')
-param diagnosticsStorageAccountId string
+@description('The properties of the App Service Plan.')
+param appServicePlanProperties object
 
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
@@ -15,21 +12,24 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The list of Resource tags')
+@description('The ID of the Storage Account.')
+param storageAccountId string
+
+@description('The list of resource tags.')
 param tags object
 
 // Resource - App Service Plan
 //////////////////////////////////////////////////
-resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
-  name: appServicePlanName
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
+  name: appServicePlanProperties.name
   location: location
   tags: tags
-  kind: 'linux'
+  kind: appServicePlanProperties.kind
   sku: {
-    name: 'P1v3'
+    name: appServicePlanProperties.skuName
   }
   properties: {
-    reserved: true
+    reserved: appServicePlanProperties.reserved
   }
 }
 
@@ -40,7 +40,7 @@ resource appServicePlanDiagnostics 'microsoft.insights/diagnosticSettings@2021-0
   name: '${appServicePlan.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
+    storageAccountId: storageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logAnalyticsDestinationType: 'Dedicated'
     metrics: [

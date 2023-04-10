@@ -9,7 +9,7 @@ param hubVirtualNetworkName string
 @description('The address prefix of hub Virtual Network.')
 param hubVirtualNetworkPrefix string
 
-@description('The array of properties for Virtual Networks 001 Subnets.')
+@description('The array of properties for the hub Virtual Network.')
 param hubVirtualNetworkSubnets array
 
 @description('The location for all resources.')
@@ -18,13 +18,13 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The name of Virtual Network 002.')
+@description('The name of the spoke Virtual Network.')
 param spokeVirtualNetworkName string
 
-@description('The address prefix of Virtual Network 002.')
+@description('The address prefix of the spoke Virtual Network.')
 param spokeVirtualNetworkPrefix string
 
-@description('The array of properties for Virtual Networks 002 Subnets.')
+@description('The array of properties of the spoke Virtual Network Subnets.')
 param spokeVirtualNetworkSubnets array
 
 @description('The ID of the Storage Account.')

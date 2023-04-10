@@ -38,12 +38,12 @@ function Deploy-AzureDemoEnvironment {
     
     # # Data Services
     # ###################################
-    Deploy-AzureDatabases $armParameters
+    # Deploy-AzureDatabases $armParameters
 
     # # Compute Infrastructure
     # ###################################
     # Deploy-AzureVirtualMachines $armParameters
-    # Deploy-AzureAppServices $armParameters
+    Deploy-AzureAppServices $armParameters
     # Deploy-AzureKubernetesServices $armParameters
     # Deploy-AzureContainerInstances $armParameters
     # Deploy-AdeApplicationToVirtualMachines $armParameters

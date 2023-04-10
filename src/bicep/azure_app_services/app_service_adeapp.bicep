@@ -1,29 +1,7 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The connection string from the App Configuration instance.')
-param appConfigConnectionString string
-
-@description('The ID of the App Service Plan.')
-param appServicePlanId string
-
-@description('The array of properties for the Ade App App Services.')
+@description('The array of properties for the App Services.')
 param appServices array
-
-@description('The ID of the Azure App Service Private DNS Zone.')
-param appServicePrivateDnsZoneId string
-
-@description('The name of the admin user of the Azure Container Registry.')
-param containerRegistryName string
-
-@description('The password of the admin user of the Azure Container Registry.')
-@secure()
-param containerRegistryPassword string
-
-@description('The URL of the Azure Container Registry.')
-param containerRegistryURL string
-
-@description('The ID of the Diagnostics Storage Account.')
-param diagnosticsStorageAccountId string
 
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
@@ -34,38 +12,30 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The ID of the Virtual Network Integration Subnet.')
-param vnetIntegrationSubnetId string
+@description('The ID of the Storage Account.')
+param storageAccountId string
 
-// Variables
-//////////////////////////////////////////////////
-var tags = {
-  environment: 'production'
-  function: 'adeApp'
-  costCenter: 'it'
-}
+@description('The list of resource tags.')
+param tags object
 
-// Resource - App Service - Ade App
+// Resource - App Service
 //////////////////////////////////////////////////
-resource app 'Microsoft.Web/sites@2022-03-01' = [for (appService, i) in appServices: {
+resource app 'Microsoft.Web/sites@2022-09-01' = [for (appService, i) in appServices: {
   name: appService.name
   location: location
   tags: tags
-  kind: 'container'
+  kind: appService.kind
   properties: {
-    serverFarmId: appServicePlanId
-    virtualNetworkSubnetId: vnetIntegrationSubnetId
-    vnetRouteAllEnabled: true
-    httpsOnly: false
+    httpsOnly: appService.httpsOnly
+    serverFarmId: appService.serverFarmId
+    virtualNetworkSubnetId: appService.virtualNetworkSubnetId
+    vnetRouteAllEnabled: appService.vnetRouteAllEnabled
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryURL}/${appService.containerImageName}'
-      alwaysOn: true
-      http20Enabled: true
-      httpLoggingEnabled: true
+      linuxFxVersion: appService.linuxFxVersion
       appSettings: [
         {
           name: 'CONNECTIONSTRINGS__APPCONFIG'
-          value: appConfigConnectionString
+          value: appService.appConfigConnectionString
         }
         {
           name: 'Ade__ENVIRONMENT'
@@ -77,15 +47,15 @@ resource app 'Microsoft.Web/sites@2022-03-01' = [for (appService, i) in appServi
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_URL'
-          value: 'https://${containerRegistryURL}'
+          value: 'https://${appService.containerRegistryUrl}'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-          value: containerRegistryName
+          value: appService.containerRegistryName
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-          value: containerRegistryPassword
+          value: appService.containerRegistryPassword
         }
         {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
@@ -100,14 +70,14 @@ resource app 'Microsoft.Web/sites@2022-03-01' = [for (appService, i) in appServi
   }
 }]
 
-// Resource - App Service - Diagnostic Settings - Ade App(s)
+// Resource - App Service - Diagnostic Settings
 //////////////////////////////////////////////////
 resource appDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (appService, i) in appServices: {
   scope: app[i]
   name: '${appService.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
+    storageAccountId: storageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logs: [
       {
@@ -144,9 +114,9 @@ resource appDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-previe
   }
 }]
 
-// Resource - Private Endpoint - App Service - Ade App(s)
+// Resource - Private Endpoint - App Service
 //////////////////////////////////////////////////
-resource appPrivateEndpoint 'Microsoft.Network/privateEndpoints@2022-01-01' = [for (appService, i) in appServices: if (appService.usePrivateEndpoint) {
+resource appPrivateEndpoint 'Microsoft.Network/privateEndpoints@2022-09-01' = [for (appService, i) in appServices: if (appService.usePrivateEndpoint) {
   name: appService.privateEndpointName
   location: location
   properties: {
@@ -167,9 +137,9 @@ resource appPrivateEndpoint 'Microsoft.Network/privateEndpoints@2022-01-01' = [f
   }
 }]
 
-// Resource - Private Endpoint Dns Group - Private Endpoint - App Service - Ade App(s)
+// Resource - Private Endpoint Dns Group - Private Endpoint - App Service
 //////////////////////////////////////////////////
-resource appPrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2022-01-01' = [for (appService, i) in appServices: if (appService.usePrivateEndpoint) {
+resource appPrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2022-09-01' = [for (appService, i) in appServices: if (appService.usePrivateEndpoint) {
   name: '${appService.privateEndpointName}/dnsgroupname'
   dependsOn: [
     appPrivateEndpoint
@@ -179,7 +149,7 @@ resource appPrivateEndpointDnsZoneGroup 'Microsoft.Network/privateEndpoints/priv
       {
         name: 'config1'
         properties: {
-          privateDnsZoneId: appServicePrivateDnsZoneId
+          privateDnsZoneId: appService.privateDnsZoneId
         }
       }
     ]

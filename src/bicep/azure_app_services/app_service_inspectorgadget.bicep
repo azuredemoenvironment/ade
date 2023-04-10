@@ -7,20 +7,11 @@ param adminPassword string
 @description('The name of the admin user.')
 param adminUserName string
 
-@description('The ID of the App Service Plan.')
-param appServicePlanId string
-
-@description('The ID of the Diagnostics Storage Account.')
-param diagnosticsStorageAccountId string
+@description('The array of App Service.')
+param appServices array
 
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
-
-@description('The name of the Inspector Gadget App Service.')
-param inspectorGadgetAppServiceName string
-
-@description('The Docker Image of the Inspector Gadget App Service.')
-param inspectorGadgetDockerImage string
 
 @description('The name of the Inspector Gadget Sql Database.')
 param inspectorGadgetSqlDatabaseName string
@@ -34,26 +25,26 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-@description('The list of Resource tags')
+@description('The ID of the Storage Account.')
+param storageAccountId string
+
+@description('The list of resource tags.')
 param tags object
 
-@description('The ID of the Virtual Network Integration Subnet.')
-param vnetIntegrationSubnetId string
-
-// Resource - App Service - Inspector Gadget
+// Resource - App Service
 //////////////////////////////////////////////////
-resource inspectorGadgetAppService 'Microsoft.Web/sites@2022-03-01' = {
-  name: inspectorGadgetAppServiceName
+resource app 'Microsoft.Web/sites@2022-09-01' = [for (appService, i) in appServices: {
+  name: appService.name
   location: location
   tags: tags
-  kind: 'container'
+  kind: appService.kind
   properties: {
-    serverFarmId: appServicePlanId
-    virtualNetworkSubnetId: vnetIntegrationSubnetId
-    vnetRouteAllEnabled: true
-    httpsOnly: false
+    httpsOnly: appService.httpsOnly
+    serverFarmId: appService.serverFarmId
+    virtualNetworkSubnetId: appService.virtualNetworkSubnetId
+    vnetRouteAllEnabled: appService.vnetRouteAllEnabled
     siteConfig: {
-      linuxFxVersion: inspectorGadgetDockerImage
+      linuxFxVersion: appService.linuxFxVersion
       appSettings: [
         {
           name: 'DefaultSqlConnectionSqlConnectionString'
@@ -66,48 +57,85 @@ resource inspectorGadgetAppService 'Microsoft.Web/sites@2022-03-01' = {
       ]
     }
   }
-}
+}]
 
-// Resource - App Service - Diagnostic Settings - Inspector Gadget
+// Resource - App Service - Diagnostic Settings
 //////////////////////////////////////////////////
-resource inspectorGadgetAppServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: inspectorGadgetAppService
-  name: '${inspectorGadgetAppService.name}-diagnostics'
+resource appServiceDiagnostics 'Microsoft.insights/diagnosticSettings@2021-05-01-preview' = [for (appService, i) in appServices: {
+  scope: app[i]
+  name: '${appService.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    storageAccountId: diagnosticsStorageAccountId
+    storageAccountId: storageAccountId
     eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
     logs: [
       {
         category: 'AppServiceHTTPLogs'
         enabled: true
+        retentionPolicy: {
+          enabled: true
+          days: 7
+        }
       }
       {
         category: 'AppServiceConsoleLogs'
         enabled: true
+        retentionPolicy: {
+          enabled: true
+          days: 7
+        }
       }
       {
         category: 'AppServiceAppLogs'
         enabled: true
+        retentionPolicy: {
+          enabled: true
+          days: 7
+        }
       }
       {
         category: 'AppServiceAuditLogs'
         enabled: true
+        retentionPolicy: {
+          enabled: true
+          days: 7
+        }
       }
       {
         category: 'AppServiceIPSecAuditLogs'
         enabled: true
+        retentionPolicy: {
+          enabled: true
+          days: 7
+        }
       }
       {
         category: 'AppServicePlatformLogs'
         enabled: true
+        retentionPolicy: {
+          enabled: true
+          days: 7
+        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
+        retentionPolicy: {
+          enabled: true
+          days: 7
+        }
       }
     ]
   }
-}
+}]
+
+// Outputs
+//////////////////////////////////////////////////
+output appServiceCustomDomainVerificationIds array = [for (appService, i) in appServices: {
+  appServiceCustomDomainVerificationId: app[i].properties.customDomainVerificationId
+}]
+output appServiceNames array = [for (appService, i) in appServices: {
+  appServiceName: app[i].name
+}]

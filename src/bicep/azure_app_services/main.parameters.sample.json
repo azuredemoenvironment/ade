@@ -23,6 +23,10 @@
         "ownerName": {
             "value": "@@ownerName@@"
         },
+        
+        "rootDomainName": {
+            "value": "@@rootDomainName@@"
+        },
         "securityResourceGroupName": {
             "value": "@@securityResourceGroupName@@"
         }

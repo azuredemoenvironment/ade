@@ -19,7 +19,7 @@ param containerRegistryURL string
 @description('The location for all resources.')
 param location string
 
-@description('The list of Resource tags')
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Azure Container Instance - Container Group - Redis

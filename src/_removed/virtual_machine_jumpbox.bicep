@@ -43,7 +43,7 @@ param managementSubnetId string
 @description('The base URI for deployment scripts.')
 param scriptsBaseUri string
 
-@description('The list of Resource tags')
+@description('The list of resource tags.')
 param tags object
 
 // Variables

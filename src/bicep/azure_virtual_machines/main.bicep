@@ -40,16 +40,15 @@ var proximityPlacementGroups = [
   }
   {
     name: 'ppg-${appEnvironment}-adeApp-az2'
+    proximityPlacementGroupType: 'Standard'
   }
   {
     name: 'ppg-${appEnvironment}-adeApp-az3'
+    proximityPlacementGroupType: 'Standard'
   }
 ]
 
 // Variables - Load Balancer
-//////////////////////////////////////////////////
-
-// Variable Arrays
 //////////////////////////////////////////////////
 var loadBalancers = [
   {
@@ -60,7 +59,7 @@ var loadBalancers = [
     properties: {
       frontendIPConfigurations: [
         {
-          name: 'fip-lbi-${appEnvironment}-adeapp-vm'
+          name: 'frontendIPConfiguration'
           properties: {
             subnet: {
               id: spokeVirtualNetwork::adeAppVmSubnet.id
@@ -72,17 +71,20 @@ var loadBalancers = [
       ]
       backendAddressPools: [
         {
-          name: 'bep-lbi-${appEnvironment}-adeapp-vm'
+          name: 'backendAddressPool'
         }
       ]
     }    
   }
   {
     name: 'lbi-${appEnvironment}-adeapp-vmss'
+    sku: {
+      name: 'Standard'
+    }
     properties: {
       frontendIPConfigurations: [
         {
-          name: 'fip-lbi-${appEnvironment}-adeapp-vmss'
+          name: 'frontendIPConfiguration'
           properties: {
             subnet: {
               id: spokeVirtualNetwork::adeAppVmssSubnet.id
@@ -94,115 +96,219 @@ var loadBalancers = [
       ]
       backendAddressPools: [
         {
-          name: 'bep-lbi-${appEnvironment}-adeapp-vmss'
+          name: 'backendAddressPool'
         }
       ]
     }    
   }
 ]
-var loadBalancerBackendServices = [
+var loadBalancerServices = [
   {
     probeName: 'probe-DataIngestorService'
-    protocol: 'Http'
+    probeProtocol: 'Http'
     requestPath: '/swagger/index.html'
     port: 5000
     intervalInSeconds: 15
     numberOfProbes: 2
+    loadBalancingRuleName: 'lbr-DataIngestorService'
+    loadBalancingRuleProtocol: 'Tcp'
+    idleTimeoutInMinutes: 15
   }
   {
     probeName: 'probe-DataReporterService'
-    protocol: 'Http'
+    probeProtocol: 'Http'
     requestPath: '/swagger/index.html'
     port: 5001
     intervalInSeconds: 15
     numberOfProbes: 2
+    loadBalancingRuleName: 'lbr-DataReporterService'
+    loadBalancingRuleProtocol: 'Tcp'
+    idleTimeoutInMinutes: 15
   }
   {
     probeName: 'probe-UserService'
-    protocol: 'Http'
+    probeProtocol: 'Http'
     requestPath: '/swagger/index.html'
     port: 5002
     intervalInSeconds: 15
     numberOfProbes: 2
+    loadBalancingRuleName: 'lbr-UserService'
+    loadBalancingRuleProtocol: 'Tcp'
+    idleTimeoutInMinutes: 15
   }
   {
     probeName: 'probe-EventIngestorService'
-    protocol: 'Http'
+    probeProtocol: 'Http'
     requestPath: '/swagger/index.html'
     port: 5003
     intervalInSeconds: 15
     numberOfProbes: 2
-  }
-]
-var virtualMachines = [
-  {
-    name: 'vm-${appEnvironment}-adeapp01'
-    availabilityZone: '1'
-    loadBalancerBackendPoolId: loadBalancerModule.outputs.loadBalancerProperties[0].resourceId
-    nicName: 'nic-${appEnvironment}-adeapp01'
-    osDiskName: 'disk-${appEnvironment}-adeapp01-os'
-    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupProperties[0].resourceId
-    subnetId: spokeVirtualNetwork::adeAppVmSubnet.id
-  }
-  {
-    name: 'vm-${appEnvironment}-adeapp02'
-    availabilityZone: '2'
-    loadBalancerBackendPoolId: loadBalancerModule.outputs.loadBalancerProperties[0].resourceId
-    nicName: 'nic-${appEnvironment}-adeapp02'
-    osDiskName: 'disk-${appEnvironment}-adeapp02-os'
-    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupProperties[1].resourceId
-    subnetId: spokeVirtualNetwork::adeAppVmSubnet.id
-  }
-  {
-    name: 'vm-${appEnvironment}-adeapp03'
-    availabilityZone: '3'
-    loadBalancerBackendPoolId: loadBalancerModule.outputs.loadBalancerProperties[0].resourceId
-    nicName: 'nic-${appEnvironment}-adeapp03'
-    osDiskName: 'disk-${appEnvironment}-adeapp03-os'
-    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupProperties[2].resourceId
-    subnetId: spokeVirtualNetwork::adeAppVmSubnet.id
-  }
-  {
-    name: 'vm-${appEnvironment}-adeweb01'
-    availabilityZone: '1'
-    loadBalancerBackendPoolId: null
-    nicName: 'nic-${appEnvironment}-adeweb01'
-    osDiskName: 'disk-${appEnvironment}-adeweb01-os'
-    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupProperties[0].resourceId
-    subnetId: spokeVirtualNetwork::adeWebVmSubnet.id
-  }
-  {
-    name: 'vm-${appEnvironment}-adeweb02'
-    availabilityZone: '2'
-    loadBalancerBackendPoolId: null
-    nicName: 'nic-${appEnvironment}-adeweb02'
-    osDiskName: 'disk-${appEnvironment}-adeweb02-os'
-    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupProperties[1].resourceId
-    subnetId: spokeVirtualNetwork::adeWebVmSubnet.id
-  }
-  {
-    name: 'vm-${appEnvironment}-adeweb03'
-    availabilityZone: '3'
-    loadBalancerBackendPoolId: null
-    nicName: 'nic-${appEnvironment}-adeweb03'
-    osDiskName: 'disk-${appEnvironment}-adeweb03-os'
-    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.proximityPlacementGroupProperties[2].resourceId
-    subnetId: spokeVirtualNetwork::adeWebVmSubnet.id
+    loadBalancingRuleName: 'lbr-EventIngestorService'
+    loadBalancingRuleProtocol: 'Tcp'
+    idleTimeoutInMinutes: 15
   }
 ]
 
+// Variables - Virtual Machine - Image Reference
+//////////////////////////////////////////////////
+var virtualMachineImageReference = {
+  publisher: 'Canonical'
+  offer: 'UbuntuServer'
+  sku: '18.04-LTS'
+  version: 'latest'
+}
+
+// Variables - Virtual Machine
+//////////////////////////////////////////////////
+var virtualMachines = [
+  {
+    nicName: 'nic-${appEnvironment}-adeapp01'
+    privateIPAllocationMethod: 'Dynamic'
+    subnetId: spokeVirtualNetwork::adeAppVmSubnet.id
+    loadBalancerBackendPoolId: loadBalancerModule.outputs.loadBalancerProperties[0].resourceId
+    name: 'vm-${appEnvironment}-adeapp01'
+    availabilityZone: '1'
+    identityType: 'SystemAssigned'
+    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.ppgProperties[0].resourceId
+    vmSize: 'Standard_B1s'
+    imageReference: virtualMachineImageReference
+    osType: 'Linux'
+    osDiskName: 'disk-${appEnvironment}-adeapp01-os'
+    createOption: 'FromImage'
+    storageAccountType: 'Standard_LRS'
+    managedIdentityId: virtualMachineManagedIdentity.properties.principalId
+    dataCollectionRuleId: dataCollectionRule.id
+  }
+  {
+    nicName: 'nic-${appEnvironment}-adeapp02'
+    privateIPAllocationMethod: 'Dynamic'
+    subnetId: spokeVirtualNetwork::adeAppVmSubnet.id
+    loadBalancerBackendPoolId: loadBalancerModule.outputs.loadBalancerProperties[0].resourceId
+    name: 'vm-${appEnvironment}-adeapp02'
+    availabilityZone: '2'
+    identityType: 'SystemAssigned'
+    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.ppgProperties[1].resourceId
+    vmSize: 'Standard_B1s'
+    imageReference: virtualMachineImageReference
+    osType: 'Linux'
+    osDiskName: 'disk-${appEnvironment}-adeapp02-os'
+    createOption: 'FromImage'
+    storageAccountType: 'Standard_LRS'
+    managedIdentityId: virtualMachineManagedIdentity.properties.principalId
+    dataCollectionRuleId: dataCollectionRule.id
+  }
+  {
+    nicName: 'nic-${appEnvironment}-adeapp03'
+    privateIPAllocationMethod: 'Dynamic'
+    subnetId: spokeVirtualNetwork::adeAppVmSubnet.id
+    loadBalancerBackendPoolId: loadBalancerModule.outputs.loadBalancerProperties[0].resourceId
+    name: 'vm-${appEnvironment}-adeapp03'
+    availabilityZone: '3'
+    identityType: 'SystemAssigned'
+    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.ppgProperties[2].resourceId
+    vmSize: 'Standard_B1s'
+    imageReference: virtualMachineImageReference
+    osType: 'Linux'
+    osDiskName: 'disk-${appEnvironment}-adeapp03-os'
+    createOption: 'FromImage'
+    storageAccountType: 'Standard_LRS'
+    managedIdentityId: virtualMachineManagedIdentity.properties.principalId
+    dataCollectionRuleId: dataCollectionRule.id
+  }
+  {
+    nicName: 'nic-${appEnvironment}-adeweb01'
+    privateIPAllocationMethod: 'Dynamic'
+    subnetId: spokeVirtualNetwork::adeWebVmSubnet.id
+    loadBalancerBackendPoolId: null
+    name: 'vm-${appEnvironment}-adeweb01'
+    availabilityZone: '1'
+    identityType: 'SystemAssigned'
+    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.ppgProperties[0].resourceId
+    vmSize: 'Standard_B1s'
+    imageReference: virtualMachineImageReference
+    osType: 'Linux'
+    osDiskName: 'disk-${appEnvironment}-adeweb01-os'
+    createOption: 'FromImage'
+    storageAccountType: 'Standard_LRS'
+    managedIdentityId: virtualMachineManagedIdentity.properties.principalId
+    dataCollectionRuleId: dataCollectionRule.id
+  }
+  {
+    nicName: 'nic-${appEnvironment}-adeweb02'
+    privateIPAllocationMethod: 'Dynamic'
+    subnetId: spokeVirtualNetwork::adeWebVmSubnet.id
+    loadBalancerBackendPoolId: null
+    name: 'vm-${appEnvironment}-adeweb02'
+    availabilityZone: '2'
+    identityType: 'SystemAssigned'
+    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.ppgProperties[1].resourceId
+    vmSize: 'Standard_B1s'
+    imageReference: virtualMachineImageReference
+    osType: 'Linux'
+    osDiskName: 'disk-${appEnvironment}-adeweb02-os'
+    createOption: 'FromImage'
+    storageAccountType: 'Standard_LRS'
+    managedIdentityId: virtualMachineManagedIdentity.properties.principalId
+    dataCollectionRuleId: dataCollectionRule.id
+  }
+  {
+    nicName: 'nic-${appEnvironment}-adeweb03'
+    privateIPAllocationMethod: 'Dynamic'
+    subnetId: spokeVirtualNetwork::adeWebVmSubnet.id
+    loadBalancerBackendPoolId: null
+    name: 'vm-${appEnvironment}-adeweb03'
+    availabilityZone: '3'
+    identityType: 'SystemAssigned'
+    proximityPlacementGroupId: proximityPlacementGroupModule.outputs.ppgProperties[2].resourceId
+    vmSize: 'Standard_B1s'
+    imageReference: virtualMachineImageReference
+    osType: 'Linux'
+    osDiskName: 'disk-${appEnvironment}-adeweb03-os'
+    createOption: 'FromImage'
+    storageAccountType: 'Standard_LRS'
+    managedIdentityId: virtualMachineManagedIdentity.properties.principalId
+    dataCollectionRuleId: dataCollectionRule.id
+  }
+]
+
+// Variables - Virtual Machine Scale Set
+//////////////////////////////////////////////////
 var virtualMachineScaleSets = [
   {
     name: 'vmss-${appEnvironment}-adeapp-vmss'
+    skuName: 'Standard_B1s'
+    tier: 'Standard'
+    capacity: 1
+    identityType: 'SystemAssigned'
+    overprovision: true
+    upgradePolicyMode: 'Automatic'
+    singlePlacementGroup: false
+    zoneBalance: true
+    imageReference: virtualMachineImageReference
+    createOption: 'FromImage'
     nicName: 'nic-${appEnvironment}-adeapp-vmss'
     subnetId: spokeVirtualNetwork::adeAppVmssSubnet.id
     loadBalancerBackendPoolId: loadBalancerModule.outputs.loadBalancerProperties[1].resourceId
+    managedIdentityId: virtualMachineManagedIdentity.properties.principalId
+    dataCollectionRuleId: dataCollectionRule.id
   }
   {
     name: 'vmss-${appEnvironment}-adeweb-vmss'
+    skuName: 'Standard_B1s'
+    tier: 'Standard'
+    capacity: 1
+    identityType: 'SystemAssigned'
+    overprovision: true
+    upgradePolicyMode: 'Automatic'
+    singlePlacementGroup: false
+    zoneBalance: true
+    imageReference: virtualMachineImageReference
+    createOption: 'FromImage'
     nicName: 'nic-${appEnvironment}-adeweb-vmss'
     subnetId: spokeVirtualNetwork::adeWebVmssSubnet.id
     loadBalancerBackendPoolId: null
+    managedIdentityId: virtualMachineManagedIdentity.properties.principalId
+    dataCollectionRuleId: dataCollectionRule.id
   }
 ]
 
@@ -212,12 +318,21 @@ var adeAppVmssSubnetName = 'snet-${appEnvironment}-adeApp-vmss'
 var adeAppVmSubnetName = 'snet-${appEnvironment}-adeApp-vm'
 var adeWebVmssSubnetName = 'snet-${appEnvironment}-adeWeb-vmss'
 var adeWebVmSubnetName = 'snet-${appEnvironment}-adeWeb-vm'
+var dataCollectionRuleName = 'dcr-${appEnvironment}-vmInsights'
 var eventHubNamespaceAuthorizationRuleName = 'RootManageSharedAccessKey'
 var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
 var keyVaultName = 'kv-${appEnvironment}'
 var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
 var spokeVirtualNetworkName = 'vnet-${appEnvironment}-spoke'
 var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
+var virtualMachineManagedIdentityName = 'id-${appEnvironment}-virtualMachine'
+
+// Existing Resource - Data Collection Rule - VM Insights
+//////////////////////////////////////////////////
+resource dataCollectionRule 'Microsoft.Insights/dataCollectionRules@2022-06-01' existing = {
+  scope: resourceGroup(managementResourceGroupName)
+  name: dataCollectionRuleName
+}
 
 // Existing Resource - Event Hub Authorization Rule
 //////////////////////////////////////////////////
@@ -238,6 +353,13 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
   name: logAnalyticsWorkspaceName
+}
+
+// Existing Resource - Managed Identity - Virtual Machine
+//////////////////////////////////////////////////
+resource virtualMachineManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
+  scope: resourceGroup(securityResourceGroupName)
+  name: virtualMachineManagedIdentityName
 }
 
 // Existing Resource - Storage Account - Diagnostics
@@ -283,8 +405,8 @@ module loadBalancerModule 'load_balancer.bicep' = {
   name: 'loadBalancerDeployment'
   params: {
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
-    loadBalancerBackendServices: loadBalancerBackendServices
     loadBalancers: loadBalancers
+    loadBalancerServices: loadBalancerServices
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     storageAccountId: storageAccount.id
@@ -301,9 +423,7 @@ module virtualMachineModule 'virtual_machine.bicep' = {
     adminUserName: adminUserName
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location: location
-    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey 
     storageAccountId: storageAccount.id
     tags: tags
     virtualMachines: virtualMachines
@@ -318,8 +438,6 @@ module virtualMachineScaleSetModule 'virtual_machine_scale_set.bicep' = {
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
     location: location
-    logAnalyticsWorkspaceCustomerId: logAnalyticsWorkspace.properties.customerId
-    logAnalyticsWorkspaceKey: listKeys(logAnalyticsWorkspace.id, logAnalyticsWorkspace.apiVersion).primarySharedKey
     tags: tags
     virtualMachineScaleSets: virtualMachineScaleSets
   }

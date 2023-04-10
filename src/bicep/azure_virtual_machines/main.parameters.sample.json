@@ -17,9 +17,6 @@
         "ownerName": {
             "value": "@@ownerName@@"
         },
-        "scriptsBaseUri": {
-            "value": "@@scriptsBaseUri@@"
-        },
         "securityResourceGroupName": {
             "value": "@@securityResourceGroupName@@"
         }        

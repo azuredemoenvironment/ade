@@ -31,7 +31,7 @@ param resourcePasswordSecretName string
 @description('The ID of the Storage Account.')
 param storageAccountId string
 
-@description('The list of resource tags')
+@description('The list of resource tags.')
 param tags object
 
 // Resource - Key Vault

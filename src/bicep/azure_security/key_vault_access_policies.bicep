@@ -6,6 +6,15 @@ param applicationGatewayManagedIdentityPrincipalId string
 @description('The secrets permissions of the Principal Id of the Application Gateway Managed Identity.')
 param applicationGatewayManagedIdentityPrincipalIdSecretsPermissions array
 
+@description('The Principal Id of Azure App Service.')
+param appServicePrincipalId string
+
+@description('The certificate permissions of the Principal Id of Azure App Service.')
+param appServicePrincipalIdCertificatePermissions array
+
+@description('The secret permissions of the Principal Id of Azure App Service.')
+param appServicePrincipalIdSecretsPermissions array
+
 @description('The Principal Id of the Container Registry Managed Identity.')
 param containerRegistryManagedIdentityPrincipalId string
 
@@ -32,6 +41,14 @@ resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2023-0
         tenantId: subscription().tenantId
         permissions: {
           secrets: applicationGatewayManagedIdentityPrincipalIdSecretsPermissions
+        }
+      }
+      {
+        objectId: appServicePrincipalId
+        tenantId: subscription().tenantId
+        permissions: {
+          certificates: appServicePrincipalIdCertificatePermissions
+          secrets: appServicePrincipalIdSecretsPermissions
         }
       }
       {

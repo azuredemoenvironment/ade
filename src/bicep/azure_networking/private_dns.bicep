@@ -37,7 +37,7 @@ resource azureSqlPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' =
   tags: tags
 }
 
-// Resource - Private Dns Zone - Virtual Network Link - privatelink.azurewebsites.net to Virtual Network
+// Resource - Private Dns Zone - Virtual Network Link - privatelink.azurewebsites.net to hub Virtual Network
 //////////////////////////////////////////////////
 resource vnetLink01 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
   parent: appServicePrivateDnsZone
@@ -51,7 +51,7 @@ resource vnetLink01 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-
   }
 }
 
-// Resource Virtual Network Link - Privatelink.Azurewebsites.Net To Virtual Network 002
+// Resource - Private Dns Zone - Virtual Network Link - privatelink.azurewebsites.net to spoke Virtual Network
 //////////////////////////////////////////////////
 resource vnetLink02 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
   parent: appServicePrivateDnsZone
