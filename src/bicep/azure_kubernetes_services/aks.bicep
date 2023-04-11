@@ -1,25 +1,7 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The DNS name of the  App Aks Cluster.')
-param aksClusterDNSName string
-
-@description('The name of the  App Aks Cluster.')
-param aksClusterName string
-
-@description('The DNS Service IP ADdress of the  App Aks Cluster.')
-param aksDNSServiceIPAddress string
-
-@description('The Docker Bridge Address of the  App Aks Cluster.')
-param aksDockerBridgeAddress string
-
-@description('The name of the  App Aks Cluster Node Resource Group.')
-param aksNodeResourceGroupName string
-
-@description('The Service Address Prefix of the  App Aks Cluster.')
-param aksServiceAddressPrefix string
-
-@description('The ID of the  App Aks Subnet.')
-param aksSubnetId string
+@description('The properties of the Azure Kubernetes Service.')
+param aksProperties object
 
 @description('The location for all resources.')
 param location string
@@ -32,53 +14,32 @@ param tags object
 
 // Resource - Azure Kubernetes Service Cluster -  App
 //////////////////////////////////////////////////
-resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-06-01' = {
-  name: aksClusterName
+resource aks 'Microsoft.ContainerService/managedClusters@2022-06-01' = {
+  name: aksProperties.name
   location: location
   tags: tags
   identity: {
-    type: 'SystemAssigned'
+    type: aksProperties.identityType
   }
   properties: {
-    kubernetesVersion: '1.23.12'
-    nodeResourceGroup: aksNodeResourceGroupName
-    enableRBAC: true
-    dnsPrefix: aksClusterDNSName
-    agentPoolProfiles: [
-      {
-        name: 'agentpool'
-        osDiskSizeGB: 0
-        count: 3
-        enableAutoScaling: true
-        minCount: 1
-        maxCount: 3
-        vmSize: 'Standard_B2s'
-        osType: 'Linux'
-        type: 'VirtualMachineScaleSets'
-        mode: 'System'
-        maxPods: 110
-        availabilityZones: [
-          '1'
-          '2'
-          '3'
-        ]
-        vnetSubnetID: aksSubnetId
-        tags: tags
-      }
-    ]
+    kubernetesVersion: aksProperties.kubernetesVersion
+    nodeResourceGroup: aksProperties.nodeResourceGroup
+    enableRBAC: aksProperties.enableRBAC
+    dnsPrefix: aksProperties.dnsPrefix
+    agentPoolProfiles: aksProperties.agentPoolProfiles
     networkProfile: {
-      loadBalancerSku: 'standard'
-      networkPlugin: 'azure'
-      serviceCidr: aksServiceAddressPrefix
-      dnsServiceIP: aksDNSServiceIPAddress
-      dockerBridgeCidr: aksDockerBridgeAddress
+      loadBalancerSku: aksProperties.loadBalancerSku
+      networkPlugin: aksProperties.networkPlugin
+      serviceCidr: aksProperties.serviceCidr
+      dnsServiceIP: aksProperties.dnsServiceIP
+      dockerBridgeCidr: aksProperties.dockerBridgeCidr
     }
     addonProfiles: {
       httpApplicationRouting: {
-        enabled: true
+        enabled: aksProperties.httpApplicationRoutingEnabled
       }
       omsagent: {
-        enabled: true
+        enabled: aksProperties.omsAgentEnabled
         config: {
           logAnalyticsWorkspaceResourceID: logAnalyticsWorkspaceId
         }
@@ -89,9 +50,9 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-06-01' = {
 
 // Resource - Azure Kubernetes Service Cluster -  App - Diagnostic Settings
 //////////////////////////////////////////////////
-resource aksClusterDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: aksCluster
-  name: '${aksCluster.name}-diagnostics'
+resource aksDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: aks
+  name: '${aks.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logAnalyticsDestinationType: 'Dedicated'
@@ -152,6 +113,6 @@ resource aksClusterDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01
 
 // Outputs
 //////////////////////////////////////////////////
-output aksClusterKubeletIdentityId string = aksCluster.properties.identityProfile.kubeletidentity.objectId
-output aksClusterPrincipalId string = aksCluster.identity.principalId
-output aksControlPlaneFqdn string = aksCluster.properties.fqdn
+output aksClusterKubeletIdentityId string = aks.properties.identityProfile.kubeletidentity.objectId
+output aksClusterPrincipalId string = aks.identity.principalId
+output aksControlPlaneFqdn string = aks.properties.fqdn

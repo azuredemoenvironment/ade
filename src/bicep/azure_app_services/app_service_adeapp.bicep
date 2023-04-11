@@ -120,6 +120,17 @@ resource appPrivateEndpoint 'Microsoft.Network/privateEndpoints@2022-09-01' = [f
   name: appService.privateEndpointName
   location: location
   properties: {
+    customNetworkInterfaceName: appService.privateEndpointNicName
+    ipConfigurations: [
+      {
+        name: 'ipconfig1'
+        properties: {
+          groupId: 'sites'
+          memberName: 'sites'
+          privateIPAddress: appService.privateEndpointPrivateIpAddress
+        }
+      }
+    ]
     subnet: {
       id: appService.subnetId
     }

@@ -13,6 +13,7 @@ function Deploy-AzureAppServices {
     $resourceGroupName = $armParameters.appServiceResourceGroupName
 
     # Create the Azure App Services Resource Group
+    ##################################################
     az group create -n $resourceGroupName -l $azureRegion
 
     # Deploy the Azure App Services Bicep Template at the Resource Group Scope.

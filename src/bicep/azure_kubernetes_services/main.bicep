@@ -28,22 +28,55 @@ var tags = {
   owner: ownerName
 }
 
-// Variables - Aks Cluster
+// Variables - Azure Kubernetes Services
 //////////////////////////////////////////////////
-var aksClusterDNSName = 'aks-${appEnvironment}-dns'
+var aksClusterDnsName = 'aks-${appEnvironment}-dns'
 var aksClusterName = 'aks-${appEnvironment}'
-var aksClusterProperties = {
+var aksProperties = {
   name: aksClusterName
   identityType: 'SystemAssigned'
-  
+  kubernetesVersion: '1.24.10'
+  nodeResourceGroup: '${containerResourceGroupName}-node'
+  enableRBAC: true
+  dnsPrefix: aksClusterDnsName
+  agentPoolProfiles: aksAgentPoolProfiles
+  loadBalancerSku: 'standard'
+  networkPlugin: 'azure'
+  serviceCidr: '192.168.0.0/24'
+  dnsServiceIP: '192.168.0.10'
+  dockerBridgeCidr: '172.17.0.1/16'
+  httpApplicationRoutingEnabled: true
+  omsAgentEnabled: true
 }
 
-var acrPullRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
-var aksDNSServiceIPAddress = '192.168.0.10'
-var aksDockerBridgeAddress = '172.17.0.1/16'
-var aksNodeResourceGroupName = '${containerResourceGroupName}-node'
-var aksServiceAddressPrefix = '192.168.0.0/24'
+// Variables - Azure Kubernetes Services - Agent Profiles
+//////////////////////////////////////////////////
+var aksAgentPoolProfiles = [
+  {
+    name: 'agentpool'
+    osDiskSizeGB: 0
+    count: 3
+    enableAutoScaling: true
+    minCount: 1
+    maxCount: 3
+    vmSize: 'Standard_B2s'
+    osType: 'Linux'
+    type: 'VirtualMachineScaleSets'
+    mode: 'System'
+    maxPods: 110
+    availabilityZones: ['1', '2', '3']
+    vnetSubnetID: spokeVirtualNetwork::adeAppAksSubnet.id
+    tags: tags
+  }
+]
+
+// Variables - Role Assignment - Network Contributor
+//////////////////////////////////////////////////
 var networkContributorRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', '4d97b98b-1d4f-4787-a291-c67834d212e7')
+
+// Variables - Role Assignment - Acr Pull
+/////////////////////////////////////////////////
+var acrPullRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
 
 // Variables - Existing Resources
 //////////////////////////////////////////////////
@@ -78,25 +111,19 @@ resource spokeVirtualNetwork 'Microsoft.Network/virtualNetworks@2022-09-01' exis
   }
 }
 
-// Module - Azure Kubernetes Services Cluster
+// Module - Azure Kubernetes Services
 //////////////////////////////////////////////////
 module aksModule 'aks.bicep' = {
   name: 'aksClusterDeployment'
   params: {
-    aksClusterDNSName: aksClusterDNSName
-    aksClusterName: aksClusterName
-    aksDNSServiceIPAddress: aksDNSServiceIPAddress
-    aksDockerBridgeAddress: aksDockerBridgeAddress
-    aksNodeResourceGroupName: aksNodeResourceGroupName
-    aksServiceAddressPrefix: aksServiceAddressPrefix
-    aksSubnetId: spokeVirtualNetwork::adeAppAksSubnet.id
+    aksProperties: aksProperties
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     tags: tags
   }
 }
 
-// Module - Azure Kubernetes Services Cluster - RBAC - Network Contributor
+// Module - Azure Kubernetes Services - RBAC - Network Contributor
 //////////////////////////////////////////////////
 module aksRbacNetworkContributor 'aks_rbac_network_contributor.bicep' = {
   scope: resourceGroup(networkingResourceGroupName)
@@ -111,7 +138,6 @@ module aksRbacNetworkContributor 'aks_rbac_network_contributor.bicep' = {
 // Module - Azure Kubernetes Services Cluster - RBAC - Acr Pull
 //////////////////////////////////////////////////
 module aksRbacAcrPull 'aks_rbac_acr_pull.bicep' = {
-  scope: resourceGroup(containerResourceGroupName)
   name: 'aksClusterRbacAcrPullDeployment'
   params: {
     acrPullRoleDefinitionId: acrPullRoleDefinitionId

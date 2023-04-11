@@ -81,10 +81,10 @@ function Set-InitialArmParameters {
         'adeInitiativeDefinition'                  = "policy-$appEnvironment-adeinitiative"
 
         # Required for Set-AzureContainerInstancesToStarted.ps1 and Set-AzureContainerInstancesToStopped.ps1
-        'adeLoadTestingGatlingContainerGroupName'  = "ci-$appEnvironment-adeloadtesting-gatling"
-        'adeLoadTestingGrafanaContainerGroupName'  = "ci-$appEnvironment-adeloadtesting-grafana"
-        'adeLoadTestingInfluxDbContainerGroupName' = "ci-$appEnvironment-adeloadtesting-influxdb"
-        'adeLoadTestingRedisContainerGroupName'    = "ci-$appEnvironment-adeloadtesting-redis"
+        'loadTestingGatlingContainerGroupName'  = "ci-$appEnvironment-loadtesting-gatling"
+        'loadTestingGrafanaContainerGroupName'  = "ci-$appEnvironment-loadtesting-grafana"
+        'loadTestingInfluxDbContainerGroupName' = "ci-$appEnvironment-loadtesting-influxdb"
+        'loadTestingRedisContainerGroupName'    = "ci-$appEnvironment-loadtesting-redis"
         
         # Required for Set-AzureFirewallToAllocated.ps1 and Set-AzureFirewallToDeallocated.ps1
         'azureFirewallPublicIpAddressName'         = "pip-$appEnvironment-fw"
@@ -96,7 +96,6 @@ function Set-InitialArmParameters {
         'adeWebVmssName'                           = "vmss-$appEnvironment-adeweb-vmss"
 
         # Required for Set-AzureVirtualMachinesToAllocated.ps1 and Set-AzureVirtualMachinesToDellocated.ps1
-        'jumpboxName'                              = "vm-jumpbox01"
         'adeWebVm01Name'                           = "vm-$appEnvironment-adeweb01"
         'adeWebVm02Name'                           = "vm-$appEnvironment-adeweb02"
         'adeWebVm03Name'                           = "vm-$appEnvironment-adeweb03"

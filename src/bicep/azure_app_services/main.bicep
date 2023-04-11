@@ -123,6 +123,8 @@ var adeAppAppServices = [
     containerRegistryPassword: first(containerRegistry.listCredentials().passwords).value
     subnetId: spokeVirtualNetwork::userServiceSubnet.id
     privateEndpointName: 'pl-${appEnvironment}-ade-userservice'
+    privateEndpointNicName: 'nic-${appEnvironment}-ade-userservice'
+    privateEndpointPrivateIpAddress: '10.102.151.4'
     usePrivateEndpoint: true
     privateDnsZoneId: appServicePrivateDnsZone.id
     containerImageName: 'ade-userservice'
@@ -142,6 +144,8 @@ var adeAppAppServices = [
     containerRegistryPassword: first(containerRegistry.listCredentials().passwords).value
     subnetId: spokeVirtualNetwork::dataIngestorServiceSubnet.id
     privateEndpointName: 'pl-${appEnvironment}-ade-dataingestorservice'
+    privateEndpointNicName: 'nic-${appEnvironment}-ade-dataingestorservice'
+    privateEndpointPrivateIpAddress: '10.102.152.4'
     usePrivateEndpoint: true
     privateDnsZoneId: appServicePrivateDnsZone.id
     containerImageName: 'ade-dataingestorservice'
@@ -161,6 +165,8 @@ var adeAppAppServices = [
     containerRegistryPassword: first(containerRegistry.listCredentials().passwords).value
     subnetId: spokeVirtualNetwork::dataReporterServiceSubnet.id
     privateEndpointName: 'pl-${appEnvironment}-ade-datareporterservice'
+    privateEndpointNicName: 'nic-${appEnvironment}-ade-datareporterservice'
+    privateEndpointPrivateIpAddress: '10.102.153.4'
     usePrivateEndpoint: true
     privateDnsZoneId: appServicePrivateDnsZone.id
     containerImageName: 'ade-datareporterservice'
@@ -180,6 +186,8 @@ var adeAppAppServices = [
     containerRegistryPassword: first(containerRegistry.listCredentials().passwords).value
     subnetId: spokeVirtualNetwork::eventIngestorServiceSubnet.id
     privateEndpointName: 'pl-${appEnvironment}-ade-eventingestorservice'
+    privateEndpointNicName: 'nic-${appEnvironment}-ade-eventingestorservice'
+    privateEndpointPrivateIpAddress: '10.102.154.4'
     usePrivateEndpoint: true
     privateDnsZoneId: appServicePrivateDnsZone.id
     containerImageName: 'ade-eventingestorservice'
