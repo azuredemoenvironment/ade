@@ -303,11 +303,22 @@ var activityLogDiagnosticSettingsName = 'subscriptionactivitylog'
 //////////////////////////////////////////////////
 var auditVirtualMachinesWithoutDisasterRecoveryConfiguredGuid = '/providers/Microsoft.Authorization/policyDefinitions/0015ea4d-51ff-4ce3-8d8c-f3f8f0179a56'
 var initiativeDefinitionName = 'policy-${appEnvironment}-adeinitiative'
-var initiativeDefinitionProperties = {
-  name: initiativeDefinitionName
-  description: 'Initiative Definition for the Azure Demo Environment'
-  enforcementMode: 'Default'
-}
+var initiativeDefinitions = [
+  {
+    name: initiativeDefinitionName
+    policyType: 'Custom'
+    displayName: initiativeDefinitionName
+    description: 'Initiative Definition for the Azure Demo Environment'
+    category: ' Initiative'
+    policyDefinitions: [
+      {
+        policyDefinitionId: auditVirtualMachinesWithoutDisasterRecoveryConfiguredGuid
+        parameters: {}
+      }
+    ]
+    enforcementMode: 'Default'
+  }
+]
 
 // Variables - Budget
 //////////////////////////////////////////////////
@@ -456,8 +467,7 @@ module policyModule 'policy.bicep' = {
   scope: subscription()
   name: 'policyDeployment'
   params: {
-    auditVirtualMachinesWithoutDisasterRecoveryConfigured: auditVirtualMachinesWithoutDisasterRecoveryConfiguredGuid
-    initiativeDefinitionProperties: initiativeDefinitionProperties
+    initiativeDefinitions: initiativeDefinitions
 
   }
 }

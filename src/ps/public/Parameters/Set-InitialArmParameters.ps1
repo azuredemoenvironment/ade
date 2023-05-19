@@ -81,10 +81,10 @@ function Set-InitialArmParameters {
         'aksClusterName'                           = "aks-$appEnvironment"
 
         # Required for Remove-AzureActivityLogDiagnostics.ps1
-        'activityLogDiagnosticsName'               = "subscriptionActivityLog"
+        'activityLogDiagnosticsName'               = "subscriptionactivitylog"
 
         # Required for Remove-AzureCostManagementBudget.ps1
-        'adeBudgetName'                            = "budget-$appEnvironment-monthly"
+        'budgetName'                            = "budget-$appEnvironment-monthly"
 
         # Required for Remove-AzurePolicyAssignmentsAndDefinitions.ps1
         'adeInitiativeDefinition'                  = "policy-$appEnvironment-adeinitiative"
@@ -113,25 +113,12 @@ function Set-InitialArmParameters {
         'adeAppVm03Name'                           = "vm-$appEnvironment-adeapp03"
   
         # Resource Group Names
-        # 'adeAppServicesResourceGroupName'        = "rg-$appEnvironment-adeappweb"
-        # 'adeAppLoadTestingResourceGroupName'     = "rg-$appEnvironment-adeapploadtesting"
-        # 'adeAppSqlResourceGroupName'             = "rg-$appEnvironment-adeappdb"
-        # 'adeAppVmResourceGroupName'              = "rg-$appEnvironment-adeappvm"
-        # 'adeAppVmssResourceGroupName'            = "rg-$appEnvironment-adeappvmss"    
-        'applicationGatewayResourceGroupName'      = "rg-$appEnvironment-applicationgateway"
-        # 'appServicePlanResourceGroupName'        = "rg-$appEnvironment-appserviceplan"
         'appServiceResourceGroupName'              = "rg-$appEnvironment-appservice"    
-        # 'containerRegistryResourceGroupName'     = "rg-$appEnvironment-containerregistry"
         'containerResourceGroupName'               = "rg-$appEnvironment-container"
         "databaseResourceGroupName"                = "rg-$appEnvironment-database"
-        'dnsResourceGroupName'                     = "rg-$appEnvironment-dns"
-        'identityResourceGroupName'                = "rg-$appEnvironment-identity"     
-        # 'inspectorGadgetResourceGroupName'       = "rg-$appEnvironment-inspectorgadget"
-        # 'jumpboxResourceGroupName'               = "rg-$appEnvironment-jumpbox"   
         'managementResourceGroupName'              = "rg-$appEnvironment-management"
         'networkingResourceGroupName'              = "rg-$appEnvironment-networking"
         'networkWatcherResourceGroupName'          = "NetworkWatcherRG"
-        # 'proximityPlacementGroupResourceGroupName' = "rg-$appEnvironment-ppg"
         'securityResourceGroupName'                = "rg-$appEnvironment-security"
         'virtualMachineResourceGroupName'          = "rg-$appEnvironment-virtualmachine"
     }

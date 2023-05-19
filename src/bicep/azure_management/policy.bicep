@@ -4,41 +4,33 @@ targetScope = 'subscription'
 
 // Parameters
 //////////////////////////////////////////////////
-@description('The ID of the "	Audit virtual machines without disaster recovery configured" Policy definition.')
-param auditVirtualMachinesWithoutDisasterRecoveryConfigured string
-
-@description('The properties of the Initiative definition.')
-param initiativeDefinitionProperties object
+@description('The array of Initiative definitions.')
+param initiativeDefinitions array
 
 // Resource - Initiative Definition
 //////////////////////////////////////////////////
-resource initiativeDefinition 'Microsoft.Authorization/policySetDefinitions@2021-06-01' = {
-  name: initiativeDefinitionProperties.name
+resource initiative 'Microsoft.Authorization/policySetDefinitions@2021-06-01' = [for (initiativeDefinition, i) in initiativeDefinitions: {
+  name: initiativeDefinition.name
   properties: {
-    policyType: 'Custom'
-    displayName: initiativeDefinitionProperties.name
-    description: initiativeDefinitionProperties.description
+    policyType: initiativeDefinition.policyType
+    displayName: initiativeDefinition.name
+    description: initiativeDefinition.description
     metadata: {
-      category: ' Initiative'
+      category: initiativeDefinition.category
     }
     parameters: {}
-    policyDefinitions: [
-      {
-        policyDefinitionId: auditVirtualMachinesWithoutDisasterRecoveryConfigured
-        parameters: {}
-      }
-    ]
+    policyDefinitions: initiativeDefinition.policyDefinitions
   }
-}
+}]
 
 // Resource - Policy Assignment - Initiative Definition
 //////////////////////////////////////////////////
-resource initiativeDefinitionPolicyAssignment 'Microsoft.Authorization/policyAssignments@2021-06-01' = {
-  name: initiativeDefinitionProperties.name
+resource initiativeassignment 'Microsoft.Authorization/policyAssignments@2021-06-01' = [for (initiativeDefinition, i) in initiativeDefinitions: {
+  name: initiative[i].name
   scope: subscription()
   properties: {
-    enforcementMode: initiativeDefinitionProperties.enforcementMode
-    policyDefinitionId: initiativeDefinition.id
+    enforcementMode: initiativeDefinition.enforcementMode
+    policyDefinitionId: initiative[i].id
     parameters: {}
   }
-}
+}]
