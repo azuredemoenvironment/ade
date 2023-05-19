@@ -22,18 +22,32 @@ param frontDoorRoutes array
 @secure()
 param frontDoorSecretProperties object
 
+@description('The properties of the Security Policy.')
+param securityPolicyProperties object
+
 @description('The list of resource tags.')
 param tags object
 
+@description('The properties of the Waf Policy.')
+param wafPolicyProperties object
+
+// Resource - WAF Policy
+//////////////////////////////////////////////////
+resource wafPolicy 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies@2022-05-01' = {
+  name: wafPolicyProperties.name
+  location: 'global'
+  sku: wafPolicyProperties.sku
+  properties: wafPolicyProperties.properties
+}
+
 // Resource - Front Door - Profile
 //////////////////////////////////////////////////
-resource profile 'Microsoft.Cdn/profiles@2021-06-01' = {
+resource profile 'Microsoft.Cdn/profiles@2022-11-01-preview' = {
   name: frontDoorProfileProperties.name
   location: 'global'
   tags: tags
-  sku: {
-    name: frontDoorProfileProperties.skuName
-  }
+  sku: frontDoorProfileProperties.sku
+  identity: frontDoorProfileProperties.identity
 }
 
 // Resource - Front Door - Endpoint
@@ -44,6 +58,31 @@ resource endpoint 'Microsoft.Cdn/profiles/afdEndpoints@2021-06-01' = {
   location: 'global'
   properties: {
     enabledState: frontDoorEndpointProperties.enabledState
+  }
+}
+
+// Resource - Front Door - Security Policy
+//////////////////////////////////////////////////
+resource securityPolicy 'Microsoft.Cdn/profiles/securityPolicies@2021-06-01' = {
+  parent: profile
+  name: securityPolicyProperties.name
+  properties: {
+    parameters: {
+      type: securityPolicyProperties.type
+      wafPolicy: {
+        id: wafPolicy.id
+      }
+      associations: [
+        {
+          domains: [
+            {
+              id: endpoint.id
+            }
+          ]
+          patternsToMatch: securityPolicyProperties.patternsToMatch
+        }
+      ]
+    }
   }
 }
 

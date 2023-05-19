@@ -77,13 +77,13 @@ var inspectorGadgetSqlProperties = {
 
 // Variables - Existing Resources
 //////////////////////////////////////////////////
-var adeAppSqlSubnetName = 'snet-${appEnvironment}-adeAppSql'
+var adeAppSqlSubnetName = 'snet-${appEnvironment}-app-Sql'
 var appConfigName = 'appcs-${appEnvironment}'
 var azureSqlPrivateDnsZoneName = 'privatelink${environment().suffixes.sqlServerHostname}'
 var eventHubNamespaceAuthorizationRuleName = 'RootManageSharedAccessKey'
 var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
-var inspectorGadgetSqlSubnetName = 'snet-${appEnvironment}-inspectorGadgetSql'
-var keyVaultName = 'kv-${appEnvironment}'
+var inspectorGadgetSqlSubnetName = 'snet-${appEnvironment}-inspectorgadget-sql'
+var keyVaultName = replace('kv-${appEnvironment}', '-', '')
 var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
 var spokeVirtualNetworkName = 'vnet-${appEnvironment}-spoke'
 var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')

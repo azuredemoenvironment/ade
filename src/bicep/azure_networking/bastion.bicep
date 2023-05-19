@@ -115,15 +115,5 @@ resource bastionDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-pr
         }
       }
     ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-        retentionPolicy: {
-          days: 7
-          enabled: true
-        }
-      }
-    ]
   }
 }

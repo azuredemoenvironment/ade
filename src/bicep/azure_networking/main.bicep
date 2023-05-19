@@ -74,7 +74,7 @@ var publicIpPrefixProperties = {
 //////////////////////////////////////////////////
 var networkSecurityGroups = [
   {
-    name: 'nsg-${appEnvironment}-applicationGateway'
+    name: 'nsg-${appEnvironment}-applicationgateway'
     properties: {
       securityRules: [
         {
@@ -189,47 +189,47 @@ var networkSecurityGroups = [
     }
   }
   {
-    name: 'nsg-${appEnvironment}-adeWeb-vm'
+    name: 'nsg-${appEnvironment}-web-vm'
     properties: {}
   }
   {
-    name: 'nsg-${appEnvironment}-adeApp-vm'
+    name: 'nsg-${appEnvironment}-app-vm'
     properties: {}
   }
   {
-    name: 'nsg-${appEnvironment}-adeWeb-vmss'
+    name: 'nsg-${appEnvironment}-web-vmss'
     properties: {}
   }
   {
-    name: 'nsg-${appEnvironment}-adeApp-vmss'
+    name: 'nsg-${appEnvironment}-app-vmss'
     properties: {}
   }
   {
-    name: 'nsg-${appEnvironment}-userService'
+    name: 'nsg-${appEnvironment}-userservice'
     properties: {}
   }
   {
-    name: 'nsg-${appEnvironment}-dataIngestorService'
+    name: 'nsg-${appEnvironment}-dataingestorservice'
     properties: {}
   }
   {
-    name: 'nsg-${appEnvironment}-dataReporterService'
+    name: 'nsg-${appEnvironment}-datareporterservice'
     properties: {}
   }
   {
-    name: 'nsg-${appEnvironment}-eventIngestorService'
+    name: 'nsg-${appEnvironment}-eventingestorservice'
     properties: {}
   }
   {
-    name: 'nsg-${appEnvironment}-adeAppSql'
+    name: 'nsg-${appEnvironment}-app-sql'
     properties: {}
   }
   {
-    name: 'nsg-${appEnvironment}-inspectorGadgetSql'
+    name: 'nsg-${appEnvironment}-inspectorgadget-sql'
     properties: {}
   }
   {
-    name: 'nsg-${appEnvironment}-vnetIntegration'
+    name: 'nsg-${appEnvironment}-vnetintegration'
     properties: {}
   }
 ]
@@ -248,7 +248,7 @@ var routes = [
 
 // Variables - Virtual Network
 //////////////////////////////////////////////////
-var applicationGatewaySubnetName = 'snet-${appEnvironment}-applicationGateway'
+var applicationGatewaySubnetName = 'snet-${appEnvironment}-applicationgateway'
 var hubVirtualNetworkName = 'vnet-${appEnvironment}-hub'
 var hubVirtualNetworkPrefix = '10.101.0.0/16'
 var hubVirtualNetworkSubnets = [  
@@ -292,7 +292,7 @@ var spokeVirtualNetworkName = 'vnet-${appEnvironment}-spoke'
 var spokeVirtualNetworkPrefix = '10.102.0.0/16'
 var spokeVirtualNetworkSubnets = [  
   {
-    name: 'snet-${appEnvironment}-adeWeb-vm'
+    name: 'snet-${appEnvironment}-web-vm'
     properties: {
       addressPrefix: '10.102.1.0/24'
       natGateway: {
@@ -309,7 +309,7 @@ var spokeVirtualNetworkSubnets = [
     }
   }
   {
-    name: 'snet-${appEnvironment}-adeApp-vm'
+    name: 'snet-${appEnvironment}-app-vm'
     properties: {
       addressPrefix: '10.102.2.0/24'
       natGateway: {
@@ -326,7 +326,7 @@ var spokeVirtualNetworkSubnets = [
     }
   }
   {
-    name: 'snet-${appEnvironment}-adeWeb-vmss'
+    name: 'snet-${appEnvironment}-web-vmss'
     properties: {
       addressPrefix: '10.102.11.0/24'
       natGateway: {
@@ -343,7 +343,7 @@ var spokeVirtualNetworkSubnets = [
     }
   }
   {
-    name: 'snet-${appEnvironment}-adeApp-vmss'
+    name: 'snet-${appEnvironment}-app-vmss'
     properties: {
       addressPrefix: '10.102.12.0/24'
       natGateway: {
@@ -360,7 +360,7 @@ var spokeVirtualNetworkSubnets = [
     }
   }
   {
-    name: 'snet-${appEnvironment}-adeApp-aks'
+    name: 'snet-${appEnvironment}-aks'
     properties: {
       addressPrefix: '10.102.100.0/23'
       serviceEndpoints: [
@@ -371,7 +371,7 @@ var spokeVirtualNetworkSubnets = [
     }
   }
   {
-    name: 'snet-${appEnvironment}-userService'
+    name: 'snet-${appEnvironment}-userservice'
     properties: {
       addressPrefix: '10.102.151.0/24'
       networkSecurityGroup: {
@@ -381,7 +381,7 @@ var spokeVirtualNetworkSubnets = [
     }
   }
   {
-    name: 'snet-${appEnvironment}-dataIngestorService'
+    name: 'snet-${appEnvironment}-dataingestorservice'
     properties: {
       addressPrefix: '10.102.152.0/24'
       networkSecurityGroup: {
@@ -391,7 +391,7 @@ var spokeVirtualNetworkSubnets = [
     }
   }
   {
-    name: 'snet-${appEnvironment}-dataReporterService'
+    name: 'snet-${appEnvironment}-datareporterservice'
     properties: {
       addressPrefix: '10.102.153.0/24'
       networkSecurityGroup: {
@@ -401,7 +401,7 @@ var spokeVirtualNetworkSubnets = [
     }
   }
   {
-    name: 'snet-${appEnvironment}-eventIngestorService'
+    name: 'snet-${appEnvironment}-eventingestorservice'
     properties: {
       addressPrefix: '10.102.154.0/24'
       networkSecurityGroup: {
@@ -411,7 +411,7 @@ var spokeVirtualNetworkSubnets = [
     }
   }
   {
-    name: 'snet-${appEnvironment}-adeAppSql'
+    name: 'snet-${appEnvironment}-app-Sql'
     properties: {
       addressPrefix: '10.102.160.0/24'
       networkSecurityGroup: {
@@ -421,7 +421,7 @@ var spokeVirtualNetworkSubnets = [
     }
   }
   {
-    name: 'snet-${appEnvironment}-inspectorGadgetSql'
+    name: 'snet-${appEnvironment}-inspectorgadget-sql'
     properties: {
       addressPrefix: '10.102.161.0/24'
       networkSecurityGroup: {
@@ -431,7 +431,7 @@ var spokeVirtualNetworkSubnets = [
     }
   }
   {
-    name: 'snet-${appEnvironment}-vnetIntegration'
+    name: 'snet-${appEnvironment}-vnetintegration'
     properties: {
       addressPrefix: '10.102.201.0/24'
       delegations: [
@@ -949,9 +949,41 @@ var requestRoutingRules = [
 
 // Variables - Front Door
 //////////////////////////////////////////////////
+var wafPolicyProperties = {
+  name: replace('wafpolicy-${appGlobalEnvironment}', '-', '') 
+  sku: {
+    name: 'Standard_AzureFrontDoor'
+  }
+  properties: {
+    policySettings: {
+      enabledState: 'Enabled'
+      mode: 'Prevention'
+    }
+    // managedRules: {
+    //   managedRuleSets: [
+    //     {
+    //       ruleSetType: 'Microsoft_DefaultRuleSet'
+    //       ruleSetVersion: '1.1'
+    //     }
+    //     {
+    //       ruleSetType: 'Microsoft_BotManagerRuleSet'
+    //       ruleSetVersion: '1.0'
+    //     }
+    //   ]
+    // }
+  }
+}
 var frontDoorProfileProperties = {
   name: 'afd-${appGlobalEnvironment}'
-  skuName: 'Standard_AzureFrontDoor'
+  sku: {
+    name: 'Standard_AzureFrontDoor'
+  }
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${frontDoorManagedIdentity.id}': {}
+    }
+  }  
 }
 var frontDoorEndpointProperties = {
   name: 'fde-${appGlobalEnvironment}'
@@ -986,6 +1018,13 @@ var frontDoorOriginGroups = [
     probeIntervalInSeconds: 100
   }
 ]
+var securityPolicyProperties = {
+  name: 'securitypolicy-${appGlobalEnvironment}'
+  type: 'WebApplicationFirewall'
+  patternsToMatch: [
+    '/*'
+  ]
+}
 var frontDoorOrigins = [
   {
     name: 'origin-${appGlobalEnvironment}-inspectorgadget'
@@ -1111,10 +1150,11 @@ var networkWatcherResourceGroupName = 'NetworkWatcherRG'
 
 // Variables - Existing Resources
 //////////////////////////////////////////////////
-var applicationGatewayManagedIdentityName = 'id-${appEnvironment}-applicationGateway'
+var applicationGatewayManagedIdentityName = 'id-${appEnvironment}-applicationgateway'
 var eventHubNamespaceAuthorizationRuleName = 'RootManageSharedAccessKey'
 var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
-var keyVaultName = 'kv-${appEnvironment}'
+var frontDoorManagedIdentityName = 'id-${appEnvironment}-frontdoor'
+var keyVaultName = replace('kv-${appEnvironment}', '-', '')
 var keyVaultSecretName = 'certificate'
 var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
 var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
@@ -1155,6 +1195,13 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10
 resource applicationGatewayManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
   scope: resourceGroup(securityResourceGroupName)
   name: applicationGatewayManagedIdentityName
+}
+
+// Existing Resource - Managed Identity - Front Door
+//////////////////////////////////////////////////
+resource frontDoorManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
+  scope: resourceGroup(securityResourceGroupName)
+  name: frontDoorManagedIdentityName
 }
 
 // Existing Resource - Storage Account - Diagnostics
@@ -1301,7 +1348,9 @@ module frontDoorModule 'front_door.bicep' = {
     frontDoorProfileProperties: frontDoorProfileProperties
     frontDoorRoutes: frontDoorRoutes
     frontDoorSecretProperties: frontDoorSecretProperties
+    securityPolicyProperties: securityPolicyProperties
     tags: tags
+    wafPolicyProperties: wafPolicyProperties
   }
 }
 

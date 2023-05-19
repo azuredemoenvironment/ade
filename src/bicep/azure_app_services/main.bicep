@@ -353,21 +353,20 @@ var adeAppServiceTlsSettings = [
 var appConfigName = 'appcs-${appEnvironment}'
 var appServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
 var containerRegistryName = replace('acr-${appEnvironment}', '-', '')
-var dataIngestorServiceSubnetName = 'snet-${appEnvironment}-dataIngestorService'
-var dataReporterServiceSubnetName = 'snet-${appEnvironment}-dataReporterService'
+var dataIngestorServiceSubnetName = 'snet-${appEnvironment}-dataingestorservice'
+var dataReporterServiceSubnetName = 'snet-${appEnvironment}-datareporterservice'
 var eventHubNamespaceAuthorizationRuleName = 'RootManageSharedAccessKey'
 var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
-var eventIngestorServiceSubnetName = 'snet-${appEnvironment}-eventIngestorService'
+var eventIngestorServiceSubnetName = 'snet-${appEnvironment}-eventingestorservice'
 var inspectorGadgetSqlDatabaseName = 'sqldb-${appEnvironment}-inspectorgadget'
 var inspectorGadgetSqlServerName = 'sql-${appEnvironment}-inspectorgadget'
-var keyVaultName = 'kv-${appEnvironment}'
+var keyVaultName = replace('kv-${appEnvironment}', '-', '')
 var keyVaultSecretName = 'certificate'
 var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
-var publicDnsZoneName = rootDomainName
 var spokeVirtualNetworkName = 'vnet-${appEnvironment}-spoke'
 var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
-var userServiceSubnetName = 'snet-${appEnvironment}-userService'
-var vnetIntegrationSubnetName = 'snet-${appEnvironment}-vnetIntegration'
+var userServiceSubnetName = 'snet-${appEnvironment}-userservice'
+var vnetIntegrationSubnetName = 'snet-${appEnvironment}-vnetintegration'
 
 // Existing Resource - App Configuration
 //////////////////////////////////////////////////
@@ -418,12 +417,6 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10
 resource appServicePrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
   scope: resourceGroup(networkingResourceGroupName)
   name: appServicePrivateDnsZoneName
-}
-
-// Existing Resource - Public Dns Zone
-resource publicDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
-  scope: resourceGroup(networkingResourceGroupName)
-  name: publicDnsZoneName
 }
 
 // Existing Resource - Storage Account - Diagnostics

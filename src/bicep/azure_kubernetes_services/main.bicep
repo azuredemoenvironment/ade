@@ -83,7 +83,7 @@ var acrPullRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinition
 var containerRegistryName = replace('acr-${appEnvironment}', '-', '')
 var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
 var spokeVirtualNetworkName = 'vnet-${appEnvironment}-spoke'
-var adeAppAksSubnetName = 'snet-${appEnvironment}-adeApp-aks'
+var adeAppAksSubnetName = 'snet-${appEnvironment}-aks'
 
 // Existing Resource - Container Registry
 //////////////////////////////////////////////////

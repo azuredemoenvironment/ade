@@ -418,10 +418,10 @@ var metricAlertProperties = {
 // Variables - Existing Resources
 //////////////////////////////////////////////////
 var actionGroupName = 'ag-${appEnvironment}-virtualmachine'
-var adeAppVmssSubnetName = 'snet-${appEnvironment}-adeApp-vmss'
-var adeAppVmSubnetName = 'snet-${appEnvironment}-adeApp-vm'
-var adeWebVmssSubnetName = 'snet-${appEnvironment}-adeWeb-vmss'
-var adeWebVmSubnetName = 'snet-${appEnvironment}-adeWeb-vm'
+var adeAppVmssSubnetName = 'snet-${appEnvironment}-app-vmss'
+var adeAppVmSubnetName = 'snet-${appEnvironment}-app-vm'
+var adeWebVmssSubnetName = 'snet-${appEnvironment}-web-vmss'
+var adeWebVmSubnetName = 'snet-${appEnvironment}-web-vm'
 var applicationGatewayAdeAppApiGatewayVmBackendPoolName = 'backendPool-apigateway-vm'
 var applicationGatewayAdeAppApiGatewayVmssBackendPoolName = 'backendPool-apigateway-vmss'
 var applicationGatewayAdeAppFrontendVmBackendPoolName = 'backendPool-frontend-vm'
@@ -431,11 +431,11 @@ var applicationGatewayName = 'appgw-${appEnvironment}'
 var dataCollectionRuleName = 'dcr-${appEnvironment}-vmInsights'
 var eventHubNamespaceAuthorizationRuleName = 'RootManageSharedAccessKey'
 var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
-var keyVaultName = 'kv-${appEnvironment}'
+var keyVaultName = replace('kv-${appEnvironment}', '-', '')
 var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
 var spokeVirtualNetworkName = 'vnet-${appEnvironment}-spoke'
 var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
-var virtualMachineManagedIdentityName = 'id-${appEnvironment}-virtualMachine'
+var virtualMachineManagedIdentityName = 'id-${appEnvironment}-virtualmachine'
 
 // Existing Resource - Action Group
 //////////////////////////////////////////////////

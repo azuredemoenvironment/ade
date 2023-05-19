@@ -46,9 +46,24 @@ var tags = {
 
 // Variables - Managed Identity
 //////////////////////////////////////////////////
-var applicationGatewayManagedIdentityName = 'id-${appEnvironment}-applicationGateway'
-var containerRegistryManagedIdentityName = 'id-${appEnvironment}-containerRegistry'
-var virtualMachineManagedIdentityName = 'id-${appEnvironment}-virtualMachine'
+var applicationGatewayManagedIdentityName = 'id-${appEnvironment}-applicationgateway'
+var containerRegistryManagedIdentityName = 'id-${appEnvironment}-containerregistry'
+var frontDoorManagedIdentityName = 'id-${appEnvironment}-frontdoor'
+var virtualMachineManagedIdentityName = 'id-${appEnvironment}-virtualmachine'
+var managedIdentities = [
+  {
+    name: applicationGatewayManagedIdentityName
+  }
+  {
+    name: containerRegistryManagedIdentityName
+  }
+  {
+    name: frontDoorManagedIdentityName
+  }
+  {
+    name: virtualMachineManagedIdentityName
+  }
+]
 
 // Variables - App Configuration
 //////////////////////////////////////////////////
@@ -160,7 +175,7 @@ var userServiceAppServiceName = replace('app-${appEnvironment}-ade-userservice',
 // Variables - Key Vault
 //////////////////////////////////////////////////
 var certificateSecretName = 'certificate'
-var keyVaultName = 'kv-${appEnvironment}'
+var keyVaultName = replace('kv-${appEnvironment}', '-', '')
 var keyVaultProperties = {
   skuName: 'standard'
   family: 'A'
@@ -178,7 +193,7 @@ var resourcePasswordSecretName = 'resourcePassword'
 //////////////////////////////////////////////////
 var keyVaultAccessPolicies = [
   {
-    objectId: managedIdentityModule.outputs.applicationGatewayManagedIdentityPrincipalId
+    objectId: managedIdentityModule.outputs.managedIdentityPrincipalIds[0].managedIdentityPrincipalId
     permissions: {
       secrets: ['get']
     }
@@ -191,10 +206,17 @@ var keyVaultAccessPolicies = [
     }
   }
   {
-    objectId: managedIdentityModule.outputs.containerRegistryManagedIdentityPrincipalId
+    objectId: managedIdentityModule.outputs.managedIdentityPrincipalIds[1].managedIdentityPrincipalId
     permissions: {
       certificates: ['get']
       keys: ['get', 'unwrapKey', 'wrapKey']
+      secrets: ['get']
+    }
+  }
+  {
+    objectId: managedIdentityModule.outputs.managedIdentityPrincipalIds[2].managedIdentityPrincipalId
+      permissions: {
+      certificates: ['get']
       secrets: ['get']
     }
   }
@@ -248,11 +270,9 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' existing 
 module managedIdentityModule 'managed_identity.bicep' = {
   name: 'identityDeployment'
   params: {
-    applicationGatewayManagedIdentityName: applicationGatewayManagedIdentityName
-    containerRegistryManagedIdentityName: containerRegistryManagedIdentityName
     location: location
+    managedIdentities: managedIdentities
     tags: tags
-    virtualMachineManagedIdentityName: virtualMachineManagedIdentityName
   }
 }
 

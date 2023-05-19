@@ -5,19 +5,19 @@ function Remove-AzureNsgFlowLogs {
 
     $location = $armParameters.azureRegion
     $nsgFlowLogEntries = @(
-        'adeApp-vm'
-        'adeApp-vmss'
-        'adeAppSql'
-        'adeWeb-vm'
-        'adeWeb-vmss'
-        'applicationGateway'
+        'app-vm'
+        'app-vmss'
+        'app-Sql'
+        'web-vm'
+        'web-vmss'
+        'applicationgateway'
         'bastion'
-        'dataIngestorService'
-        'dataReporterService'
-        'eventIngestorService'
-        'inspectorGadgetSql'
-        'userService'
-        'vnetIntegration'
+        'dataIngestorservice'
+        'dataReporterservice'
+        'eventIngestorservice'
+        'inspectorgadget-sql'
+        'userservice'
+        'vnetintegration'
     )
 
     $nsgFlowLogEntries | ForEach-Object {

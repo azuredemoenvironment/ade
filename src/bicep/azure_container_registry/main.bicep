@@ -38,7 +38,7 @@ var containerRegistryProperties = {
 
 // Variables - Existing Resources
 //////////////////////////////////////////////////
-var containerRegistryManagedIdentityName = 'id-${appEnvironment}-containerRegistry'
+var containerRegistryManagedIdentityName = 'id-${appEnvironment}-containerregistry'
 var eventHubNamespaceAuthorizationRuleName = 'RootManageSharedAccessKey'
 var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
 var logAnalyticsWorkspaceName = 'log-${appEnvironment}'

@@ -23,7 +23,7 @@ function Set-InitialArmParameters {
     $azureRegionShortName = Get-RegionShortName $azureRegion
     $appEnvironment = "$workload-$environment-$azureRegionShortName".ToLowerInvariant()
     $appGlobalEnvironment = "$workload-$environment-global".ToLowerInvariant()
-    $dnsZoneResourceGroupName = "rg-ade-jowaddel-prod-global-dns"
+    $dnsZoneResourceGroupName = "rg-joshuawaddell.cloud"
     $acrName = "acr-$appEnvironment".replace('-', '')
     $ownerName = $(az account show --query "user.name" --output tsv)
     $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content    
@@ -75,7 +75,7 @@ function Set-InitialArmParameters {
 
         # Required for Deploy-AzureGovernance.ps1               
         'keyVaultKeyName'                          = "containerRegistry"
-        'keyVaultName'                             = "kv-$appEnvironment"
+        'keyVaultName'                             = "kv-$appEnvironment".Replace('-','')
 
         # Required for Enable-AzureKubernetesServicesCluster.ps1 and Set-AzureKubernetesServicesClusterToStopped.ps1
         'aksClusterName'                           = "aks-$appEnvironment"
@@ -84,16 +84,16 @@ function Set-InitialArmParameters {
         'activityLogDiagnosticsName'               = "subscriptionactivitylog"
 
         # Required for Remove-AzureCostManagementBudget.ps1
-        'budgetName'                            = "budget-$appEnvironment-monthly"
+        'budgetName'                               = "budget-$appEnvironment-monthly"
 
         # Required for Remove-AzurePolicyAssignmentsAndDefinitions.ps1
         'adeInitiativeDefinition'                  = "policy-$appEnvironment-adeinitiative"
 
         # Required for Set-AzureContainerInstancesToStarted.ps1 and Set-AzureContainerInstancesToStopped.ps1
-        'loadTestingGatlingContainerGroupName'  = "ci-$appEnvironment-loadtesting-gatling"
-        'loadTestingGrafanaContainerGroupName'  = "ci-$appEnvironment-loadtesting-grafana"
-        'loadTestingInfluxDbContainerGroupName' = "ci-$appEnvironment-loadtesting-influxdb"
-        'loadTestingRedisContainerGroupName'    = "ci-$appEnvironment-loadtesting-redis"
+        'loadTestingGatlingContainerGroupName'     = "ci-$appEnvironment-loadtesting-gatling"
+        'loadTestingGrafanaContainerGroupName'     = "ci-$appEnvironment-loadtesting-grafana"
+        'loadTestingInfluxDbContainerGroupName'    = "ci-$appEnvironment-loadtesting-influxdb"
+        'loadTestingRedisContainerGroupName'       = "ci-$appEnvironment-loadtesting-redis"
         
         # Required for Set-AzureFirewallToAllocated.ps1 and Set-AzureFirewallToDeallocated.ps1
         'azureFirewallPublicIpAddressName'         = "pip-$appEnvironment-fw"
