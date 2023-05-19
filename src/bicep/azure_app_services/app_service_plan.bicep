@@ -117,4 +117,4 @@ resource autoscaleSetting 'Microsoft.Insights/autoscalesettings@2021-05-01-previ
 
 // Outputs
 //////////////////////////////////////////////////
-output appServicePlanId string = appServicePlan.id
+output serverFarmId string = appServicePlan.id

@@ -8,6 +8,9 @@
         "appEnvironment": {
             "value": "@@appEnvironment@@"
         },
+        "dnsZoneResourceGroupName": {
+            "value": "@@dnsZoneResourceGroupName@@"
+        },
         "managementResourceGroupName": {
             "value": "@@managementResourceGroupName@@"
         },
@@ -16,6 +19,9 @@
         },
         "ownerName": {
             "value": "@@ownerName@@"
+        },
+        "rootDomainName": {
+            "value": "@@rootDomainName@@"
         },
         "securityResourceGroupName": {
             "value": "@@securityResourceGroupName@@"

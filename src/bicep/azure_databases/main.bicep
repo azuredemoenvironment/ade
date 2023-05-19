@@ -88,7 +88,7 @@ var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
 var spokeVirtualNetworkName = 'vnet-${appEnvironment}-spoke'
 var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
 
-// Existing Resource - App Config
+// Existing Resource - App Configuration
 //////////////////////////////////////////////////
 resource appConfig 'Microsoft.AppConfiguration/configurationStores@2023-03-01' existing = {
   scope: resourceGroup(securityResourceGroupName)
@@ -174,11 +174,11 @@ module inspectorGadgetSqlModule 'sql.bicep' = {
   }
 }
 
-// Module - App Config - Ade App - Sql Database
+// Module - App Configuration - Ade App - Sql Database
 //////////////////////////////////////////////////
-module adeAppSqlAppConfigModule './sql_app_config.bicep' = {
+module adeAppSqlAppConfigurationKeys './sql_app_config.bicep' = {
   scope: resourceGroup(securityResourceGroupName)
-  name: 'adeAppSqlAppConfigDeployment'
+  name: 'adeAppSqlDeployment'
   params: {
     adminPassword: keyVault.getSecret('resourcePassword')
     appConfigName: appConfig.name    
@@ -188,11 +188,11 @@ module adeAppSqlAppConfigModule './sql_app_config.bicep' = {
   }
 }
 
-// Module - App Config - Inspector Gadget - Sql Database
+// Module - App Configuration - Inspector Gadget - Sql Database
 //////////////////////////////////////////////////
-module inspectorGadgetSqlAppConfigModule './sql_app_config.bicep' = {
+module inspectorGadgetSqlAppConfigurationKeys './sql_app_config.bicep' = {
   scope: resourceGroup(securityResourceGroupName)
-  name: 'inspectorGadgetSqlAppConfigDeployment'
+  name: 'inspectorGadgetSqlDeployment'
   params: {
     adminPassword: keyVault.getSecret('resourcePassword')
     appConfigName: appConfig.name    

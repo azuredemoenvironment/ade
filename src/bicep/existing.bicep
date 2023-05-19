@@ -31,6 +31,7 @@ var adeWebVmssSubnetName = 'snet-${appEnvironment}-adeWeb-vmss'
 var adeWebVmSubnetName = 'snet-${appEnvironment}-adeWeb-vm'
 var appConfigName = 'appcs-${appEnvironment}'
 var applicationGatewayManagedIdentityName = 'id-${appEnvironment}-applicationGateway'
+var applicationGatewayName = 'appgw-${appEnvironment}'
 var applicationGatewaySubnetName = 'snet-${appEnvironment}-applicationGateway'
 var applicationInsightsName = 'appinsights-${appEnvironment}'
 var appServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
@@ -60,11 +61,18 @@ var userServiceSubnetName = 'snet-${appEnvironment}-userService'
 var virtualMachineManagedIdentityName = 'id-${appEnvironment}-virtualMachine'
 var vnetIntegrationSubnetName = 'snet-${appEnvironment}-vnetIntegration'
 
-// Existing Resource - App Config
+// Existing Resource - App Configuration
 //////////////////////////////////////////////////
 resource appConfig 'Microsoft.AppConfiguration/configurationStores@2023-03-01' existing = {
   scope: resourceGroup(securityResourceGroupName)
   name: appConfigName
+}
+
+// Existing Resource - Application Gateway
+//////////////////////////////////////////////////
+resource applicationGateway 'Microsoft.Network/applicationGateways@2022-09-01' existing = {
+  scope: resourceGroup(networkingResourceGroupName)
+  name: applicationGatewayName
 }
 
 // Existing Resource - Application Insights
@@ -104,6 +112,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
     name: keyVaultSecretName
   }
 }
+
 // Existing Resource - Log Analytics Workspace
 //////////////////////////////////////////////////
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' existing = {

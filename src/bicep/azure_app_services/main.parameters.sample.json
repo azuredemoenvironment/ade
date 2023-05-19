@@ -14,6 +14,9 @@
         "databaseResourceGroupName": {
             "value": "@@databaseResourceGroupName@@"
         },
+        "dnsZoneResourceGroupName": {
+            "value": "@@dnsZoneResourceGroupName@@"
+        },
         "managementResourceGroupName": {
             "value": "@@managementResourceGroupName@@"
         },

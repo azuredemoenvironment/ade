@@ -72,16 +72,6 @@ resource appConfigDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-
   }
 }
 
-// Resource - App Configuration - ASP.NET Core Environment
-//////////////////////////////////////////////////
-resource appConfigKeyAspNetCoreEnvironment 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
-  parent: appConfig
-  name: 'ASPNETCORE_ENVIRONMENT'
-  properties: {
-    value: 'Development'
-  }
-}
-
 // Outputs
 //////////////////////////////////////////////////
 output appConfigName string = appConfig.name

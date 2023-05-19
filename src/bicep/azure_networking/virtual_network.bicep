@@ -1,5 +1,8 @@
 // Parameters
 //////////////////////////////////////////////////
+@description('The name of the Application Gateway Subnet.')
+param applicationGatewaySubnetName string
+
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
 
@@ -53,6 +56,9 @@ resource hubVirtualNetwork 'Microsoft.Network/virtualNetworks@2022-09-01' = {
   resource bastionSubnet 'subnets' existing = {
     name: 'AzureBastionSubnet'
   }
+  resource applicationGatewaySubnet 'subnets' existing = {
+    name: applicationGatewaySubnetName
+  }
   resource firewallSubnet 'subnets' existing = {
     name: 'AzureFirewallSubnet'
   }
@@ -73,14 +79,22 @@ resource hubVirtualNetworkDiagnostics 'microsoft.insights/diagnosticSettings@202
     logAnalyticsDestinationType: 'Dedicated'
     logs: [
       {
-        category: 'VMProtectionAlerts'
+        categoryGroup: 'allLogs'
         enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
     metrics: [
       {
         category: 'AllMetrics'
         enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
   }
@@ -132,6 +146,7 @@ resource spokeVirtualNetworkDiagnostics 'microsoft.insights/diagnosticSettings@2
 
 // Outputs
 //////////////////////////////////////////////////
+output applicationGatewaySubnetId string = hubVirtualNetwork::applicationGatewaySubnet.id
 output bastionSubnetId string = hubVirtualNetwork::bastionSubnet.id
 output firewallSubnetId string = hubVirtualNetwork::firewallSubnet.id
 output gatewaySubnetId string = hubVirtualNetwork::gatewaySubnet.id

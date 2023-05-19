@@ -22,23 +22,28 @@ function Set-InitialArmParameters {
     $environment = "prod"
     $azureRegionShortName = Get-RegionShortName $azureRegion
     $appEnvironment = "$workload-$environment-$azureRegionShortName".ToLowerInvariant()
+    $appGlobalEnvironment = "$workload-$environment-global".ToLowerInvariant()
+    $dnsZoneResourceGroupName = "rg-ade-jowaddel-prod-global-dns"
     $acrName = "acr-$appEnvironment".replace('-', '')
+    $ownerName = $(az account show --query "user.name" --output tsv)
+    $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content    
+        
     $certificateBase64String = ''
-    if ($secureCertificatePassword -ne $null -and $wildcardCertificatePath -eq $null) {
+    if ($secureCertificatePassword -ne $null -and $wildcardCertificatePath -ne $null) {
         $certificateBase64String = Convert-WildcardCertificateToBase64String $secureCertificatePassword $wildcardCertificatePath
     }
-    $ownerName = $(az account show --query "user.name" --output tsv)
+
     $plainTextResourcePassword = ''
     if ($secureResourcePassword -ne $null) {
         $plainTextResourcePassword = ConvertFrom-SecureString -SecureString $secureResourcePassword -AsPlainText
     }
-    $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content    
 
     Write-Log 'Generating ARM Parameters'
 
     $armParameters = @{
         # Standard Parameters
         'appEnvironment'                           = $appEnvironment
+        'appGlobalEnvironment'                     = $appGlobalEnvironment
         'azurePairedRegion'                        = $azurePairedRegion
         'azureRegion'                              = $azureRegion
         'contactEmailAddress'                      = $email
@@ -53,6 +58,7 @@ function Set-InitialArmParameters {
         # Generated Parameters        
         'adminUserName'                            = $resourceUserName
         'certificateBase64String'                  = $certificateBase64String
+        'dnsZoneResourceGroupName'                 = $dnsZoneResourceGroupName
         'localNetworkGatewayAddressPrefix'         = $localNetworkRange
         'logAnalyticsWorkspaceName'                = "log-$appEnvironment"
         'ownerName'                                = $ownerName
@@ -70,6 +76,9 @@ function Set-InitialArmParameters {
         # Required for Deploy-AzureGovernance.ps1               
         'keyVaultKeyName'                          = "containerRegistry"
         'keyVaultName'                             = "kv-$appEnvironment"
+
+        # Required for Enable-AzureKubernetesServicesCluster.ps1 and Set-AzureKubernetesServicesClusterToStopped.ps1
+        'aksClusterName'                           = "aks-$appEnvironment"
 
         # Required for Remove-AzureActivityLogDiagnostics.ps1
         'activityLogDiagnosticsName'               = "subscriptionActivityLog"
@@ -104,8 +113,6 @@ function Set-InitialArmParameters {
         'adeAppVm03Name'                           = "vm-$appEnvironment-adeapp03"
   
         # Resource Group Names
-        'adeAppAksNodeResourceGroupName'           = "rg-$appEnvironment-adeappaks-node"
-        'adeAppAksResourceGroupName'               = "rg-$appEnvironment-adeappaks"
         # 'adeAppServicesResourceGroupName'        = "rg-$appEnvironment-adeappweb"
         # 'adeAppLoadTestingResourceGroupName'     = "rg-$appEnvironment-adeapploadtesting"
         # 'adeAppSqlResourceGroupName'             = "rg-$appEnvironment-adeappdb"

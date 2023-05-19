@@ -29,12 +29,3 @@ resource appConfigKeyAdeAppApiGatewayVmUri 'Microsoft.AppConfiguration/configura
     value: 'https://${adeAppApiGatewayVmHostName}'
   }
 }
-
-// Resource - App Configuration Key Values - :Sentinel
-//////////////////////////////////////////////////
-resource appConfigKeySentinel 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = {
-  name: '${appConfigName}/ADE:Sentinel'
-  properties: {
-    value: currentTime
-  }
-}

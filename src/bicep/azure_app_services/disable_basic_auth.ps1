@@ -1,0 +1,15 @@
+az resource update -g rg-ade-jowaddel-prod-eus-appservice -n ftp --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/appadejowaddelprodeusinspectorgadget --set properties.allow=false
+az resource update -g rg-ade-jowaddel-prod-eus-appservice -n ftp --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/appadejowaddelprodeusadefrontend --set properties.allow=false
+az resource update -g rg-ade-jowaddel-prod-eus-appservice -n ftp --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/appadejowaddelprodeusadeapigateway --set properties.allow=false
+az resource update -g rg-ade-jowaddel-prod-eus-appservice -n ftp --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/appadejowaddelprodeusadeuserservice --set properties.allow=false
+az resource update -g rg-ade-jowaddel-prod-eus-appservice -n ftp --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/appadejowaddelprodeusadedataingestorservice --set properties.allow=false
+az resource update -g rg-ade-jowaddel-prod-eus-appservice -n ftp --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/appadejowaddelprodeusadedatareporterservice --set properties.allow=false
+az resource update -g rg-ade-jowaddel-prod-eus-appservice -n ftp --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/appadejowaddelprodeusadeeventingestorservice --set properties.allow=false
+
+az resource update -g rg-ade-jowaddel-prod-eus-appservice -n scm --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/appadejowaddelprodeusinspectorgadget --set properties.allow=false
+az resource update -g rg-ade-jowaddel-prod-eus-appservice -n scm --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/appadejowaddelprodeusadefrontend --set properties.allow=false
+az resource update -g rg-ade-jowaddel-prod-eus-appservice -n scm --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/appadejowaddelprodeusadeapigateway --set properties.allow=false
+az resource update -g rg-ade-jowaddel-prod-eus-appservice -n scm --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/appadejowaddelprodeusadeuserservice --set properties.allow=false
+az resource update -g rg-ade-jowaddel-prod-eus-appservice -n scm --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/appadejowaddelprodeusadedataingestorservice --set properties.allow=false
+az resource update -g rg-ade-jowaddel-prod-eus-appservice -n scm --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/appadejowaddelprodeusadedatareporterservice --set properties.allow=false
+az resource update -g rg-ade-jowaddel-prod-eus-appservice -n scm --namespace Microsoft.Web --resource-type basicPublishingCredentialsPolicies --parent sites/appadejowaddelprodeusadeeventingestorservice --set properties.allow=false

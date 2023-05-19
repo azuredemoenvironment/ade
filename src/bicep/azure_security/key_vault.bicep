@@ -64,6 +64,7 @@ resource certificateBase64StringSecret 'Microsoft.KeyVault/vaults/secrets@2021-1
   name: certificateSecretName
   properties: {
     value: certificateBase64String
+    contentType: 'application/x-pkcs12'
   }
 }
 

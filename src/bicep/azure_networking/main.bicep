@@ -3,11 +3,20 @@
 @description('The application environment (workload, environment, location).')
 param appEnvironment string
 
+@description('The application global environment (workload, environment, location).')
+param appGlobalEnvironment string
+
 @description('The current date.')
 param currentDate string = utcNow('yyyy-MM-dd')
 
 @description('Deploy Azure Firewall if value is set to true.')
 param deployFirewall bool = true
+
+@description('The name of the Dns Zone Resource Group.')
+param dnsZoneResourceGroupName string
+
+@description('The version of the Key Vault Secret.')
+param keyVaultSecretVersion string = ''
 
 @description('The location for all resources.')
 param location string = resourceGroup().location
@@ -21,8 +30,14 @@ param ownerName string
 @description('The value for Root Domain Name.')
 param rootDomainName string
 
+@description('The name of the Security Resource Group.')
+param securityResourceGroupName string
+
 @description('The public IP address of the on-premises network.')
 param sourceAddressPrefix string
+
+@description('The name of the SSL Certificate.')
+param sslCertificateName string
 
 // Variables
 //////////////////////////////////////////////////
@@ -233,6 +248,7 @@ var routes = [
 
 // Variables - Virtual Network
 //////////////////////////////////////////////////
+var applicationGatewaySubnetName = 'snet-${appEnvironment}-applicationGateway'
 var hubVirtualNetworkName = 'vnet-${appEnvironment}-hub'
 var hubVirtualNetworkPrefix = '10.101.0.0/16'
 var hubVirtualNetworkSubnets = [  
@@ -243,7 +259,7 @@ var hubVirtualNetworkSubnets = [
     }
   }
   {
-    name: 'snet-${appEnvironment}-applicationGateway'
+    name: applicationGatewaySubnetName
     properties: {
       addressPrefix: '10.101.11.0/24'
       networkSecurityGroup: {
@@ -460,6 +476,621 @@ var bastionPublicIpAddressProperties = {
   sku: 'Standard'
 }
 
+// Variables - Application Gateway
+//////////////////////////////////////////////////
+var apiGatewayVmHostName = 'apigateway-vm.${rootDomainName}'
+var apiGatewayVmssHostName = 'apigateway-vmss.${rootDomainName}'
+var applicationGatewayName = 'appgw-${appEnvironment}'
+var applicationGatewayPublicIpAddressName = 'pip-${appEnvironment}-appgw'
+var frontendVmHostName = 'frontEnd-vm.${rootDomainName}'
+var frontendVmssHostName = 'frontEnd-vmss.${rootDomainName}'
+var sslCertificateDataPassword = ''
+var applicationGatewayPublicIpAddressProperties = {
+  name: applicationGatewayPublicIpAddressName
+  publicIPAllocationMethod: 'Static'
+  publicIPAddressVersion: 'IPv4'
+  sku: 'Standard'
+}
+var applicationGatewayProperties = {
+  name: applicationGatewayName
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${applicationGatewayManagedIdentity.id}': {}
+    }
+  }
+  properties: {
+    backendAddressPools: backendAddressPools
+    backendHttpSettingsCollection: backendHttpSettingsCollection
+    enableHttp2: false
+    frontendPorts: frontendPorts
+    gatewayIPConfigurations: gatewayIPConfigurations
+    httpListeners: httpListeners
+    probes: probes
+    redirectConfigurations: redirectConfigurations
+    requestRoutingRules: requestRoutingRules
+    sku: {
+      name: 'WAF_v2'
+      tier: 'WAF_v2'
+      capacity: 1
+    }
+    webApplicationFirewallConfiguration: {
+      enabled: true
+      firewallMode: 'Prevention'
+      ruleSetType: 'OWASP'
+      ruleSetVersion: '3.1'
+    }
+  }
+}
+var backendAddressPools = [
+  {
+    name: 'backendPool-apigateway-vm'
+    properties: {}
+  }
+  {
+    name: 'backendPool-apigateway-vmss'
+    properties: {}
+  }
+  {
+    name: 'backendPool-frontend-vm'
+    properties: {}
+  }
+  {
+    name: 'backendPool-frontend-vmss'
+    properties: {}
+  }
+]
+var backendHttpSettingsCollection = [
+  {
+    name: 'backendsetting-apigateway-vm'
+    properties: {
+      port: 8080
+      protocol: 'Http'
+      cookieBasedAffinity: 'Disabled'
+      requestTimeout: 30
+      pickHostNameFromBackendAddress: true
+      probe: {
+        id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, 'probe-apigateway-vm')
+      }
+    }
+  }
+  {
+    name: 'backendsetting-apigateway-vmss'
+    properties: {
+      port: 8080
+      protocol: 'Http'
+      cookieBasedAffinity: 'Disabled'
+      requestTimeout: 30
+      pickHostNameFromBackendAddress: true
+      probe: {
+        id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, 'probe-apigateway-vmss')
+      }
+    }
+  }
+  {
+    name: 'backendsetting-frontend-vm'
+    properties: {
+      port: 80
+      protocol: 'Http'
+      cookieBasedAffinity: 'Disabled'
+      requestTimeout: 30
+      pickHostNameFromBackendAddress: true
+      probe: {
+        id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, 'probe-frontend-vm')
+      }
+    }
+  }
+  {
+    name: 'backendsetting-frontend-vmss'
+    properties: {
+      port: 80
+      protocol: 'Http'
+      cookieBasedAffinity: 'Disabled'
+      requestTimeout: 30
+      pickHostNameFromBackendAddress: true
+      probe: {
+        id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, 'probe-frontend-vmss')
+      }
+    }
+  }
+]
+var frontendPorts = [
+  {
+    name: 'port_80'
+    properties: {
+      port: 80
+    }
+  }
+  {
+    name: 'port_443'
+    properties: {
+      port: 443
+    }
+  }
+]
+var gatewayIPConfigurations = [
+  {
+    name: 'appGatewayIPConfig'
+    properties: {
+      subnet: {
+        id: virtualNetworkModule.outputs.applicationGatewaySubnetId
+      }
+    }
+  }
+]
+var httpListeners = [
+  {
+    name: 'listener-http-apigateway-vm'
+    properties: {
+      frontendIPConfiguration: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'frontendIpConfiguration')
+      }
+      frontendPort: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_80')
+      }
+      protocol: 'Http'
+      hostName: apiGatewayVmHostName
+      requireServerNameIndication: false
+    }
+  }
+  {
+    name: 'listener-https-apigateway-vm'
+    properties: {
+      frontendIPConfiguration: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'frontendIpConfiguration')
+      }
+      frontendPort: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_443')
+      }
+      protocol: 'Https'
+      sslCertificate: {
+        id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, sslCertificateName)
+      }
+      hostName: apiGatewayVmHostName
+      requireServerNameIndication: false
+    }
+  }
+  {
+    name: 'listener-http-apigateway-vmss'
+    properties: {
+      frontendIPConfiguration: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'frontendIpConfiguration')
+      }
+      frontendPort: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_80')
+      }
+      protocol: 'Http'
+      hostName: apiGatewayVmssHostName
+      requireServerNameIndication: false
+    }
+  }
+  {
+    name: 'listener-https-apigateway-vmss'
+    properties: {
+      frontendIPConfiguration: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'frontendIpConfiguration')
+      }
+      frontendPort: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_443')
+      }
+      protocol: 'Https'
+      sslCertificate: {
+        id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, sslCertificateName)
+      }
+      hostName: apiGatewayVmssHostName
+      requireServerNameIndication: false
+    }
+  }
+  {
+    name: 'listener-http-frontend-vm'
+    properties: {
+      frontendIPConfiguration: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'frontendIpConfiguration')
+      }
+      frontendPort: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_80')
+      }
+      protocol: 'Http'
+      hostName: frontendVmHostName
+      requireServerNameIndication: false
+    }
+  }
+  {
+    name: 'listener-https-frontend-vm'
+    properties: {
+      frontendIPConfiguration: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'frontendIpConfiguration')
+      }
+      frontendPort: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_443')
+      }
+      protocol: 'Https'
+      sslCertificate: {
+        id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, sslCertificateName)
+      }
+      hostName: frontendVmHostName
+      requireServerNameIndication: false
+    }
+  }
+  {
+    name: 'listener-http-frontend-vmss'
+    properties: {
+      frontendIPConfiguration: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'frontendIpConfiguration')
+      }
+      frontendPort: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_80')
+      }
+      protocol: 'Http'
+      hostName: frontendVmssHostName
+      requireServerNameIndication: false
+    }
+  }
+  {
+    name: 'listener-https-frontend-vmss'
+    properties: {
+      frontendIPConfiguration: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'frontendIpConfiguration')
+      }
+      frontendPort: {
+        id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_443')
+      }
+      protocol: 'Https'
+      sslCertificate: {
+        id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, sslCertificateName)
+      }
+      hostName: frontendVmssHostName
+      requireServerNameIndication: false
+    }
+  }
+]
+var probes = [
+  {
+    name: 'probe-apigateway-vm'
+    properties: {
+      interval: 30
+      path: '/swagger'
+      protocol: 'Http'
+      timeout: 30
+      unhealthyThreshold: 3
+      pickHostNameFromBackendHttpSettings: true
+    }
+  }
+  {
+    name: 'probe-apigateway-vmss'
+    properties: {
+      interval: 30
+      path: '/swagger'
+      protocol: 'Http'
+      timeout: 30
+      unhealthyThreshold: 3
+      pickHostNameFromBackendHttpSettings: true
+    }
+  }
+  {
+    name: 'probe-frontend-vm'
+    properties: {
+      interval: 30
+      path: '/'
+      protocol: 'Http'
+      timeout: 30
+      unhealthyThreshold: 3
+      pickHostNameFromBackendHttpSettings: true
+    }
+  }
+  {
+    name: 'probe-frontend-vmss'
+    properties: {
+      interval: 30
+      path: '/'
+      protocol: 'Http'
+      timeout: 30
+      unhealthyThreshold: 3
+      pickHostNameFromBackendHttpSettings: true
+    }
+  }
+]
+var redirectConfigurations = [
+  {
+    name: 'redirectionconfig-apigateway-vm'
+    properties: {
+      redirectType: 'Permanent'
+      targetListener: {
+        id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'listener-https-apigateway-vm')
+      }
+    }
+  }
+  {
+    name: 'redirectionconfig-apigateway-vmss'
+    properties: {
+      redirectType: 'Permanent'
+      targetListener: {
+        id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'listener-https-apigateway-vmss')
+      }
+    }
+  }
+  {
+    name: 'redirectionconfig-frontend-vm'
+    properties: {
+      redirectType: 'Permanent'
+      targetListener: {
+        id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'listener-https-frontend-vm')
+      }
+    }
+  }
+  {
+    name: 'redirectionconfig-frontend-vmss'
+    properties: {
+      redirectType: 'Permanent'
+      targetListener: {
+        id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'listener-https-frontend-vmss')
+      }
+    }
+  }
+]
+var requestRoutingRules = [
+  {
+    name: 'routingrule-apigateway-vm'
+    properties: {
+      ruleType: 'Basic'
+      priority: 10
+      httpListener: {
+        id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'listener-https-apigateway-vm')
+      }
+      backendAddressPool: {
+        id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, 'backendPool-apigateway-vm')
+      }
+      backendHttpSettings: {
+        id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, 'backendsetting-apigateway-vm')
+      }
+    }
+  }
+  {
+    name: 'routingrule-redirection-apigateway-vm'
+    properties: {
+      ruleType: 'Basic'
+      priority: 20
+      httpListener: {
+        id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'listener-http-apigateway-vm')
+      }
+      redirectConfiguration: {
+        id: resourceId('Microsoft.Network/applicationGateways/redirectConfigurations', applicationGatewayName, 'redirectionconfig-apigateway-vm')
+      }
+    }
+  }
+  {
+    name: 'routingrule-apigateway-vmss'
+    properties: {
+      ruleType: 'Basic'
+      priority: 30
+      httpListener: {
+        id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'listener-https-apigateway-vmss')
+      }
+      backendAddressPool: {
+        id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, 'backendPool-apigateway-vmss')
+      }
+      backendHttpSettings: {
+        id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, 'backendsetting-apigateway-vmss')
+      }
+    }
+  }
+  {
+    name: 'routingrule-redirection-apigateway-vmss'
+    properties: {
+      ruleType: 'Basic'
+      priority: 40
+      httpListener: {
+        id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'listener-http-apigateway-vmss')
+      }
+      redirectConfiguration: {
+        id: resourceId('Microsoft.Network/applicationGateways/redirectConfigurations', applicationGatewayName, 'redirectionconfig-apigateway-vmss')
+      }
+    }
+  }
+  {
+    name: 'routingrule-frontend-vm'
+    properties: {
+      ruleType: 'Basic'
+      priority: 50
+      httpListener: {
+        id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'listener-https-frontend-vm')
+      }
+      backendAddressPool: {
+        id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, 'backendPool-frontend-vm')
+      }
+      backendHttpSettings: {
+        id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, 'backendsetting-frontend-vm')
+      }
+    }
+  }
+  {
+    name: 'routingrule-redirection-frontend-vm'
+    properties: {
+      ruleType: 'Basic'
+      priority: 60
+      httpListener: {
+        id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'listener-http-frontend-vm')
+      }
+      redirectConfiguration: {
+        id: resourceId('Microsoft.Network/applicationGateways/redirectConfigurations', applicationGatewayName, 'redirectionconfig-frontend-vm')
+      }
+    }
+  }
+  {
+    name: 'routingrule-frontend-vmss'
+    properties: {
+      ruleType: 'Basic'
+      priority: 70
+      httpListener: {
+        id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'listener-https-frontend-vmss')
+      }
+      backendAddressPool: {
+        id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, 'backendPool-frontend-vmss')
+      }
+      backendHttpSettings: {
+        id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, 'backendsetting-frontend-vmss')
+      }
+    }
+  }
+  {
+    name: 'routingrule-redirection-frontend-vmss'
+    properties: {
+      ruleType: 'Basic'
+      priority: 80
+      httpListener: {
+        id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'listener-http-frontend-vmss')
+      }
+      redirectConfiguration: {
+        id: resourceId('Microsoft.Network/applicationGateways/redirectConfigurations', applicationGatewayName, 'redirectionconfig-frontend-vmss')
+      }
+    }
+  }
+]
+
+// Variables - Front Door
+//////////////////////////////////////////////////
+var frontDoorProfileProperties = {
+  name: 'afd-${appGlobalEnvironment}'
+  skuName: 'Standard_AzureFrontDoor'
+}
+var frontDoorEndpointProperties = {
+  name: 'fde-${appGlobalEnvironment}'
+  enabledState: 'Enabled'
+}
+var frontDoorOriginGroups = [
+  {
+    name: 'origingroup-${appGlobalEnvironment}-inspectorgadget'
+    sampleSize: 4
+    successfulSamplesRequired: 3
+    probePath: '/'
+    probeRequestType: 'HEAD'
+    probeProtocol: 'Http'
+    probeIntervalInSeconds: 100
+  }
+  {
+    name: 'origingroup-${appGlobalEnvironment}-frontend'
+    sampleSize: 4
+    successfulSamplesRequired: 3
+    probePath: '/'
+    probeRequestType: 'HEAD'
+    probeProtocol: 'Http'
+    probeIntervalInSeconds: 100
+  }
+  {
+    name: 'origingroup-${appGlobalEnvironment}-apigateway'
+    sampleSize: 4
+    successfulSamplesRequired: 3
+    probePath: '/swagger'
+    probeRequestType: 'HEAD'
+    probeProtocol: 'Http'
+    probeIntervalInSeconds: 100
+  }
+]
+var frontDoorOrigins = [
+  {
+    name: 'origin-${appGlobalEnvironment}-inspectorgadget'
+    hostName: replace('app-${appEnvironment}-inspectorgadget.azurewebsites.net', '-', '')
+    httpPort: 80
+    httpsPort: 443
+    originHostHeader: replace('app-${appEnvironment}-inspectorgadget.azurewebsites.net', '-', '')
+    priority: 1
+    weight: 1000
+  }
+  {
+    name: 'origin-${appGlobalEnvironment}-frontend'
+    hostName: replace('app-${appEnvironment}-ade-frontend.azurewebsites.net', '-', '')
+    httpPort: 80
+    httpsPort: 443
+    originHostHeader: replace('app-${appEnvironment}-ade-frontend.azurewebsites.net', '-', '')
+    priority: 1
+    weight: 1000
+  }
+  {
+    name: 'origin-${appGlobalEnvironment}-apigateway'
+    hostName: replace('app-${appEnvironment}-ade-apigateway.azurewebsites.net', '-', '')
+    httpPort: 80
+    httpsPort: 443
+    originHostHeader: replace('app-${appEnvironment}-ade-apigateway.azurewebsites.net', '-', '')
+    priority: 1
+    weight: 1000
+  }
+]
+var frontDoorSecretProperties = {
+  name: 'secret-${appGlobalEnvironment}'
+  type: 'CustomerCertificate'
+  useLatestVersion: (keyVaultSecretVersion == '')
+  secretVersion: keyVaultSecretVersion
+  id: keyVault::keyVaultSecret.id
+}
+var frontDoorCustomDomains = [
+  {
+    name: 'domainName-${appGlobalEnvironment}-inspectorgadget'
+    hostName: 'inspectorgadget.${rootDomainName}'
+    certificateType: 'CustomerCertificate'
+    minimumTlsVersion: 'TLS12'
+  }
+  {
+    name: 'domainName-${appGlobalEnvironment}-frontend'
+    hostName: 'ade-frontend-app.${rootDomainName}'
+    certificateType: 'CustomerCertificate'
+    minimumTlsVersion: 'TLS12'
+  }
+  {
+    name: 'domainName-${appGlobalEnvironment}-apigateway'
+    hostName: 'ade-apigateway-app.${rootDomainName}'
+    certificateType: 'CustomerCertificate'
+    minimumTlsVersion: 'TLS12'
+  }
+]
+var frontDoorRoutes = [
+  {
+    name: 'route-${appGlobalEnvironment}-inspectorgadget'
+  }
+  {
+    name: 'route-${appGlobalEnvironment}-frontend'
+  }
+  {
+    name: 'route-${appGlobalEnvironment}-apigateway'
+  }
+]
+
+// Variables - Front Door Dns Records
+//////////////////////////////////////////////////
+var frontDoorTxtRecords = [
+  {
+    name: '_dnsauth.inspectorgadget'
+    ttl: 3600
+    value: frontDoorModule.outputs.frontDoorCustomDomainVerificationIds[0].frontDoorCustomDomainVerificationId
+  }
+  {
+    name: '_dnsauth.frontend-app'
+    ttl: 3600
+    value: frontDoorModule.outputs.frontDoorCustomDomainVerificationIds[0].frontDoorCustomDomainVerificationId
+  }
+  {
+    name: '_dnsauth.apigateway-app'
+    ttl: 3600
+    value: frontDoorModule.outputs.frontDoorCustomDomainVerificationIds[0].frontDoorCustomDomainVerificationId
+  }
+]
+var frontDoorCnameRecords = [
+  {
+    name: 'inspectorgadget'
+    ttl: 3600
+    cname: frontDoorModule.outputs.frontDoorEndpointHostName
+  }
+  {
+    name: 'frontend-app'
+    ttl: 3600
+    cname: frontDoorModule.outputs.frontDoorEndpointHostName
+  }
+  {
+    name: 'apigateway-app'
+    ttl: 3600
+    cname: frontDoorModule.outputs.frontDoorEndpointHostName
+  }
+]
+
 // Variables - Private DNS
 //////////////////////////////////////////////////
 var appServicePrivateDnsZoneName = 'privatelink.azurewebsites.net'
@@ -480,10 +1111,20 @@ var networkWatcherResourceGroupName = 'NetworkWatcherRG'
 
 // Variables - Existing Resources
 //////////////////////////////////////////////////
+var applicationGatewayManagedIdentityName = 'id-${appEnvironment}-applicationGateway'
 var eventHubNamespaceAuthorizationRuleName = 'RootManageSharedAccessKey'
 var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
+var keyVaultName = 'kv-${appEnvironment}'
+var keyVaultSecretName = 'certificate'
 var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
 var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
+
+// Existing Resource - Dns Zone
+//////////////////////////////////////////////////
+resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' existing = {
+  scope: resourceGroup(dnsZoneResourceGroupName)
+  name: rootDomainName
+}
 
 // Existing Resource - Event Hub Authorization Rule
 //////////////////////////////////////////////////
@@ -492,11 +1133,28 @@ resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/autho
   name: '${eventHubNamespaceName}/${eventHubNamespaceAuthorizationRuleName}'
 }
 
+// Existing Resource - Key Vault
+//////////////////////////////////////////////////
+resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
+  scope: resourceGroup(securityResourceGroupName)
+  name: keyVaultName
+  resource keyVaultSecret 'secrets' existing = {
+    name: keyVaultSecretName
+  }
+}
+
 // Existing Resource - Log Analytics Workspace
 //////////////////////////////////////////////////
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' existing = {
   scope: resourceGroup(managementResourceGroupName)
   name: logAnalyticsWorkspaceName
+}
+
+// Existing Resource - Managed Identity - Application Gateway
+//////////////////////////////////////////////////
+resource applicationGatewayManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
+  scope: resourceGroup(securityResourceGroupName)
+  name: applicationGatewayManagedIdentityName
 }
 
 // Existing Resource - Storage Account - Diagnostics
@@ -564,6 +1222,7 @@ module routeTableModule './route_table.bicep' = {
 module virtualNetworkModule 'virtual_network.bicep' = {
   name: 'virtualNetworkDeployment'
   params: {
+    applicationGatewaySubnetName: applicationGatewaySubnetName
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     hubVirtualNetworkName: hubVirtualNetworkName
     hubVirtualNetworkPrefix: hubVirtualNetworkPrefix
@@ -606,10 +1265,55 @@ module azureBastionModule './bastion.bicep' = {
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    // publicIpAddressName: bastionPublicIpAddressName
     publicIpAddressProperties: bastionPublicIpAddressProperties
     storageAccountId: storageAccount.id
     tags: tags
+  }
+}
+
+// Module - Application Gateway
+//////////////////////////////////////////////////
+module applicationGatewayModule 'application_gateway.bicep' = {
+  name: 'applicationGatewayDeployment'
+  params: {
+    applicationGatewayProperties: applicationGatewayProperties
+    eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
+    location: location
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
+    publicIpAddressProperties: applicationGatewayPublicIpAddressProperties
+    sslCertificateData: keyVault.getSecret('certificate')
+    sslCertificateDataPassword: sslCertificateDataPassword
+    sslCertificateName: sslCertificateName
+    storageAccountId: storageAccount.id
+    tags: tags
+  }
+}
+
+// Module - Front Door
+//////////////////////////////////////////////////
+module frontDoorModule 'front_door.bicep' = {
+  name: 'frontDoorDeployment'
+  params: {
+    frontDoorCustomDomains: frontDoorCustomDomains
+    frontDoorEndpointProperties: frontDoorEndpointProperties
+    frontDoorOriginGroups: frontDoorOriginGroups
+    frontDoorOrigins: frontDoorOrigins
+    frontDoorProfileProperties: frontDoorProfileProperties
+    frontDoorRoutes: frontDoorRoutes
+    frontDoorSecretProperties: frontDoorSecretProperties
+    tags: tags
+  }
+}
+
+// Module - Front Door Dns Records
+//////////////////////////////////////////////////
+module frontDoorDnsRecordsModule 'front_door_dns.bicep' = {
+  scope: resourceGroup(dnsZoneResourceGroupName)
+  name: 'frontDoorDnsRecordsDeployment'
+  params: {
+    dnsCnameRecords: frontDoorCnameRecords
+    dnsTxtRecords: frontDoorTxtRecords
+    dnsZoneName: dnsZone.name
   }
 }
 
@@ -623,15 +1327,6 @@ module vnetPeeringVgwModule 'virtual_network_peering.bicep' = {
     peeringProperties: peeringProperties
     spokeVirtualNetworkId: virtualNetworkModule.outputs.spokeVirtualNetworkId
     spokeVirtualNetworkName: spokeVirtualNetworkName
-  }
-}
-
-// Module - Public Dns
-//////////////////////////////////////////////////
-module publicDnsModule 'public_dns.bicep' = {
-  name: 'publicDnsDeployment'
-  params: {
-    rootDomainName: rootDomainName
   }
 }
 

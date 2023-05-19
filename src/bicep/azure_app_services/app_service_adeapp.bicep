@@ -173,3 +173,12 @@ output appDockerWebHookUris array = [for (appService, i) in appServices: {
   // Should not return secrets, but we need it in this case
   adeAppDockerWebHookUri: '${list(resourceId('Microsoft.Web/sites/config', appService.name, 'publishingcredentials'), '2019-08-01').properties.scmUri}/docker/hook'
 }]
+output appServiceCustomDomainVerificationIds array = [for (appService, i) in appServices: {
+  appServiceCustomDomainVerificationId: app[i].properties.customDomainVerificationId
+}]
+output appServiceDefaultHostNames array = [for (appService, i) in appServices: {
+  appServiceDefaultHostName: app[i].properties.defaultHostName
+}]
+output appServiceNames array = [for (appService, i) in appServices: {
+  appServiceName: app[i].name
+}]

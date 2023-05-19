@@ -42,10 +42,10 @@
 
 ## Azure Security
 
-### App Config
+### App Configuration
 
 - Review implementations and best practices
-- Implement App Config everywhere it can be used
+- Implement App Configuration everywhere it can be used
 
 ## Azure Networking
 

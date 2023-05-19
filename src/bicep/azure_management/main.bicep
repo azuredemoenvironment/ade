@@ -15,6 +15,9 @@ param automationJobScheduleVirtualMachineAllocateName string = newGuid()
 @description('The VM deallocation job schedule guid.')
 param automationJobScheduleVirtualMachineDeallocateName string = newGuid()
 
+@description('The Email Address used for Alerts and Notifications.')
+param contactEmailAddress string
+
 @description('The current date.')
 param currentDate string = utcNow('yyyy-MM-dd')
 
@@ -34,6 +37,9 @@ param location string = resourceGroup().location
 
 @description('The name of the owner of the deployment.')
 param ownerName string
+
+@description('The start date of the Budget.')
+param startDate string = '${utcNow('yyyy-MM')}-01'
 
 // Variables
 //////////////////////////////////////////////////
@@ -96,6 +102,125 @@ var dataCollectionRuleName = 'dcr-${appEnvironment}-vmInsights'
 // Variables - Application Insights
 //////////////////////////////////////////////////
 var applicationInsightsName = 'appinsights-${appEnvironment}'
+
+// Variables - Action Group
+//////////////////////////////////////////////////
+var actionGroups = [
+  {
+    name: 'ag-${appEnvironment}-budget'
+    enabled: true 
+    groupShortName: 'ag-budget'
+    emailReceiversName: 'email'
+    emailAddress: contactEmailAddress
+    useCommonAlertSchema: true
+  }
+  {
+    name: 'ag-${appEnvironment}-servicehealth'
+    enabled: true 
+    groupShortName: 'ag-svchealth'
+    emailReceiversName: 'email'
+    emailAddress: contactEmailAddress
+    useCommonAlertSchema: true
+  }
+  {
+    name: 'ag-${appEnvironment}-virtualmachine'
+    enabled: true 
+    groupShortName: 'ag-vm'
+    emailReceiversName: 'email'
+    emailAddress: contactEmailAddress
+    useCommonAlertSchema: true
+  }
+  {
+    name: 'ag-${appEnvironment}-virtualnetwork'
+    enabled: true 
+    groupShortName: 'ag-vnet'
+    emailReceiversName: 'email'
+    emailAddress: contactEmailAddress
+    useCommonAlertSchema: true
+  }
+]
+
+// Variables - Activity Log Alert
+//////////////////////////////////////////////////
+var activityLogAlerts = [
+  {
+    name: 'service health'
+    description: 'service health'
+    enabled: true 
+    scopes: [
+      subscription().id
+    ]
+    condition: {
+      allOf: [
+        {
+          field: 'category'
+          equals: 'ServiceHealth'
+        }
+      ]
+    }
+    actions: {
+      actionGroups: [
+        {
+          actionGroupId: actionGroupModule.outputs.actionGroupIds[1].actionGroupId
+        }
+      ]
+    }
+  }
+  {
+    name: 'virtual machines - all administrative operations'
+    description: 'virtual machines - all administrative operations'
+    enabled: true 
+    scopes: [
+      subscription().id
+    ]
+    condition: {
+      allOf: [
+        {
+          field: 'category'
+          equals: 'ServiceHealth'
+        }
+        {
+          field: 'resourceType'
+          equals: 'microsoft.compute/virtualmachines'
+        }
+      ]
+    }
+    actions: {
+      actionGroups: [
+        {
+          actionGroupId: actionGroupModule.outputs.actionGroupIds[3].actionGroupId
+        }
+      ]
+    }
+  }
+  {
+    name: 'virtual networks - all administrative operations'
+    description: 'virtual networks - all administrative operations'
+    enabled: true 
+    scopes: [
+      subscription().id
+    ]
+    condition: {
+      allOf: [
+        {
+          field: 'category'
+          equals: 'ServiceHealth'
+        }
+        {
+          field: 'resourceType'
+          equals: 'Microsoft.Network/virtualNetworks'
+        }
+      ]
+    }
+    actions: {
+      actionGroups: [
+        {
+          actionGroupId: actionGroupModule.outputs.actionGroupIds[2].actionGroupId
+        }
+      ]
+    }
+  }
+]
 
 // Variables - Automation
 //////////////////////////////////////////////////
@@ -184,6 +309,24 @@ var initiativeDefinitionProperties = {
   enforcementMode: 'Default'
 }
 
+// Variables - Budget
+//////////////////////////////////////////////////
+var budgetProperties = {
+  name: 'budget-${appEnvironment}-monthly'
+  startDate: startDate
+  timeGrain: 'Monthly'
+  amount: 1500
+  category: 'Cost'
+  operator: 'GreaterThan'
+  enabled: true 
+  firstThreshold: 10
+  secondThreshold: 50
+  thirdThreshold: 100
+  forecastedThreshold: 150
+  contactEmails: contactEmailAddress
+  contactGroups: actionGroupModule.outputs.actionGroupIds[0].actionGroupId
+}
+
 // Module - Log Analytics Workspace
 //////////////////////////////////////////////////
 module logAnalyticsModule 'log_analytics.bicep' = {
@@ -247,6 +390,26 @@ module applicationInsightsModule './application_insights.bicep' = {
   }
 }
 
+// Module - Action Group
+//////////////////////////////////////////////////
+module actionGroupModule 'action_group.bicep' = {
+  name: 'actionGroupsDeployment'
+  params: {
+    actionGroups: actionGroups
+    tags: tags
+  }
+}
+
+// Module - Activity Log Alert
+//////////////////////////////////////////////////
+module alertsModule 'activity_log_alert.bicep' = {
+  name: 'alertsDeployment'
+  params: {
+    activityLogAlerts: activityLogAlerts
+    tags: tags
+  }
+}
+
 // Module - Automation
 //////////////////////////////////////////////////
 module automationModule 'automation.bicep' = {
@@ -296,5 +459,15 @@ module policyModule 'policy.bicep' = {
     auditVirtualMachinesWithoutDisasterRecoveryConfigured: auditVirtualMachinesWithoutDisasterRecoveryConfiguredGuid
     initiativeDefinitionProperties: initiativeDefinitionProperties
 
+  }
+}
+
+// Module - Budget
+//////////////////////////////////////////////////
+module budgetModule 'budget.bicep' = {
+  scope: subscription()
+  name: 'budgetDeployment'
+  params: {
+    budgetProperties: budgetProperties
   }
 }

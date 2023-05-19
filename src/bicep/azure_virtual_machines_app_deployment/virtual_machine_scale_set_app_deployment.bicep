@@ -1,30 +1,7 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The connection string from the App Configuration instance.')
-param appConfigConnectionString string
-
-@description('The name of the admin user of the Azure Container Registry.')
-param containerRegistryName string
-
-@description('The password of the admin user of the Azure Container Registry.')
-@secure()
-param containerRegistryPassword string
-
-@description('Function to generate the current time.')
-param currentTime string = utcNow()
-
-@description('The base URI for deployment scripts.')
-param scriptsBaseUri string
-
 @description('The array of properties for Virtual Machine Scale Sets.')
 param virtualMachineScaleSets array
-
-// Variables
-//////////////////////////////////////////////////
-var sanitizeCurrentTime = replace(replace(currentTime, 'Z', ''), 'T', '')
-var scriptLocation = '${scriptsBaseUri}/azure_virtual_machines/adeappinstall.sh'
-var scriptName = 'adeappinstall.sh'
-var timeStamp = int('${substring(sanitizeCurrentTime, 1, 2)}${substring(sanitizeCurrentTime, 3, 2)}${substring(sanitizeCurrentTime, 5, 2)}${substring(sanitizeCurrentTime, 7, 4)}')
 
 // Existing Resource - Virtual Machine Scale Set
 //////////////////////////////////////////////////
@@ -44,13 +21,13 @@ resource adeWebVmCustomScriptExtension 'Microsoft.Compute/virtualMachineScaleSet
     autoUpgradeMinorVersion: true
     settings: {
       skipDos2Unix: true
-      timestamp: timeStamp
+      timestamp: virtualMachineScaleSet.timeStamp
     }
     protectedSettings: {
       fileUris: [
-        scriptLocation
+        virtualMachineScaleSet.scriptLocation
       ]
-      commandToExecute: './${scriptName} "${containerRegistryName}" "${containerRegistryPassword}" "${appConfigConnectionString}" "${virtualMachineScaleSet.containerImage}" "${virtualMachineScaleSet.loadBalancerIpAddress}" "${scriptsBaseUri}/azure_virtual_machines/nginx.conf"'
+      commandToExecute: virtualMachineScaleSet.commandToExecute
     }
   }
 }]

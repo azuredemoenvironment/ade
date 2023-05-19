@@ -31,35 +31,26 @@ function Deploy-AzureDemoEnvironment {
     
     # Core Services
     ###################################
-    # Deploy-AzureManagement $armParameters
-    # Deploy-AzureSecurity $armParameters
-    # Deploy-AzureNetworking $armParameters
-    # Deploy-AzureContainerRegistry $armParameters
+    Deploy-AzureManagement $armParameters
+    Deploy-AzureSecurity $armParameters
+    Deploy-AzureNetworking $armParameters
+    Deploy-AzureContainerRegistry $armParameters
     
     # # Data Services
     # ###################################
-    # Deploy-AzureDatabases $armParameters
+    Deploy-AzureDatabases $armParameters
 
     # # Compute Infrastructure
     # ###################################
-    # Deploy-AzureVirtualMachines $armParameters
-    # Deploy-AzureAppServices $armParameters
-    # Deploy-AzureKubernetesServices $armParameters
+    Deploy-AzureVirtualMachines $armParameters
+    Deploy-AzureAppServices $armParameters
+    Deploy-AzureKubernetesServices $armParameters
     Deploy-AzureContainerInstances $armParameters
-    # Deploy-AdeApplicationToVirtualMachines $armParameters
+    Deploy-AdeApplicationToVirtualMachines $armParameters
 
-    # # Frontend Load Balancers
-    # ###################################
-    # Deploy-AzureFrontendLoadBalancers $armParameters
-    
     # # Service Cleanup
     # ###################################
-    # Set-AzureContainerInstancesToStopped $armParameters
-
-    # # Additional Core Services
-    # ###################################
-    # Deploy-AzureAlerts $armParameters
-    # Deploy-AzurePublicDns $armParameters
+    Set-AzureContainerInstancesToStopped $armParameters
 
     $stopwatch.Stop()
     $elapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 0)

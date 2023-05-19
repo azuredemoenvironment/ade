@@ -19,6 +19,9 @@
         },
         "resourcePassword": {
             "value": "@@resourcePassword@@"
+        },
+        "rootDomainName": {
+            "value": "@@rootDomainName@@"
         }
     }
 }

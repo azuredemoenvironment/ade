@@ -72,6 +72,7 @@ resource vmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = [for (vir
                         id: virtualMachineScaleSet.loadBalancerBackendPoolId
                       }
                     ] : null
+                    applicationGatewayBackendAddressPools: virtualMachineScaleSet.applicationGatewayBackendPoolIds != null ? virtualMachineScaleSet.applicationGatewayBackendPoolIds : null
                   }
                 }
               ]

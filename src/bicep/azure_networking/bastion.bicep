@@ -6,9 +6,6 @@ param bastionName string
 @description('The ID of the Bastion Subnet.')
 param bastionSubnetId string
 
-@description('The ID of the Diagnostics Storage Account.')
-param storageAccountId string
-
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
 
@@ -18,11 +15,11 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-// @description('The name of the Firewall Public IP Address.')
-// param publicIpAddressName string
-
 @description('The properties of the Public IP Address')
 param publicIpAddressProperties object
+
+@description('The ID of the Diagnostics Storage Account.')
+param storageAccountId string
 
 @description('The list of resource tags.')
 param tags object

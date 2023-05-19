@@ -5,8 +5,14 @@
         "appEnvironment": {
             "value": "@@appEnvironment@@"
         },
+        "appGlobalEnvironment": {
+            "value": "@@appGlobalEnvironment@@"
+        },
         "deployFirewall": {
             "value": @@deployFirewall@@
+        },
+        "dnsZoneResourceGroupName": {
+            "value": "@@dnsZoneResourceGroupName@@"
         },
         "managementResourceGroupName": {
             "value": "@@managementResourceGroupName@@"
@@ -17,8 +23,14 @@
         "rootDomainName": {
             "value": "@@rootDomainName@@"
         },
+        "securityResourceGroupName": {
+            "value": "@@securityResourceGroupName@@"
+        },
         "sourceAddressPrefix": {
             "value": "@@sourceAddressPrefix@@"
-        }              
+        },
+        "sslCertificateName": {
+            "value": "@@sslCertificateName@@"
+        }         
     }
 }

@@ -9,6 +9,9 @@ param certificateBase64String string
 @description('The current date.')
 param currentDate string = utcNow('yyyy-MM-dd')
 
+@description('Function to generate the current time.')
+param currentTime string = utcNow()
+
 @description('The name of the application environment.')
 @allowed([
   'dev'
@@ -30,6 +33,9 @@ param ownerName string
 @secure()
 param resourcePassword string
 
+@description('The value for Root Domain Name.')
+param rootDomainName string
+
 // Variables
 //////////////////////////////////////////////////
 var tags = {
@@ -50,6 +56,107 @@ var appConfigName = 'appcs-${appEnvironment}'
 var appConfigPurgeProtection = false
 var appConfigSku = 'Standard'
 
+// Variables - App Configuration - Keys (Public URIs)
+//////////////////////////////////////////////////
+var apiGatewayAppServiceHostName = 'ade-apigateway-app.${rootDomainName}'
+var apiGatewayVmHostName = 'ade-apigateway-vm.${rootDomainName}'
+var apiGatewayVmssHostName = 'ade-apigateway-vmss.${rootDomainName}'
+var appConfigurationKeysPublic = [
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/ADE:ApiGatewayUri$appservices'
+    keyValue: 'https://${apiGatewayAppServiceHostName}'
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/ADE:ApiGatewayUri$virtualmachines'
+    keyValue: 'https://${apiGatewayVmHostName}'
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/ADE:ApiGatewayUri$virtualmachinescalesets'
+    keyValue: 'https://${apiGatewayVmssHostName}'
+  }
+]
+
+// Variables - App Configuration - Keys (Private URIs)
+//////////////////////////////////////////////////
+var apiGatewayAppServiceName = replace('app-${appEnvironment}-ade-apigateway', '-', '')
+var appConfigurationKeysPrivate = [
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/ApplicationInsights:ConnectionString'
+    keyValue: applicationInsights.properties.ConnectionString
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/ASPNETCORE_ENVIRONMENT'
+    keyValue: 'Development'
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:Sentinel'
+    keyValue: currentTime
+  }  
+  
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:FrontendUri$appservices'
+    keyValue: 'https://${frontendAppServiceName}.azurewebsites.net'
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:ApiGatewayUri$appservices'
+    keyValue: 'https://${apiGatewayAppServiceName}.azurewebsites.net'
+  }  
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:DataIngestorServiceUri$appservices'
+    keyValue: 'https://${dataIngestorAppServiceName}.azurewebsites.net'
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:DataReporterServiceUri$appservices'
+    keyValue: 'https://${dataReporterAppServiceName}.azurewebsites.net'
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:UserServiceUri$appservices'
+    keyValue: 'https://${userServiceAppServiceName}.azurewebsites.net'
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:EventIngestorServiceUri$appservices'
+    keyValue: 'https://${eventIngestorAppServiceName}.azurewebsites.net'
+  }  
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:DataIngestorServiceUri$virtualmachines'
+    keyValue: 'http://localhost:5000'
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:DataReporterServiceUri$virtualmachines'
+    keyValue: 'http://localhost:5001'
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:UserServiceUri$virtualmachines'
+    keyValue: 'http://localhost:5002'
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:EventIngestorServiceUri$virtualmachines'
+    keyValue: 'http://localhost:5003'
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:DataIngestorServiceUri$virtualmachinescalesets'
+    keyValue: 'http://localhost:5000'
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:DataReporterServiceUri$virtualmachinescalesets'
+    keyValue: 'http://localhost:5001'
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:UserServiceUri$virtualmachinescalesets'
+    keyValue: 'http://localhost:5002'
+  }
+  {
+    keyName: '${appConfigModule.outputs.appConfigName}/Ade:EventIngestorServiceUri$virtualmachinescalesets'
+    keyValue: 'http://localhost:5003'
+  }
+]
+var dataIngestorAppServiceName = replace('app-${appEnvironment}-ade-dataingestorservice', '-', '')
+var dataReporterAppServiceName = replace('app-${appEnvironment}-ade-datareporterservice', '-', '')
+var eventIngestorAppServiceName = replace('app-${appEnvironment}-ade-eventingestorservice', '-', '')
+var frontendAppServiceName = replace('app-${appEnvironment}-ade-frontend', '-', '')
+var userServiceAppServiceName = replace('app-${appEnvironment}-ade-userservice', '-', '')
+
+
 // Variables - Key Vault
 //////////////////////////////////////////////////
 var certificateSecretName = 'certificate'
@@ -69,13 +176,36 @@ var resourcePasswordSecretName = 'resourcePassword'
 
 // Variables - Key Vault - Access Policies
 //////////////////////////////////////////////////
-var applicationGatewayManagedIdentityPrincipalIdSecretsPermissions = ['get']
-var appServicePrincipalId = 'abfa0a7c-a6b6-4736-8310-5855508787cd'
-var appServicePrincipalIdCertificatePermissions = ['get']
-var appServicePrincipalIdSecretsPermissions = ['get']
-var containerRegistryManagedIdentityPrincipalIdCertificatesPermissions = ['get']
-var containerRegistryManagedIdentityPrincipalIdKeysPermissions = ['get', 'unwrapKey', 'wrapKey']
-var containerRegistryManagedIdentityPrincipalIdSecretsPermissions = ['get']
+var keyVaultAccessPolicies = [
+  {
+    objectId: managedIdentityModule.outputs.applicationGatewayManagedIdentityPrincipalId
+    permissions: {
+      secrets: ['get']
+    }
+  }
+  {
+    objectId: 'f8daea97-62e7-4026-becf-13c2ea98e8b4'
+    permissions: {
+      certificates: ['get']
+      secrets: ['get']
+    }
+  }
+  {
+    objectId: managedIdentityModule.outputs.containerRegistryManagedIdentityPrincipalId
+    permissions: {
+      certificates: ['get']
+      keys: ['get', 'unwrapKey', 'wrapKey']
+      secrets: ['get']
+    }
+  }
+  {
+    objectId: '4dbab725-22a4-44d5-ad44-c267ca38a954'
+      permissions: {
+      certificates: ['get']
+      secrets: ['get']
+    }
+  }
+]
 
 // Variables - Existing Resources
 //////////////////////////////////////////////////
@@ -142,13 +272,21 @@ module appConfigModule './app_config.bicep' = {
   }
 }
 
-// Module - App Configuration - Application Insights
+// Module - App Configuration - Keys (Public URIs)
 //////////////////////////////////////////////////
-module appConfigApplicationInsightsModule './app_config_application_insights.bicep' = {
-  name: 'appConfigApplicationInsightsDeployment'
+module appConfigurationKeysPublicModule 'app_config_keys.bicep' = {
+  name: 'appConfigurationKeysPublicDeployment'
   params: {
-    appConfigName: appConfigModule.outputs.appConfigName
-    applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
+    appConfigKeys: appConfigurationKeysPublic
+  }
+}
+
+// Module - App Configuration - Keys (Private URIs)
+//////////////////////////////////////////////////
+module appConfigurationKeysPrivateModule 'app_config_keys.bicep' = {
+  name: 'appConfigurationKeysPrivateDeployment'
+  params: {
+    appConfigKeys: appConfigurationKeysPrivate
   }
 }
 
@@ -176,15 +314,7 @@ module keyVaultModule './key_vault.bicep' = {
 module keyVaultAccessPoliciesModule 'key_vault_access_policies.bicep' = {
   name: 'keyVaultAccessPoliciesDeployment'
   params: {
-    applicationGatewayManagedIdentityPrincipalId: managedIdentityModule.outputs.applicationGatewayManagedIdentityPrincipalId
-    applicationGatewayManagedIdentityPrincipalIdSecretsPermissions: applicationGatewayManagedIdentityPrincipalIdSecretsPermissions
-    appServicePrincipalId: appServicePrincipalId
-    appServicePrincipalIdCertificatePermissions: appServicePrincipalIdCertificatePermissions
-    appServicePrincipalIdSecretsPermissions: appServicePrincipalIdSecretsPermissions    
-    containerRegistryManagedIdentityPrincipalId: managedIdentityModule.outputs.containerRegistryManagedIdentityPrincipalId
-    containerRegistryManagedIdentityPrincipalIdCertificatesPermissions: containerRegistryManagedIdentityPrincipalIdCertificatesPermissions
-    containerRegistryManagedIdentityPrincipalIdKeysPermissions: containerRegistryManagedIdentityPrincipalIdKeysPermissions
-    containerRegistryManagedIdentityPrincipalIdSecretsPermissions: containerRegistryManagedIdentityPrincipalIdSecretsPermissions
+    keyVaultAccessPolicies: keyVaultAccessPolicies
     keyVaultName: keyVaultModule.outputs.keyVaultName
   }
 }

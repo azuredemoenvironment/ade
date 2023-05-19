@@ -6,10 +6,10 @@ function Set-AzureContainerInstancesToStopped {
     Write-ScriptSection "Setting Azure Container Instances to Stopped (for Cost Savings)"
 
     $containerGroups = @(
-        @{ Name = $armParameters.loadTestingGatlingContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName },
-        @{ Name = $armParameters.loadTestingGrafanaContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName },
-        @{ Name = $armParameters.loadTestingInfluxDbContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName },
-        @{ Name = $armParameters.loadTestingRedisContainerGroupName; ResourceGroup = $armParameters.adeAppLoadTestingResourceGroupName }
+        @{ Name = $armParameters.loadTestingGatlingContainerGroupName; ResourceGroup = $armParameters.containerResourceGroupName },
+        @{ Name = $armParameters.loadTestingGrafanaContainerGroupName; ResourceGroup = $armParameters.containerResourceGroupName },
+        @{ Name = $armParameters.loadTestingInfluxDbContainerGroupName; ResourceGroup = $armParameters.containerResourceGroupName },
+        @{ Name = $armParameters.loadTestingRedisContainerGroupName; ResourceGroup = $armParameters.containerResourceGroupName }
     )
     
     $containerGroups | ForEach-Object {

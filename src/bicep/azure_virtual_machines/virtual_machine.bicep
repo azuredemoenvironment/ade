@@ -22,7 +22,7 @@ param storageAccountId string
 @description('The list of resource tags.')
 param tags object
 
-@description('The array of properties for Virtual Machines.')
+@description('The array of Virtual Machines.')
 param virtualMachines array
 
 // Resource - Network Interface
@@ -45,6 +45,7 @@ resource vmNic 'Microsoft.Network/networkInterfaces@2022-09-01' = [for (virtualM
               id: virtualMachine.loadBalancerBackendPoolId
             }
           ] : null
+          applicationGatewayBackendAddressPools: virtualMachine.applicationGatewayBackendPoolIds != null ? virtualMachine.applicationGatewayBackendPoolIds : null
         }
       }
     ]

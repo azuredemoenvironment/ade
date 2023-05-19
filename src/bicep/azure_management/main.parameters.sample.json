@@ -5,6 +5,9 @@
         "appEnvironment": {
             "value": "@@appEnvironment@@"
         },
+        "contactEmailAddress": {
+            "value": "@@contactEmailAddress@@"
+        },
         "environment": {
             "value": "@@environment@@"
         },

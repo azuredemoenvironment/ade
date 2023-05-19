@@ -9,6 +9,9 @@ param serviceHealthActionGroupId string
 @description('The name of the Service Health Alert.')
 param serviceHealthAlertName string
 
+@description('The list of resource tags.')
+param tags object
+
 @description('The ID of the Virtual Machine Action Group.')
 param virtualMachineActionGroupId string
 
@@ -23,14 +26,6 @@ param virtualNetworkActionGroupId string
 
 @description('The name of the Virtual Network Alert.')
 param virtualNetworkAlertName string
-
-// Variables
-//////////////////////////////////////////////////
-var tags = {
-  environment: 'production'
-  function: 'monitoring and diagnostics'
-  costCenter: 'it'
-}
 
 // Resource - Alert - Service Health
 //////////////////////////////////////////////////

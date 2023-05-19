@@ -12,6 +12,9 @@ param containerResourceGroupName string
 @description('The current date.')
 param currentDate string = utcNow('yyyy-MM-dd')
 
+@description('The name of the Dns Zone Resource Group.')
+param dnsZoneResourceGroupName string
+
 @description('The name of the Database Resource Group.')
 param databaseResourceGroupName string
 
@@ -50,31 +53,61 @@ var appServicePlanProperties = {
   reserved: true
 }
 
+// Variables - App Service - Certificate
+//////////////////////////////////////////////////
+var certificateName = 'wildcard'
+
 // Variables - App Service - Inspector Gadget
 //////////////////////////////////////////////////
-var inspectorGadgetAppServiceName = replace('app-${appEnvironment}-inspectorgadget', '-', '')
-var inspectorGadgetApplicationName = 'inspectorgadget'
-var inspectorGadgetAppServices = [
+var inspectorGadgetAppService = {
+  name: replace('app-${appEnvironment}-inspectorgadget', '-', '')
+  kind: 'container'
+  httpsOnly: true
+  serverFarmId: appServicePlanModule.outputs.serverFarmId
+  virtualNetworkSubnetId: spokeVirtualNetwork::vnetIntegrationSubnet.id
+  vnetRouteAllEnabled: true
+  linuxFxVersion: inspectorGadgetDockerImage
+}
+var inspectorGadgetDockerImage = 'DOCKER|jelledruyts/inspectorgadget:latest'
+
+// Variables - App Service - Dns Records - Inspector Gadget
+//////////////////////////////////////////////////
+var inspectorGadgetAppServiceTxtRecords = [
   {
-    name: inspectorGadgetAppServiceName
-    kind: 'container'
-    httpsOnly: true
-    serverFarmId: appServicePlanModule.outputs.appServicePlanId
-    virtualNetworkSubnetId: spokeVirtualNetwork::vnetIntegrationSubnet.id
-    vnetRouteAllEnabled: true
-    linuxFxVersion: inspectorGadgetDockerImage
+    name: 'asuid.inspectorgadget'
+    ttl: 3600
+    value: inspectorGadgetAppServiceModule.outputs.appServiceCustomDomainVerificationId
   }
 ]
-var inspectorGadgetDockerImage = 'DOCKER|jelledruyts/inspectorgadget:latest'
+var inspectorGadgetAppServiceCnameRecords = [
+  {
+    name: 'inspectorgadget'
+    ttl: 3600
+    cname: inspectorGadgetAppServiceModule.outputs.appServiceDefaultHostName
+  }
+]
+
+// Variables - App Service - Tls - Inspector Gadget
+//////////////////////////////////////////////////
+var inspectorGadgetAppServiceTlsSettings = [
+  {
+    appServiceName: inspectorGadgetAppServiceModule.outputs.appServiceName
+    applicationHostName: 'inspectorgadget.${rootDomainName}'
+    hostNameType: 'Verified'
+    sslState: 'SniEnabled'
+    customHostNameDnsRecordType: 'CName'
+    thumbprint: appServiceCertificateModule.outputs.certificateThumbprint
+  }
+]
 
 // Variables - App Service - Ade App
 //////////////////////////////////////////////////
-var adeAppAppServices = [
+var adeAppServices = [
   {
     name: replace('app-${appEnvironment}-ade-frontend', '-', '')
     kind: 'container'
     httpsOnly: true
-    serverFarmId: appServicePlanModule.outputs.appServicePlanId
+    serverFarmId: appServicePlanModule.outputs.serverFarmId
     virtualNetworkSubnetId: spokeVirtualNetwork::vnetIntegrationSubnet.id
     vnetRouteAllEnabled: true
     linuxFxVersion: 'DOCKER|${containerRegistry.properties.loginServer}/ade-frontend'
@@ -88,13 +121,12 @@ var adeAppAppServices = [
     privateDnsZoneId: null
     containerImageName: 'ade-frontend'
     appConfigName: appConfig.name
-    keyValueName: '${appConfig.name}/Ade:frontendUri$appservices'
   }
   {
     name: replace('app-${appEnvironment}-ade-apigateway', '-', '')
     kind: 'container'
     httpsOnly: true
-    serverFarmId: appServicePlanModule.outputs.appServicePlanId
+    serverFarmId: appServicePlanModule.outputs.serverFarmId
     virtualNetworkSubnetId: spokeVirtualNetwork::vnetIntegrationSubnet.id
     vnetRouteAllEnabled: true
     linuxFxVersion: 'DOCKER|${containerRegistry.properties.loginServer}/ade-apigateway'
@@ -107,13 +139,12 @@ var adeAppAppServices = [
     usePrivateEndpoint: false
     privateDnsZoneId: null
     containerImageName: 'ade-apigateway'
-    keyValueName: '${appConfig.name}/Ade:apigatewayUri$appservices'
   }
   {
     name: replace('app-${appEnvironment}-ade-userservice', '-', '')
     kind: 'container'
     httpsOnly: true
-    serverFarmId: appServicePlanModule.outputs.appServicePlanId
+    serverFarmId: appServicePlanModule.outputs.serverFarmId
     virtualNetworkSubnetId: spokeVirtualNetwork::vnetIntegrationSubnet.id
     vnetRouteAllEnabled: true
     linuxFxVersion: 'DOCKER|${containerRegistry.properties.loginServer}/ade-userservice'
@@ -128,13 +159,12 @@ var adeAppAppServices = [
     usePrivateEndpoint: true
     privateDnsZoneId: appServicePrivateDnsZone.id
     containerImageName: 'ade-userservice'
-    keyValueName: '${appConfig.name}/Ade:userserviceUri$appservices'
   }
   {
     name: replace('app-${appEnvironment}-ade-dataingestorservice', '-', '')
     kind: 'container'
     httpsOnly: true
-    serverFarmId: appServicePlanModule.outputs.appServicePlanId
+    serverFarmId: appServicePlanModule.outputs.serverFarmId
     virtualNetworkSubnetId: spokeVirtualNetwork::vnetIntegrationSubnet.id
     vnetRouteAllEnabled: true
     linuxFxVersion: 'DOCKER|${containerRegistry.properties.loginServer}/ade-dataingestorservice'
@@ -149,13 +179,12 @@ var adeAppAppServices = [
     usePrivateEndpoint: true
     privateDnsZoneId: appServicePrivateDnsZone.id
     containerImageName: 'ade-dataingestorservice'
-    keyValueName: '${appConfig.name}/Ade:dataingestorserviceUri$appservices'
   }
   {
     name: replace('app-${appEnvironment}-ade-datareporterservice', '-', '')
     kind: 'container'
     httpsOnly: true
-    serverFarmId: appServicePlanModule.outputs.appServicePlanId
+    serverFarmId: appServicePlanModule.outputs.serverFarmId
     virtualNetworkSubnetId: spokeVirtualNetwork::vnetIntegrationSubnet.id
     vnetRouteAllEnabled: true
     linuxFxVersion: 'DOCKER|${containerRegistry.properties.loginServer}/ade-datareporterservice'
@@ -170,13 +199,12 @@ var adeAppAppServices = [
     usePrivateEndpoint: true
     privateDnsZoneId: appServicePrivateDnsZone.id
     containerImageName: 'ade-datareporterservice'
-    keyValueName: '${appConfig.name}/Ade:datareporterserviceUri$appservices'
   }
   {
     name: replace('app-${appEnvironment}-ade-eventingestorservice', '-', '')
     kind: 'container'
     httpsOnly: true
-    serverFarmId: appServicePlanModule.outputs.appServicePlanId
+    serverFarmId: appServicePlanModule.outputs.serverFarmId
     virtualNetworkSubnetId: spokeVirtualNetwork::vnetIntegrationSubnet.id
     vnetRouteAllEnabled: true
     linuxFxVersion: 'DOCKER|${containerRegistry.properties.loginServer}/ade-eventingestorservice'
@@ -191,33 +219,132 @@ var adeAppAppServices = [
     usePrivateEndpoint: true
     privateDnsZoneId: appServicePrivateDnsZone.id
     containerImageName: 'ade-eventingestorservice'
-    keyValueName: '${appConfig.name}/Ade:eventingestorserviceUri$appservices'
   }
 ]
 
-// Variables - App Service - Dns Records
+// Variables - App Service - Dns Records - Ade App
 //////////////////////////////////////////////////
-var appServiceDnsRecords = [
+var adeAppServiceTxtRecords = [
   {
-    applicationName: inspectorGadgetApplicationName
-    appServiceCustomDomainVerificationId: inspectorGadgetAppServiceModule.outputs.appServiceCustomDomainVerificationIds[0].appServiceCustomDomainVerificationId
-    appServiceName: inspectorGadgetAppServiceName
-    dnsZoneName: publicDnsZone.name
+    name: 'asuid.ade-frontend-app'
+    ttl: 3600
+    value: adeAppServiceModule.outputs.appServiceCustomDomainVerificationIds[0].appServiceCustomDomainVerificationId
+  }
+  {
+    name: 'asuid.ade-apigateway-app'
+    ttl: 3600
+    value: adeAppServiceModule.outputs.appServiceCustomDomainVerificationIds[1].appServiceCustomDomainVerificationId
+  }
+  {
+    name: 'asuid.ade-userservice-app'
+    ttl: 3600
+    value: adeAppServiceModule.outputs.appServiceCustomDomainVerificationIds[2].appServiceCustomDomainVerificationId
+  }
+  {
+    name: 'asuid.ade-dataingestorservice-app'
+    ttl: 3600
+    value: adeAppServiceModule.outputs.appServiceCustomDomainVerificationIds[3].appServiceCustomDomainVerificationId
+  }
+  {
+    name: 'asuid.ade-datareporterservice-app'
+    ttl: 3600
+    value: adeAppServiceModule.outputs.appServiceCustomDomainVerificationIds[4].appServiceCustomDomainVerificationId
+  }
+  {
+    name: 'asuid.ade-eventingestorservice-app'
+    ttl: 3600
+    value: adeAppServiceModule.outputs.appServiceCustomDomainVerificationIds[5].appServiceCustomDomainVerificationId
+  }
+]
+var adeAppServiceCnameRecords = [
+  {
+    name: 'ade-frontend-app'
+    ttl: 3600
+    cname: adeAppServiceModule.outputs.appServiceDefaultHostNames[0].appServiceDefaultHostName
+  }
+  {
+    name: 'ade-apigateway-app'
+    ttl: 3600
+    cname: adeAppServiceModule.outputs.appServiceDefaultHostNames[1].appServiceDefaultHostName
+  }
+  {
+    name: 'ade-userservice-app'
+    ttl: 3600
+    cname: adeAppServiceModule.outputs.appServiceDefaultHostNames[2].appServiceDefaultHostName
+  }
+  {
+    name: 'ade-dataingestorservice-app'
+    ttl: 3600
+    cname: adeAppServiceModule.outputs.appServiceDefaultHostNames[3].appServiceDefaultHostName
+  }
+  {
+    name: 'ade-datareporterservice-app'
+    ttl: 3600
+    cname: adeAppServiceModule.outputs.appServiceDefaultHostNames[4].appServiceDefaultHostName
+  }
+  {
+    name: 'ade-eventingestorservice-app'
+    ttl: 3600
+    cname: adeAppServiceModule.outputs.appServiceDefaultHostNames[5].appServiceDefaultHostName
   }
 ]
 
-// Variables - App Service - Tls
+// Variables - App Service - Tls - Ade App
 //////////////////////////////////////////////////
-var appServiceTlsSettings = [
+var adeFrontendApplicationName = 'ade-frontend-app'
+var adeApiGatewayApplicationName = 'ade-apigateway-app'
+var adeUserServiceApplicationName = 'ade-userservice-app'
+var adeDataIngestorServiceApplicationName = 'ade-dataingestorservice-app'
+var adeDataReporterServiceApplicationName = 'ade-datareporterservice-app'
+var adeEventIngestorServiceApplicationName = 'ade-eventingestorservice-app'
+var adeAppServiceTlsSettings = [
   {
-    appServiceName: '${inspectorGadgetAppServiceModule.outputs.appServiceNames[0].appServiceName}'
-    applicationHostName: '${inspectorGadgetApplicationName}.${rootDomainName}'
+    appServiceName: '${adeAppServiceModule.outputs.appServiceNames[0].appServiceName}'
+    applicationHostName: '${adeFrontendApplicationName}.${rootDomainName}'
     hostNameType: 'Verified'
-    sslState: 'Disabled'
+    sslState: 'SniEnabled'
     customHostNameDnsRecordType: 'CName'
-    certificateName: 'cert-${inspectorGadgetApplicationName}-wildcard'
-    keyVaultId: keyVault.id
-    serverFarmId: appServicePlanModule.outputs.appServicePlanId
+    thumbprint: appServiceCertificateModule.outputs.certificateThumbprint
+  }
+  {
+    appServiceName: '${adeAppServiceModule.outputs.appServiceNames[1].appServiceName}'
+    applicationHostName: '${adeApiGatewayApplicationName}.${rootDomainName}'
+    hostNameType: 'Verified'
+    sslState: 'SniEnabled'
+    customHostNameDnsRecordType: 'CName'
+    thumbprint: appServiceCertificateModule.outputs.certificateThumbprint
+  }
+  {
+    appServiceName: '${adeAppServiceModule.outputs.appServiceNames[2].appServiceName}'
+    applicationHostName: '${adeUserServiceApplicationName}.${rootDomainName}'
+    hostNameType: 'Verified'
+    sslState: 'SniEnabled'
+    customHostNameDnsRecordType: 'CName'
+    thumbprint: appServiceCertificateModule.outputs.certificateThumbprint
+  }
+  {
+    appServiceName: '${adeAppServiceModule.outputs.appServiceNames[3].appServiceName}'
+    applicationHostName: '${adeDataIngestorServiceApplicationName}.${rootDomainName}'
+    hostNameType: 'Verified'
+    sslState: 'SniEnabled'
+    customHostNameDnsRecordType: 'CName'
+    thumbprint: appServiceCertificateModule.outputs.certificateThumbprint
+  }
+  {
+    appServiceName: '${adeAppServiceModule.outputs.appServiceNames[4].appServiceName}'
+    applicationHostName: '${adeDataReporterServiceApplicationName}.${rootDomainName}'
+    hostNameType: 'Verified'
+    sslState: 'SniEnabled'
+    customHostNameDnsRecordType: 'CName'
+    thumbprint: appServiceCertificateModule.outputs.certificateThumbprint
+  }
+  {
+    appServiceName: '${adeAppServiceModule.outputs.appServiceNames[5].appServiceName}'
+    applicationHostName: '${adeEventIngestorServiceApplicationName}.${rootDomainName}'
+    hostNameType: 'Verified'
+    sslState: 'SniEnabled'
+    customHostNameDnsRecordType: 'CName'
+    thumbprint: appServiceCertificateModule.outputs.certificateThumbprint
   }
 ]
 
@@ -242,7 +369,7 @@ var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscrip
 var userServiceSubnetName = 'snet-${appEnvironment}-userService'
 var vnetIntegrationSubnetName = 'snet-${appEnvironment}-vnetIntegration'
 
-// Existing Resource - App Config
+// Existing Resource - App Configuration
 //////////////////////////////////////////////////
 resource appConfig 'Microsoft.AppConfiguration/configurationStores@2023-03-01' existing = {
   scope: resourceGroup(securityResourceGroupName)
@@ -254,6 +381,13 @@ resource appConfig 'Microsoft.AppConfiguration/configurationStores@2023-03-01' e
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-01' existing = {
   scope: resourceGroup(containerResourceGroupName)
   name: containerRegistryName
+}
+
+// Existing Resource - Dns Zone
+//////////////////////////////////////////////////
+resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' existing = {
+  scope: resourceGroup(dnsZoneResourceGroupName)
+  name: rootDomainName
 }
 
 // Existing Resource - Event Hub Authorization Rule
@@ -349,6 +483,19 @@ module appServicePlanModule 'app_service_plan.bicep' = {
   }
 }
 
+// Module - App Service - Certificate
+//////////////////////////////////////////////////
+module appServiceCertificateModule 'app_service_certificate.bicep' = {
+  name: 'appServiceCertificateDeployment'
+  params: {
+    certificateName: certificateName
+    keyVaultId: keyVault.id
+    keyVaultSecretName: keyVaultSecretName
+    location: location
+    serverFarmId: appServicePlanModule.outputs.serverFarmId
+  }
+}
+
 // Module - App Service - Inspector Gadget
 //////////////////////////////////////////////////
 module inspectorGadgetAppServiceModule 'app_service_inspectorgadget.bicep' = {
@@ -356,23 +503,44 @@ module inspectorGadgetAppServiceModule 'app_service_inspectorgadget.bicep' = {
   params: {
     adminPassword: keyVault.getSecret('resourcePassword')
     adminUserName: adminUserName
-    appServices: inspectorGadgetAppServices
+    appService: inspectorGadgetAppService
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
-    inspectorGadgetSqlDatabaseName: inspectorGadgetSqlDatabase.name
-    inspectorGadgetSqlServerFQDN: inspectorGadgetSqlServer.properties.fullyQualifiedDomainName
+    sqlDatabaseName: inspectorGadgetSqlDatabase.name
+    sqlServerFqdn: inspectorGadgetSqlServer.properties.fullyQualifiedDomainName
     location:location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
     storageAccountId: storageAccount.id
     tags: tags
+  }
+}
+
+// Module - App Service - Dns Zone Records - Inspector Gadget
+//////////////////////////////////////////////////
+module inspectorGadgetAppServiceDnsZoneRecordsModule 'app_service_dns.bicep' = {
+  scope: resourceGroup(dnsZoneResourceGroupName)
+  name: 'inspectorGadgetAppServiceDnsZoneRecordsDeployment'
+  params: {
+    dnsCnameRecords: inspectorGadgetAppServiceCnameRecords
+    dnsTxtRecords: inspectorGadgetAppServiceTxtRecords
+    dnsZoneName: dnsZone.name
+  }
+}
+
+// Module - App Service - Tls Settings - Inspector Gadget
+//////////////////////////////////////////////////
+module inspectorGadgetAppServiceTlsSettingsModule 'app_service_tls.bicep' = {
+  name: 'inspectorGadgetAppServiceTlsSettingsDeployment'
+  params: {
+    appServiceTlsSettings: inspectorGadgetAppServiceTlsSettings
   }
 }
 
 // Module - App Service - Ade App
 // //////////////////////////////////////////////////
-module adeAppServicesModule 'app_service_adeapp.bicep' = {
-  name: 'adeAppServicesDeployment'
+module adeAppServiceModule 'app_service_adeapp.bicep' = {
+  name: 'adeAppServiceDeployment'
   params: {
-    appServices: adeAppAppServices
+    appServices: adeAppServices
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
     location:location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
@@ -381,26 +549,26 @@ module adeAppServicesModule 'app_service_adeapp.bicep' = {
   }
 }
 
-// Module - App Service - Dns Zone Records
+// Module - App Service - Dns Zone Records - Ade App
 //////////////////////////////////////////////////
-// module appServiceDnsZoneRecordsModule 'app_service_dns_records.bicep' = {
-//   scope: resourceGroup(networkingResourceGroupName)
-//   name: 'appServiceDnsZoneRecordsDeployment'
-//   params: {
-//     appServiceDnsRecords: appServiceDnsRecords
-//   }
-// }
+module adeAppServiceDnsZoneRecordsModule 'app_service_dns.bicep' = {
+  scope: resourceGroup(dnsZoneResourceGroupName)
+  name: 'adeAppServiceDnsZoneRecordsDeployment'
+  params: {
+    dnsCnameRecords: adeAppServiceCnameRecords
+    dnsTxtRecords: adeAppServiceTxtRecords
+    dnsZoneName: dnsZone.name
+  }
+}
 
-// Module - App Service - Tls Settings
+// Module - App Service - Tls Settings - Ade App
 //////////////////////////////////////////////////
-// module appServiceTlsSettingsModule 'app_service_tls.bicep' = {
-//   name: 'appServiceTlsSettingsDeployment'
-//   params: {
-//     appServiceTlsSettings: appServiceTlsSettings
-//     keyVaultSecretName: keyVaultSecretName
-//     location: location
-//   }
-// }
+module adeAppServiceTlsSettingsModule 'app_service_tls.bicep' = {
+  name: 'adeAppServiceTlsSettingsDeployment'
+  params: {
+    appServiceTlsSettings: adeAppServiceTlsSettings
+  }
+}
 
 // Module - Webhooks - Ade App(s)
 //////////////////////////////////////////////////
@@ -408,18 +576,8 @@ module adeAppWebHooksModule 'app_service_webhooks.bicep' = {
   scope: resourceGroup(containerResourceGroupName)
   name: 'adeAppWebHooksDeployment'
   params: {
-    appDockerWebHookUris: adeAppServicesModule.outputs.appDockerWebHookUris
-    appServices: adeAppAppServices
+    appDockerWebHookUris: adeAppServiceModule.outputs.appDockerWebHookUris
+    appServices: adeAppServices
     location:location
-  }
-}
-
-// Module - App Config - Ade App(s)
-//////////////////////////////////////////////////
-module appConfigAppServices 'app_service_app_config.bicep' = {
-  scope: resourceGroup(securityResourceGroupName)
-  name: 'azureAppServicesAdeAppConfigDeployment'
-  params: {
-    appServices: adeAppAppServices
   }
 }

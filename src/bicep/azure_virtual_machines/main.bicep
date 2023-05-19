@@ -9,6 +9,9 @@ param appEnvironment string
 @description('The current date.')
 param currentDate string = utcNow('yyyy-MM-dd')
 
+@description('The name of the Dns Zone Resource Group.')
+param dnsZoneResourceGroupName string
+
 @description('The location for all resources.')
 param location string = resourceGroup().location
 
@@ -20,6 +23,9 @@ param networkingResourceGroupName string
 
 @description('The name of the owner of the deployment.')
 param ownerName string
+
+@description('The value for Root Domain Name.')
+param rootDomainName string
 
 @description('The name of the Security Resource Group.')
 param securityResourceGroupName string
@@ -166,6 +172,7 @@ var virtualMachines = [
     privateIPAllocationMethod: 'Dynamic'
     subnetId: spokeVirtualNetwork::adeAppVmSubnet.id
     loadBalancerBackendPoolId: loadBalancerModule.outputs.loadBalancerProperties[0].resourceId
+    applicationGatewayBackendPoolIds: null
     name: 'vm-${appEnvironment}-adeapp01'
     availabilityZone: '1'
     identityType: 'SystemAssigned'
@@ -184,6 +191,7 @@ var virtualMachines = [
     privateIPAllocationMethod: 'Dynamic'
     subnetId: spokeVirtualNetwork::adeAppVmSubnet.id
     loadBalancerBackendPoolId: loadBalancerModule.outputs.loadBalancerProperties[0].resourceId
+    applicationGatewayBackendPoolIds: null
     name: 'vm-${appEnvironment}-adeapp02'
     availabilityZone: '2'
     identityType: 'SystemAssigned'
@@ -202,6 +210,7 @@ var virtualMachines = [
     privateIPAllocationMethod: 'Dynamic'
     subnetId: spokeVirtualNetwork::adeAppVmSubnet.id
     loadBalancerBackendPoolId: loadBalancerModule.outputs.loadBalancerProperties[0].resourceId
+    applicationGatewayBackendPoolIds: null
     name: 'vm-${appEnvironment}-adeapp03'
     availabilityZone: '3'
     identityType: 'SystemAssigned'
@@ -220,6 +229,14 @@ var virtualMachines = [
     privateIPAllocationMethod: 'Dynamic'
     subnetId: spokeVirtualNetwork::adeWebVmSubnet.id
     loadBalancerBackendPoolId: null
+    applicationGatewayBackendPoolIds: [
+      {
+        id: resourceId(networkingResourceGroupName, 'Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, applicationGatewayAdeAppFrontendVmBackendPoolName)
+      }
+      {
+        id: resourceId(networkingResourceGroupName,'Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, applicationGatewayAdeAppApiGatewayVmBackendPoolName)
+      }
+    ]
     name: 'vm-${appEnvironment}-adeweb01'
     availabilityZone: '1'
     identityType: 'SystemAssigned'
@@ -238,6 +255,14 @@ var virtualMachines = [
     privateIPAllocationMethod: 'Dynamic'
     subnetId: spokeVirtualNetwork::adeWebVmSubnet.id
     loadBalancerBackendPoolId: null
+    applicationGatewayBackendPoolIds: [
+      {
+        id: resourceId(networkingResourceGroupName, 'Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, applicationGatewayAdeAppFrontendVmBackendPoolName)
+      }
+      {
+        id: resourceId(networkingResourceGroupName,'Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, applicationGatewayAdeAppApiGatewayVmBackendPoolName)
+      }
+    ]
     name: 'vm-${appEnvironment}-adeweb02'
     availabilityZone: '2'
     identityType: 'SystemAssigned'
@@ -256,6 +281,14 @@ var virtualMachines = [
     privateIPAllocationMethod: 'Dynamic'
     subnetId: spokeVirtualNetwork::adeWebVmSubnet.id
     loadBalancerBackendPoolId: null
+    applicationGatewayBackendPoolIds: [
+      {
+        id: resourceId(networkingResourceGroupName, 'Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, applicationGatewayAdeAppFrontendVmBackendPoolName)
+      }
+      {
+        id: resourceId(networkingResourceGroupName,'Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, applicationGatewayAdeAppApiGatewayVmBackendPoolName)
+      }
+    ]
     name: 'vm-${appEnvironment}-adeweb03'
     availabilityZone: '3'
     identityType: 'SystemAssigned'
@@ -289,6 +322,7 @@ var virtualMachineScaleSets = [
     nicName: 'nic-${appEnvironment}-adeapp-vmss'
     subnetId: spokeVirtualNetwork::adeAppVmssSubnet.id
     loadBalancerBackendPoolId: loadBalancerModule.outputs.loadBalancerProperties[1].resourceId
+    applicationGatewayBackendPoolIds: null
     managedIdentityId: virtualMachineManagedIdentity.properties.principalId
     dataCollectionRuleId: dataCollectionRule.id
   }
@@ -307,17 +341,93 @@ var virtualMachineScaleSets = [
     nicName: 'nic-${appEnvironment}-adeweb-vmss'
     subnetId: spokeVirtualNetwork::adeWebVmssSubnet.id
     loadBalancerBackendPoolId: null
+    applicationGatewayBackendPoolIds: [
+      {
+        id: resourceId(networkingResourceGroupName, 'Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, applicationGatewayAdeAppFrontendVmssBackendPoolName)
+      }
+      {
+        id: resourceId(networkingResourceGroupName,'Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, applicationGatewayAdeAppApiGatewayVmssBackendPoolName)
+      }
+    ]
     managedIdentityId: virtualMachineManagedIdentity.properties.principalId
     dataCollectionRuleId: dataCollectionRule.id
   }
 ]
 
+// Variables - Virtual Machine and Virtual Machine Scale Set Dns Records
+//////////////////////////////////////////////////
+var vmAndVmssARecords = [
+  {
+    name: 'ade-frontend-vm'
+    ttl: 3600
+    ipv4Address: publicIpAddress.properties.ipAddress
+  }
+  {
+    name: 'ade-frontend-vmss'
+    ttl: 3600
+    ipv4Address: publicIpAddress.properties.ipAddress
+  }
+  {
+    name: 'ade-apigateway-vm'
+    ttl: 3600
+    ipv4Address: publicIpAddress.properties.ipAddress
+  }
+  {
+    name: 'ade-apigateway-vmss'
+    ttl: 3600
+    ipv4Address: publicIpAddress.properties.ipAddress
+  }
+]
+
+// Variables - Virtual Machine Alerts
+//////////////////////////////////////////////////
+var metricAlertProperties = {
+  name: 'virtual machines - cpu utilization'
+  description: 'virtual machines - cpu utilization'
+  enabled: true 
+  scopes: [
+    subscription().id
+  ]
+  severity: 2
+  evaluationFrequency: 'PT1M'
+  windowSize: 'PT5M'
+  targetResourceType: 'microsoft.compute/virtualmachines'
+  targetResourceRegion: location
+  criteria: {
+    'odata.type': 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria'
+    allOf: [
+      {
+        name: 'Metric1'
+        criterionType: 'StaticThresholdCriterion'
+        metricName: 'Percentage CPU'
+        metricNamespace: 'microsoft.compute/virtualmachines'
+        dimensions: []
+        operator: 'GreaterThan'
+        threshold: 75
+        timeAggregation: 'Average'
+      }
+    ]
+  }
+  actions: [
+    {
+      actionGroupId: actionGroup.id
+    }
+  ]
+}
+
 // Variables - Existing Resources
 //////////////////////////////////////////////////
+var actionGroupName = 'ag-${appEnvironment}-virtualmachine'
 var adeAppVmssSubnetName = 'snet-${appEnvironment}-adeApp-vmss'
 var adeAppVmSubnetName = 'snet-${appEnvironment}-adeApp-vm'
 var adeWebVmssSubnetName = 'snet-${appEnvironment}-adeWeb-vmss'
 var adeWebVmSubnetName = 'snet-${appEnvironment}-adeWeb-vm'
+var applicationGatewayAdeAppApiGatewayVmBackendPoolName = 'backendPool-apigateway-vm'
+var applicationGatewayAdeAppApiGatewayVmssBackendPoolName = 'backendPool-apigateway-vmss'
+var applicationGatewayAdeAppFrontendVmBackendPoolName = 'backendPool-frontend-vm'
+var applicationGatewayAdeAppFrontendVmssBackendPoolName = 'backendPool-frontend-vmss'
+var applicationGatewayPublicIpAddressName = 'pip-${appEnvironment}-appgw'
+var applicationGatewayName = 'appgw-${appEnvironment}'
 var dataCollectionRuleName = 'dcr-${appEnvironment}-vmInsights'
 var eventHubNamespaceAuthorizationRuleName = 'RootManageSharedAccessKey'
 var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
@@ -326,6 +436,20 @@ var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
 var spokeVirtualNetworkName = 'vnet-${appEnvironment}-spoke'
 var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
 var virtualMachineManagedIdentityName = 'id-${appEnvironment}-virtualMachine'
+
+// Existing Resource - Action Group
+//////////////////////////////////////////////////
+resource actionGroup 'Microsoft.Insights/actionGroups@2023-01-01' existing = {
+  scope: resourceGroup(managementResourceGroupName)
+  name: actionGroupName
+}
+
+// Existing Resource - Dns Zone
+//////////////////////////////////////////////////
+resource dnsZone 'Microsoft.Network/dnsZones@2018-05-01' existing = {
+  scope: resourceGroup(dnsZoneResourceGroupName)
+  name: rootDomainName
+}
 
 // Existing Resource - Data Collection Rule - VM Insights
 //////////////////////////////////////////////////
@@ -360,6 +484,13 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10
 resource virtualMachineManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
   scope: resourceGroup(securityResourceGroupName)
   name: virtualMachineManagedIdentityName
+}
+
+// Existing Resource - Public Ip Address - Application Gateway
+//////////////////////////////////////////////////
+resource publicIpAddress 'Microsoft.Network/publicIPAddresses@2022-09-01' existing = {
+  scope: resourceGroup(networkingResourceGroupName)
+  name: applicationGatewayPublicIpAddressName
 }
 
 // Existing Resource - Storage Account - Diagnostics
@@ -440,5 +571,26 @@ module virtualMachineScaleSetModule 'virtual_machine_scale_set.bicep' = {
     location: location
     tags: tags
     virtualMachineScaleSets: virtualMachineScaleSets
+  }
+}
+
+// Module - Virtual Machine and Virtual Machine Scale Set Dns Records
+//////////////////////////////////////////////////
+module vmAndVmssDnsRecordsModule 'virtual_machine_dns.bicep' = {
+  scope: resourceGroup(dnsZoneResourceGroupName)
+  name: 'vmAndVmssDnsRecordsDeployment'
+  params: {
+    dnsARecords: vmAndVmssARecords
+    dnsZoneName: dnsZone.name
+  }
+}
+
+// Module - Virtual Machine Alerts
+//////////////////////////////////////////////////
+module vmAndVmssAlertsModule 'metric_alert.bicep' = {
+  name: 'vmAndVmssAlertsDeployment'
+  params: {
+    metricAlertProperties: metricAlertProperties
+    tags: tags
   }
 }

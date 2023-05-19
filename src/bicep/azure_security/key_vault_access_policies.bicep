@@ -1,65 +1,20 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The Principal Id of the Application Gateway Managed Identity.')
-param applicationGatewayManagedIdentityPrincipalId string
-
-@description('The secrets permissions of the Principal Id of the Application Gateway Managed Identity.')
-param applicationGatewayManagedIdentityPrincipalIdSecretsPermissions array
-
-@description('The Principal Id of Azure App Service.')
-param appServicePrincipalId string
-
-@description('The certificate permissions of the Principal Id of Azure App Service.')
-param appServicePrincipalIdCertificatePermissions array
-
-@description('The secret permissions of the Principal Id of Azure App Service.')
-param appServicePrincipalIdSecretsPermissions array
-
-@description('The Principal Id of the Container Registry Managed Identity.')
-param containerRegistryManagedIdentityPrincipalId string
-
-@description('The certificates permissions of the Principal Id of the Container Registry Managed Identity.')
-param containerRegistryManagedIdentityPrincipalIdCertificatesPermissions array
-
-@description('The keys permissions of the Principal Id of the Container Registry Managed Identity.')
-param containerRegistryManagedIdentityPrincipalIdKeysPermissions array
-
-@description('The secrets permissions of the Principal Id of the Container Registry Managed Identity.')
-param containerRegistryManagedIdentityPrincipalIdSecretsPermissions array
+@description('The array of Key Vault Access Policies.')
+param keyVaultAccessPolicies array
 
 @description('The name of the Key Vault.')
 param keyVaultName string
 
 // Resource - Key Vault - Access Policies
 //////////////////////////////////////////////////
-resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2023-02-01' = {
+resource accessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2023-02-01' = {
   name: '${keyVaultName}/add'
   properties: {
-    accessPolicies: [
-      {
-        objectId: applicationGatewayManagedIdentityPrincipalId
-        tenantId: subscription().tenantId
-        permissions: {
-          secrets: applicationGatewayManagedIdentityPrincipalIdSecretsPermissions
-        }
-      }
-      {
-        objectId: appServicePrincipalId
-        tenantId: subscription().tenantId
-        permissions: {
-          certificates: appServicePrincipalIdCertificatePermissions
-          secrets: appServicePrincipalIdSecretsPermissions
-        }
-      }
-      {
-        objectId: containerRegistryManagedIdentityPrincipalId
-        tenantId: subscription().tenantId
-        permissions: {
-          certificates: containerRegistryManagedIdentityPrincipalIdCertificatesPermissions
-          keys: containerRegistryManagedIdentityPrincipalIdKeysPermissions
-          secrets: containerRegistryManagedIdentityPrincipalIdSecretsPermissions
-        }
-      }
-    ]
+    accessPolicies: [for keyVaultAccessPolicy in keyVaultAccessPolicies: {
+      objectId: keyVaultAccessPolicy.objectId
+      tenantId: subscription().tenantId
+      permissions: keyVaultAccessPolicy.permissions
+    }]
   }
 }
