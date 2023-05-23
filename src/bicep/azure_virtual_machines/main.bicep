@@ -160,7 +160,7 @@ var loadBalancerServices = [
 var virtualMachineImageReference = {
   publisher: 'Canonical'
   offer: 'UbuntuServer'
-  sku: '18.04-LTS'
+  sku: '20.04-LTS'
   version: 'latest'
 }
 

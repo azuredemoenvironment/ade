@@ -35,7 +35,7 @@ var aksClusterName = 'aks-${appEnvironment}'
 var aksProperties = {
   name: aksClusterName
   identityType: 'SystemAssigned'
-  kubernetesVersion: '1.24.10'
+  kubernetesVersion: '1.25.6'
   nodeResourceGroup: '${containerResourceGroupName}-node'
   enableRBAC: true
   dnsPrefix: aksClusterDnsName

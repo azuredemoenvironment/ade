@@ -478,12 +478,12 @@ var bastionPublicIpAddressProperties = {
 
 // Variables - Application Gateway
 //////////////////////////////////////////////////
-var apiGatewayVmHostName = 'apigateway-vm.${rootDomainName}'
-var apiGatewayVmssHostName = 'apigateway-vmss.${rootDomainName}'
+var apiGatewayVmHostName = 'ade-apigateway-vm.${rootDomainName}'
+var apiGatewayVmssHostName = 'ade-apigateway-vmss.${rootDomainName}'
 var applicationGatewayName = 'appgw-${appEnvironment}'
 var applicationGatewayPublicIpAddressName = 'pip-${appEnvironment}-appgw'
-var frontendVmHostName = 'frontEnd-vm.${rootDomainName}'
-var frontendVmssHostName = 'frontEnd-vmss.${rootDomainName}'
+var frontendVmHostName = 'ade-frontEnd-vm.${rootDomainName}'
+var frontendVmssHostName = 'ade-frontEnd-vmss.${rootDomainName}'
 var sslCertificateDataPassword = ''
 var applicationGatewayPublicIpAddressProperties = {
   name: applicationGatewayPublicIpAddressName
@@ -1102,12 +1102,12 @@ var frontDoorTxtRecords = [
     value: frontDoorModule.outputs.frontDoorCustomDomainVerificationIds[0].frontDoorCustomDomainVerificationId
   }
   {
-    name: '_dnsauth.frontend-app'
+    name: '_dnsauth.ade-frontend-app'
     ttl: 3600
     value: frontDoorModule.outputs.frontDoorCustomDomainVerificationIds[0].frontDoorCustomDomainVerificationId
   }
   {
-    name: '_dnsauth.apigateway-app'
+    name: '_dnsauth.ade-apigateway-app'
     ttl: 3600
     value: frontDoorModule.outputs.frontDoorCustomDomainVerificationIds[0].frontDoorCustomDomainVerificationId
   }
@@ -1119,12 +1119,12 @@ var frontDoorCnameRecords = [
     cname: frontDoorModule.outputs.frontDoorEndpointHostName
   }
   {
-    name: 'frontend-app'
+    name: 'ade-frontend-app'
     ttl: 3600
     cname: frontDoorModule.outputs.frontDoorEndpointHostName
   }
   {
-    name: 'apigateway-app'
+    name: 'ade-apigateway-app'
     ttl: 3600
     cname: frontDoorModule.outputs.frontDoorEndpointHostName
   }

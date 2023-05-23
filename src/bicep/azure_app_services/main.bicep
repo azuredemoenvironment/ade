@@ -522,6 +522,9 @@ module inspectorGadgetAppServiceDnsZoneRecordsModule 'app_service_dns.bicep' = {
 // Module - App Service - Tls Settings - Inspector Gadget
 //////////////////////////////////////////////////
 module inspectorGadgetAppServiceTlsSettingsModule 'app_service_tls.bicep' = {
+  dependsOn: [
+    inspectorGadgetAppServiceDnsZoneRecordsModule
+  ]
   name: 'inspectorGadgetAppServiceTlsSettingsDeployment'
   params: {
     appServiceTlsSettings: inspectorGadgetAppServiceTlsSettings
@@ -557,6 +560,9 @@ module adeAppServiceDnsZoneRecordsModule 'app_service_dns.bicep' = {
 // Module - App Service - Tls Settings - Ade App
 //////////////////////////////////////////////////
 module adeAppServiceTlsSettingsModule 'app_service_tls.bicep' = {
+  dependsOn: [
+    adeAppServiceDnsZoneRecordsModule
+  ]
   name: 'adeAppServiceTlsSettingsDeployment'
   params: {
     appServiceTlsSettings: adeAppServiceTlsSettings

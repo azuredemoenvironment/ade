@@ -25,6 +25,7 @@ function Confirm-AzureResourceExists {
     $azCommandToExecute = switch ($resourceType) {
         'dns a record' { "az network dns record-set a show -g $resourceNamePartOne -z $resourceNamePartTwo -n $resourceNamePartThree" }
         'dns cname record' { "az network dns record-set cname show -g $resourceNamePartOne -z $resourceNamePartTwo -n $resourceNamePartThree" }
+        'dns txt record' { "az network dns record-set txt show -g $resourceNamePartOne -z $resourceNamePartTwo -n $resourceNamePartThree" }
         'dns zone' { "az network dns zone show -g $resourceNamePartOne -n $resourceNamePartTwo" }
         'keyvault' { "az keyvault show -g $resourceNamePartOne -n $resourceNamePartTwo" }
         'service principal' { "az ad sp show --id http://$resourceNamePartOne" }
