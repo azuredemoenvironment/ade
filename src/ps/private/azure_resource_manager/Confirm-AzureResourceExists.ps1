@@ -23,13 +23,14 @@ function Confirm-AzureResourceExists {
     # Need to check by "show"ing and validating an error
 
     $azCommandToExecute = switch ($resourceType) {
+        'budget' { "az consumption budget show --budget-name $resourceNamePartOne"}
         'dns a record' { "az network dns record-set a show -g $resourceNamePartOne -z $resourceNamePartTwo -n $resourceNamePartThree" }
         'dns cname record' { "az network dns record-set cname show -g $resourceNamePartOne -z $resourceNamePartTwo -n $resourceNamePartThree" }
         'dns txt record' { "az network dns record-set txt show -g $resourceNamePartOne -z $resourceNamePartTwo -n $resourceNamePartThree" }
         'dns zone' { "az network dns zone show -g $resourceNamePartOne -n $resourceNamePartTwo" }
         'keyvault' { "az keyvault show -g $resourceNamePartOne -n $resourceNamePartTwo" }
         'service principal' { "az ad sp show --id http://$resourceNamePartOne" }
-        'budget' { "az consumption budget show --budget-name $resourceNamePartOne"}
+        'subscription deployment' { "az deployment sub show -n $resourceNamePartOne" }        
         
         # TODO: add other az types
 

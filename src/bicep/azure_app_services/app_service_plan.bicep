@@ -47,6 +47,10 @@ resource appServicePlanDiagnostics 'microsoft.insights/diagnosticSettings@2021-0
       {
         category: 'AllMetrics'
         enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
   }
@@ -110,6 +114,39 @@ resource autoscaleSetting 'Microsoft.Insights/autoscalesettings@2021-05-01-previ
             }
           }
         ]
+      }
+    ]
+  }
+}
+
+// Resource - App Service Plan - Autoscale Setting - Diagnostic Settings
+//////////////////////////////////////////////////
+resource autoscaleSettingDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: autoscaleSetting
+  name: '${autoscaleSetting.name}-diagnostics'
+  properties: {
+    workspaceId: logAnalyticsWorkspaceId
+    storageAccountId: storageAccountId
+    eventHubAuthorizationRuleId: eventHubNamespaceAuthorizationRuleId
+    logAnalyticsDestinationType: 'Dedicated'
+    logs: [
+      {
+        categoryGroup: 'allLogs'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
+    ]
+    metrics: [
+      {
+        category: 'AllMetrics'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
       }
     ]
   }
