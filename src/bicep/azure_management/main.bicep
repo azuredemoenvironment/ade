@@ -38,6 +38,9 @@ param location string = resourceGroup().location
 @description('The name of the owner of the deployment.')
 param ownerName string
 
+@description('The base URI for deployment scripts.')
+param scriptsBaseUri string
+
 @description('The start date of the Budget.')
 param startDate string = '${utcNow('yyyy-MM')}-01'
 
@@ -108,7 +111,7 @@ var applicationInsightsName = 'appinsights-${appEnvironment}'
 var actionGroups = [
   {
     name: 'ag-${appEnvironment}-budget'
-    enabled: true 
+    enabled: true
     groupShortName: 'ag-budget'
     emailReceiversName: 'email'
     emailAddress: contactEmailAddress
@@ -116,7 +119,7 @@ var actionGroups = [
   }
   {
     name: 'ag-${appEnvironment}-servicehealth'
-    enabled: true 
+    enabled: true
     groupShortName: 'ag-svchealth'
     emailReceiversName: 'email'
     emailAddress: contactEmailAddress
@@ -124,7 +127,7 @@ var actionGroups = [
   }
   {
     name: 'ag-${appEnvironment}-virtualmachine'
-    enabled: true 
+    enabled: true
     groupShortName: 'ag-vm'
     emailReceiversName: 'email'
     emailAddress: contactEmailAddress
@@ -132,7 +135,7 @@ var actionGroups = [
   }
   {
     name: 'ag-${appEnvironment}-virtualnetwork'
-    enabled: true 
+    enabled: true
     groupShortName: 'ag-vnet'
     emailReceiversName: 'email'
     emailAddress: contactEmailAddress
@@ -146,7 +149,7 @@ var activityLogAlerts = [
   {
     name: 'service health'
     description: 'service health'
-    enabled: true 
+    enabled: true
     scopes: [
       subscription().id
     ]
@@ -169,7 +172,7 @@ var activityLogAlerts = [
   {
     name: 'virtual machines - all administrative operations'
     description: 'virtual machines - all administrative operations'
-    enabled: true 
+    enabled: true
     scopes: [
       subscription().id
     ]
@@ -196,7 +199,7 @@ var activityLogAlerts = [
   {
     name: 'virtual networks - all administrative operations'
     description: 'virtual networks - all administrative operations'
-    enabled: true 
+    enabled: true
     scopes: [
       subscription().id
     ]
@@ -247,7 +250,7 @@ var automationRunbooks = [
     scheduleName: 'runbook-schedule-app-service-scale-down'
     startTime: deallocationTime
     timeZone: 'Etc/UTC'
-    uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/joshuawaddell/issue/189-Refactoring-and-Standardization-of-Names-Terms-Types-etc-after-v20-Merge/scripts/automation_runbooks/app_service_scale_down.ps1'
+    uri: '${scriptsBaseUri}/automation_runbooks/app_service_scale_down.ps1'
   }
   {
     frequency: 'Day'
@@ -260,7 +263,7 @@ var automationRunbooks = [
     scheduleName: 'runbook-schedule-app-service-scale-up'
     startTime: allocationTime
     timeZone: 'Etc/UTC'
-    uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/joshuawaddell/issue/189-Refactoring-and-Standardization-of-Names-Terms-Types-etc-after-v20-Merge/scripts/automation_runbooks/app_service_scale_up.ps1'
+    uri: '${scriptsBaseUri}/automation_runbooks/app_service_scale_up.ps1'
   }
   {
     frequency: 'Day'
@@ -273,7 +276,7 @@ var automationRunbooks = [
     scheduleName: 'runbook-schedule-virtual-machine-allocate'
     startTime: allocationTime
     timeZone: 'Etc/UTC'
-    uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/joshuawaddell/issue/189-Refactoring-and-Standardization-of-Names-Terms-Types-etc-after-v20-Merge/scripts/automation_runbooks/virtual_machine_allocate.ps1'
+    uri: '${scriptsBaseUri}/automation_runbooks/virtual_machine_allocate.ps1'
   }
   {
     frequency: 'Day'
@@ -286,7 +289,7 @@ var automationRunbooks = [
     scheduleName: 'runbook-schedule-virtual-machine-deallocate'
     startTime: deallocationTime
     timeZone: 'Etc/UTC'
-    uri: 'https://raw.githubusercontent.com/azuredemoenvironment/ade/joshuawaddell/issue/189-Refactoring-and-Standardization-of-Names-Terms-Types-etc-after-v20-Merge/scripts/automation_runbooks/virtual_machine_deallocate.ps1'    
+    uri: '${scriptsBaseUri}/automation_runbooks/virtual_machine_deallocate.ps1'
   }
 ]
 var contributorRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions','b24988ac-6180-42a0-ab88-20f7382dd24c')
@@ -330,7 +333,7 @@ var budgetProperties = {
   amount: 1500
   category: 'Cost'
   operator: 'GreaterThan'
-  enabled: true 
+  enabled: true
   firstThreshold: 10
   secondThreshold: 50
   thirdThreshold: 100
@@ -395,7 +398,7 @@ module applicationInsightsModule './application_insights.bicep' = {
   params: {
     applicationInsightsName: applicationInsightsName
     eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
-    location: location    
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
     storageAccountId: storageAccountModule.outputs.storageAccountId
     tags: tags
@@ -430,7 +433,7 @@ module automationModule 'automation.bicep' = {
     automationAccountProperties: automationAccountProperties
     automationRunbooks: automationRunbooks
     eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
-    location: location    
+    location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
     storageAccountId: storageAccountModule.outputs.storageAccountId
     tags: tags

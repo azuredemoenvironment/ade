@@ -24,7 +24,7 @@ function Set-InitialArmParameters {
     $azureRegionShortName = Get-RegionShortName $azureRegion
     $appEnvironment = "$workload-$environment-$azureRegionShortName".ToLowerInvariant()
     $appGlobalEnvironment = "$workload-$environment-global".ToLowerInvariant()
-    $dnsZoneResourceGroupName = "rg-joshuawaddell.cloud"
+    $dnsZoneResourceGroupName = "rg-$appGlobalEnvironment-dns"
     $acrName = "acr-$appEnvironment".replace('-', '')
     $ownerName = $(az account show --query "user.name" --output tsv)
     $sourceAddressPrefix = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content

@@ -13,6 +13,9 @@
         },
         "ownerName": {
             "value": "@@ownerName@@"
+        },
+        "scriptsBaseUri": {
+            "value": "@@scriptsBaseUri@@"
         }
     }
 }
