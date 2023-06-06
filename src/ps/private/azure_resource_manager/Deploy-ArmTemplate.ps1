@@ -3,11 +3,16 @@ function Deploy-ArmTemplate {
         [string] $stepName,
         [object] $armParameters,
         [string] $resourceGroupName = '',
-        [string] $region = 'EastUS',
+        [string] $region,
         [string] $resourceLevel = 'group',
         [switch] $noWait = $false,
         [switch] $bicep = $false
     )
+
+    if(-not $region){
+        Write-Log "Region is null, defaulting to ARM parameters"
+        $region = $armParameters.azureRegion
+    }
 
     $stopwatch = [system.diagnostics.stopwatch]::StartNew()
 

@@ -32,9 +32,9 @@ software must be setup and configured.
 
     - Public IP Addresses (10 - 20)
 
-  **Note: At this time, the Azure Demo Environment is configured to deploy to
-  East US (Primary Region), East US 2, and West US (Secondary Region). In a
-  future update, other regions will be supported.**
+  **Note: At this time, the Azure Demo Environment can be configured to deploy to
+  any region with availability zones. Most testing has been done in East US.
+  Internal Microsoft subscriptions will have additional region limitations.**
 
 ### Software Installations
 
@@ -75,13 +75,30 @@ ensure that Docker is **running**.
 ## Using the Azure Demo Environment
 
 The Azure Demo Environment is designed to run within a Docker container. To
-start ADE, open a terminal and run the following command:
+start ADE, open a terminal and run the following command relevant to your shell
+(be sure to set the certificate path variable):
+
+### Bash
 
 ```sh
+CERTIFICATE_PATH="/path/to/certificate/data/folder/yourcert.pfx"
+
 docker run \
   -it --rm --name ade \
   -v /var/run/docker.sock:/var/run/docker.sock:rw \
-  -v /path/to/certificate/data/folder/yourcert.pfx:/opt/ade/data/wildcard.pfx \
+  -v "$CERTIFICATE_PATH:/opt/ade/data/wildcard.pfx" \
+  ghcr.io/azuredemoenvironment/ade/ade:latest
+```
+
+### PowerShell
+
+```ps
+$CertificatePath = 'C:/path/to/certificate/data/folder/yourcert.pfx'
+
+docker run `
+  -it --rm --name ade `
+  -v /var/run/docker.sock:/var/run/docker.sock:rw `
+  -v "$CertificatePath:/opt/ade/data/wildcard.pfx" `
   ghcr.io/azuredemoenvironment/ade/ade:latest
 ```
 
@@ -99,6 +116,16 @@ parameters to the command.
 You are automatically prompted to login to both Azure and Docker Hub once first
 entering the container. If you need to login anytime after being in the `ADE`
 shell, you can use the `login` command to run the process again.
+
+### Updating to the Latest ADE Release
+
+To update to the latest ADE release, run the following command:
+
+```sh
+docker pull ghcr.io/azuredemoenvironment/ade/ade:latest
+```
+
+You can then run the `docker run` command from above.
 
 ### `deploy` Command
 
