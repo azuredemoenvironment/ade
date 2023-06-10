@@ -3,13 +3,17 @@ function Remove-AzureDnsRecords {
         [object] $armParameters
     )
 
+    # Parameters
+    ##################################################
+    $resourceGroupName = $armParameters.dnsZoneResourceGroupName
+
     Write-ScriptSection "Removing Azure Dns A Records "
 
     $dnsARecordsToRemove = @(
-        ade-apigateway-vm
-        ade-apigateway-vmss
-        ade-frontend-vm
-        ade-frontend-vmss
+        "ade-apigateway-vm"
+        "ade-apigateway-vmss"
+        "ade-frontend-vm"
+        "ade-frontend-vmss"
     )
 
     $dnsARecordsToRemove | ForEach-Object {
@@ -21,7 +25,7 @@ function Remove-AzureDnsRecords {
 
         Write-Log "Removing $_ Dns A Record"
 
-        az network dns record-set a delete -n $_ -y
+        az network dns record-set a delete -g $resourceGroupName -n $_ -y
         Confirm-LastExitCode
 
         Write-Log "Removed $_ Dns A Record"
@@ -30,13 +34,13 @@ function Remove-AzureDnsRecords {
     Write-ScriptSection "Removing Azure Dns Cname Records "
 
     $dnsCnameRecordsToRemove = @(
-        ade-apigateway-app
-        ade-dataingestorservice-app
-        ade-datareporterservice-app
-        ade-eventingestorservice-app
-        ade-frontend-app
-        ade-userservice-app
-        inspectorgadget
+        "ade-apigateway-app"
+        "ade-dataingestorservice-app"
+        "ade-datareporterservice-app"
+        "ade-eventingestorservice-app"
+        "ade-frontend-app"
+        "ade-userservice-app"
+        "inspectorgadget"
     )
 
     $dnsCnameRecordsToRemove | ForEach-Object {
@@ -48,7 +52,7 @@ function Remove-AzureDnsRecords {
 
         Write-Log "Removing $_ Dns Cname Record"
 
-        az network dns record-set cname delete -n $_ -y
+        az network dns record-set cname delete -g $resourceGroupName -n $_ -y
         Confirm-LastExitCode
 
         Write-Log "Removed $_ Dns Cname Record"
@@ -57,16 +61,16 @@ function Remove-AzureDnsRecords {
     Write-ScriptSection "Removing Azure Dns Txt Records "
 
     $dnsTxtRecordsToRemove = @(
-        _dnsauth.ade-apigateway-app
-        _dnsauth.ade-frontend-app
-        _dnsauth.inspectorgadget
-        asuid.ade-apigateway-app
-        asuid.ade-dataingestorservice-app
-        asuid.ade-datareporterservice-app
-        asuid.ade-eventingestorservice-app
-        asuid.ade-frontend-app
-        asuid.ade-userservice-app
-        asuid.inspectorgadget
+        "_dnsauth.ade-apigateway-app"
+        "_dnsauth.ade-frontend-app"
+        "_dnsauth.inspectorgadget"
+        "asuid.ade-apigateway-app"
+        "asuid.ade-dataingestorservice-app"
+        "asuid.ade-datareporterservice-app"
+        "asuid.ade-eventingestorservice-app"
+        "asuid.ade-frontend-app"
+        "asuid.ade-userservice-app"
+        "asuid.inspectorgadget"
     )
 
     $dnsTxtRecordsToRemove | ForEach-Object {
@@ -78,7 +82,7 @@ function Remove-AzureDnsRecords {
 
         Write-Log "Removing $_ Dns Txt Record"
 
-        az network dns record-set txt delete -n $_ -y
+        az network dns record-set txt delete -g $resourceGroupName -n $_ -y
         Confirm-LastExitCode
 
         Write-Log "Removed $_ Dns Txt Record"
