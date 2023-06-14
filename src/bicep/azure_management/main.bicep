@@ -304,7 +304,6 @@ var activityLogDiagnosticSettingsName = 'subscriptionactivitylog'
 
 // Variables - Azure Policy
 //////////////////////////////////////////////////
-
 var auditVirtualMachinesWithoutDisasterRecoveryConfiguredGuid = '/providers/Microsoft.Authorization/policyDefinitions/0015ea4d-51ff-4ce3-8d8c-f3f8f0179a56'
 var initiativeDefinitionName = 'policy-${appEnvironment}-adeinitiative'
 var initiativeDefinitions = [

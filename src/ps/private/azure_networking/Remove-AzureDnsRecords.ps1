@@ -6,6 +6,7 @@ function Remove-AzureDnsRecords {
     # Parameters
     ##################################################
     $resourceGroupName = $armParameters.dnsZoneResourceGroupName
+    $zoneName = $armParameters.rootDomainName
 
     Write-ScriptSection "Removing Azure Dns A Records "
 
@@ -17,7 +18,7 @@ function Remove-AzureDnsRecords {
     )
 
     $dnsARecordsToRemove | ForEach-Object {
-        $dnsARecordExists = Confirm-AzureResourceExists 'dns a record' $_
+        $dnsARecordExists = Confirm-AzureResourceExists 'dns a record' $resourceGroupName $zoneName $_
         if (-not $dnsARecordExists) {
             Write-Log "The Dns A Record $_ does not exist; skipping."
             return
@@ -25,7 +26,7 @@ function Remove-AzureDnsRecords {
 
         Write-Log "Removing $_ Dns A Record"
 
-        az network dns record-set a delete -g $resourceGroupName -n $_ -y
+        az network dns record-set a delete -g $resourceGroupName -z $zoneName -n $_ -y
         Confirm-LastExitCode
 
         Write-Log "Removed $_ Dns A Record"
@@ -44,7 +45,7 @@ function Remove-AzureDnsRecords {
     )
 
     $dnsCnameRecordsToRemove | ForEach-Object {
-        $dnsCnameRecordExists = Confirm-AzureResourceExists 'dns cname record' $_
+        $dnsCnameRecordExists = Confirm-AzureResourceExists 'dns cname record' $resourceGroupName $zoneName $_
         if (-not $dnsCnameRecordExists) {
             Write-Log "The Dns Cname Record $_ does not exist; skipping."
             return
@@ -52,7 +53,7 @@ function Remove-AzureDnsRecords {
 
         Write-Log "Removing $_ Dns Cname Record"
 
-        az network dns record-set cname delete -g $resourceGroupName -n $_ -y
+        az network dns record-set cname delete -g $resourceGroupName -z $zoneName -n $_ -y
         Confirm-LastExitCode
 
         Write-Log "Removed $_ Dns Cname Record"
@@ -74,7 +75,7 @@ function Remove-AzureDnsRecords {
     )
 
     $dnsTxtRecordsToRemove | ForEach-Object {
-        $dnsTxtRecordExists = Confirm-AzureResourceExists 'dns txt record' $_
+        $dnsTxtRecordExists = Confirm-AzureResourceExists 'dns txt record' $resourceGroupName $zoneName $_
         if (-not $dnsTxtRecordExists) {
             Write-Log "The Dns Txt Record $_ does not exist; skipping."
             return
@@ -82,7 +83,7 @@ function Remove-AzureDnsRecords {
 
         Write-Log "Removing $_ Dns Txt Record"
 
-        az network dns record-set txt delete -g $resourceGroupName -n $_ -y
+        az network dns record-set txt delete -g $resourceGroupName -z $zoneName -n $_ -y
         Confirm-LastExitCode
 
         Write-Log "Removed $_ Dns Txt Record"

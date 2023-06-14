@@ -220,13 +220,6 @@ var keyVaultAccessPolicies = [
       secrets: ['get']
     }
   }
-  // {
-  //   objectId: '4dbab725-22a4-44d5-ad44-c267ca38a954'
-  //     permissions: {
-  //     certificates: ['get']
-  //     secrets: ['get']
-  //   }
-  // }
 ]
 
 // Variables - Existing Resources
