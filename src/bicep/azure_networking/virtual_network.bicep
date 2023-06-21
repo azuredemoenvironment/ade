@@ -62,6 +62,9 @@ resource hubVirtualNetwork 'Microsoft.Network/virtualNetworks@2022-09-01' = {
   resource firewallSubnet 'subnets' existing = {
     name: 'AzureFirewallSubnet'
   }
+  resource firewallManagementSubnet 'subnets' existing = {
+    name: 'AzureFirewallManagementSubnet'
+  }
   resource gatewaySubnet 'subnets' existing = {
     name: 'GatewaySubnet'
   }
@@ -149,6 +152,7 @@ resource spokeVirtualNetworkDiagnostics 'microsoft.insights/diagnosticSettings@2
 output applicationGatewaySubnetId string = hubVirtualNetwork::applicationGatewaySubnet.id
 output bastionSubnetId string = hubVirtualNetwork::bastionSubnet.id
 output firewallSubnetId string = hubVirtualNetwork::firewallSubnet.id
+output firewallManagementSubnetId string = hubVirtualNetwork::firewallManagementSubnet.id
 output gatewaySubnetId string = hubVirtualNetwork::gatewaySubnet.id
 output hubVirtualNetworkId string = hubVirtualNetwork.id
 output spokeVirtualNetworkId string = spokeVirtualNetwork.id

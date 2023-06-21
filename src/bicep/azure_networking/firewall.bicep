@@ -3,8 +3,11 @@
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
 
-// @description('The name of the Firewall.')
-// param firewallName string
+@description('The ID of the Firewall Subnet.')
+param firewallManagementSubnetId string
+
+@description('The properties of the Firewall Policy.')
+param firewallPolicyProperties object
 
 @description('The properties of the Firewall.')
 param firewallProperties object
@@ -18,11 +21,8 @@ param location string
 @description('The ID of the Log Analytics Workspace.')
 param logAnalyticsWorkspaceId string
 
-// @description('The name of the Firewall Public IP Address.')
-// param publicIpAddressName string
-
-@description('The properties of the Public IP Address.')
-param publicIpAddressProperties object
+@description('The array of Public IP Addresses.')
+param publicIpAddresses array
 
 @description('The ID of the Storage Account.')
 param storageAccountId string
@@ -32,23 +32,23 @@ param tags object
 
 // Resource - Public Ip Address
 //////////////////////////////////////////////////
-resource publicIpAddress 'Microsoft.Network/publicIPAddresses@2022-09-01' = {
-  name: publicIpAddressProperties.name
+resource pip 'Microsoft.Network/publicIPAddresses@2022-09-01' = [for (publicIpAddress, i) in publicIpAddresses: {
+  name: publicIpAddress.name
   location: location
   tags: tags
   properties: {
-    publicIPAllocationMethod: publicIpAddressProperties.publicIPAllocationMethod
-    publicIPAddressVersion: publicIpAddressProperties.publicIPAddressVersion
+    publicIPAllocationMethod: publicIpAddress.publicIPAllocationMethod
+    publicIPAddressVersion: publicIpAddress.publicIPAddressVersion
   }
   sku: {
-    name: publicIpAddressProperties.sku
+    name: publicIpAddress.sku
   }
-}
+}]
 
 // Resource - Public Ip Address - Diagnostic Settings
 //////////////////////////////////////////////////
-resource publicIpAddressDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: publicIpAddress
+resource publicIpAddressDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [for (publicIpAddress, i) in publicIpAddresses: {
+  scope: pip[i]
   name: '${publicIpAddress.name}-diagnostics'
   properties: {
     workspaceId: logAnalyticsWorkspaceId
@@ -76,6 +76,19 @@ resource publicIpAddressDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-
       }
     ]
   }
+}]
+
+// Resource - Azure Firewall Policy
+//////////////////////////////////////////////////
+resource firewallPolicy 'Microsoft.Network/firewallPolicies@2022-01-01'= {
+  name: firewallPolicyProperties.name
+  location: location
+  properties: {
+    sku: {
+      tier: firewallPolicyProperties.sku.tier
+    }
+    threatIntelMode: firewallPolicyProperties.threatIntelMode
+  }
 }
 
 // Resource - Firewall
@@ -85,12 +98,16 @@ resource firewall 'Microsoft.Network/azureFirewalls@2022-09-01' = {
   location: location
   tags: tags
   properties: {
+    sku: {
+      name: firewallProperties.sku.name
+      tier: firewallProperties.sku.tier
+    }
     ipConfigurations: [
       {
-        name: 'IpConf'
+        name: pip[0].name
         properties: {
           publicIPAddress: {
-            id: publicIpAddress.id
+            id: pip[0].id
           }
           subnet: {
             id: firewallSubnetId
@@ -98,7 +115,20 @@ resource firewall 'Microsoft.Network/azureFirewalls@2022-09-01' = {
         }
       }
     ]
-    applicationRuleCollections: []
+    managementIpConfiguration: {
+      name: pip[1].name
+      properties: {
+        subnet: {
+          id: firewallManagementSubnetId
+        }
+        publicIPAddress: {
+          id: pip[1].id
+        }
+      }
+    }
+    firewallPolicy: {
+      id: firewallPolicy.id
+    }
   }
 }
 

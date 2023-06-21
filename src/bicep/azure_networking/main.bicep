@@ -259,6 +259,12 @@ var hubVirtualNetworkSubnets = [
     }
   }
   {
+    name: 'AzureFirewallManagementSubnet'
+    properties: {
+      addressPrefix: '10.101.2.0/24'
+    }
+  }
+  {
     name: applicationGatewaySubnetName
     properties: {
       addressPrefix: '10.101.11.0/24'
@@ -452,18 +458,39 @@ var spokeVirtualNetworkSubnets = [
 
 // Variables - Firewall
 //////////////////////////////////////////////////
+var firewallManagementPublicIpAddressName = 'pip-${appEnvironment}-fw-mgmt'
 var firewallName = 'fw-${appEnvironment}'
-var firewallPublicIpAddressName = 'pip-${appEnvironment}-fw'
-var firewallPublicIpAddressProperties = {
-  name: firewallPublicIpAddressName
-  publicIPAllocationMethod: 'Static'
-  publicIPAddressVersion: 'IPv4'
-  sku: 'Standard'
+var firewallPolicyName = 'fwp-${appEnvironment}'
+var firewallPolicyProperties = {
+  name: firewallPolicyName
+  sku: {
+    tier: 'Basic'
+  }
+  threatIntelMode: 'Alert'
 }
 var firewallPrivateIpAddress = '10.101.0.4'
 var firewallProperties = {
   name: firewallName
+  sku: {
+    name: 'AZFW_VNet'
+    tier: 'Basic'
+  }
 }
+var firewallPublicIpAddressName = 'pip-${appEnvironment}-fw'
+var publicIpAddresses = [
+  {
+    name: firewallManagementPublicIpAddressName
+    publicIPAllocationMethod: 'Static'
+    publicIPAddressVersion: 'IPv4'
+    sku: 'Standard'
+  }
+  {
+    name: firewallPublicIpAddressName
+    publicIPAllocationMethod: 'Static'
+    publicIPAddressVersion: 'IPv4'
+    sku: 'Standard'
+  }
+]
 
 // Variables - Bastion
 //////////////////////////////////////////////////
@@ -1290,13 +1317,13 @@ module firewallModule './firewall.bicep' = if (deployFirewall == true) {
   name: 'firewallDeployment'
   params: {
     eventHubNamespaceAuthorizationRuleId: eventHubNamespaceAuthorizationRule.id
-    // firewallName: firewallName
+    firewallManagementSubnetId: virtualNetworkModule.outputs.firewallManagementSubnetId
+    firewallPolicyProperties: firewallPolicyProperties
     firewallProperties: firewallProperties
     firewallSubnetId: virtualNetworkModule.outputs.firewallSubnetId
     location: location
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.id
-    // publicIpAddressName: firewallPublicIpAddressName
-    publicIpAddressProperties: firewallPublicIpAddressProperties
+    publicIpAddresses: publicIpAddresses
     storageAccountId: storageAccount.id
     tags: tags
   }
