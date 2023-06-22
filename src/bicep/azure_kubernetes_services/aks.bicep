@@ -97,6 +97,54 @@ resource aksDiagnostics 'microsoft.insights/diagnosticSettings@2021-05-01-previe
           enabled: true
         }
       }
+      {
+        category: 'kube-audit-admin'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
+      {
+        category: 'cloud-controller-manager'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
+      {
+        category: 'guard'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
+      {
+        category: 'csi-azuredisk-controller'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
+      {
+        category: 'csi-azurefile-controller'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
+      {
+        category: 'csi-snapshot-controller'
+        enabled: true
+        retentionPolicy: {
+          days: 7
+          enabled: true
+        }
+      }
     ]
     metrics: [
       {
