@@ -52,8 +52,6 @@ function Deploy-AzureContainerRegistry {
         Write-Log "Requesting ACR to Pull GitHub Container Registry Image $gitHubContainerRegistryImageName to $containerRegistryLoginServer"
         az acr import --name "$containerRegistryName" --source "ghcr.io/$gitHubContainerRegistryImageName" --image "$($containerImageName):latest" --force
         Confirm-LastExitCode
-
-        # TODO: Create an ACR Task to Poll Docker Hub for updates: https://docs.microsoft.com/en-us/azure/container-registry/container-registry-tasks-overview#automate-os-and-framework-patching
     }
 
     $stopwatch.Stop()

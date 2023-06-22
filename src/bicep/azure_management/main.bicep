@@ -62,8 +62,20 @@ var logAnalyticsWorkspaceSolutions = [
     galleryName: 'ContainerInsights'
   }
   {
+    name: 'DnsAnalytics(${logAnalyticsWorkspaceName})'
+    galleryName: 'DnsAnalytics'
+  }
+  {
     name: 'KeyVaultAnalytics(${logAnalyticsWorkspaceName})'
     galleryName: 'KeyVaultAnalytics'
+  }
+  {
+    name: 'LogicAppsManagement(${logAnalyticsWorkspaceName})'
+    galleryName: 'LogicAppsManagement'
+  }
+  {
+    name: 'AzureSQLAnalytics(${logAnalyticsWorkspaceName})'
+    galleryName: 'AzureSQLAnalytics'
   }
   {
     name: 'VMInsights(${logAnalyticsWorkspaceName})'
