@@ -38,6 +38,10 @@ resource vmss 'Microsoft.Compute/virtualMachineScaleSets@2020-12-01' = [for (vir
   properties: {
     overprovision: virtualMachineScaleSet.overprovision
     upgradePolicy: {
+      automaticOSUpgradePolicy: {
+        disableAutomaticRollback: virtualMachineScaleSet.disableAutomaticRollback
+        enableAutomaticOSUpgrade: virtualMachineScaleSet.enableAutomaticOSUpgrade
+      }
       mode: virtualMachineScaleSet.upgradePolicyMode
     }
     singlePlacementGroup: virtualMachineScaleSet.singlePlacementGroup

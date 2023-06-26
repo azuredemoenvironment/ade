@@ -314,6 +314,8 @@ var virtualMachineScaleSets = [
     capacity: 1
     identityType: 'SystemAssigned'
     overprovision: true
+    disableAutomaticRollback: false
+    enableAutomaticOSUpgrade: true
     upgradePolicyMode: 'Automatic'
     singlePlacementGroup: false
     zoneBalance: true
@@ -333,6 +335,8 @@ var virtualMachineScaleSets = [
     capacity: 1
     identityType: 'SystemAssigned'
     overprovision: true
+    disableAutomaticRollback: false
+    enableAutomaticOSUpgrade: true
     upgradePolicyMode: 'Automatic'
     singlePlacementGroup: false
     zoneBalance: true
