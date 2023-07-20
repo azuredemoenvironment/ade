@@ -89,32 +89,3 @@ function Remove-AzureDnsRecords {
         Write-Log "Removed $_ Dns Txt Record"
     }
 }
-
-# TODO: remove these entries before merging to main
-
-# # A Records
-# az network dns record-set a delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n ade-apigateway-vm
-# az network dns record-set a delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n ade-apigateway-vmss
-# az network dns record-set a delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n ade-frontend-vm
-# az network dns record-set a delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n ade-frontend-vmss
-
-# # CNAME Records
-# az network dns record-set cname delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n ade-apigateway-app
-# az network dns record-set cname delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n ade-dataingestorservice-app
-# az network dns record-set cname delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n ade-datareporterservice-app
-# az network dns record-set cname delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n ade-eventingestorservice-app
-# az network dns record-set cname delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n ade-userservice-app
-# az network dns record-set cname delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n apigateway-app
-# az network dns record-set cname delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n inspectorgadget
-
-# # TXT Records
-# az network dns record-set txt delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n asuid.ade-apigateway-app
-# az network dns record-set txt delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n asuid.ade-dataingestorservice-app
-# az network dns record-set txt delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n asuid.ade-datareporterservice-app
-# az network dns record-set txt delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n asuid.ade-eventingestorservice-app
-# az network dns record-set txt delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n asuid.ade-frontend-app
-# az network dns record-set txt delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n asuid.ade-userservice-app
-# az network dns record-set txt delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n _dnsauth.ade-apigateway-app
-# az network dns record-set txt delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n _dnsauth.ade-frontend-app
-# az network dns record-set txt delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n _dnsauth.inspectorgadget
-# az network dns record-set txt delete -g rg-joshuawaddell.cloud -z joshuawaddell.cloud -n asuid.inspectorgadget
