@@ -1,7 +1,7 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the Data Colleciton Rule for VM Insights.')
-param dataCollectionRuleName string
+@description('The properties of the Data Colleciton Rule for VM Insights.')
+param dataCollectionRuleProperties object
 
 @description('The location for all resources.')
 param location string
@@ -15,7 +15,7 @@ param tags object
 // Resource - Data Collection Rule
 //////////////////////////////////////////////////
 resource dataCollectionRule 'Microsoft.Insights/dataCollectionRules@2022-06-01' = {
-  name: dataCollectionRuleName
+  name: dataCollectionRuleProperties.name
   location: location
   tags: tags
   properties: {
@@ -27,7 +27,6 @@ resource dataCollectionRule 'Microsoft.Insights/dataCollectionRules@2022-06-01' 
           streams: [
             'Microsoft-InsightsMetrics'
           ]
-          scheduledTransferPeriod: 'PT1M'
           samplingFrequencyInSeconds: 60
           counterSpecifiers: [
             '\\VmInsights\\DetailedMetrics'

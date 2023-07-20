@@ -13,15 +13,9 @@ resource ag 'Microsoft.Insights/actionGroups@2023-01-01' = [for (actionGroup, i)
   location: 'global'
   tags: tags
   properties: {
-    enabled: actionGroup.enabled
-    groupShortName: actionGroup.groupShortName
-    emailReceivers: [
-      {
-        name: actionGroup.emailReceiversName
-        emailAddress: actionGroup.emailAddress
-        useCommonAlertSchema: actionGroup.useCommonAlertSchema
-      }
-    ]
+    groupShortName: actionGroup.properties.groupShortName
+    enabled: actionGroup.properties.enabled
+    emailReceivers: actionGroup.properties.emailReceivers
   }
 }]
 

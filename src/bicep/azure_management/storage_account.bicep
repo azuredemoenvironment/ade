@@ -20,11 +20,11 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   tags: tags
   kind: storageAccountProperties.kind
   sku: {
-    name: storageAccountProperties.sku
+    name: storageAccountProperties.sku.name
   }
   properties: {
-    accessTier: storageAccountProperties.accessTier
-    supportsHttpsTrafficOnly: storageAccountProperties.httpsOnly
+    accessTier: storageAccountProperties.properties.accessTier
+    supportsHttpsTrafficOnly: storageAccountProperties.properties.httpsOnly
   }
   resource blobServices 'blobServices@2022-09-01' = {
     name: 'default'

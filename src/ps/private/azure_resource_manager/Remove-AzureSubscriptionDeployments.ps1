@@ -18,7 +18,7 @@ function Remove-AzureSubscriptionDeployments {
         
         Write-Log "Removing $_ Subscription Deployment"
 
-        az deployment sub delete -n $_ -y
+        az deployment sub delete -n $_
         Confirm-LastExitCode
 
         Write-Log "Removed $_ Subscription Deployment"

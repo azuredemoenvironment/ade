@@ -1,7 +1,13 @@
 // Parameters
 //////////////////////////////////////////////////
+@description('The properties of the Event Hub Namespace Authorization Rule.')
+param eventHubNameSpaceAuthorizationRuleProperties object
+
 @description('The properties of the Event Hub Namespace.')
 param eventHubNamespaceProperties object
+
+@description('The properties of the Event Hub.')
+param eventHubProperties object
 
 @description('The location for all resources.')
 param location string
@@ -15,16 +21,16 @@ param tags object
 // Resource - Event Hub Namespace
 //////////////////////////////////////////////////
 resource eventHubNamespace 'Microsoft.EventHub/namespaces@2022-10-01-preview' = {
-  name: eventHubNamespaceProperties.eventHubNamespaceName
+  name: eventHubNamespaceProperties.name
   location: location
   tags: tags
   sku: {
-    name: eventHubNamespaceProperties.sku
-    tier: eventHubNamespaceProperties.sku
-    capacity: eventHubNamespaceProperties.skuCapacity
+    name: eventHubNamespaceProperties.sku.name
+    tier: eventHubNamespaceProperties.sku.tier
+    capacity: eventHubNamespaceProperties.sku.capacity
   }
   properties: {
-    isAutoInflateEnabled: eventHubNamespaceProperties.autoInflate
+    isAutoInflateEnabled: eventHubNamespaceProperties.properties.isAutoInflateEnabled
   }
 }
 
@@ -32,10 +38,10 @@ resource eventHubNamespace 'Microsoft.EventHub/namespaces@2022-10-01-preview' = 
 //////////////////////////////////////////////////
 resource eventHub 'Microsoft.EventHub/namespaces/eventhubs@2022-10-01-preview' = {
   parent: eventHubNamespace
-  name: eventHubNamespaceProperties.eventHubName
+  name: eventHubProperties.name
   properties: {
-    messageRetentionInDays: eventHubNamespaceProperties.messageRetention
-    partitionCount: eventHubNamespaceProperties.partitions
+    messageRetentionInDays: eventHubProperties.properties.messageRetentionInDays
+    partitionCount: eventHubProperties.properties.partitionCount
   }
 }
 
@@ -43,13 +49,9 @@ resource eventHub 'Microsoft.EventHub/namespaces/eventhubs@2022-10-01-preview' =
 //////////////////////////////////////////////////
 resource eventHubNamespaceAuthorizationRule 'Microsoft.EventHub/namespaces/authorizationRules@2022-10-01-preview' = {
   parent: eventHubNamespace
-  name: eventHubNamespaceProperties.authorizationRuleName
+  name: eventHubNameSpaceAuthorizationRuleProperties.name
   properties: {
-    rights: [
-      'Listen'
-      'Manage'
-      'Send'
-    ]
+    rights: eventHubNameSpaceAuthorizationRuleProperties.properties.rights
   }
 }
 

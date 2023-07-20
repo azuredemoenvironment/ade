@@ -55,7 +55,15 @@ var tags = {
 // Variables - Log Analytics
 //////////////////////////////////////////////////
 var logAnalyticsWorkspaceName = 'log-${appEnvironment}'
-var logAnalyticsWorkspaceRetentionInDays = 30
+var logAnalyticsWorkspaceProperties = {
+  name: logAnalyticsWorkspaceName
+  properties: {
+    retentionInDays: 30
+    sku: {
+      name: 'PerGB2018'
+    }
+  }
+}
 var logAnalyticsWorkspaceSolutions = [
   {
     name: 'ContainerInsights(${logAnalyticsWorkspaceName})'
@@ -85,73 +93,128 @@ var logAnalyticsWorkspaceSolutions = [
 
 // Variables - Storage Account
 //////////////////////////////////////////////////
-var storageAccountName = replace('sa-diag-${uniqueString(subscription().subscriptionId)}', '-', '')
+var storageAccountName = replace('sa-diag-${uniqueString(resourceGroup().id)}', '-', '')
 var storageAccountProperties = {
   name: storageAccountName
-  accessTier: 'Hot'
-  httpsOnly: true
   kind: 'StorageV2'
-  sku: 'Standard_GRS'
+  sku: {
+    name: 'Standard_GRS'
+  }
+  properties: {
+    accessTier: 'Hot'
+    httpsOnly: true
+  } 
 }
 
 // Variables - Event Hub
 //////////////////////////////////////////////////
-var eventHubName = 'evh-${appEnvironment}-diagnostics'
 var eventHubNamespaceName = 'evhns-${appEnvironment}-diagnostics'
 var eventHubNamespaceProperties = {
-  autoInflate: false
-  authorizationRuleName: 'RootManageSharedAccessKey'
-  eventHubName: eventHubName
-  eventHubNamespaceName: eventHubNamespaceName
-  messageRetention: 1
-  partitions: 1
-  rights: ['Listen', 'Manage', 'Send']
-  sku: 'Basic'
-  skuCapacity: 1
+  name: eventHubNamespaceName
+  sku: {
+    name: 'Basic'
+    tier: 'Basic'
+    capacity: 1
+  }
+  properties: {
+    isAutoInflateEnabled: false
+  }
+}
+var eventHubName = 'evh-${appEnvironment}-diagnostics'
+var eventHubProperties = {
+  name: eventHubName
+  properties: {
+    messageRetentionInDays: 1
+    partitionCount: 1
+  }
+}
+var eventHubNameSpaceAuthorizationRuleProperties = {
+  name: 'RootManageSharedAccessKey'
+  properties: {
+    rights: [
+      'Listen'
+      'Manage'
+      'Send'
+    ]
+  }
 }
 
 // Variables - Data Collection Rule
 //////////////////////////////////////////////////
 var dataCollectionRuleName = 'dcr-${appEnvironment}-vmInsights'
+var dataCollectionRuleProperties = {
+  name: dataCollectionRuleName
+}
 
 // Variables - Application Insights
 //////////////////////////////////////////////////
 var applicationInsightsName = 'appinsights-${appEnvironment}'
+var applicationInsightsProperties = {
+  name: applicationInsightsName
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+  }
+}
 
 // Variables - Action Group
 //////////////////////////////////////////////////
 var actionGroups = [
   {
     name: 'ag-${appEnvironment}-budget'
-    enabled: true
-    groupShortName: 'ag-budget'
-    emailReceiversName: 'email'
-    emailAddress: contactEmailAddress
-    useCommonAlertSchema: true
+    properties: {
+      groupShortName: 'ag-budget'
+      enabled: true
+      emailReceivers: [
+        {
+          name: 'email'
+          emailAddress: contactEmailAddress
+          useCommonAlertSchema: true
+        }
+      ]      
+    }
   }
   {
     name: 'ag-${appEnvironment}-servicehealth'
-    enabled: true
-    groupShortName: 'ag-svchealth'
-    emailReceiversName: 'email'
-    emailAddress: contactEmailAddress
-    useCommonAlertSchema: true
+    properties: {
+      groupShortName: 'ag-svchealth'
+      enabled: true
+      emailReceivers: [
+        {
+          name: 'email'
+          emailAddress: contactEmailAddress
+          useCommonAlertSchema: true
+        }
+      ]
+    }
   }
   {
     name: 'ag-${appEnvironment}-virtualmachine'
-    enabled: true
-    groupShortName: 'ag-vm'
-    emailReceiversName: 'email'
-    emailAddress: contactEmailAddress
-    useCommonAlertSchema: true
+    properties: {
+      groupShortName: 'ag-vm'
+      enabled: true
+      emailReceivers: [
+        {
+          name: 'email'
+          emailAddress: contactEmailAddress
+          useCommonAlertSchema: true
+        }
+      ]
+    }
   }
   {
     name: 'ag-${appEnvironment}-virtualnetwork'
-    enabled: true
-    groupShortName: 'ag-vnet'
-    emailReceiversName: 'email'
-    emailAddress: contactEmailAddress
-    useCommonAlertSchema: true
+    properties: {
+      groupShortName: 'ag-vnet'
+      enabled: true
+      emailReceivers: [
+        {
+          name: 'email'
+          emailAddress: contactEmailAddress
+          useCommonAlertSchema: true
+        }
+      ]
+    }
   }
 ]
 
@@ -359,8 +422,7 @@ module logAnalyticsModule 'log_analytics.bicep' = {
   name: 'logAnalyticsDeployment'
   params: {
     location: location
-    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
-    logAnalyticsWorkspaceRetentionInDays: logAnalyticsWorkspaceRetentionInDays
+    logAnalyticsWorkspaceProperties: logAnalyticsWorkspaceProperties
     logAnalyticsWorkspaceSolutions: logAnalyticsWorkspaceSolutions
     tags: tags
   }
@@ -380,10 +442,12 @@ module storageAccountModule 'storage_account.bicep' = {
 
 // Module - Event Hub
 //////////////////////////////////////////////////
-module eventHubDiagnosticsModule 'event_hub.bicep' = {
-  name: 'eventHubDiagnosticsDeployment'
+module eventHubModule 'event_hub.bicep' = {
+  name: 'eventHubDeployment'
   params: {
+    eventHubNameSpaceAuthorizationRuleProperties: eventHubNameSpaceAuthorizationRuleProperties
     eventHubNamespaceProperties: eventHubNamespaceProperties
+    eventHubProperties: eventHubProperties
     location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
     tags: tags
@@ -395,7 +459,7 @@ module eventHubDiagnosticsModule 'event_hub.bicep' = {
 module dataCollectionRuleModule 'data_collection_rule.bicep' = {
   name: 'dataCollectionRuleDeployment'
   params: {
-    dataCollectionRuleName: dataCollectionRuleName
+    dataCollectionRuleProperties: dataCollectionRuleProperties
     location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
     tags: tags
@@ -404,11 +468,11 @@ module dataCollectionRuleModule 'data_collection_rule.bicep' = {
 
 // Module - Application Insights
 //////////////////////////////////////////////////
-module applicationInsightsModule './application_insights.bicep' = {
+module applicationInsightsModule 'application_insights.bicep' = {
   name: 'applicationInsightsDeployment'
   params: {
-    applicationInsightsName: applicationInsightsName
-    eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
+    applicationInsightsProperties: applicationInsightsProperties
+    eventHubNamespaceAuthorizationRuleId: eventHubModule.outputs.eventHubNamespaceAuthorizationRuleId
     location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
     storageAccountId: storageAccountModule.outputs.storageAccountId
@@ -443,7 +507,7 @@ module automationModule 'automation.bicep' = {
   params: {
     automationAccountProperties: automationAccountProperties
     automationRunbooks: automationRunbooks
-    eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
+    eventHubNamespaceAuthorizationRuleId: eventHubModule.outputs.eventHubNamespaceAuthorizationRuleId
     location: location
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
     storageAccountId: storageAccountModule.outputs.storageAccountId
@@ -470,7 +534,7 @@ module activityLogModule './activity_log.bicep' = {
   name: 'activityLogDeployment'
   params: {
     activityLogDiagnosticSettingsName: activityLogDiagnosticSettingsName
-    eventHubNamespaceAuthorizationRuleId: eventHubDiagnosticsModule.outputs.eventHubNamespaceAuthorizationRuleId
+    eventHubNamespaceAuthorizationRuleId: eventHubModule.outputs.eventHubNamespaceAuthorizationRuleId
     logAnalyticsWorkspaceId: logAnalyticsModule.outputs.logAnalyticsWorkspaceId
     storageAccountId: storageAccountModule.outputs.storageAccountId
   }
@@ -483,7 +547,6 @@ module policyModule 'policy.bicep' = {
   name: 'policyDeployment'
   params: {
     initiativeDefinitions: initiativeDefinitions
-
   }
 }
 

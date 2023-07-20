@@ -1,7 +1,7 @@
 // Parameters
 //////////////////////////////////////////////////
-@description('The name of the Application Insights instance.')
-param applicationInsightsName string
+@description('The properties of the Application Insights instance.')
+param applicationInsightsProperties object
 
 @description('The ID of the Event Hub Namespace Authorization Rule.')
 param eventHubNamespaceAuthorizationRuleId string
@@ -21,12 +21,12 @@ param tags object
 // Resource - Application Insights
 //////////////////////////////////////////////////
 resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: applicationInsightsName
+  name: applicationInsightsProperties.name
   location: location
   tags: tags
-  kind: 'web'
+  kind: applicationInsightsProperties.kind
   properties: {
-    Application_Type: 'web'
+    Application_Type: applicationInsightsProperties.properties.Application_Type
     WorkspaceResourceId: logAnalyticsWorkspaceId
   }
 }
