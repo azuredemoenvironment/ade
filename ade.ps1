@@ -88,6 +88,7 @@ param (
 
 # We want to stop if *any* error occurs
 Set-StrictMode -Version Latest
+# set this to 0 to disable tracing, set to 1 or 2 to show lines being executed (useful for debugging)
 Set-PSDebug -Trace 0 -Strict
 $DebugPreference = "Continue"
 $ErrorActionPreference = "Stop"

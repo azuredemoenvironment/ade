@@ -1,0 +1,38 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUserName": {
+            "value": "@@adminUsername@@"
+        },
+        "appEnvironment": {
+            "value": "@@appEnvironment@@"
+        },
+        "containerResourceGroupName": {
+            "value": "@@containerResourceGroupName@@"
+        },
+        "databaseResourceGroupName": {
+            "value": "@@databaseResourceGroupName@@"
+        },
+        "dnsZoneResourceGroupName": {
+            "value": "@@dnsZoneResourceGroupName@@"
+        },
+        "managementResourceGroupName": {
+            "value": "@@managementResourceGroupName@@"
+        },
+        "networkingResourceGroupName": {
+            "value": "@@networkingResourceGroupName@@"
+        },
+        "ownerName": {
+            "value": "@@ownerName@@"
+        },
+        
+        "rootDomainName": {
+            "value": "@@rootDomainName@@"
+        },
+        "securityResourceGroupName": {
+            "value": "@@securityResourceGroupName@@"
+        }
+        
+    }
+}

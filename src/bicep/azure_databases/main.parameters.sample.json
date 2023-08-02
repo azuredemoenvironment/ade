@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appEnvironment": {
+            "value": "@@appEnvironment@@"
+        },
+        "adminUserName": {
+            "value": "@@adminUsername@@"
+        },
+        "managementResourceGroupName": {
+            "value": "@@managementResourceGroupName@@"
+        },
+        "networkingResourceGroupName": {
+            "value": "@@networkingResourceGroupName@@"
+        },
+        "ownerName": {
+            "value": "@@ownerName@@"
+        },
+        "securityResourceGroupName": {
+            "value": "@@securityResourceGroupName@@"
+        }     
+    }
+}

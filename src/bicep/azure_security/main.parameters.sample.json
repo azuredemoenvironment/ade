@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appEnvironment": {
+            "value": "@@appEnvironment@@"
+        },
+        "certificateBase64String": {
+            "value": "@@certificateBase64String@@"
+        },
+        "environment": {
+            "value": "@@environment@@"
+        },
+        "managementResourceGroupName": {
+            "value": "@@managementResourceGroupName@@"
+        },
+        "ownerName": {
+            "value": "@@ownerName@@"
+        },
+        "resourcePassword": {
+            "value": "@@resourcePassword@@"
+        },
+        "rootDomainName": {
+            "value": "@@rootDomainName@@"
+        }
+    }
+}

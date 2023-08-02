@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appEnvironment": {
+            "value": "@@appEnvironment@@"
+        },
+        "appGlobalEnvironment": {
+            "value": "@@appGlobalEnvironment@@"
+        },
+        "deployFirewall": {
+            "value": @@deployFirewall@@
+        },
+        "dnsZoneResourceGroupName": {
+            "value": "@@dnsZoneResourceGroupName@@"
+        },
+        "managementResourceGroupName": {
+            "value": "@@managementResourceGroupName@@"
+        },
+        "ownerName": {
+            "value": "@@ownerName@@"
+        },
+        "rootDomainName": {
+            "value": "@@rootDomainName@@"
+        },
+        "securityResourceGroupName": {
+            "value": "@@securityResourceGroupName@@"
+        },
+        "sourceAddressPrefix": {
+            "value": "@@sourceAddressPrefix@@"
+        },
+        "sslCertificateName": {
+            "value": "@@sslCertificateName@@"
+        }         
+    }
+}
